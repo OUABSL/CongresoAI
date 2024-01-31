@@ -2,7 +2,7 @@ import json
 import datetime
 
 class User:
-    def __init__(self, nombre, apellido, DNI , fecha_nacimiento, fecha_alta=None, tipo_usuario, area_conocimiento=None, matricula=None):
+    def __init__(self, nombre, apellido, DNI , fecha_nacimiento, tipo_usuario, fecha_alta=None, area_conocimiento=None, matricula=None):
         self.nombre = nombre
         self.apellido = apellido        
         self.DNI = DNI

@@ -5,6 +5,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import os
 import sys
 sys.path.append('..')
+from app import base
 from config.config import Config
 
 app = Flask(__name__)

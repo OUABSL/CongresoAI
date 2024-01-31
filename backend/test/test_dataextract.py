@@ -34,7 +34,7 @@ def extract_and_correct_math_formulas(text):
     return text
 
 # Ruta del PDF
-pdf_path = "Prueba.pdf"
+pdf_path = r"C:\Users\Ouael\OneDrive\Desktop\TI4\TFG\CongresoAI_V2\backend\test\prueba.pdf"
 
 # Extraer texto del PDF
 pdf_text = extract_text_from_pdf(pdf_path)
