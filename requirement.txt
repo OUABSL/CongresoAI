@@ -1,5 +1,3 @@
-# Este es un ejemplo básico de un archivo requirement.txt
-
 # Bibliotecas comunes
 numpy
 pandas
