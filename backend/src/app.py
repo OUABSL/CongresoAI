@@ -1,16 +1,23 @@
-import os
-import sys
-from flask import Flask, request
+from flask import Flask
 from flask_pymongo import PyMongo
+from config import MONGO_URI, LLAMUS_KEY
 
 
-app = Flask(__name__)
-app.config['MONGO_URI'] = MONGO_URI
-mongo = PyMongo(app)
+def create_app():
+    # Create the Flask application
+    app = Flask(__name__)
+    
+    # Set up additional configurations
+    app.config['LLAMUS_KEY'] = LLAMUS_KEY
+    app.config['MONGO_URI'] = MONGO_URI
+    
+    # Initialize PyMongo with the Flask application
+    PyMongo(app)
 
-# Define references to all collections you will be using
-base = mongo.db
+    return app
 
+
+app = create_app()
 
 if __name__ == "__main__":
     app.run(debug=True)

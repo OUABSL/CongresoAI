@@ -1,17 +1,17 @@
-from app import mongo, base, app, request
-import re
-import PyPDF2
-from models.tabajo import TrabajoCientifico
-import datetime
+import sys
+from ..app import app
 
 
-db = base.trabajos
+
+print("sys path is: ", sys.path)
+
+db = app.base.trabajos
 content_extracted = ''
 
 
 @app.route("/", methods=["GET", "POST"])
 def index():
-    if request.method == "POST":
+    if app.request.method == "POST":
         # Check if a file was uploaded
         if 'pdf_file' not in request.files:
             return 'No file part'
