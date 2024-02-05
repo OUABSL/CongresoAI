@@ -1,6 +1,6 @@
 from flask import Flask
 from flask_pymongo import PyMongo
-from config import MONGO_URI, LLAMUS_KEY
+from src.config import MONGO_URI, LLAMUS_KEY
 
 
 
@@ -18,7 +18,7 @@ def create_app():
     return app,mongo
 
 
-app = create_app()
+app, mongo = create_app()
 
 
 if __name__ == "__main__":

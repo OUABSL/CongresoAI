@@ -1,31 +1,28 @@
-import json
 from mongoengine import Document, StringField, ReferenceField
-import sys
 from user import User
-sys.path.append('..')
-from app import db
+import json
 
 
-class TrabajoCientifico(db.Document):
-    userId = db.ReferenceField(User)
-    titulo = db.StringField()
-    contenido = db.StringField()
-    fecha_entrega = db.StringField()
-    area_conocimiento = db.StringField()
-    summary = db.StringField()
-    evaluation = db.StringField()
-    revisor = db.StringField()  # Puede ser None si no se ha asignado un revisor
+class ScientificWork(Document, User):
+    user_id = ReferenceField(User)
+    title = StringField()
+    content = StringField()
+    submission_date = StringField()
+    knowledge_field = StringField()
+    summary = StringField()
+    evaluation = StringField()
+    reviewer = StringField()  # Can be None if a reviewer has not yet been assigned.
 
     def to_dict(self):
         return {
-            'usuario': str(self.userId.id),
-            'titulo': self.titulo,
-            'contenido': self.contenido,
-            'fecha_entrega': self.fecha_entrega,
-            'area_conocimiento': self.area_conocimiento,
+            'user': str(self.user_id.id),
+            'title': self.title,
+            'content': self.content,
+            'submission_date': self.submission_date,
+            'knowledge_field': self.knowledge_field,
             'summary': self.summary,
             'evaluation': self.evaluation,
-            'revisor': self.revisor
+            'reviewer': self.reviewer,
         }
 
     def to_json(self):
