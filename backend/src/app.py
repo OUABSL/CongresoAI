@@ -3,6 +3,7 @@ from flask_pymongo import PyMongo
 from config import MONGO_URI, LLAMUS_KEY
 
 
+
 def create_app():
     # Create the Flask application
     app = Flask(__name__)
@@ -12,12 +13,13 @@ def create_app():
     app.config['MONGO_URI'] = MONGO_URI
     
     # Initialize PyMongo with the Flask application
-    PyMongo(app)
+    mongo = PyMongo(app)
 
-    return app
+    return app,mongo
 
 
 app = create_app()
+
 
 if __name__ == "__main__":
     app.run(debug=True)
