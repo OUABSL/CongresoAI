@@ -1,5 +1,5 @@
 import sys
-sys.path.append('.')
+sys.path.append('..')
 from typing import Type
 from app import app, base
 from dataPreparation import content_extracted
