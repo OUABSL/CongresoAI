@@ -2,7 +2,6 @@ import datetime
 from mongoengine import Document, StringField, IntField, DateTimeField, DateField
 import json
 import sys
-sys.path.append('..')
 from app import db #db = PyMongo(app).user
 
 

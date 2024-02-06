@@ -99,7 +99,6 @@ Given a query under the stated conditions, $x^+$ (resp. $x^-$) is used to denote
 According to the following definition, positive elements impose constraints on the presence of queries, while negative elements impose constraints on their absence. To be more specific, each positive/negative node in a query requires the existence/non-existence of a node in $G$ which satisfies its conditions (imposed by $\theta_x$ and its edges):
 
 \begin{definition}{}
-%\label{verifica}
     Given $S\subseteq G$, and $Q\in \mathcal{Q}$, we say that $S$ \emph{matches} $Q$ ($S\vDash Q$), if the following formula holds:
 
     $$Q(S)=\bigwedge_{n\in V_Q} Q_n^{\alpha(n)}(S)$$
@@ -114,7 +113,6 @@ According to the following definition, positive elements impose constraints on t
 
 \end{definition}\medskip
 
-%Note that $Q$ can evaluate any subgraph in $G$. In particular, using $ S = G $ we can define when a complete graph matches a query. 
 
 A generic query example is shown in Figure \ref{abstractpqg}.
 
@@ -163,7 +161,6 @@ Next, we examine the relationship between the topological structure of a query a
     \begin{enumerate}
         \item $Q_2\subseteq Q_1$.
         \item $\forall n\in V_{Q_2}^-\, \forall e\in \gamma_{Q_1}(n)\, \exists e'\in \gamma_{Q_2}(n)\ (Q_e\equiv Q_{e'})$.
-        % For every negative node in $Q_2$, $n\in V_{Q_2}^-$, and every edge incident to it in $Q_1$, $e \in \gamma_{Q_1}(n)$, exists an edge incident to it in $Q_2$, $e'\in \gamma_{Q_2}(n)$, imposing the same restriction, that is: $Q_e\equiv Q_{e'}$.
     \end{enumerate}
 \end{definition}\medskip
 
@@ -518,4 +515,4 @@ The computational complexity to verify the existence of a path beginning or endi
 
 Finally, if the query consists of $|V_Q|$ nodes, the complexity of checking the query $Q(S)$ is $\mathcal{O}(p\times |V|^k \times |E_Q| \times |V_Q|)$. It is evident that the constant $k$ (path length bound) significantly impacts the execution of such queries, as it determines the exponent of the complexity.
 
-Efficient operation of a graph query framework is crucial when dealing with large-scale data sets that are commonly found in real-world applications. Notably, when such a system is employed as the kernel of relational machine learning algorithms, as we will demonstrate in the following section, the ability to perform query operations in polynomial time, even for cyclic queries, is fundamental.
+Efficient operation of a graph query framework is crucial when dealing with large-scale data sets that are commonly found in real-world applications. Notably, when such a system is employed as the kernel of relational machine learning algorithms, as we will demonstrate in the following section, the ability to perform query operations in polynomial time, even for cyclic queries,

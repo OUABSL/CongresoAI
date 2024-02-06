@@ -1,29 +1,30 @@
-from mongoengine import Document, StringField, ReferenceField
-from user import User
+from mongoengine import Document, ReferenceField, StringField, DateTimeField
+#from user import User
 import json
+from datetime import datetime
 
 
-class ScientificWork(Document, User):
-    user_id = ReferenceField(User)
-    title = StringField()
-    content = StringField()
-    submission_date = StringField()
-    knowledge_field = StringField()
-    summary = StringField()
-    evaluation = StringField()
-    reviewer = StringField()  # Can be None if a reviewer has not yet been assigned.
-
+class ScientificArticle(Document):
+    user_id = StringField() #ReferenceField(User)
+    title = StringField(required=True)
+    content = StringField(required=True)
+    submission_date = DateTimeField(default=datetime.utcnow)
+    knowledge_field = StringField(null=True)
+    summary = StringField(null=True)
+    evaluation = StringField(null=True)
+    reviewer = StringField(null=True)
+    
     def to_dict(self):
         return {
-            'user': str(self.user_id.id),
+            'user': self.user_id,  #str(self.user_id.id) if self.user_id else None,
             'title': self.title,
             'content': self.content,
-            'submission_date': self.submission_date,
+            'submission_date': self.submission_date.strftime('%Y-%m-%d %H:%M:%S'),
             'knowledge_field': self.knowledge_field,
             'summary': self.summary,
             'evaluation': self.evaluation,
-            'reviewer': self.reviewer,
-        }
+            'reviewer': self.reviewer
+        } 
 
     def to_json(self):
-        return json.dumps(self.to_dict())
+        return json.loads(self.to_dict())
