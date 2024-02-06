@@ -1,81 +1,30 @@
-\section{Conclusions and future work}
-\label{cafw}
-
-The paper's main contribution lies in a novel framework for graph queries that permits the polynomial cyclic assessment of queries and refinements based on atomic operations. The framework's ability to apply refinements in relational learning processes was also demonstrated. In addition, the presented framework fulfils several essential requirements. The system utilises a consistent grammar for both queries and evaluated structures. It allows the assessment of subgraphs beyond individual nodes and supports cyclic queries within polynomial time (where the length of the query path is limited). The system offers a controlled and automated query construction via refinements, and the refinement sets constitute embedded partitions of the evaluated structure set, making them effective tools for top-down learning techniques.
-
-Graph isomorphism-based query systems exhibit exponential complexity when presented with cyclic queries. Additionally, if a projection is necessary for pattern verification, evaluating the non-existence of specific elements becomes difficult or even impossible. However, the query graph framework offered here assesses the existence/non-existence of paths and nodes in a graph rather than demanding isomorphisms, thus enabling the evaluation of cyclic patterns in polynomial time. 
-
-After conducting an initial and fully functional proof-of-concept implementation, the graph query framework's capabilities have been demonstrated through experimentation. This methodology has been explicitly applied in relational learning procedures, as demonstrated in section \ref{kd}, and the results of these experiments have shown that interesting patterns can be extracted from relational data. This is of great significance in both explainable learning and automatic feature extraction tasks. The results' graphs were obtained via our proof-of-concept implementation on a graph database and employing the \textit{matplotlib} library \citep{hunter}.
-
-Despite the presented query definition utilizing binary graph data sets (rather than hypergraphs), it can be implemented on hypergraph data as well. This is due to the fact that the concept of a path, which connects pairs of nodes, is independent of the edge arity involved. For the sake of simplicity, and due to the absence of true hypergraph databases, our queries have been limited to the binary case. Nevertheless, they can be adapted to more universal cases once the usage of hypergraphs becomes more widespread.
-
-Also, in Section \ref{refs}, a basic and reliable set of refinement operations have been provided. However, they should not be considered the most suitable solution for all types of learning tasks. To achieve complex queries and to prevent plateaus in the pattern space, more complex refinement families can be established. For example, it is possible to combine the operations \emph{ add edge} and \emph{adding property to an edge} into one step, thereby reducing the number of steps required. If executed properly, unifying the refinements based on the frequency of structural occurrences in a graph, for instance, can lead to faster versions of learning algorithms at the expense of covering a broader query space. This work provides theoretical tools to support the accuracy of new refinement families. Future research will focus on developing automated methods to generate refinement sets based on a given learning task and the specific characteristics of the graph dataset. Extracting statistics from the graph data for automatic generation of such sets can result in significant optimizations. 
-
-It is concluded that it is feasible to establish effective techniques for matching graph patterns and learning symbolic relationships, resulting in systematic exploration of the pattern space, a high degree of expressiveness in queries and computational cost of implementations kept in reasonable orders.
-%Complexity associated to queries within the proposed framework is polynomial. However, the constant $k$ that limits the length of the paths searched in the graph plays a fundamental role (section \ref{cc}). For this reason, care must be taken to define such a bounding so that the query system remains viable. Being $d$ the number of attributes and $m$ the number of examples, complexity of decision tree learning algorithms belongs to $\mathcal{O}(d \times m \times \log m)$  \citep{witten2016data}. Thus, complexity of our proposed relational decision tree learning algorithm is polynomial too. As efficiency is one of the major problems for this kind of learning techniques, the higher efficiency of the complete relational learning framework presented here may be very promising.
-
-Patterns associated with the leaves in obtained decision trees can be used to characterize subgraph categories. Moreover, the path from the root node to the corresponding leaf of the decision tree for a particular input can be used to justify decisions, a beneficial feature in various sensitive applications as in decision trees. In addition, patterns obtained from the graph learning procedure presented can serve as features in other machine learning methods. Once the patterns have been acquired, they can serve as Boolean features for subgraph modeling, enabling non-relational machine learning methods to learn from them.
-
-Learning of relational decision trees can be utilised by \textit{ensemble} methods (such as Random Forest), and although the explanatory power is diluted when multiple trees are combined, its predictive power can be greatly enhanced. Therefore, it is essential to investigate the probabilistic amalgamation of queries to generate patterns that can be interpreted as probabilistic decision tools. 
-
-Furthermore, while a relational decision tree learning technique has been employed, additional machine learning algorithms can be evaluated alongside this query framework to investigate more opportunities for relational learning.
-
-\section*{Acknowledgements}
+section*{Acknowledgements}
 
 
 \vspace{6pt} 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% optional
-%\supplementary{The following supporting information can be downloaded at:  \linksupplementary{s1}, Figure S1: title; Table S1: title; Video S1: title.}
 
-% Only for the journal Methods and Protocols:
-% If you wish to submit a video article, please do so with any other supplementary material.
-% \supplementary{The following supporting information can be downloaded at: \linksupplementary{s1}, Figure S1: title; Table S1: title; Video S1: title. A supporting video article is available at doi: link.}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%\authorcontributions{For research articles with several authors, a short paragraph specifying their individual contributions must be provided. The following statements should be used ``Conceptualization, X.X. and Y.Y.; methodology, X.X.; software, X.X.; validation, X.X., Y.Y. and Z.Z.; formal analysis, X.X.; investigation, X.X.; resources, X.X.; data curation, X.X.; writing---original draft preparation, X.X.; writing---review and editing, X.X.; visualization, X.X.; supervision, X.X.; project administration, X.X.; funding acquisition, Y.Y. All authors have read and agreed to the published version of the manuscript.'', please turn to the  \href{http://img.mdpi.org/data/contributor-role-instruction.pdf}{CRediT taxonomy} for the term explanation. Authorship must be limited to those who have contributed substantially to the work~reported.}
 
-%\funding{Please add: ``This research received no external funding'' or ``This research was funded by NAME OF FUNDER grant number XXX.'' and  and ``The APC was funded by XXX''. Check carefully that the details given are accurate and use the standard spelling of funding agency names at \url{https://search.crossref.org/funding}, any errors may affect your future funding.}
 
-%\institutionalreview{In this section, you should add the Institutional Review Board Statement and approval number, if relevant to your study. You might choose to exclude this statement if the study did not require ethical approval. Please note that the Editorial Office might ask you for further information. Please add “The study was conducted in accordance with the Declaration of Helsinki, and approved by the Institutional Review Board (or Ethics Committee) of NAME OF INSTITUTE (protocol code XXX and date of approval).” for studies involving humans. OR “The animal study protocol was approved by the Institutional Review Board (or Ethics Committee) of NAME OF INSTITUTE (protocol code XXX and date of approval).” for studies involving animals. OR “Ethical review and approval were waived for this study due to REASON (please provide a detailed justification).” OR “Not applicable” for studies not involving humans or animals.}
 
-%\informedconsent{Any research article describing a study involving humans should contain this statement. Please add ``Informed consent was obtained from all subjects involved in the study.'' OR ``Patient consent was waived due to REASON (please provide a detailed justification).'' OR ``Not applicable'' for studies not involving humans. You might also choose to exclude this statement if the study did not involve humans.
 
-%Written informed consent for publication must be obtained from participating patients who can be identified (including by the patients themselves). Please state ``Written informed consent has been obtained from the patient(s) to publish this paper'' if applicable.}
 
-%\dataavailability{We encourage all authors of articles published in MDPI journals to share their research data. In this section, please provide details regarding where data supporting reported results can be found, including links to publicly archived datasets analyzed or generated during the study. Where no new data were created, or where data is unavailable due to privacy or ethical re-strictions, a statement is still required. Suggested Data Availability Statements are available in section “MDPI Research Data Policies” at \url{https://www.mdpi.com/ethics}.} 
 
 \funding{Proyecto PID2019-109152G financiado por MCIN/AEI/10.13039/501100011033}
 
 \acknowledgments{DISARM project - Grant n. PDC2021-121197, and the HORUS project - Grant n. PID2021-126359OB-I00 funded by MCIN/AEI/310.13039/501100011033 and by the “European Union NextGenerationEU/PRTR”}
 
-%\conflictsofinterest{Declare conflicts of interest or state ``The authors declare no conflict of interest.'' Authors must identify and declare any personal circumstances or interest that may be perceived as inappropriately influencing the representation or interpretation of reported research results. Any role of the funders in the design of the study; in the collection, analyses or interpretation of data; in the writing of the manuscript; or in the decision to publish the results must be declared in this section. If there is no role, please state ``The funders had no role in the design of the study; in the collection, analyses, or interpretation of data; in the writing of the manuscript; or in the decision to publish the~results''.} 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% Optional
 
 
-%\section[\appendixname~\thesection]{}
-%All appendix sections must be cited in the main text. In the appendices, Figures, Tables, etc. should be labeled, starting with ``A''---e.g., Figure A1, Figure A2, etc.
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \begin{adjustwidth}{-\extralength}{0cm}
-%\printendnotes[custom] % Un-comment to print a list of endnotes
 
 \reftitle{References}
 
-% Please provide either the correct journal abbreviation (e.g. according to the “List of Title Word Abbreviations” http://www.issn.org/services/online-services/access-to-the-ltwa/) or the full name of the journal.
-% Citations and References in Supplementary files are permitted provided that they also appear in the reference list here. 
 
-%=====================================
-% References, variant A: external bibliography
-%=====================================
-%\bibliography{your_external_BibTeX_file}
 
-%=====================================
-% References, variant B: internal bibliography
-%=====================================
 \begin{thebibliography}{31}
 \expandafter\ifx\csname natexlab\endcsname\relax\def\natexlab#1{#1}\fi
 \providecommand{\url}[1]{\texttt{#1}}
@@ -89,7 +38,6 @@ Furthermore, while a relational decision tree learning technique has been employ
 \providecommand{\Pubmed}[1]{\href{pmid:#1}{\path{#1}}}
 \providecommand{\bibinfo}[2]{#2}
 \ifx\xfnm\relax \def\xfnm[#1]{\unskip,\space#1}\fi
-%Type = Article
 \bibitem[{Almagro{-}Blanco \&
   Sancho{-}Caparrini(2017)}]{DBLP:journals/corr/abs-1708-03734}
 \bibinfo{author}{Almagro{-}Blanco, P.}, \& \bibinfo{author}{Sancho{-}Caparrini,
@@ -99,7 +47,6 @@ Furthermore, while a relational decision tree learning technique has been employ
   \bibinfo{volume}{abs/1708.03734}\/}. \URLprefix
   \url{http://arxiv.org/abs/1708.03734}.
   \href{http://arxiv.org/abs/1708.03734}{\tt arXiv:1708.03734}.
-%Type = Inproceedings
 \bibitem[{Barcel{\'o} et~al.(2011)Barcel{\'o}, Libkin \& Reutter}]{Barcelo}
 \bibinfo{author}{Barcel{\'o}, P.}, \bibinfo{author}{Libkin, L.}, \&
   \bibinfo{author}{Reutter, J.~L.} (\bibinfo{year}{2011}).
@@ -110,7 +57,6 @@ Furthermore, while a relational decision tree learning technique has been employ
 \newblock \bibinfo{address}{New York, NY, USA}: \bibinfo{publisher}{ACM}.
 \newblock \URLprefix \url{http://doi.acm.org/10.1145/1989284.1989307}.
   \DOIprefix\doi{10.1145/1989284.1989307}.
-%Type = Article
 \bibitem[{Blockeel \& Raedt(1998)}]{BLOCKEEL1998285}
 \bibinfo{author}{Blockeel, H.}, \& \bibinfo{author}{Raedt, L.~D.}
   (\bibinfo{year}{1998}).
@@ -120,7 +66,6 @@ Furthermore, while a relational decision tree learning technique has been employ
   \bibinfo{volume}{101}\/}, \bibinfo{pages}{285--297}. \URLprefix
   \url{http://www.sciencedirect.com/science/article/pii/S0004370298000344}.
   \DOIprefix\doi{10.1016/S0004-3702(98)00034-4}.
-%Type = Incollection
 
 \bibitem[{Bonifati, Angela and Fletcher, George and Voigt, Hannes and Yakovets, Nikolay and Jagadish, H. V.}]{Bonifati}
 \bibinfo{author}{Bonifati, A.} \bibinfo{author}{Fletcher, G.}\bibinfo{author}{Voigt, H.}\bibinfo{author}{Yakovets, N.}\bibinfo{author}{Jagadish, H. V.} (\bibinfo{year}{2018}
@@ -144,7 +89,6 @@ Furthermore, while a relational decision tree learning technique has been employ
   \url{http://papers.nips.cc/paper/5071-translating-embeddings-for-modeling-multi-relational-data.pdf}.
 
   
-%Type = Article
 \bibitem[{Brynjolfsson \& Mitchell(2017)}]{brynjolfsson2017can}
 \bibinfo{author}{Brynjolfsson, E.}, \& \bibinfo{author}{Mitchell, T.}
   (\bibinfo{year}{2017}).
@@ -152,7 +96,6 @@ Furthermore, while a relational decision tree learning technique has been employ
   implications}.
 \newblock {\it \bibinfo{journal}{Science}\/},  {\it \bibinfo{volume}{358}\/},
   \bibinfo{pages}{1530--1534}.
-%Type = Article
 \bibitem[{Camacho et~al.(2011)Camacho, Pereira, Costa, Fonseca, Adriano,
   Sim{\~o}es \& Brito}]{camacho2011relational}
 \bibinfo{author}{Camacho, R.}, \bibinfo{author}{Pereira, M.},
@@ -163,7 +106,6 @@ Furthermore, while a relational decision tree learning technique has been employ
   relationships in drug design toxicity studies}.
 \newblock {\it \bibinfo{journal}{Journal of integrative bioinformatics}\/},
   {\it \bibinfo{volume}{8}\/}, \bibinfo{pages}{176--194}.
-%Type = Inproceedings
 \bibitem[{Chang et~al.(2014)Chang, Yih, Yang \& Meek}]{typed}
 \bibinfo{author}{Chang, K.-W.}, \bibinfo{author}{Yih, S. W.-t.},
   \bibinfo{author}{Yang, B.}, \& \bibinfo{author}{Meek, C.}
@@ -176,7 +118,6 @@ Furthermore, while a relational decision tree learning technique has been employ
   Linguistics}.
 \newblock \URLprefix
   \url{https://www.microsoft.com/en-us/research/publication/typed-tensor-decomposition-of-knowledge-bases-for-relation-extraction/}.
-%Type = Inproceedings
 \bibitem[{Consens \& Mendelzon(1990)}]{graphlog}
 \bibinfo{author}{Consens, M.~P.}, \& \bibinfo{author}{Mendelzon, A.~O.}
   (\bibinfo{year}{1990}).
@@ -188,7 +129,6 @@ Furthermore, while a relational decision tree learning technique has been employ
 \newblock \bibinfo{address}{New York, NY, USA}: \bibinfo{publisher}{ACM}.
 \newblock \URLprefix \url{http://doi.acm.org/10.1145/298514.298591}.
   \DOIprefix\doi{10.1145/298514.298591}.
-%Type = Inproceedings
 \bibitem[{Cook(1971)}]{Cook:1971:CTP:800157.805047}
 \bibinfo{author}{Cook, S.~A.} (\bibinfo{year}{1971}).
 \newblock \bibinfo{title}{The complexity of theorem-proving procedures}.
@@ -198,7 +138,6 @@ Furthermore, while a relational decision tree learning technique has been employ
 \newblock \bibinfo{address}{New York, NY, USA}: \bibinfo{publisher}{ACM}.
 \newblock \URLprefix \url{http://doi.acm.org/10.1145/800157.805047}.
   \DOIprefix\doi{10.1145/800157.805047}.
-%Type = Inproceedings
 \bibitem[{Dong et~al.(2014)Dong, Gabrilovich, Heitz, Horn, Lao, Murphy,
   Strohmann, Sun \& Zhang}]{webscale}
 \bibinfo{author}{Dong, X.}, \bibinfo{author}{Gabrilovich, E.},
@@ -214,7 +153,6 @@ Furthermore, while a relational decision tree learning technique has been employ
 \newblock \bibinfo{address}{New York, NY, USA}: \bibinfo{publisher}{ACM}.
 \newblock \URLprefix \url{http://doi.acm.org/10.1145/2623330.2623623}.
   \DOIprefix\doi{10.1145/2623330.2623623}.
-%Type = Article
 \bibitem[{Fan et~al.(2010)Fan, Li, Ma, Tang, Wu \& Wu}]{Fan}
 \bibinfo{author}{Fan, W.}, \bibinfo{author}{Li, J.}, \bibinfo{author}{Ma, S.},
   \bibinfo{author}{Tang, N.}, \bibinfo{author}{Wu, Y.}, \& \bibinfo{author}{Wu,
@@ -226,14 +164,12 @@ Furthermore, while a relational decision tree learning technique has been employ
   \url{http://dx.doi.org/10.14778/1920841.1920878}.
   \DOIprefix\doi{10.14778/1920841.1920878}.
  
-%Type = Article
 \bibitem[{Gallagher(2006)}]{matching}
 \bibinfo{author}{Gallagher, B.} (\bibinfo{year}{2006}).
 \newblock \bibinfo{title}{Matching structure and semantics: A survey on
   graph-based pattern matching}.
 \newblock {\it \bibinfo{journal}{AAAI FS}\/},  {\it \bibinfo{volume}{6}\/},
   \bibinfo{pages}{45--53}.
-%Type = Article
 \bibitem[{García-Jiménez et~al.(2014)García-Jiménez, Pons, Sanchis \&
   Valencia}]{6802366}
 \bibinfo{author}{García-Jiménez, B.}, \bibinfo{author}{Pons, T.},
@@ -244,7 +180,6 @@ Furthermore, while a relational decision tree learning technique has been employ
 \newblock {\it \bibinfo{journal}{IEEE/ACM Transactions on Computational Biology
   and Bioinformatics}\/},  {\it \bibinfo{volume}{11}\/},
   \bibinfo{pages}{753--765}. \DOIprefix\doi{10.1109/TCBB.2014.2318730}.
-%Type = Inbook
 \bibitem[{Geamsakul et~al.(2003)Geamsakul, Matsuda, Yoshida, Motoda \&
   Washio}]{Geamsakul2003}
 \bibinfo{author}{Geamsakul, W.}, \bibinfo{author}{Matsuda, T.},
@@ -261,14 +196,12 @@ Furthermore, while a relational decision tree learning technique has been employ
   Berlin Heidelberg}.
 \newblock \URLprefix \url{http://dx.doi.org/10.1007/3-540-36175-8_6}.
   \DOIprefix\doi{10.1007/3-540-36175-8_6}.
-%Type = Book
 \bibitem[{Gupta(2015)}]{gupta2015neo4j}
 \bibinfo{author}{Gupta, S.} (\bibinfo{year}{2015}).
 \newblock {\it \bibinfo{title}{Neo4j Essentials}\/}.
 \newblock Community experience distilled.
 \newblock \bibinfo{publisher}{Packt Publishing}.
 \newblock \URLprefix \url{https://books.google.es/books?id=WJ7NBgAAQBAJ}.
-%Type = Inproceedings
 \bibitem{de_raedt_2021}
 Luc De Raedt, Sebastijan Duman\v{c}i\'{c}, Robin Manhaeve, Giuseppe Marra.
 \emph{From Statistical Relational to Neural-Symbolic Artificial Intelligence}.
@@ -277,7 +210,6 @@ ISBN: 9780999241165.
 Article No.: 688.
 Pages: 8.
 Yokohama, Japan.
-%Type = Inproceedings
 \bibitem[{Henzinger et~al.(1995)Henzinger, Henzinger \&
   Kopke}]{henzinger1995computing}
 \bibinfo{author}{Henzinger, M.~R.}, \bibinfo{author}{Henzinger, T.~A.}, \&
@@ -286,7 +218,6 @@ Yokohama, Japan.
 \newblock In {\it \bibinfo{booktitle}{Foundations of Computer Science, 1995.
   Proceedings., 36th Annual Symposium on}\/} (pp. \bibinfo{pages}{453--462}).
 \newblock \bibinfo{organization}{IEEE}.
-%Type = Inproceedings
 \bibitem[{Jacob et~al.(2014)Jacob, Denoyer \&
   Gallinari}]{Jacob:2014:LLR:2556195.2556225}
 \bibinfo{author}{Jacob, Y.}, \bibinfo{author}{Denoyer, L.}, \&
@@ -299,7 +230,6 @@ Yokohama, Japan.
 \newblock \bibinfo{address}{New York, NY, USA}: \bibinfo{publisher}{ACM}.
 \newblock \URLprefix \url{http://doi.acm.org/10.1145/2556195.2556225}.
   \DOIprefix\doi{10.1145/2556195.2556225}.
-%Type = Inproceedings
 \bibitem[{Jiang(2011)}]{10.1007/978-3-642-23038-7_12}
 \bibinfo{author}{Jiang, J.~Q.} (\bibinfo{year}{2011}).
 \newblock \bibinfo{title}{Learning protein functions from bi-relational graph
@@ -309,21 +239,18 @@ Yokohama, Japan.
   \bibinfo{pages}{128--138}).
 \newblock \bibinfo{address}{Berlin, Heidelberg}: \bibinfo{publisher}{Springer
   Berlin Heidelberg}.
-%Type = Article
 
 \bibitem[{Hunter(2007}]{hunter}
 \bibinfo{author}{Hunter, J.~D.} (\bibinfo{year}{2007}).
 \newblock \bibinfo{title}{Matplotlib: A 2D Graphics Environment}.
 \newblock {\it \bibinfo{journal}{Computing in Science \& Engineering}\/},  {\it \bibinfo{volume}{9}\/},
   \bibinfo{pages}{3}.
-%Type = Article
 \bibitem[{Karp(1975)}]{karp1975computational}
 \bibinfo{author}{Karp, R.~M.} (\bibinfo{year}{1975}).
 \newblock \bibinfo{title}{On the computational complexity of combinatorial
   problems}.
 \newblock {\it \bibinfo{journal}{Networks}\/},  {\it \bibinfo{volume}{5}\/},
   \bibinfo{pages}{45--68}.
-%Type = Inproceedings
 \bibitem[{Knobbe et~al.(1999)Knobbe, Siebes, Wallen \& {Syllogic
   B.}}]{Knobbe99multi-relationaldecision}
 \bibinfo{author}{Knobbe, A.~J.}, \bibinfo{author}{Siebes, A.},
@@ -333,12 +260,10 @@ Yokohama, Japan.
 \newblock In {\it \bibinfo{booktitle}{In Proceedings of PKDD{\rq} 99, Prague,
   Czech Republic, Septembre}\/} (pp. \bibinfo{pages}{378--383}).
 \newblock \bibinfo{publisher}{Springer}.
-%Type = Inproceedings
 \bibitem[{Latouche \& Rossi(2015)}]{latouche2015graphs}
 \bibinfo{author}{Latouche, P.}, \& \bibinfo{author}{Rossi, F.}
   (\bibinfo{year}{2015}).
 \newblock \bibinfo{title}{Graphs in machine learning: an introduction}.
-%Type = Inproceedings
 \bibitem[{Leiva et~al.(2002)Leiva, Gadia \& Dobbs}]{Leiva02mrdtl:a}
 \bibinfo{author}{Leiva, H.~A.}, \bibinfo{author}{Gadia, S.}, \&
   \bibinfo{author}{Dobbs, D.} (\bibinfo{year}{2002}).
@@ -348,13 +273,11 @@ Yokohama, Japan.
   Conference on Inductive Logic Programming (ILP 2003}\/} (pp.
   \bibinfo{pages}{38--56}).
 \newblock \bibinfo{publisher}{Springer-Verlag}.
-%Type = Book
 \bibitem[{Milner(1989)}]{Milner}
 \bibinfo{author}{Milner, R.} (\bibinfo{year}{1989}).
 \newblock {\it \bibinfo{title}{Communication and Concurrency}\/}.
 \newblock \bibinfo{address}{Upper Saddle River, NJ, USA}:
   \bibinfo{publisher}{Prentice-Hall, Inc.}
-%Type = Inbook
 \bibitem[{Nguyen et~al.(2005)Nguyen, Ohara, Motoda \& Washio}]{Nguyen2005}
 \bibinfo{author}{Nguyen, P.~C.}, \bibinfo{author}{Ohara, K.},
   \bibinfo{author}{Motoda, H.}, \& \bibinfo{author}{Washio, T.}
@@ -370,7 +293,6 @@ Yokohama, Japan.
   Berlin Heidelberg}.
 \newblock \URLprefix \url{http://dx.doi.org/10.1007/11430919_74}.
   \DOIprefix\doi{10.1007/11430919_74}.
-  %Type = Article
   \bibitem{fan_2012}
 Wenfei Fan.
 \emph{Graph Pattern Matching Revised for Social Network Analysis}.
@@ -419,7 +341,6 @@ Lingfei Wu, Peng Cui, Jian Pei, Liang Zhao, Xiaojie Guo.
 En \emph{Proceedings of the 28th ACM SIGKDD Conference on Knowledge Discovery and Data Mining (KDD '22)}, 2022, páginas 4840–4841.
 DOI: \url{https://doi.org/10.1145/3534678.3542609}.
 
-%Type = Article
 \bibitem[{Nickel et~al.(2016)Nickel, Murphy, Tresp \&
   Gabrilovich}]{nickel2016review}
 \bibinfo{author}{Nickel, M.}, \bibinfo{author}{Murphy, K.},
@@ -429,15 +350,12 @@ DOI: \url{https://doi.org/10.1145/3534678.3542609}.
   graphs}.
 \newblock {\it \bibinfo{journal}{Proceedings of the IEEE}\/},  {\it
   \bibinfo{volume}{104}\/}, \bibinfo{pages}{11--33}.
-%Type = Article
 \bibitem[{Lee(2023)}]{lee2023conditional}
 \bibinfo{author}{Namkyeong L., Dongmin H., Gyoung S. Na, Sungwon K., Junseok L. and Chanyoung P.} (\bibinfo{year}{2023}).
 \newblock \bibinfo{title}{Conditional Graph Information Bottleneck for Molecular Relational Learning}.
-%Type = Article
 \bibitem[{Plotkin(1972)}]{plotkin1972automatic}
 \bibinfo{author}{Plotkin, G.} (\bibinfo{year}{1972}).
 \newblock \bibinfo{title}{Automatic methods of inductive inference} .
-%Type = Inproceedings
 \bibitem[{van Rest et~al.(2016)van Rest, Hong, Kim, Meng \&
   Chafi}]{van2016pgql}
 \bibinfo{author}{van Rest, O.}, \bibinfo{author}{Hong, S.},
@@ -448,7 +366,6 @@ DOI: \url{https://doi.org/10.1145/3534678.3542609}.
   Workshop on Graph Data Management Experiences and Systems}\/}
   (p.~\bibinfo{pages}{7}).
 \newblock \bibinfo{organization}{ACM}.
-%Type = Phdthesis
 \bibitem[{Reutter(2013)}]{phdthesis}
 \bibinfo{author}{Reutter, J.~L.} (\bibinfo{year}{2013}).
 \newblock {\it \bibinfo{title}{Graph Patterns: Structure, Query Answering and
@@ -456,7 +373,6 @@ DOI: \url{https://doi.org/10.1145/3534678.3542609}.
 \newblock Ph.D. thesis
   \bibinfo{address}{Laboratory for Foundations of Computer Science School of
   Informatics University of Edinburgh}.
-%Type = Book
 \bibitem[{Segaran et~al.(2009)Segaran, Evans, Taylor, Toby, Colin \&
   Jamie}]{Segaran:2009:PSW:1696488}
 \bibinfo{author}{Segaran, T.}, \bibinfo{author}{Evans, C.},
@@ -466,7 +382,6 @@ DOI: \url{https://doi.org/10.1145/3534678.3542609}.
 \newblock {\it \bibinfo{title}{Programming the Semantic Web}\/}.
 \newblock (\bibinfo{edition}{1st} ed.).
 \newblock \bibinfo{publisher}{O'Reilly Media, Inc.}
-%Type = Inproceedings
 \bibitem[{Tang \& Liu(2009)}]{tang2009relational}
 \bibinfo{author}{Tang, L.}, \& \bibinfo{author}{Liu, H.}
   (\bibinfo{year}{2009}).
@@ -475,7 +390,6 @@ DOI: \url{https://doi.org/10.1145/3534678.3542609}.
   international conference on Knowledge discovery and data mining}\/} (pp.
   \bibinfo{pages}{817--826}).
 \newblock \bibinfo{organization}{ACM}.
-%Type = Article
 \bibitem[{Zou et~al.(2009)Zou, Chen \& {\"O}zsu}]{distance-join}
 \bibinfo{author}{Zou, L.}, \bibinfo{author}{Chen, L.}, \&
   \bibinfo{author}{{\"O}zsu, M.~T.} (\bibinfo{year}{2009}).
@@ -485,7 +399,6 @@ DOI: \url{https://doi.org/10.1145/3534678.3542609}.
   \bibinfo{volume}{2}\/}, \bibinfo{pages}{886--897}. \URLprefix
   \url{http://dx.doi.org/10.14778/1687627.1687727}.
   \DOIprefix\doi{10.14778/1687627.1687727}.
-%Type = Article
 
 \bibitem{ma_2014}
 Shuai Ma, Yang Cao, Wenfei Fan, Jinpeng Huai, Tianyu Wo.
@@ -500,27 +413,7 @@ Keywords: dual simulation, graph simulation, data locality, Strong simulation, s
 
 \end{thebibliography}
 
-% If authors have biography, please use the format below
-%\section*{Short Biography of Authors}
-%\bio
-%{\raisebox{-0.35cm}{\includegraphics[width=3.5cm,height=5.3cm,clip,keepaspectratio]{Definitions/author1.pdf}}}
-%{\textbf{Firstname Lastname} Biography of first author}
-%
-%\bio
-%{\raisebox{-0.35cm}{\includegraphics[width=3.5cm,height=5.3cm,clip,keepaspectratio]{Definitions/author2.jpg}}}
-%{\textbf{Firstname Lastname} Biography of second author}
 
-% For the MDPI journals use author-date citation, please follow the formatting guidelines on http://www.mdpi.com/authors/references
-% To cite two works by the same author: \citeauthor{ref-journal-1a} (\citeyear{ref-journal-1a}, \citeyear{ref-journal-1b}). This produces: Whittaker (1967, 1975)
-% To cite two works by the same author with specific pages: \citeauthor{ref-journal-3a} (\citeyear{ref-journal-3a}, p. 328; \citeyear{ref-journal-3b}, p.475). This produces: Wong (1999, p. 328; 2000, p. 475)
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% for journal Sci
-%\reviewreports{\\
-%Reviewer 1 comments and authors’ response\\
-%Reviewer 2 comments and authors’ response\\
-%Reviewer 3 comments and authors’ response
-%}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \PublishersNote{}
 \end{adjustwidth}

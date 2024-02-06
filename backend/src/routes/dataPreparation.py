@@ -1,106 +1,110 @@
-import sys
-from ..app import app
+# Import required libraries
+from pathlib import Path
+import zipfile
+import re
+import os, sys
+sys.path[0] = os.getcwd()
+from app import mongo
+from models.tabajo import ScientificArticle
+#from models.user import User
+"""
+To do: 
+- Relacionar la bibliografia con sus citaciones
+- Más limpieza al codigo
+- Integración con Usuario emisor
+- Almacenar el PDF
+"""
 
 
+class DataHandler:
+    """This class assists with file and directory management tasks."""
+    
+    def __init__(self, zip_path: str, dest_path: str, archive_name: str):
 
-print("sys path is: ", sys.path)
+        self.title = "Extraido de la entrega"
+        self.db = mongo.db.articles
+        self.zip_path = Path(zip_path)
+        self.dest_path = Path(dest_path)
+        self.tex_path = self.dest_path / archive_name
+    
+    def insert_into_db(self, data: dict):
+        """Insert provided data into the database and return the inserted ID"""
+        result = self.db.insert_one(data)
+        return str(result.inserted_id)
 
-db = app.base.trabajos
-content_extracted = ''
+    @staticmethod
+    def _perform_extraction(src: str, dest: str):
+        """Extract files from the provided source ZIP to the destination folder"""
+        with zipfile.ZipFile(src, 'r') as file:
+            file.extractall(dest)
+
+    @staticmethod
+    def _read_file_data(file_path: str):
+        """Read and return the contents of the provided file."""
+        with open(file_path, 'r', encoding='utf-8') as file:
+            return file.read()
+
+    @staticmethod
+    def _parse_document_content(data):
+        begin_pos = data.find(r'\begin{document}')
+        end_pos = data.find(r'\end{document}')
+        if begin_pos != -1 and end_pos != -1:
+            content = data[begin_pos + len(r'\begin{document}'):end_pos]
+            return content
+        return None
+    
+    @staticmethod
+    def _remove_commented_lines(content):
+         return "\n".join([line for line in content.split("\n") if not line.strip().startswith("%")])
 
 
-@app.route("/", methods=["GET", "POST"])
-def index():
-    if app.request.method == "POST":
-        # Check if a file was uploaded
-        if 'pdf_file' not in request.files:
-            return 'No file part'
+    
+    @staticmethod
+    def _get_section_data(document_content):
+        sections = re.findall(r'\\section\*?\{([^}]*)\}', document_content)
+        section_contents = {}
+        for idx, section_name in enumerate(sections):
+            section_start = document_content.find(section_name) - 9  # 9 is approximately length of '\section{' or '\section*{'
+            if idx < len(sections) - 1:
+                next_section_start = document_content.find(sections[idx + 1]) - len(sections[idx + 1]) 
+                section_contents[section_name] = document_content[section_start:next_section_start].strip()
+            else:
+                section_contents[section_name] = document_content[section_start:].strip()
+        return section_contents
+    
+    
+    @staticmethod
+    def _save_sections(sections: dict, destination: Path):
+        """Save the provided sections dictionary as individual files in the provided destination."""
+        destination.mkdir(parents=True, exist_ok=True)
+        for idx, (section_name, section_content) in enumerate(sections.items(), start=1):
+            (destination / f"section_{idx}_{section_name.replace('/', '_')}.txt").write_text(section_content, encoding='utf-8')
 
-        pdf_file = request.files["pdf_file"]
-
-        # Check if the file is a PDF
-        if pdf_file.filename == '':
-            return 'No selected file'
-
-        if pdf_file and pdf_file.filename.endswith('.pdf'):
-            try:
-                # Read the contents of the PDF file
-                pdf_data = pdf_file.read()
-
-                # Parse the PDF file
-                pdf_file_obj = PyPDF2.PdfFileReader(pdf_data)
-
-                # Extract the text from the PDF file
-                content_extracted = extract_text_from_pdf(pdf_file_obj)
-
-            except PyPDF2.utils.PdfReadError:
-                return 'Invalid PDF file'
-
-            # Get the title and user ID from the form data
-            user_id = ""  # Missing user ID
-            title = request.form["title"]
-            current_datetime = datetime.datetime.now()
-
-            # Format the date and time as a string
-            formatted_datetime = current_datetime.strftime("%Y-%m-%d %H:%M:%S")
-
-            # Create a new TrabajoCientifico object
-            trabajo = TrabajoCientifico(
-                userId=user_id,
-                titulo=title,
-                contenido=content_extracted,
-                fecha_entrega=formatted_datetime,
-                area_conocimiento= extract_knowledge_fields
-            )
-
-            # Save the TrabajoCientifico object to the database
-            db.insert_one(trabajo.to_dict())
-
-            return 'Trabajo cientifico created successfully'
-
+    def run(self):
+        """Execute the main actions of the class"""
+        self._perform_extraction(self.zip_path, self.dest_path)
+        content = self._parse_document_content(self._read_file_data(self.tex_path))
+        sections = {}
+        if content is not None:
+            content = self._remove_commented_lines(content)
+            sections = self._get_section_data(content)
+            #self._save_sections(sections, self.dest_path / "res")
         else:
-            return 'Invalid file type. Please upload a PDF file.'
+            print("Contenido Nulo!")
+
+        user = "beta user"
+        article = ScientificArticle(
+            user_id=user,
+            title= self.title,
+            content=sections,
+        )
+        self.insert_into_db(article.to_dict())
 
 
+if __name__ == "__main__":
+    zip_filepath = Path.cwd() / "test" / "article.zip"
+    destination_folder = Path.cwd() / "test" / "output"
+    destination_folder.mkdir(parents=True, exist_ok=True)
 
-
-def extract_knowledge_fields():
-    """Obtiene los campos de conocimiento que se pueden utilizar para asignar un articulo a un revisor adecuado"""
-    return None
-
-
-def extract_text_from_pdf(pdf_path):
-    with open(pdf_path, 'rb') as file:
-        pdf_reader = PyPDF2.PdfFileReader(file)
-        text = ""
-        for page_num in range(pdf_reader.numPages):
-            page = pdf_reader.getPage(page_num)
-            text += page.extract_text()
-    return text
-
-
-
-def extract_math_formulas(text, formulas_dict):
-    # Count the number of occurrences of the math formula pattern in the input text
-    pattern = r'\$[^\$]*\$'
-    formulas = re.findall(pattern, text)
-    count = len(formulas)
-
-
-    # Replace each occurrence of the math formula pattern with the corresponding value
-    for i in range(1, count + 1):
-        pattern = r'\$[^\$]*\$(?!\s*\()'
-        match = re.search(pattern, text)
-        if match:
-            formula = match.group(0)
-            value = formulas_dict.get(formula, formula)
-            text = text.replace(formula, value)
-
-    return text
-pdf_path = "tu_archivo.pdf"
-pdf_text = extract_text_from_pdf(pdf_path)
-math_formulas = extract_math_formulas(pdf_text)
-
-# Imprimir las fórmulas extraídas
-for i, formula in enumerate(math_formulas):
-    print(f"Fórmula {i + 1}:\n{formula}\n")
+    handler = DataHandler(zip_filepath, destination_folder, archive_name="PQG.tex")
+    handler.run()

@@ -47,15 +47,4 @@ Similarly, by utilizing each character node in the Star Wars toy graph (Figure \
         \includegraphics[scale=0.3]{png/FIG7.pdf}
     \end{center}
 	\caption{Character specie classifier}
-	    \label{droid}
-\end{figure}
-
-%As an example of structure classification problem, let us consider the training set composed by pairs master-apprentice connected by a \texttt{TEACHES} relationship in Starwars toy graph in order to distinguish pairs devotee of the same side from those devotee of different sides. Figure \ref{ts} shows the relational decision tree produced by our method. The leftmost leaf provide an explanation for the positive class samples, while the rest of the leafs explain the negative class.
-%
-%\begin{figure}[htb]
-%    \begin{center}
-%        \includegraphics[width=\columnwidth]{png/arbolMAStarwars.pdf}
-%    \end{center}
-%	\caption{Same side Master-Apprentice classifier.}
-%	    \label{ts}
-%\end{figure}
+	    \label{droi
