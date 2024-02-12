@@ -1,0 +1,48 @@
+@startuml Congreso
+skinparam classBackgroundColor AliceBlue
+skinparam classBorderColor Blue
+skinparam classFontName Comic Sans
+skinparam classFontSize 20
+
+class Usuario {
+  - ID-User: int
+  - Nombre: string
+  - Fecha de Nacimiento: Date
+  - Correo electrónico: string
+  - Teléfono: string
+  - Contraseña (Hash): string
+  - Fecha de Alta: Date
+}
+
+class Revisor {
+  - ID-Revisor: int
+  - Áreas de conocimiento: [string]
+  - Trabajos asignados pendientes: map<ID_Trabajo, tuple<fecha_entrega, estado[primera_evaluación, segunda_evaluación]>>
+  - Trabajos evaluados: map<ID_Trabajo, tuple<fecha_evaluación, resultado de evaluación>>
+}
+
+class Autor {
+  - ID-Autor: int
+  - Áreas de interés: [string]
+  - Publicaciones: map<Trabajo_ID, Fecha de publicación>
+  - Publicaciones pendientes: map<Trabajo_ID, tuple<fecha_entrega, estado>>
+}
+
+class Articulo {
+  - Título: string
+  - ID-Trabajo: int
+  - ID-Autor: int
+  - Fecha de entrega: Date
+  - Documento PDF: string
+  - Contenido: string
+  - Resumen: string
+  - Evaluación: string
+  - Áreas de conocimiento (key words): [string]
+  - ID-Revisor: int
+}
+
+Usuario --|> Revisor : Es Revisor
+Usuario --|> Autor : Es Autor
+Autor "1" -- "0..*" Articulo : Tiene
+Revisor "0..1" -- "0..*" Articulo : Revisa
+@enduml

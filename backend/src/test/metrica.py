@@ -1,6 +1,5 @@
 import requests
 import json
-import src
 
 
 def fetch_model_names():
