@@ -1,518 +1,467 @@
-\section{Graph query framework}
-\label{ggq}
-
 In graph pattern matching, precise definitions are fundamental for research. They create a shared terminology, whilst theorems illustrated by mathematical proofs reveal essential characteristics and direct the development of algorithms. This paper presents a mathematical tool for conducting graph pattern matching. We will do this by utilising these mathematical tools.
 
-We are exploring graph queries that enable atomic specialisations. We aim to produce pattern specialisations that select only a particular subset of elements by utilising a set of elements that satisfy a specific relational pattern. Selection Graphs serves as an instance of this query tool and has been developed for use in relational learning procedures. However, it has a fundamental limitation, as its patterns are unable to include cycles. Furthermore, when dealing with high relational data, incorporating a graphical representation of SQL queries can lead to efficiency issues. Our proposal draws inspiration from this method while bypassing its possible constraints. 
+We are exploring graph queries that enable atomic specialisations. We aim to produce pattern specialisations that select only a particular subset of elements by utilising a set of elements that satisfy a specific relational pattern. Selection Graphs serves as an instance of this query tool and has been developed for use in relational learning procedures. However, it has a fundamental limitation, as its patterns are unable to include cycles. Furthermore, when dealing with high relational data, incorporating a graphical representation of SQL queries can lead to efficiency issues. Our proposal draws inspiration from this method while bypassing its possible constraints.
 
 When searching for query specialization, we aim to also create complementary queries to cover new conditions. Exploring the pattern space and characterizing elements in a top-down method would be helpful. In particular, we seek a group of specialized queries that create embedded partitions of a single query.
 
 We would like to emphasise that our primary aim is to offer formalisation and examples of how the model can be applied, with the added goal of producing a real implementation that is practical for use\footnote{\url{https://github.com/palmagro/ggq}}.
 
+Preliminaries
 
-\subsection{Preliminaries}
-
-This passage presents preliminary concepts for defining graph queries. For a more complete review, refer to \citep{DBLP:journals/corr/abs-1708-03734}.  
+This passage presents preliminary concepts for defining graph queries. For a more complete review, refer to [2].
 
 We will begin with a graph definition that encompasses several common types found in literature, such as directed/undirected graphs, multi-relational graphs, and hypergraphs. This definition serves as a foundational basis for general graph dataset structures and queries.
 
 \begin{definition}
-A \emph{Graph} is a tuple $ G = (V, E, \mu) $ where:
-\begin{itemize}
-\item $ V $ and $ E $ are sets, called, respectively, \emph{set of nodes} and \emph{set of edges} of $ G $.
-\item $ \mu $ associates each node/edge in the graph with a set of properties $ \mu: (V \cup E) \times R \rightarrow J $, where $ R $ represents the set of \emph{keys} for  properties, and $ J $ the set of \emph{values}. 
-\end{itemize} 
+A Graph is a tuple G= (V, E, μ) where:
 
-Furthermore, it is necessary to have a distinct key for the edges of the graph, called \emph{incidences} and denoted by $\gamma $, which associates each edge in $E$ with a set of vertices in $V$.
+-  V and E are sets, called, respectively, set of nodes and set of edges of G.
+-  μ associates each node/edge in the graph with a set of properties μ: (V ∪ E) × R → J, where R represents the set of keys for properties, and J the set of values.
+
+Furthermore, it is necessary to have a distinct key for the edges of the graph, called incidences and denoted by γ, which associates each edge in E with a set of vertices in V.
 \end{definition}
 \medskip
-The domain of $ \mu $ is the Cartesian product of the sets $V \cup E$ and $ R $. Generally, we denote $\alpha(x)$ instead of $\mu(x,\alpha)$ for each $x\in V\cup E$ and $\alpha \in R$, treating properties as maps from nodes/edges to values. Note that unlike standard definitions, the items in E are symbols that indicate the edges, rather than pairs of elements from V. Additionally, gamma is the function that matches each edge to the group of nodes, ordered or otherwise, that it connects. 
+The domain of μ is the Cartesian product of the sets V ∪ E and R. Generally, we denote α(x) instead of μ(x,α) for each x∈ V∪ E and α ∈ R, treating properties as maps from nodes/edges to values. Note that unlike standard definitions, the items in E are symbols that indicate the edges, rather than pairs of elements from V. Additionally, gamma is the function that matches each edge to the group of nodes, ordered or otherwise, that it connects.
 
-We will use $\gamma(v)$ to denote the edges in which node $v\in V$ participates. The \emph{neighbourhood} of $ v $ is the set of nodes, including itself, connected to it, that is, $ \mathcal{N}(v) = \bigcup_{e \in \gamma (v)} \gamma (e) $. 
+We will use γ(v) to denote the edges in which node v∈ V participates. The neighbourhood of v is the set of nodes, including itself, connected to it, that is, 𝓝(v)= ⋃_{e ∈ γ (v)} γ (e).
 
-For instance, we could depict a binary social graph $G$, which encompasses a set of nodes $V$, a set of edges $E$, and a function $\mu$ that associates each node/edge in the graph with a set of properties $R$. Our social graph would comprise the attribute $\tau \in R$ that may assume the values $person$ and $photo$ for the nodes and $follows$ and $like$ for edges. The attribute $gamma \in R$ would be responsible for associating a pair of nodes in $V$ with each edge. Furthermore, nodes and edges may possess additional attributes, such as $age$ for nodes with $\tau = person$ or $date$ for edges with $\tau = like$.
+For instance, we could depict a binary social graph G, which encompasses a set of nodes V, a set of edges E, and a function μ that associates each node/edge in the graph with a set of properties R. Our social graph would comprise the attribute τ ∈ R that may assume the values person and photo for the nodes and follows and like for edges. The attribute gamma ∈ R would be responsible for associating a pair of nodes in V with each edge. Furthermore, nodes and edges may possess additional attributes, such as age for nodes with τ= person or date for edges with τ= like.
 
-We need to provide an understanding of the position of a node in an edge. We offer a basic definition of \textit{position}, but a more comprehensive one can be provided to distinguish between \textit{directed} and \textit{undirected} edges:
+We need to provide an understanding of the position of a node in an edge. We offer a basic definition of position, but a more comprehensive one can be provided to distinguish between directed and undirected edges:
 
 \begin{definition}{}
-If $e\in E$ and $\gamma(e)=(v_1,\dots,v_n)\in V^n$, then we define the \emph{position} of each $v_i\in \gamma(e)$ in $e$ as $ord_e(v_i)=i$. We denote $u\leq_e v$ to indicate $ord_e(u)\leq ord_e(v)$.
+If e∈ E and γ(e)=(v₁,\dots,vₙ)∈ Vⁿ, then we define the position of each vᵢ∈ γ(e) in e as ordₑ(vᵢ)=i. We denote u\leqₑ v to indicate ordₑ(u)\leq ordₑ(v).
 \end{definition}
 
-From this ordering of the nodes on an edge, we can establish \textit{paths} within a graph.
+From this ordering of the nodes on an edge, we can establish paths within a graph.
 
 \begin{definition}{}
-Given a graph $G=(V,E,\mu)$, we define the set of \emph{paths} in $G$ as $\mathcal{P}_G$, which is the smallest set that satisfies the conditions:
-\begin{enumerate}
-    \item If $e\in E$ and $u,\ v\in \gamma (e)$ with $u \leq_e v$, then $\rho=u \stackrel{e}{\rightarrow} v\in \mathcal{P}_G$. We will say that $\rho$ \emph{connects} the nodes $u$ and $v$ of $G$, and we will denote it by $u \stackrel{\rho}{\rightsquigarrow} v$.
-    \item If $\rho_1,\ \rho_2\in \mathcal{P}_G$, with $u \stackrel{\rho_1}{\rightsquigarrow} v$ and $v \stackrel{\rho_2}{\rightsquigarrow} w$ then $\rho_1\cdot\rho_2 \in \mathcal{P}_G$, with $u \stackrel{\rho_1\cdot\rho_2}{\rightsquigarrow} w$.
-\end{enumerate}
+Given a graph G=(V,E,μ), we define the set of paths in G as 𝓟_G, which is the smallest set that satisfies the conditions:
+
+1. If e∈ E and u, v∈ γ (e) with u \leqₑ v, then ρ=u v∈ 𝓟_G. We will say that ρ connects the nodes u and v of G, and we will denote it by u v.
+2. If ρ₁, ρ₂∈ 𝓟_G, with u v and v w then ρ₁·ρ₂ ∈ 𝓟_G, with u w.
 \end{definition}\medskip
 
 Some useful notations are as follows:
-	\begin{itemize}
-	\item If $u \stackrel{\rho}{\rightsquigarrow} v$, then we write $\rho^o=u$ and $\rho^i=v$.
-	\item We denote the paths \textit{through} $u$, \textit{starting in} $u$, and \textit{ending in} $ u$, respectively, by:
-	$$\mathcal{P}_u(G)=\{\rho \in \mathcal{P}(G):\ u\in \rho\},$$
-	$$\mathcal{P}_u^o(G)=\{\rho \in \mathcal{P}(G):\ \rho^o=u\},$$
-	$$\mathcal{P}_u^i(G)=\{\rho \in \mathcal{P}(G):\ \rho^i=u\}.$$
-\end{itemize}
-For example, for a graph $G$ with $V=\{v_1,v_2,v_3\}$ and $E=\{e_1,e_2\}$, $\gamma(e_1) = \{v_1,v_2\}$ and $\gamma(e_2) = \{v_2,v_3\}$, the set of paths comprises $ \mathcal{P}_G = \{ v_1 \stackrel{e_1}{\rightsquigarrow}  v_2,v_2 \stackrel{e2}{\rightsquigarrow}  v_3,v_1 \stackrel{e1\cdot e2}{\rightsquigarrow}  v_3$\} with $\mathcal{P}^o_{v_1}(G)=\{ v_1 \stackrel{e1}{\rightsquigarrow}  v_2,v_1 \stackrel{e1\cdot e_2}{\rightsquigarrow}  v_3$\} and  $\mathcal{P}^i_{v_1}(G)=\emptyset$ .
+
+- If u v, then we write ρᵒ=u and ρⁱ=v.
+- We denote the paths through u, starting in u, and ending in u, respectively, by:
+𝓟_u(G)=\{ρ ∈ 𝓟(G): u∈ ρ\},
+𝓟_u^o(G)=\{ρ ∈ 𝓟(G): ρ^o=u\},
+𝓟_u^i(G)=\{ρ ∈ 𝓟(G): ρ^i=u\}.
+For example, for a graph G with V=\{v₁,v₂,v₃\} and E=\{e₁,e₂\}, γ(e₁)= \{v₁,v₂\} and γ(e₂)= \{v₂,v₃\}, the set of paths comprises 𝓟_G= \{ v₁ \stackrel{e₁}{⇝} v₂,v₂ \stackrel{e2}{⇝} v₃,v₁ \stackrel{e1· e2}{⇝} v₃\} with 𝓟ᵒ_{v₁}(G)=\{ v₁ \stackrel{e1}{⇝} v₂,v₁ \stackrel{e1· e₂}{⇝} v₃\} and 𝓟ⁱ_{v₁}(G)=\emptyset.
 The concept of a subgraph is acquired by employing the customary procedure of enforcing that the features are sustained within the intersecting elements.
 
 \begin{definition}{}
-    A subgraph of $G = (V, E,\mu)$ is defined as a graph $S = (V_S, E_S,\mu_S)$ where $V_S$ is a subset of $V$, $E_S$ is a subset of $E$, and $\mu_S$ is a subset of $\mu_{|V_S \cup E_S}$. We denote $S \subseteq G$. 
+A subgraph of G= (V, E,μ) is defined as a graph S= (V_S, E_S,μ_S) where V_S is a subset of V, E_S is a subset of E, and μ_S is a subset of μ_{|V_S ∪ E_S}. We denote S \subseteq G.
 \end{definition}
 
-An instance of a subgraph from the graph stated earlier could be constituted by $V_S=\{v_1,v_2\}$, $E_S=\{e_1\}$, and $\gamma{|V_S \cup E_S}$.
+An instance of a subgraph from the graph stated earlier could be constituted by V_S=\{v₁,v₂\}, E_S=\{e₁\}, and γ{|V_S ∪ E_S}.
 
-\subsection{Graph queries}
+Graph queries
 
-As mentioned previously, our graph query framework aims to enable the generation of complementary queries based on a given query. This entails ensuring that if a subgraph does not comply with a query, it must always comply with one of its complementaries. However, since projection hinders the evaluation of non-existent elements, which is necessary for achieving complementarity, we propose the use of logical predicates instead of projections. 
+As mentioned previously, our graph query framework aims to enable the generation of complementary queries based on a given query. This entails ensuring that if a subgraph does not comply with a query, it must always comply with one of its complementaries. However, since projection hinders the evaluation of non-existent elements, which is necessary for achieving complementarity, we propose the use of logical predicates instead of projections.
 
-In the following, we examine a graph that is prefixed, denoted by $G=(V,E,\mu)$. We will provide a brief formalization of our understanding of a predicate for $G$. More details on this topic can be found in \cite{Bonifati}.
+In the following, we examine a graph that is prefixed, denoted by G=(V,E,μ). We will provide a brief formalization of our understanding of a predicate for G. More details on this topic can be found in [1].
 
-Consider a collection of function, predicate, and constant symbols, called $\Theta$, which includes all the properties in $\mu$, together with constants associated with elements of $G$, and possibly some additional symbols (for example, metrics defined in $G$, such as $degree$). We can use $\Theta$ as a set of non-logical symbols in the first-order language with equality, $L$. In this scenario, a \textit{predicate} in $G$ is an element of the set of first-order formulas of $L$ ($Form(L)$). The binary predicates on $G$ are indicated as $Form^2(L)$.
-
-\begin{definition}{}
-    A \emph{Query} for $G$ is a graph, specifically $Q = (V_Q, E_Q, \mu_Q)$, possessing $\alpha$ and $\theta$ properties in $\mu_Q$, and satisfying the following conditions:
-    \begin{itemize}
-        \item $\alpha:V_Q\cup E_Q\rightarrow \{+,-\}$.
-        \item $\theta:V_Q\cup E_Q\rightarrow Form^2(L)$.
-    \end{itemize}
-\end{definition}\medskip
-
-Formally, $Q$ depends on $L$ and $G$, but since we will consider $L$ and $G$ as prefixed, we will write $Q \in \mathcal{Q} $ (instead of $Q \in \mathcal{Q}(L, G) $) to denote that $Q $ is a query on $G$ using $L $.  Note that once a query is defined, it can be applied to multiple graphs using the same language.
-
-Intuitively, when examining a query, we utilize the second input of binary predicates to place limitations on the membership of subgraphs within $ G $. Conversely, the first input should receive elements of the corresponding type with which it is associated. 
-
-For example, if $a,b\in V_Q$ and $e\in E_Q$, and (we will denote $\theta_x:=\theta(x)$):
-\begin{align*}
-\theta_a(v,S)&:=v\in S,\\
-\theta_b(v,S)&:=\exists z\in S\ (z \stackrel{}{\rightsquigarrow} v),\\
-\theta_e(\rho,S)&:=\exists y,z (y \stackrel{\rho}{\rightsquigarrow} z \wedge y \notin S\wedge z\in S).
-\end{align*}
-
-The node-based $\theta_a(v,S)$ is defined to check whether the subgraph evaluation of $S$ contains $v\in V$. The node-based $\theta_b(v,S)$ is verified only when a path in $G$ connects a node of $S$ with $v\in G$. Lastly, the path-based $\theta_e(\rho,S)$ is defined to verify if the evaluated path $\rho\in \mathcal{P}_G$ connects $S$ with its outward in $G$.
-
-Given a query under the stated conditions, $x^+$ (resp. $x^-$) is used to denote $ \alpha (x) = + $ (resp. $ \alpha (x) = - $), and $V_Q^+/V_Q^-$ (resp. $E_Q^+/E_Q^-$) represent the set of positive/negative nodes (resp. edges). If $ \theta_x $ is not explicitly defined for an element, it is assumed to be a tautology.
-
-According to the following definition, positive elements impose constraints on the presence of queries, while negative elements impose constraints on their absence. To be more specific, each positive/negative node in a query requires the existence/non-existence of a node in $G$ which satisfies its conditions (imposed by $\theta_x$ and its edges):
+Consider a collection of function, predicate, and constant symbols, called Θ, which includes all the properties in μ, together with constants associated with elements of G, and possibly some additional symbols (for example, metrics defined in G, such as degree). We can use Θ as a set of non-logical symbols in the first-order language with equality, L. In this scenario, a predicate in G is an element of the set of first-order formulas of L (Form(L)). The binary predicates on G are indicated as Form²(L).
 
 \begin{definition}{}
-    Given $S\subseteq G$, and $Q\in \mathcal{Q}$, we say that $S$ \emph{matches} $Q$ ($S\vDash Q$), if the following formula holds:
+A Query for G is a graph, specifically Q= (V_Q, E_Q, μ_Q), possessing α and θ properties in μ_Q, and satisfying the following conditions:
 
-    $$Q(S)=\bigwedge_{n\in V_Q} Q_n^{\alpha(n)}(S)$$
-		where, for each node, $n\in V_Q$:	        
-		$$Q_n^+ = Q_n,\hspace{1cm} Q_n^- = \neg Q_n,$$                	        
-		$$Q_n(S)=\exists v\in V\ \left(\bigwedge_{e\in \gamma(n)} Q_{e^*}^{\alpha(e)}(v,S)\right)$$	        
-	    and, for each edge, $e\in E_Q$, $*\in \{o,i\}$:
-	    $$Q_{e^*}^+ = Q_{e^*}, Q_{e^*}^- = \neg Q_{e^*},$$
+- α:V_Q∪ E_Q→ \{+,-\}.
+- θ:V_Q∪ E_Q→ Form²(L).
+\end{definition}\medskip
 
-        $$Q_{e^o}(v,S)=\exists \rho\in \mathcal{P}_v^o(G)\ \left(\theta_e(\rho,S)\wedge \theta_{e^o}(\rho^o,S) \wedge \theta_{e^i}(\rho^i,S)\right),$$
-        $$Q_{e^i}(v,S)=\exists \rho\in \mathcal{P}_v^i(G)\ \left(\theta_e(\rho,S)\wedge \theta_{e^o}(\rho^o,S) \wedge \theta_{e^i}(\rho^i,S)\right).$$
+Formally, Q depends on L and G, but since we will consider L and G as prefixed, we will write Q ∈ 𝓠 (instead of Q ∈ 𝓠(L, G) ) to denote that Q is a query on G using L. Note that once a query is defined, it can be applied to multiple graphs using the same language.
+
+Intuitively, when examining a query, we utilize the second input of binary predicates to place limitations on the membership of subgraphs within G. Conversely, the first input should receive elements of the corresponding type with which it is associated.
+
+For example, if a,b∈ V_Q and e∈ E_Q, and (we will denote θₓ:=θ(x)):
+
+θₐ(v,S)&:=v∈ S,
+
+θ_b(v,S)&:=∃ z∈ S (z \stackrel{}{⇝} v),
+
+θₑ(ρ,S)&:=∃ y,z (y \stackrel{ρ}{⇝} z ∧ y ∉ S∧ z∈ S).
+
+The node-based θₐ(v,S) is defined to check whether the subgraph evaluation of S contains v∈ V. The node-based θ_b(v,S) is verified only when a path in G connects a node of S with v∈ G. Lastly, the path-based θₑ(ρ,S) is defined to verify if the evaluated path ρ∈ 𝓟_G connects S with its outward in G.
+
+Given a query under the stated conditions, x⁺ (resp. x⁻) is used to denote α (x)= + (resp. α (x)= - ), and V_Q⁺/V_Q⁻ (resp. E_Q⁺/E_Q⁻) represent the set of positive/negative nodes (resp. edges). If θₓ is not explicitly defined for an element, it is assumed to be a tautology.
+
+According to the following definition, positive elements impose constraints on the presence of queries, while negative elements impose constraints on their absence. To be more specific, each positive/negative node in a query requires the existence/non-existence of a node in G which satisfies its conditions (imposed by θₓ and its edges):
+
+\begin{definition}{}
+Given S\subseteq G, and Q∈ 𝓠, we say that S matches Q (S\vDash Q), if the following formula holds:
+
+Q(S)=⋀_{n∈ V_Q} Q_n^{α(n)}(S)
+where, for each node, n∈ V_Q:
+Q_n^+= Q_n,\hspace{1cm} Q_n^-= \neg Q_n,
+Q_n(S)=∃ v∈ V (⋀_{e∈ γ(n)} Q_{e^*}^{α(e)}(v,S)\right)
+and, for each edge, e∈ E_Q, *∈ \{o,i\}:
+Q_{e^*}^+= Q_{e^*}, Q_{e^*}^-= \neg Q_{e^*},
+
+Q_{e^o}(v,S)=∃ ρ∈ 𝓟_v^o(G) (θ_e(ρ,S)∧ θ_{e^o}(ρ^o,S) ∧ θ_{e^i}(ρ^i,S)\right),
+Q_{e^i}(v,S)=∃ ρ∈ 𝓟_v^i(G) (θ_e(ρ,S)∧ θ_{e^o}(ρ^o,S) ∧ θ_{e^i}(ρ^i,S)\right).
 
 \end{definition}\medskip
 
-
-A generic query example is shown in Figure \ref{abstractpqg}.
+A generic query example is shown in Figure 1.
 
 \begin{figure}[h!]
-    \begin{center}
-        \includegraphics[scale=0.5]{png/Fig1.pdf}
-    \end{center}
-    \caption{%
-        Graph Query Example
-    }%
-    \label{abstractpqg}
+\begin{center}
+\includegraphics[scale=0.5]{png/Fig1.pdf}
+\end{center}
+\caption{Graph Query Example}
 \end{figure}
 
 Unlike other previous graph query systems, this system can efficiently satisfy the following requirements: (1) the ability to contain cycles; (2) the capability to evaluate subgraphs; (3) projecting edges in the query onto paths in the graph; (4) evaluating structural and/or semantic characteristics; and (5) the added benefit of specialization through atomic operations (as will be discussed in the next section).
 
-\subsection{Refinement sets}    
-\label{refs}
+Refinement sets
 
 To properly characterize the elements within a graph, it is crucial to utilize computationally effective methods when constructing queries based on basic operations. This section will introduce a query construction method optimized for use in relational learning tasks. To begin, let us first define the concept of relative refinements between queries.
 
 \begin{definition}{}
-    Given $Q_1,\ Q_2\in \mathcal{Q}$, we say:
-    \begin{enumerate}
-    	\item $Q_1$ \emph{refines} $Q_2$ in $G$ ($Q_1\preceq_G Q_2$) if:
-    	$\forall S\subseteq G\ (S\vDash Q_1 \Rightarrow S\vDash Q_2)$.
-    	\item They are \emph{equivalent} in $G$ ($Q_1\equiv_G Q_2$) if:
-    	$Q_1\preceq_G Q_2$ and $Q_2\preceq_G Q_1$.
-    \end{enumerate} 
+Given Q₁, Q₂∈ 𝓠, we say:
+
+1. Q₁ refines Q₂ in G (Q₁\preceq_G Q₂) if:
+∀ S\subseteq G (S\vDash Q₁ ⇒ S\vDash Q₂).
+2. They are equivalent in G (Q₁≡_G Q₂) if:
+Q₁\preceq_G Q₂ and Q₂\preceq_G Q₁.
 \end{definition}\medskip
 
 Two queries are deemed equivalent when they are confirmed to be exactly the same by identical subgraphs. From this definition, it is straightforward the following result is straightforward (the proof of which may be omitted):
 
 \begin{theorem}{}
-    $\preceq_G$ is a partial order in $\mathcal{Q}$. That is, for every $Q_1,\ Q_2,\ Q_3 \in \mathcal{Q}$:
-    \begin{enumerate}
-        \item $Q_1\preceq_G Q_1$.
-        \item $Q_1\preceq_G Q_2\ \wedge \ Q_2\preceq_G Q_1 \Rightarrow Q_1\equiv_G Q_2$.
-        \item $Q_1\preceq_G Q_2\ \wedge \ Q_2\preceq_G Q_3 \Rightarrow Q_1\preceq_G Q_3$.
-    \end{enumerate}
+\preceq_G is a partial order in 𝓠. That is, for every Q₁, Q₂, Q₃ ∈ 𝓠:
+
+1. Q₁\preceq_G Q₁.
+2. Q₁\preceq_G Q₂ ∧ Q₂\preceq_G Q₁ ⇒ Q₁≡_G Q₂.
+3. Q₁\preceq_G Q₂ ∧ Q₂\preceq_G Q₃ ⇒ Q₁\preceq_G Q₃.
 \end{theorem}\medskip
 
 Next, we examine the relationship between the topological structure of a query and its functionality as a predicate on subgraphs. Generally, extracting logical properties of the predicate from the structural properties of the graph that represents it is difficult. However, we can obtain useful conditions to manipulate the structures and modify the query's semantics in a controlled manner.
 
 \begin{definition}{}
-    Given $Q_1,\ Q_2\in\mathcal{Q}$, we say that $Q_1$ is a \emph{$Q^-$-conservative extension} of $Q_2$ ($Q_2\subseteq^- Q_1$) if:
-    \begin{enumerate}
-        \item $Q_2\subseteq Q_1$.
-        \item $\forall n\in V_{Q_2}^-\, \forall e\in \gamma_{Q_1}(n)\, \exists e'\in \gamma_{Q_2}(n)\ (Q_e\equiv Q_{e'})$.
-    \end{enumerate}
+Given Q₁, Q₂∈𝓠, we say that Q₁ is a Q⁻-conservative extension of Q₂ (Q₂\subseteq⁻ Q₁) if:
+
+1. Q₂\subseteq Q₁.
+2. ∀ n∈ V_{Q₂}⁻\, ∀ e∈ γ_{Q₁}(n)\, ∃ e'∈ γ_{Q₂}(n) (Qₑ≡ Q_{e'}).
 \end{definition}\medskip
 
-Figure \ref{ejemplo-conservativa} illustrates an example of a $Q^-$-conservative extension. The novel element in the right query mandates fresh constraints on the positive node, but it does not introduce any additional constraints to the negative one.
+Figure 2 illustrates an example of a Q⁻-conservative extension. The novel element in the right query mandates fresh constraints on the positive node, but it does not introduce any additional constraints to the negative one.
 
 \begin{figure}[h]
-    \begin{center}
-        \includegraphics[scale=0.5]{png/FIG2.pdf}
-    \end{center}
-    \caption{%
-        $Q^-$-conservative extension
-    }%
-    \label{ejemplo-conservativa}
+\begin{center}
+\includegraphics[scale=0.5]{png/FIG2.pdf}
+\end{center}
+\caption{Q⁻-conservative extension}
 \end{figure}
 
-Since negative nodes introduce non-existence constraints to subgraph verification, $Q^-$-conservative extensions guarantee that no new constraints are added to them. Therefore:
+Since negative nodes introduce non-existence constraints to subgraph verification, Q⁻-conservative extensions guarantee that no new constraints are added to them. Therefore:
 
 \begin{theorem}{}
-    If $Q_2\subseteq^- Q_1$ then $Q_1\preceq Q_2$.
+If Q₂\subseteq⁻ Q₁ then Q₁\preceq Q₂.
 \end{theorem}
 \begin{proof}{}
-	Since predicates associated to edges are solely based on the information within the edge itself (which takes into account the value of $\theta$ in its incident nodes, irrespective of their $\alpha$ value), we can assert that:
-	$$\forall e\in E_{Q_2}\ ({Q_1}_e^{\alpha(e)}={Q_2}_e^{\alpha(e)})$$
-	
-	Considering this fact, we examine the behaviour of predicates associated with the nodes for both queries:
-	\begin{itemize}
-		\item If  $n\in V_{Q_2}^-$, since $Q_2\subseteq^- Q_1$, then ${Q_1}_n^-={Q_2}_n^-$.
-		\item If $n\in V_{Q_2}^+$, then ${Q_1}_n^+\rightarrow {Q_2}_n^+$, because ($\gamma_1$, $\gamma_2$ are the incidence functions of $Q_1$ and $Q_2$, respectively):
-		\begin{align*}
-		{Q_1}_n^+   &= \exists v\in V\ \left( \bigwedge_{e\in \gamma_1(n)} {Q_1}_e^{\alpha(e)}\right)\\
-		&= \exists v\in V\left( \bigwedge_{e\in \gamma_1(n)\cap E_{Q_2}} {Q_1}_e^{\alpha(e)}\ \wedge \ \bigwedge_{e\in \gamma_1(n)\smallsetminus E_{Q_2}} {Q_1}_e^{\alpha(e)}\right)\\
-		&= \exists v\in V\left( \bigwedge_{e\in \gamma_2(n)\cap E_{Q_2}} {Q_2}_e^{\alpha(e)}\ \wedge \ \bigwedge_{e\in \gamma_1(n)\smallsetminus E_{Q_2}} {Q_1}_e^{\alpha(e)}\right)\\
-		&\rightarrow {Q_2}_n^+
-		\end{align*}
-	\end{itemize}
-	Hence:
-	\begin{align*}
-	Q_1 &= \bigwedge_{n\in V_{Q_1}} {Q_1}_n^{\alpha(n)} = \bigwedge_{n\in V_{Q_2}} {Q_1}_n^{\alpha(n)} \ \wedge \ \bigwedge_{n\in V_{Q_1}\smallsetminus V_{Q_2}} {Q_1}_n^{\alpha(n)}\\
-	&= \bigwedge_{n\in V_{Q_2}^+} {Q_1}_n^{\alpha(n)} \ \wedge \ \bigwedge_{n\in V_{Q_2}^-} {Q_1}_n^{\alpha(n)} \ \wedge \ \bigwedge_{n\in V_{Q_1}\smallsetminus V_{Q_2}} {Q_1}_n^{\alpha(n)}
-	\end{align*}
-	\begin{align*}
-	&\rightarrow \bigwedge_{n\in V_{Q_2}^+} {Q_2}_n^{\alpha(n)} \ \wedge \ \bigwedge_{n\in V_{Q_2}^-} {Q_2}_n^{\alpha(n)} \ \wedge \ \bigwedge_{n\in V_{Q_1}\smallsetminus V_{Q_2}} {Q_1}_n^{\alpha(n)}\\ 
-	&= \bigwedge_{n\in V_{Q_2}} {Q_2}_n^{\alpha(n)} \ \wedge \ \bigwedge_{n\in V_{Q_1}\smallsetminus V_{Q_2}} {Q_1}_n^{\alpha(n)}\\
-	&\rightarrow {Q_2}
-	\end{align*}
+Since predicates associated to edges are solely based on the information within the edge itself (which takes into account the value of θ in its incident nodes, irrespective of their α value), we can assert that:
+∀ e∈ E_{Q_2} ({Q_1}_e^{α(e)}={Q_2}_e^{α(e)})
+
+Considering this fact, we examine the behaviour of predicates associated with the nodes for both queries:
+
+- If n∈ V_Q₂⁻, since Q₂\subseteq⁻ Q₁, then Q₁ₙ⁻=Q₂ₙ⁻.
+- If n∈ V_Q₂⁺, then Q₁ₙ⁺→ Q₂ₙ⁺, because (γ₁, γ₂ are the incidence functions of Q₁ and Q₂, respectively):
+ₙ⁺ &= ∃ v∈ V ( ⋀_e∈ γ₁(n) Q₁ₑ^α(e)\right)
+&= ∃ v∈ V( ⋀_e∈ γ₁(n)∩ E_Q₂ Q₁ₑ^α(e) ∧ ⋀_e∈ γ₁(n)∖ E_Q₂ Q₁ₑ^α(e)\right)
+&= ∃ v∈ V( ⋀_e∈ γ₂(n)∩ E_Q₂ Q₂ₑ^α(e) ∧ ⋀_e∈ γ₁(n)∖ E_Q₂ Q₁ₑ^α(e)\right)
+&→ Q₂ₙ⁺
+
+Hence:
+
+Q₁ &= ⋀_{n∈ V_{Q₁}} {Q₁}ₙ^{α(n)}= ⋀_{n∈ V_{Q₂}} {Q₁}ₙ^{α(n)} ∧ ⋀_{n∈ V_{Q₁}∖ V_{Q₂}} {Q₁}ₙ^{α(n)}
+
+&= ⋀_{n∈ V_{Q₂}⁺} {Q₁}ₙ^{α(n)} ∧ ⋀_{n∈ V_{Q₂}⁻} {Q₁}ₙ^{α(n)} ∧ ⋀_{n∈ V_{Q₁}∖ V_{Q₂}} {Q₁}ₙ^{α(n)}
+
+&→ ⋀_{n∈ V_{Q₂}⁺} {Q₂}ₙ^{α(n)} ∧ ⋀_{n∈ V_{Q₂}⁻} {Q₂}ₙ^{α(n)} ∧ ⋀_{n∈ V_{Q₁}∖ V_{Q₂}} {Q₁}ₙ^{α(n)}
+
+&= ⋀_{n∈ V_{Q₂}} {Q₂}ₙ^{α(n)} ∧ ⋀_{n∈ V_{Q₁}∖ V_{Q₂}} {Q₁}ₙ^{α(n)}
+
+&→ {Q₂}
+
 \end{proof}
 Previous result suggests that a query can be refined by adding nodes (of any sign) and edges to the existing positive nodes, but because of the (negated) interpretation of predicates associated with negative nodes, care must be taken to maintain their neighborhood to be sure that adding more edges does not weaken the imposed conditions (which consequently will not provide refined predicates).
 
-To achieve controlled methods of query generation, we will outline processes for refining queries through unit steps. We shall accomplish this by defining the cloning operation, whereby existing nodes are duplicated, and all incident edges (including those between the nodes) on the original graph are also cloned: 
+To achieve controlled methods of query generation, we will outline processes for refining queries through unit steps. We shall accomplish this by defining the cloning operation, whereby existing nodes are duplicated, and all incident edges (including those between the nodes) on the original graph are also cloned:
 
 \begin{definition}{}
-    Given $G=(V,E,\mu)$, and $W\subseteq V$, we define the \emph{clone of $G$ by duplication of $W$}, $Cl_G^W$, as:
-    
-    $$Cl_G^W=(V\cup W',E\cup E',\mu\cup \{(n',\mu(n))\}_{n\in W}\cup \{(e',\mu(e))\}_{e'\in E'})$$
-    where $W'=\{n'\ :\ n\in W\}$ are new cloned nodes from $W$, and $ E '$ is a set of new edges obtained from incident edges on nodes of $ W $ where nodes of $ W $ are replaced by copies of $ W' $ (edges connecting original nodes with cloned nodes and edges connecting cloned nodes, are cloned).
+Given G=(V,E,μ), and W\subseteq V, we define the clone of G by duplication of W, Cl_Gᵂ, as:
+
+Cl_G^W=(V∪ W',E∪ E',μ∪ \{(n',μ(n))\}_{n∈ W}∪ \{(e',μ(e))\}_{e'∈ E'})
+where W'=\{n': n∈ W\} are new cloned nodes from W, and E ' is a set of new edges obtained from incident edges on nodes of W where nodes of W are replaced by copies of W' (edges connecting original nodes with cloned nodes and edges connecting cloned nodes, are cloned).
 \end{definition}\medskip
 
-Figure \ref{ejemplo-clonacion} shows an example of a cloned graph by duplicating two nodes (in the original graph, left side, the set of nodes to be duplicated is highlighted).
+Figure 3 shows an example of a cloned graph by duplicating two nodes (in the original graph, left side, the set of nodes to be duplicated is highlighted).
 \begin{figure}[h]
-    \begin{center}
-        \includegraphics[width=\columnwidth]{png/FIG3.pdf}
-    \end{center}
-    \caption{%
-        Clone of a graph by duplication
-    }%
-    \label{ejemplo-clonacion}
+\begin{center}
+\includegraphics[width=\columnwidth]{png/FIG3.pdf}
+\end{center}
+\caption{Clone of a graph by duplication}
 \end{figure}
 
-The next result indicates that duplicating positive nodes does not change the \textit{meaning} of the queries.
+The next result indicates that duplicating positive nodes does not change the meaning of the queries.
 
 \begin{theorem}{}
-    If $W\subseteq V^+_Q$, then $Cl_Q^W\equiv Q$.
+If W\subseteq V⁺_Q, then Cl_Qᵂ≡ Q.
 \end{theorem}
 \begin{proof}{}
-	Let us denote $ Q_1 = Cl_Q^W $. Then:
-	\begin{align*}
-	Q_1 &= \bigwedge_{n\in V_{Q_1}} {Q_1}_n^{\alpha(n)}
-	 =\bigwedge_{n\in V_Q} {Q_1}_n^{\alpha(n)}\ \wedge \ \bigwedge_{n\in W} {Q_1}_{n'}^{\alpha(n')}\\
-	&= \bigwedge_{n\in V_Q\smallsetminus \gamma_Q(W)} {Q_1}_n^{\alpha(n)}\ \wedge \ \bigwedge_{n\in\gamma_Q(W)} {Q_1}_n^{\alpha(n)}\ \wedge \ \bigwedge_{n\in W} {Q_1}_{n'}^{\alpha(n')}\\
-	&= \bigwedge_{n\in V_Q\smallsetminus \gamma_Q(W)} Q_n^{\alpha(n)}\ \wedge \bigwedge_{n\in\gamma_Q(W)} Q_n^{\alpha(n)}\ \wedge \ \bigwedge_{n\in W} Q_n^{\alpha(n)}\\
-	&= Q
-	\end{align*}
+Let us denote Q₁= Cl_Qᵂ. Then:
+
+Q₁ &= ⋀_{n∈ V_{Q₁}} {Q₁}ₙ^{α(n)}
+=⋀_{n∈ V_Q} {Q₁}ₙ^{α(n)} ∧ ⋀_{n∈ W} {Q₁}_{n'}^{α(n')}
+
+&= ⋀_{n∈ V_Q∖ γ_Q(W)} {Q₁}ₙ^{α(n)} ∧ ⋀_{n∈γ_Q(W)} {Q₁}ₙ^{α(n)} ∧ ⋀_{n∈ W} {Q₁}_{n'}^{α(n')}
+
+&= ⋀_{n∈ V_Q∖ γ_Q(W)} Qₙ^{α(n)} ∧ ⋀_{n∈γ_Q(W)} Qₙ^{α(n)} ∧ ⋀_{n∈ W} Qₙ^{α(n)}
+
+&= Q
+
 \end{proof}
 
 When refining a query to find complementary sets of selected subgraphs, we define the concept of a refinement set as central:
 
 \begin{definition}{}
-    Given $Q\in \mathcal{Q}$, $R\subseteq \mathcal{Q}$ is a \emph{refinement set} of $Q$ in $G$ if:
-    \begin{enumerate}
-        \item $\forall\ Q'\in R\ (Q'\preceq_G Q).$
-        \item $\forall\ S\subseteq G\ (S\vDash Q\Rightarrow \exists !\ Q'\in R\ (S\vDash Q')).$
-    \end{enumerate}
+Given Q∈ 𝓠, R\subseteq 𝓠 is a refinement set of Q in G if:
+
+1. ∀ Q'∈ R (Q'\preceq_G Q).
+2. ∀ S\subseteq G (S\vDash Q⇒ ∃! Q'∈ R (S\vDash Q')).
 \end{definition}\medskip
 
-Let us now introduce refinement sets to enhance simpler queries for expressiveness. $Q\in\mathcal{Q}$ is prefixed, and $\top$ represents a tautology:
+Let us now introduce refinement sets to enhance simpler queries for expressiveness. Q∈𝓠 is prefixed, and ⊤ represents a tautology:
 
 \begin{theorem}{(Add new node)}
-    If $m\notin V_Q$, the set $Q+\{m\}$, formed by:
-        \begin{align*}
-        Q_1 &= (V_Q\cup\{m\},\ E_Q,\ \alpha_Q\cup(m,+),\ \theta_Q\cup(m,\top)) , \\ 
-         Q_2 &= (V_Q\cup\{m\},\ E_Q,\ \alpha_Q\cup(m,-),\ \theta_Q\cup(m,\top))
-        \end{align*}
-    is a refinement set of $Q$ in $G$ (Fig. \ref{ref1}).
+If m∉ V_Q, the set Q+\{m\}, formed by:
+
+Q₁ &= (V_Q∪\{m\}, E_Q, α_Q∪(m,+), θ_Q∪(m,⊤)),
+
+Q₂ &= (V_Q∪\{m\}, E_Q, α_Q∪(m,-), θ_Q∪(m,⊤))
+
+is a refinement set of Q in G (Fig. 4).
 \end{theorem}
 \begin{proof}{}
-	We must verify the two necessary conditions for refinement sets:
-	\begin{enumerate}
-		\item Since $Q\subseteq^- Q_1$ and $Q\subseteq^- Q_2$, thus $Q_1\preceq Q$ and $Q_2\preceq Q$.
-		\item Given $S\subseteq G$ such that $S\vDash Q$. Then:
-		\begin{align*}
-		Q_1&= Q\ \wedge\ Q_m ,\\
-		Q_2&= Q\ \wedge\ \neg Q_m 
-		\end{align*}
-		where $Q_m=\exists v\in V\ (\top)$.
-		
-		If $G\neq \emptyset$, then $S\vDash Q_1$ and $S\nvDash Q_2$.
-		
-		If $G= \emptyset$, then $S\nvDash Q_1$ and $S\vDash Q_2$.
-	\end{enumerate}
+We must verify the two necessary conditions for refinement sets:
+
+1. Since Q\subseteq⁻ Q₁ and Q\subseteq⁻ Q₂, thus Q₁\preceq Q and Q₂\preceq Q.
+2. Given S\subseteq G such that S\vDash Q. Then:
+
+Q₁&= Q ∧ Qₘ,
+Q₂&= Q ∧ \neg Qₘ
+
+where Qₘ=∃ v∈ V (⊤).
+If G\neq \emptyset, then S\vDash Q₁ and S\nvDash Q₂.
+If G= \emptyset, then S\nvDash Q₁ and S\vDash Q₂.
 \end{proof}
 
-Since $ G \neq \emptyset $ (usually), $ Q_1 \equiv Q $. However, although we obtain an equivalent query, this operation is beneficial for adding new nodes and restrictions in the future.
+Since G \neq \emptyset (usually), Q₁ ≡ Q. However, although we obtain an equivalent query, this operation is beneficial for adding new nodes and restrictions in the future.
 
 \begin{figure}[h]
-    \begin{center}
-        \includegraphics[scale=0.3]{png/REF1.pdf}
-    \end{center}
-    \caption{%
-        \textit{Add node} refinement
-    }%
-    \label{ref1}
+\begin{center}
+\includegraphics[scale=0.3]{png/REF1.pdf}
+\end{center}
+\caption{Add node refinement}
 \end{figure}
 
-The second refinement allows for the establishment of edges between query nodes that already exist. To obtain a valid refinement set, the inclusion of edges is limited to positive nodes. Subsequently, the nodes marked with a positive/negative sign represent cloned nodes whose $\alpha$ property has been designated as positive/negative.
+The second refinement allows for the establishment of edges between query nodes that already exist. To obtain a valid refinement set, the inclusion of edges is limited to positive nodes. Subsequently, the nodes marked with a positive/negative sign represent cloned nodes whose α property has been designated as positive/negative.
 
 \begin{theorem}{(Add new edge between + nodes)}
-    If $n,m\in V_Q^+$, the set $Q+\{n\stackrel {e^*}{\longrightarrow} m\}$ ($*\in\{+,-\}$), formed by:
-    \begin{align*}
-    Q_1 &= (V_{Q'},\ E_{Q'}\cup\{n^+\stackrel {e^*}{\longrightarrow} m^+\},\ \theta_{Q'}\cup(e,\top)), \\
-    Q_2 &= (V_{Q'},\ E_{Q'}\cup\{n^+\stackrel {e^*}{\longrightarrow} m^-\},\ \theta_{Q'}\cup(e,\top)), \\
-    Q_3 &= (V_{Q'},\ E_{Q'}\cup\{n^-\stackrel {e^*}{\longrightarrow} m^+\},\ \theta_{Q'}\cup(e,\top)), \\
-    Q_4 &= (V_{Q'},\ E_{Q'}\cup\{n^-\stackrel {e^*}{\longrightarrow} m^-\},\ \theta_{Q'}\cup(e,\top))
-\end{align*}
-    (where $Q'=Cl_Q^{\{n,m\}}$) is a refinement set of $Q$ in $G$ (Fig. \ref{ref2}).
+If n,m∈ V_Q⁺, the set Q+\{n\stackrel {e^*}{⟶} m\} (*∈\{+,-\}), formed by:
+
+Q₁ &= (V_{Q'}, E_{Q'}∪\{n⁺\stackrel {e^*}{⟶} m⁺\}, θ_{Q'}∪(e,⊤)),
+
+Q₂ &= (V_{Q'}, E_{Q'}∪\{n⁺\stackrel {e^*}{⟶} m⁻\}, θ_{Q'}∪(e,⊤)),
+
+Q₃ &= (V_{Q'}, E_{Q'}∪\{n⁻\stackrel {e^*}{⟶} m⁺\}, θ_{Q'}∪(e,⊤)),
+
+Q₄ &= (V_{Q'}, E_{Q'}∪\{n⁻\stackrel {e^*}{⟶} m⁻\}, θ_{Q'}∪(e,⊤))
+
+(where Q'=Cl_Q^{\{n,m\}}) is a refinement set of Q in G (Fig. 5).
 \end{theorem}
 \begin{proof}{}
-	\quad
-	\begin{enumerate}
-		\item Since $Q'$ is a clone of $Q$, then $Q\equiv Q'$. In addition,  $Q'\subseteq^- Q_1,Q_2,Q_3,Q_4$, thus $Q_1,Q_2,Q_3,Q_4\preceq Q'\equiv Q$.
-		\item Let us consider the predicates:
-		\begin{align*}
-		P_n &= \exists v\in V\ \left( \bigwedge_{a\in \gamma(n)} Q_a^{\alpha(a)}\ \wedge Q_{e^o}^{\alpha(e)}\right), \\
-		P_m &= \exists v\in V\ \left( \bigwedge_{a\in \gamma(m)} Q_a^{\alpha(a)}\ \wedge Q_{e^i}^{\alpha(e)}\right).
-		\end{align*}
-		If $S\vDash Q_n$ and $S\vDash Q_m$, then we have four mutually complementary options:
-		\begin{itemize}
-			\item $S\vDash P_n\ \wedge\ S\vDash P_m \Rightarrow S\vDash Q_1$
-			\item $S\vDash P_n\ \wedge\ S\nvDash P_m \Rightarrow S\vDash Q_2$
-			\item $S\nvDash P_n\ \wedge\ S\vDash P_m \Rightarrow S\vDash Q_3$
-			\item $S\nvDash P_n\ \wedge\ S\nvDash P_m \Rightarrow S\vDash Q_4$
-		\end{itemize}
-	\end{enumerate}
+\quad
+
+1. Since Q' is a clone of Q, then Q≡ Q'. In addition, Q'\subseteq⁻ Q₁,Q₂,Q₃,Q₄, thus Q₁,Q₂,Q₃,Q₄\preceq Q'≡ Q.
+2. Let us consider the predicates:
+
+Pₙ &= ∃ v∈ V ( ⋀_a∈ γ(n) Qₐ^α(a) ∧ Q_eᵒ^α(e)\right),
+Pₘ &= ∃ v∈ V ( ⋀_a∈ γ(m) Qₐ^α(a) ∧ Q_eⁱ^α(e)\right).
+
+If S\vDash Qₙ and S\vDash Qₘ, then we have four mutually complementary options:
+   • S\vDash Pₙ ∧ S\vDash Pₘ ⇒ S\vDash Q₁
+   • S\vDash Pₙ ∧ S\nvDash Pₘ ⇒ S\vDash Q₂
+   • S\nvDash Pₙ ∧ S\vDash Pₘ ⇒ S\vDash Q₃
+   • S\nvDash Pₙ ∧ S\nvDash Pₘ ⇒ S\vDash Q₄
 \end{proof}
 
 \begin{figure}[h]
-    \begin{center}
-        \includegraphics[width=\columnwidth]{png/REF2SIM.pdf}
-    \end{center}
-    \caption{%
-        \textit{Add edge} refinement (simplified)
-    }%
-    \label{ref2}
+\begin{center}
+\includegraphics[width=\columnwidth]{png/REF2SIM.pdf}
+\end{center}
+\caption{Add edge refinement (simplified)}
 \end{figure}
 
 Next, an additional predicate is added to an existing edge through the following operation, limited to positive edges connecting positive nodes.
 
 \begin{theorem}{(Add predicate to + edge between + nodes)}
-    If $n,m\in V_Q^+$, with $n\stackrel {e^+}{\longrightarrow} m$, and $\varphi\in Form^2(L)$, the set $Q+\{n\stackrel {e \wedge \varphi}{\longrightarrow} m\}$, formed by:
-    \begin{align*}
-    Q_1 &= (V_{Q'},\ E_{Q'}\cup\{n^+\stackrel {e'}{\longrightarrow} m^+\},\ \theta_{Q'}\cup(e',\theta_e\wedge \varphi)), \\
-    Q_2 &= (V_{Q'},\ E_{Q'}\cup\{n^+\stackrel {e'}{\longrightarrow} m^-\},\ \theta_{Q'}\cup(e',\theta_e\wedge \varphi)), \\
-    Q_3 &= (V_{Q'},\ E_{Q'}\cup\{n^-\stackrel {e'}{\longrightarrow} m^+\},\ \theta_{Q'}\cup(e',\theta_e\wedge \varphi)), \\
-    Q_4 &= (V_{Q'},\ E_{Q'}\cup\{n^-\stackrel {e'}{\longrightarrow} m^-\},\ \theta_{Q'}\cup(e',\theta_e\wedge \varphi))
-    \end{align*}
-    (where $Q'=Cl_Q^{\{n,m\}}$) is a refinement set of $Q$ in $G$ (Fig. \ref{ref3}).
+If n,m∈ V_Q⁺, with n\stackrel {e⁺}{⟶} m, and 𝜑∈ Form²(L), the set Q+\{n\stackrel {e ∧ 𝜑}{⟶} m\}, formed by:
+
+Q₁ &= (V_{Q'}, E_{Q'}∪\{n⁺\stackrel {e'}{⟶} m⁺\}, θ_{Q'}∪(e',θₑ∧ 𝜑)),
+
+Q₂ &= (V_{Q'}, E_{Q'}∪\{n⁺\stackrel {e'}{⟶} m⁻\}, θ_{Q'}∪(e',θₑ∧ 𝜑)),
+
+Q₃ &= (V_{Q'}, E_{Q'}∪\{n⁻\stackrel {e'}{⟶} m⁺\}, θ_{Q'}∪(e',θₑ∧ 𝜑)),
+
+Q₄ &= (V_{Q'}, E_{Q'}∪\{n⁻\stackrel {e'}{⟶} m⁻\}, θ_{Q'}∪(e',θₑ∧ 𝜑))
+
+(where Q'=Cl_Q^{\{n,m\}}) is a refinement set of Q in G (Fig. 6).
 \end{theorem}
 \begin{proof}{}
-	The proof is similar to the previous ones.
+The proof is similar to the previous ones.
 \end{proof}
 
 \begin{figure}[h]
-    \begin{center}
-        \includegraphics[width=\columnwidth]{png/REF3SIM.pdf}
-    \end{center}
-    \caption{%
-	\textit{Add predicate to edge} refinement (simplified)
-    }%
-    \label{ref3}
+\begin{center}
+\includegraphics[width=\columnwidth]{png/REF3SIM.pdf}
+\end{center}
+\caption{Add predicate to edge refinement (simplified)}
 \end{figure}
 
 Finally, the last step involves adding predicates to existing nodes. This operation is only permitted when the affected nodes are positive, including the node where the predicate is added and those connected to it.
 
 \begin{theorem}{(Add predicate to + node with + neighborhood)}
-    If $\varphi\in Form^2(L)$, and $n\in V_Q^+$ with $\mathcal{N}_Q(n)\subseteq V_Q^+$, then the set $Q+\{n\wedge \varphi\}$ formed by:
-    $$\{Q_{\sigma}=(V_{Q'},E_{Q'},\alpha_{Q'}\cup \sigma,\theta_{Q'}\cup(n',\theta_n\wedge\varphi))\ :\ \sigma\in \{+,-\}^{\mathcal{N}_Q(n)}\}$$ 	
-(where $Q'=Cl_Q^{\mathcal{N}_Q(n)}$, and $\{+,-\}^{\mathcal{N}_Q(n)}$ is the set of all possible assignments of signs to elements in $\mathcal{N}_Q(n)$)
-is a refinement set of $Q$ in $G$ (Fig. \ref{ref4}).
+If 𝜑∈ Form²(L), and n∈ V_Q⁺ with 𝓝_Q(n)\subseteq V_Q⁺, then the set Q+\{n∧ 𝜑\} formed by:
+\{Q_{σ}=(V_{Q'},E_{Q'},α_{Q'}∪ σ,θ_{Q'}∪(n',θ_n∧𝜑)): σ∈ \{+,-\}^{𝓝_Q(n)}\}
+(where Q'=Cl_Q^{𝓝_Q(n)}, and \{+,-\}^{𝓝_Q(n)} is the set of all possible assignments of signs to elements in 𝓝_Q(n))
+is a refinement set of Q in G (Fig. 7).
 \end{theorem}
 \normalsize
 \begin{proof}{}
-	The proof resembles earlier ones. It is important to consider that modifying node $n$ not only alters the associated predicate, but also those of its neighboring nodes. Additionally, the set of functions $\{+, -\}^{\mathcal{N}_Q(n)}$ encompasses all feasible sign assignments for the nodes within the neighborhood.
+The proof resembles earlier ones. It is important to consider that modifying node n not only alters the associated predicate, but also those of its neighboring nodes. Additionally, the set of functions \{+, -\}^{𝓝_Q(n)} encompasses all feasible sign assignments for the nodes within the neighborhood.
 \end{proof}
 
 \begin{figure}[h]
-    \begin{center}
-        \includegraphics[width=\columnwidth]{png/REF4SIM.pdf}
-    \end{center}
-    \caption{%
-        \textit{Add predicate to node} refinement (simplified)
-    }%
-    \label{ref4}
+\begin{center}
+\includegraphics[width=\columnwidth]{png/REF4SIM.pdf}
+\end{center}
+\caption{Add predicate to node refinement (simplified)}
 \end{figure}
 
-Also note that simplified versions of the refinement sets are shown in Figures \ref{ref1}-\ref{ref4}. Section \ref{simrefs} provides an explanation on how to obtain these simplifications.
+Also note that simplified versions of the refinement sets are shown in Figures 4-7. Section 8 provides an explanation on how to obtain these simplifications.
 
-Obtaining a complementary query from the structure is a challenging task. Nonetheless, graph analyses often require sequences of queries to verify properties related to refinement and complementarity. To bridge this gap, this section introduces refinement operations. These operations facilitate the construction of an embedded partition tree, where nodes are labelled as illustrated in Figure \ref{arbolGGQ}:
+Obtaining a complementary query from the structure is a challenging task. Nonetheless, graph analyses often require sequences of queries to verify properties related to refinement and complementarity. To bridge this gap, this section introduces refinement operations. These operations facilitate the construction of an embedded partition tree, where nodes are labelled as illustrated in Figure 9:
 
-\begin{itemize}
-    \item The root node is labeled with $ Q_0 $ (some initial query).
-    \item If a node on the tree is labelled with $Q$, and $R=\{Q_1,\dots,Q_n\}$ is a set that refines $Q$, then the child nodes will be labelled with the elements of $R$.
-\end{itemize}
+- The root node is labeled with Q₀ (some initial query).
+- If a node on the tree is labelled with Q, and R=\{Q₁,\dots,Qₙ\} is a set that refines Q, then the child nodes will be labelled with the elements of R.
 
 \begin{figure}[h]
-    \begin{center}
-        \includegraphics[scale=0.3]{png/FIG4.pdf}
-    \end{center}
-    \caption{%
-        Refinements tree
-    }%
-    \label{arbolGGQ}
+\begin{center}
+\includegraphics[scale=0.3]{png/FIG4.pdf}
+\end{center}
+\caption{Refinements tree}
 \end{figure}
 
 Refinement sets presented herein offer one approach, rather than the sole approach. For example, we could consider refinements that, instead of adding constraints to positive elements, lighten the conditions over negative elements, for example, by using disjunction of predicates instead of conjunction of them.
 
-\subsection{Simplified refinement sets}
-\label{simrefs}
+Simplified refinement sets
+
 Let us simplify a query into an equivalent one by applying certain operations.
 
 \begin{definition}{}
-    We define $Q'\subseteq Q$ as \emph{redundant} in $Q$ if $Q\equiv Q-Q'$. Here, $Q-Q'$ represents the subgraph of $Q$ given by:
-	$$(V_Q\smallsetminus V_{Q'}, E_Q\smallsetminus (E_{Q'}\cup\{\gamma(n):\ n\in V_{Q'}\}),\mu_Q)$$
+We define Q'\subseteq Q as redundant in Q if Q≡ Q-Q'. Here, Q-Q' represents the subgraph of Q given by:
+(V_Q∖ V_{Q'}, E_Q∖ (E_{Q'}∪\{γ(n): n∈ V_{Q'}\}),μ_Q)
 
 \end{definition}\medskip
 
 One initial finding that enables the acquisition of simplified versions of a query by eliminating superfluous nodes is (from the following two results we only give an idea of the proof, which can be very laborious but straightforward from the above constructions):
 
 \begin{theorem}{}
-	Given a query $Q$, and $n,m\in V_Q$ verifying:
-	\begin{itemize}
-		\item $\alpha(n)=\alpha(m)$
-		\item $\theta_n\equiv\theta_m$
-		\item For each $e\in \gamma(n)$, exists $e'\in \gamma(m)$, with $\alpha(e)=\alpha(e')$, $\theta_e\equiv\theta_{e'}$ and $\gamma(e)\smallsetminus\{n\}=\gamma(e')\smallsetminus\{m\}$
-	\end{itemize}
-	Then, $n$ is redundant in $Q$.
-\end{theorem}
+Given a query Q, and n,m∈ V_Q verifying:
 
+- α(n)=α(m)
+- θₙ≡θₘ
+- For each e∈ γ(n), exists e'∈ γ(m), with α(e)=α(e'), θₑ≡θ_{e'} and γ(e)∖\{n\}=γ(e')∖\{m\}
+Then, n is redundant in Q.
+\end{theorem}
 
 \begin{proof}{}
 
-A query Q comprises nodes and their relationships. Each query node imposes constraints on the subgraph that is evaluated, including the presence or absence of nodes and the paths in which they participate. These restrictions should be considered during the evaluation. If there are two nodes $n,m \in V_Q$ with $\alpha(n) = \alpha(m)$ and $\theta_n\equiv\theta_m$, and for each $e\in \gamma(n)$, there exists $e'\in \gamma(m)$, with $\alpha(e)=\alpha(e')$, $\theta_e\equiv\theta_{e'}$ and $\gamma(e)\smallsetminus\{n\}=\gamma(e')\smallsetminus\{m\}$, both nodes apply identical restrictions to the subgraph being evaluated. Therefore, deleting one of them will not change the assessment on the subgraph.
+A query Q comprises nodes and their relationships. Each query node imposes constraints on the subgraph that is evaluated, including the presence or absence of nodes and the paths in which they participate. These restrictions should be considered during the evaluation. If there are two nodes n,m ∈ V_Q with α(n)= α(m) and θₙ≡θₘ, and for each e∈ γ(n), there exists e'∈ γ(m), with α(e)=α(e'), θₑ≡θ_{e'} and γ(e)∖\{n\}=γ(e')∖\{m\}, both nodes apply identical restrictions to the subgraph being evaluated. Therefore, deleting one of them will not change the assessment on the subgraph.
 \end{proof}
 
-
-Essentially, $m$ is a duplicate of $n$, but potentially with additional connected edges. A comparable outcome for the edges can be achieved:
+Essentially, m is a duplicate of n, but potentially with additional connected edges. A comparable outcome for the edges can be achieved:
 
 \begin{theorem}{}
-    Given a query $Q$, and two edges, $e, e'\in E_Q$, such that $\alpha(e)=\alpha(e')$, $n\stackrel {e}{\longrightarrow} m$ and $n\stackrel {e'}{\longrightarrow} m$ with $n,m \in V_Q^+$. If $\theta_e\rightarrow \theta_{e'}$ then $e'$ is redundant in $Q$.
+Given a query Q, and two edges, e, e'∈ E_Q, such that α(e)=α(e'), n\stackrel {e}{⟶} m and n\stackrel {e'}{⟶} m with n,m ∈ V_Q⁺. If θₑ→ θ_{e'} then e' is redundant in Q.
 \end{theorem}
-
 
 \begin{proof}{}
 
-Following the same reasoning as the previous theorem, if there are two edges, $e$ and $e'$, in $E_Q$, which connect the same two nodes in a query and $\alpha(e)=\alpha(e')$ and $\theta_e\rightarrow \theta_{e'}$, the constraint imposed by $e$ implies the constraint imposed by $e'$. Therefore, eliminating e' would maintain the set of matching subgraphs.
+Following the same reasoning as the previous theorem, if there are two edges, e and e', in E_Q, which connect the same two nodes in a query and α(e)=α(e') and θₑ→ θ_{e'}, the constraint imposed by e implies the constraint imposed by e'. Therefore, eliminating e' would maintain the set of matching subgraphs.
 
 \end{proof}
 
-From these two findings, we can streamline the refinement sets that were established in section \ref{refs} by removing redundant elements in succession after cloning. 
+From these two findings, we can streamline the refinement sets that were established in section 10 by removing redundant elements in succession after cloning.
 
-\subsection{Graph query examples}
+Graph query examples
 
-For illustrative purposes, this section presents a series of queries on a toy graph dataset. Figure \ref{starwars} illustrates a segment of the Starwars graph\footnote{http://console.neo4j.org/?id=StarWars}.
-
-\begin{figure}[h!]
-    \begin{center}
-        \includegraphics[width=\columnwidth]{png/FIG5.pdf}
-    \end{center}
-    \caption{%
-        Section of Starwars Graph
-    }%
-    \label{starwars}
-\end{figure}
-
-To streamline query and graph representation, we will convert $\tau$, a property denoting node and edge types, into labels for edges or icons for nodes. Additionally, the node properties denoted by \textit{name} will be written on them, and the undirected edges will be represented by bidirectional arrows. The property $\alpha$ will be represented directly on query elements using $+ / -$ symbols, and we will write the binary predicate $\theta$ directly on the elements (except for tautologies). When expressions such as $\tau (\rho) = X$ are in the predicate of an edge, $X$ is written directly and interpreted as a regular expression to be verified by the sequence of $\tau$ properties of the links in the associated graph path. 
+For illustrative purposes, this section presents a series of queries on a toy graph dataset. Figure 11 illustrates a segment of the Starwars graph\footnote{http://console.neo4j.org/?id=StarWars}.
 
 \begin{figure}[h!]
-    \begin{center}
-        \includegraphics[width=\columnwidth]{png/PQG1.pdf}
-    \end{center}
-    \caption{%
-        Query 1
-    }%
-    \label{pqg1}
+\begin{center}
+\includegraphics[width=\columnwidth]{png/FIG5.pdf}
+\end{center}
+\caption{Section of Starwars Graph}
 \end{figure}
 
-Query 1 (Figure \ref{pqg1}) can be interpreted as follows: \textit{Two characters are connected by a \textit{TEACHES} relationship, where the master is over 500 years old and both are devoted to the Jedi.} This query utilizes structural constraints through the presence of edges and predicates with properties such as $ \tau $, \textit{name}, and \textit{age}. For example, in Figure \ref{starwars}, the subgraph comprising \texttt{Yoda}, \texttt{Luke}, and their \texttt{TEACHES} relationship satisfies this query. 
+To streamline query and graph representation, we will convert τ, a property denoting node and edge types, into labels for edges or icons for nodes. Additionally, the node properties denoted by name will be written on them, and the undirected edges will be represented by bidirectional arrows. The property α will be represented directly on query elements using + / - symbols, and we will write the binary predicate θ directly on the elements (except for tautologies). When expressions such as τ (ρ)= X are in the predicate of an edge, X is written directly and interpreted as a regular expression to be verified by the sequence of τ properties of the links in the associated graph path.
+
+\begin{figure}[h!]
+\begin{center}
+\includegraphics[width=\columnwidth]{png/PQG1.pdf}
+\end{center}
+\caption{Query 1}
+\end{figure}
+
+Query 1 (Figure 12) can be interpreted as follows: Two characters are connected by a TEACHES relationship, where the master is over 500 years old and both are devoted to the Jedi. This query utilizes structural constraints through the presence of edges and predicates with properties such as τ, name, and age. For example, in Figure 11, the subgraph comprising Yoda, Luke, and their TEACHES relationship satisfies this query.
 
 \begin{figure}[h]
-    \begin{center}
-        \includegraphics[width=\columnwidth]{png/PQG3.pdf}
-    \end{center}
-    \caption{%
-      Query 2
-    }%
-    \label{pqg3}
+\begin{center}
+\includegraphics[width=\columnwidth]{png/PQG3.pdf}
+\end{center}
+\caption{Query 2}
 \end{figure}
 
-Query 2 (Figure \ref{pqg3}) outlines a cyclic query that utilises \texttt{FRIENDS} relationships. It will be verified on any subgraph containing three characters who are friends with each other (for example, the subgraph formed by \texttt{Hans Solo}, \texttt{Chewbaka}, \texttt{Princess Leia} and the \texttt{FRIENDS} relationships between them in Figure \ref{starwars}).
+Query 2 (Figure 13) outlines a cyclic query that utilises FRIENDS relationships. It will be verified on any subgraph containing three characters who are friends with each other (for example, the subgraph formed by Hans Solo, Chewbaka, Princess Leia and the FRIENDS relationships between them in Figure 11).
 
 \begin{figure}[h]
-    \begin{center}
-        \includegraphics[width=\columnwidth]{png/PQG4.pdf}
-    \end{center}
-    \caption{%
-        Query 3
-    }%
-    \label{pqg4}
+\begin{center}
+\includegraphics[width=\columnwidth]{png/PQG4.pdf}
+\end{center}
+\caption{Query 3}
 \end{figure}
 
-Query 3 (Figure \ref{pqg4}) can be interpreted as follows: \textit{A character with more than 3 outgoing relationships, not belonging to the Sith clan, connected through a path consisting of any number of FRIENDS and TEACHES relationships with an individual from Alderaan.} In this scenario, a regular expression has been employed to denote a path consisting of an unspecified amount of \texttt{FRIENDS} and \texttt{TEACHES} relationships. Additionally, an auxiliary function, $gr_s(v) \in L$, has been utilised to reference the outgoing degree of node $v$. This query will be validated by any subgraph that contains \texttt{Luke} or \texttt{Obi Wan Kenobi}.
+Query 3 (Figure 14) can be interpreted as follows: A character with more than 3 outgoing relationships, not belonging to the Sith clan, connected through a path consisting of any number of FRIENDS and TEACHES relationships with an individual from Alderaan. In this scenario, a regular expression has been employed to denote a path consisting of an unspecified amount of FRIENDS and TEACHES relationships. Additionally, an auxiliary function, grₛ(v) ∈ L, has been utilised to reference the outgoing degree of node v. This query will be validated by any subgraph that contains Luke or Obi Wan Kenobi.
 
-\subsection{Computational complexity}
-\label{cc}
-Query systems based on graph isomorphisms (most of the existing ones) face NP-complete complexity  \citep{karp1975computational,Cook:1971:CTP:800157.805047}.
+Computational complexity
 
-The preceding section presented our graph query framework that is reliant on logical predicates. In this section, we will demonstrate that the assessment of queries is polynomial, even in the case of cyclic queries. This is achievable by imposing two constraints. First, the length of paths that are illustrated by links in the query is restricted by the constant $k$, and second, the complexity of the predicates used in nodes and edges is polynomial.
+Query systems based on graph isomorphisms (most of the existing ones) face NP-complete complexity [3, 4].
 
-To verify $S\models Q$, it is necessary to examine each predicate $Q_n(S)$ linked to all nodes $n \in V_Q$. Furthermore, each predicate $Q_n(S)$ linked to a node in $Q$ requires assessing one $Q_e(v,S)$ predicate for every link $e\in\gamma_Q(n)$. Thus, initially, we shall focus on evaluating the computational complexity linked with the link predicates $Q_e(v,S)$. Subsequently, we shall proceed to examine the complexity associated with the node predicates $Q_n(S)$. Ultimately, we shall exhibit that the query complexity is polynomial.
+The preceding section presented our graph query framework that is reliant on logical predicates. In this section, we will demonstrate that the assessment of queries is polynomial, even in the case of cyclic queries. This is achievable by imposing two constraints. First, the length of paths that are illustrated by links in the query is restricted by the constant k, and second, the complexity of the predicates used in nodes and edges is polynomial.
 
-As previously defined, the computational complexity of evaluating predicates attributed to both nodes and edges within a query $Q$ is polynomial, denoted by $\mathcal{O}(p)$. The predicates $Q_e(v,S)$ related to edges in a query verify the existence of a path $\rho$ in the graph $G$ starting/ending in $v$ that satisfies its own predicate $\theta_e (\rho, S)$ and with the source and destination nodes that satisfy the predicates $\theta_{e^o} (\rho^o , S)$ and $\theta_{e^i} (\rho^i , S)$ respectively. Thus, the complexity involved in evaluating a particular path is $\mathcal{O}(3p) = \mathcal{O}(p)$. 
+To verify S⊧ Q, it is necessary to examine each predicate Qₙ(S) linked to all nodes n ∈ V_Q. Furthermore, each predicate Qₙ(S) linked to a node in Q requires assessing one Qₑ(v,S) predicate for every link e∈γ_Q(n). Thus, initially, we shall focus on evaluating the computational complexity linked with the link predicates Qₑ(v,S). Subsequently, we shall proceed to examine the complexity associated with the node predicates Qₙ(S). Ultimately, we shall exhibit that the query complexity is polynomial.
 
-The computational complexity to verify the existence of a path beginning or ending at a node $v$ in $V$, satisfying the aforementioned criteria, is $\mathcal{O}(p \times |V|^k)$. Here, $|V|^k$ denotes the number of paths that start or end at $v$ under the condition that they are no longer than $k$ in length. As the number of links commencing or ending at a node $n \in V_Q$ is bound by $|E_Q|$, the computational complexity involved in the node predicate $Q_n(S)$ is $\mathcal{O}(p\times |V|^k \times |E_Q|)$. 
+As previously defined, the computational complexity of evaluating predicates attributed to both nodes and edges within a query Q is polynomial, denoted by 𝓞(p). The predicates Qₑ(v,S) related to edges in a query verify the existence of a path ρ in the graph G starting/ending in v that satisfies its own predicate θₑ (ρ, S) and with the source and destination nodes that satisfy the predicates θ_{eᵒ} (ρᵒ, S) and θ_{eⁱ} (ρⁱ, S) respectively. Thus, the complexity involved in evaluating a particular path is 𝓞(3p)= 𝓞(p).
 
-Finally, if the query consists of $|V_Q|$ nodes, the complexity of checking the query $Q(S)$ is $\mathcal{O}(p\times |V|^k \times |E_Q| \times |V_Q|)$. It is evident that the constant $k$ (path length bound) significantly impacts the execution of such queries, as it determines the exponent of the complexity.
+The computational complexity to verify the existence of a path beginning or ending at a node v in V, satisfying the aforementioned criteria, is 𝓞(p × |V|ᵏ). Here, |V|ᵏ denotes the number of paths that start or end at v under the condition that they are no longer than k in length. As the number of links commencing or ending at a node n ∈ V_Q is bound by |E_Q|, the computational complexity involved in the node predicate Qₙ(S) is 𝓞(p× |V|ᵏ × |E_Q|).
 
-Efficient operation of a graph query framework is crucial when dealing with large-scale data sets that are commonly found in real-world applications. Notably, when such a system is employed as the kernel of relational machine learning algorithms, as we will demonstrate in the following section, the ability to perform query operations in polynomial time, even for cyclic queries,
+Finally, if the query consists of |V_Q| nodes, the complexity of checking the query Q(S) is 𝓞(p× |V|ᵏ × |E_Q| × |V_Q|). It is evident that the constant k (path length bound) significantly impacts the execution of such queries, as it determines the exponent of the complexity.
+
+Efficient operation of a graph query framework is crucial when dealing with large-scale data sets that are commonly found in real-world applications. Notably, when such a system is employed as the kernel of relational machine learning algorithms, as we will demonstrate in the following section, the ability to perform query operations in polynomial time, even for cyclic queries, is fundamental.

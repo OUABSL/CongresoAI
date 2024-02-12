@@ -1,50 +1,44 @@
-\section{Relational machine learning}
-\label{rml}
-
 In this section, we shall leverage the advantages of the framework presented to acquire relational classifiers on graph data sets. To elaborate, we shall initiate from a labelled subgraph set within a graph data set then develop a pattern search technique founded on information gain to obtain typical patterns for each subgraph class.
 
-\subsection{Information-gain pattern mining}
-\label{algorithm}
+Information-gain pattern mining
 
-To obtain characteristic patterns of subgraph classes using the previous graph query framework, a top-down decision tree induction will be conducted to explore the pattern space. Within the trees' internal nodes, graph queries will serve as test tools. The best refinement sets will be identified during the tree construction process, resulting in queries that define classes within the graph dataset. 
+To obtain characteristic patterns of subgraph classes using the previous graph query framework, a top-down decision tree induction will be conducted to explore the pattern space. Within the trees' internal nodes, graph queries will serve as test tools. The best refinement sets will be identified during the tree construction process, resulting in queries that define classes within the graph dataset.
 
-The training set, $\mathcal{L}$, consists of pairs $(S_i, y_i)$, where $S_i$ denotes a subgraph of $G$ and $y_i$ represents its associated class. Every node $n$ in the resulting decision tree is linked to:
- 
-\begin{itemize}
-\item a subset of the training set: $\mathcal{L}_n \subseteq \mathcal{L}$, 
-\item a query $Q_n$ such that: $\forall S \in \mathcal {L}_n (S \vDash Q_n)$.
-\end{itemize}
+The training set, 𝓛, consists of pairs (Sᵢ, yᵢ), where Sᵢ denotes a subgraph of G and yᵢ represents its associated class. Every node n in the resulting decision tree is linked to:
 
-The procedure for tree learning is standard: a tree is initialized comprising one node (the root) linked to the entire set of training, $\mathcal{L}$. The initial query, $ Q_0 $, corresponds to all its constituents ($\forall S \in \mathcal{L}, S \vDash Q_0$). The subsequent stage involves determining which refinement set generates the maximum information gain while separating $\mathcal{L}$, and applying it to $ Q_0 $. For each query in the refinement set, a corresponding child node is created, and $\mathcal{L}$ samples are transmitted through it. A child with a matching associated query is guaranteed to exist since it is a refinement set of $Q_0$. The recursive process continues for each new node until a stop condition is met. At that point, the node becomes a leaf associated with a class. Note that the decision trees derived from this approach are not predominantly binary, unlike the prevalent trees in the literature. 
+- a subset of the training set: 𝓛ₙ \subseteq 𝓛,
+- a query Qₙ such that: ∀ S ∈ ₙ (S \vDash Qₙ).
 
-\subsection{Relational tree learning examples}
-\label{kd}
+The procedure for tree learning is standard: a tree is initialized comprising one node (the root) linked to the entire set of training, 𝓛. The initial query, Q₀, corresponds to all its constituents (∀ S ∈ 𝓛, S \vDash Q₀). The subsequent stage involves determining which refinement set generates the maximum information gain while separating 𝓛, and applying it to Q₀. For each query in the refinement set, a corresponding child node is created, and 𝓛 samples are transmitted through it. A child with a matching associated query is guaranteed to exist since it is a refinement set of Q₀. The recursive process continues for each new node until a stop condition is met. At that point, the node becomes a leaf associated with a class. Note that the decision trees derived from this approach are not predominantly binary, unlike the prevalent trees in the literature.
 
-Here, we introduce some practical instances to demonstrate the process of performing relational learning by using the query framework and refinement sets. The refinement operations will be as mentioned in Section \ref{refs}. A critical factor is that all subgraphs in a decision node belong to the same class, which we require as the stopping condition. Initially, we will focus on node classification problems before proceeding to classify more intricate structures. 
+Relational tree learning examples
 
-Consider the small social network illustrated in Figure \ref{grafo1}, portraying users and items in a graph. The objective is to classify the nodes based on the patterns extracted from the dataset.
+Here, we introduce some practical instances to demonstrate the process of performing relational learning by using the query framework and refinement sets. The refinement operations will be as mentioned in Section 1. A critical factor is that all subgraphs in a decision node belong to the same class, which we require as the stopping condition. Initially, we will focus on node classification problems before proceeding to classify more intricate structures.
+
+Consider the small social network illustrated in Figure 2, portraying users and items in a graph. The objective is to classify the nodes based on the patterns extracted from the dataset.
 
 \begin{figure}[h!]
-  \centering
-  \includegraphics[scale=0.6]{png/FIG8.pdf}
-  \caption{Social Network toy}
-  \label{grafo1}
+\centering
+\includegraphics[scale=0.6]{png/FIG8.pdf}
+\caption{Social Network toy}
+
 \end{figure}
 
-Beginning with a training set composed of all nodes in the graph, Figure \ref{social1} displays the relational decision tree acquired through the process elucidated in Section \ref{algorithm}. Negative nodes/edges are identified with a cross, while nodes with predicate $\theta(v,S) := v \in S$ are larger and white in hue. This tree accurately assigns types (\texttt{User A}, \texttt{User B}, or \texttt{Item}) to all nodes in the graph by exploiting relational information from the network. Furthermore, on the leaves of the tree, distinctive patterns are acquired for each node type, which can be used to directly assess nodes and clarify future classifications. 
+Beginning with a training set composed of all nodes in the graph, Figure 3 displays the relational decision tree acquired through the process elucidated in Section 4. Negative nodes/edges are identified with a cross, while nodes with predicate θ(v,S):= v ∈ S are larger and white in hue. This tree accurately assigns types (User A, User B, or Item) to all nodes in the graph by exploiting relational information from the network. Furthermore, on the leaves of the tree, distinctive patterns are acquired for each node type, which can be used to directly assess nodes and clarify future classifications.
 
 \begin{figure}[h!]
-	\centering
-	\includegraphics[scale = 0.3]{png/FIG6.pdf}
-	\caption{Node type classifier}
-	\label{social1}
+\centering
+\includegraphics[scale= 0.3]{png/FIG6.pdf}
+\caption{Node type classifier}
+
 \end{figure}
 
-Similarly, by utilizing each character node in the Star Wars toy graph (Figure \ref{starwars}) and the corresponding \texttt{specie} property as a training dataset, the relational decision tree shown in Figure \ref{droid} categorizes and explains each character's species in the graph. The leaf patterns of the tree characterize each species: human characters are born friends of \texttt{Luke}, while droids are unborn friends of \texttt{Luke}, wookies are those born in \texttt{Kashyyk}, etc.
+Similarly, by utilizing each character node in the Star Wars toy graph (Figure 5) and the corresponding specie property as a training dataset, the relational decision tree shown in Figure 6 categorizes and explains each character's species in the graph. The leaf patterns of the tree characterize each species: human characters are born friends of Luke, while droids are unborn friends of Luke, wookies are those born in Kashyyk, etc.
 
 \begin{figure}[htb]
-    \begin{center}
-        \includegraphics[scale=0.3]{png/FIG7.pdf}
-    \end{center}
-	\caption{Character specie classifier}
-	    \label{droi
+\begin{center}
+\includegraphics[scale=0.3]{png/FIG7.pdf}
+\end{center}
+\caption{Character specie classifier}
+
+\end{figure}
