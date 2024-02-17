@@ -1,13 +1,13 @@
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 from flask import Flask, render_template, request, redirect, url_for
-from app import base
-from models.user import User 
-from config.config import Config
+from src.app import mongo
+from src.models.user import User 
+from src.config import FLASK_SECRET_KEY
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = Config.FLASK_SECRET_KEY
+app.config['SECRET_KEY'] = FLASK_SECRET_KEY
 
-db = base.users
+db = mongo.db.users
 login_manager = LoginManager()
 login_manager.init_app(app)
 

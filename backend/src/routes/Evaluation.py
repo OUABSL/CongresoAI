@@ -1,57 +1,79 @@
-import sys
-sys.path.append('..')
-from typing import Type
-from app import app, base
-from dataPreparation import content_extracted
-from langchain import ChatOpenAI, LLMChain, StuffDocumentsChain, PromptTemplate
+import os
+import json
+import requests
+import os, sys
+sys.path[0] = os.getcwd() + "/backend"
+from src.config import LLAMUS_KEY
+from src.app import mongo
+from bson.objectid import ObjectId
 
-from openai import * 
+API_URL = "https://llamus.cs.us.es/api/chat"
+DB = mongo.db.articles
 
-db = base.trabajos
+
+SYSTEM_PROMPT_BASE = ("""You are an expert tutor specializing in reviewing and evaluating scientific research articles within the technology domain. Your focus lies on the '{section_name}' section of a manuscript titled "Logical-Mathematical Foundations of a Graph Query Framework for Relational Learning."
+                 Process the provided '{section_name}' section, evaluate it according to the following criteria:
+
+                 Evaluation Levels:
+
+                 YES: The criterion is fully met in the provided section.
+                 Can be improved: The criterion is partially met but could be strengthened.
+                 Must be Improved: The criterion is not adequately met, but there's potential for enhancement.
+                 Not Applicable: The criterion doesn't apply to this type of article.
+
+                 """
+)
+        
+
+def llamus_request(system_prompt, user_prompt):
+    headers = {
+        'Content-Type': 'application/json',
+        'Authorization': f'Bearer {LLAMUS_KEY}'
+    }
+    data = {
+        'model': 'TheBloke.llama-2-13b-chat.Q5_K_M.gguf',
+        'prompt': system_prompt,
+        'messages': [{'role': 'assistant', 'content': user_prompt}],
+        'temperature': 0.5,
+        'trimWhitespaceSuffix': False
+    }
+
+    response = requests.post(API_URL, headers=headers, data=json.dumps(data))
+    if response.status_code == 200:  # Checking if the request was successful
+        try:
+            return response.json()
+        except json.decoder.JSONDecodeError:  # Catching JSON decode errors
+            print('Failed to decode JSON. Response:', response.content)
+    else:
+        print('Request failed. Status Code:', response.status_code)
+        print('Response:', response.content)
+
+def get_article(query):
+    return DB.find_one(query)
+
+def updateEvaluationdb(article, query, value):
+    evaluationState = dict(article['evaluation'])
+    evaluationState[value[0]] = value[1]
+    newvalues = { "$set": { "evaluation": evaluationState } }
+    DB.update_one(query,newvalues)
+    print(f"\nUpdated the evaluation of {value[0]} in memorie!")
 
 
-def generate_evaluation_prompt(pdf_content, title):
-    prompt_template = """Do the rule of a reviewer of scientific paper and articles, you need to reviewing our manuscript titled {title}. Ignore all latex code and take into account just the content of the article 'Text, Tables and mathematical formulas' 
-In order for us to improve the quality of our work and advance the publication process, we kindly ask that in your review report you can provide us with:
-- If the topic of the work is appropriate to the theme of the congress
-- A general evaluation of the relevance of the topic, the originality and the significance of the results presented.
-- Your opinion on the clarity of the introduction and whether it provides the context and information necessary to understand the work.
-- specific feedback on the robustness of the methodology and statistical analyses, if applicable.
-- Comments on the suitability of the references and whether they adequately represent the state of the art of the topic.
-- Your perspective regarding the clarity of the presentation of the results and whether the figures and tables are interpreted in a self-contained way.
-- Recommendations on how to improve the discussion and conclusions of the study.
-- Any suggestions that help enrich the quality of the manuscript and its potential contribution to the field.
-- If considered appropriate, the identification of relevant works that have been omitted from the bibliography.
 
-Once again, we thank you for taking your valuable time to review our manuscript and we look forward to your comments and any questions that may arise.
+def run():
+    #section = st.text_input("Ask your question")
+    myquery = {"_id": ObjectId("65d0f693650a61d37039b6e3")}
+    article = get_article(myquery)
+    article_content = dict(article["content"])
+    for section_name, section_content in article_content.items():
+        system_prompt = SYSTEM_PROMPT_BASE.format(section_name = section_name)
+        section_evaluation = llamus_request(system_prompt, section_content)
+        if section_evaluation:
+            #if section_name == "Relational machine learning":
+            #print(f"\n\n para la seccion {section_name} el prompt es:\n\n {system_prompt}")
+            value = (section_name, section_evaluation)
+            updateEvaluationdb(article, myquery, value)
+
     
-    Write a concise evaluation of the given text in Spanish, 
-    generating a markdown file with bullet points for the main ideas, the text:
-    "{pdf_content}"
-    CONCISE EVALUATION:"""
-
-    
-    prompt = PromptTemplate.from_template(prompt_template)
-    return prompt
-
-
-def generate_prompt(template: str, **kwargs) -> Type[PromptTemplate]:
-    filled_template = template.format(**kwargs)
-    prompt = PromptTemplate.from_template(filled_template)
-    return prompt
-
-def evaluation(document, loader, title):
-        prompt = generate_evaluation_prompt(document, title)
-
-        llm = ChatOpenAI(temperature=0, model_name="gpt-4")
-        llm_chain = LLMChain(llm=llm, prompt=prompt)
-
-        stuff_chain = StuffDocumentsChain(
-        llm_chain=llm_chain, document_variable_name="text")
-
-        docs = loader.load()
-        print(docs)
-        #Almacenar el resumen en la base de datos
-        return stuff_chain.run(docs)
-
-  
+if __name__ == "__main__":
+    run()
