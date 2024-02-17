@@ -7,7 +7,6 @@ import os, sys
 sys.path[0] = os.getcwd()
 from app import mongo
 from models.tabajo import ScientificArticle
-from config import LLAMUS_KEY
 
 #from models.user import User
 
