@@ -5,12 +5,10 @@ import zipfile
 import re, json, requests
 import os, sys
 sys.path[0] = os.getcwd()
-from app import mongo
-from models.tabajo import ScientificArticle
-from config import LLAMUS_KEY
+from src.app import mongo
+from src.models.tabajo import ScientificArticle
 from typing import Type, List, Dict
-from langchain.prompts import PromptTemplate
-from langchain.text_splitter import CharacterTextSplitter
+
 
 #from models.user import User
 
@@ -23,10 +21,7 @@ class DataHandler:
         self.zip_path = Path(zip_path)
         self.dest_path = Path(dest_path)
         self.tex_path = self.dest_path / "PQG.tex"
-        self.key = LLAMUS_KEY
-        self.url = 'https://llamus.cs.us.es/api/chat'
-        self.text_splitter = CharacterTextSplitter.from_tiktoken_encoder(
-            chunk_size=400, chunk_overlap=20)
+
 
     
     def insert_into_db(self, data: dict):
@@ -118,8 +113,8 @@ class DataHandler:
         self.insert_into_db(article.to_dict())
 
 if __name__ == "__main__":
-    zip_filepath = Path.cwd() / "test" / "article.zip"
-    destination_folder = Path.cwd() / "test" / "output"
+    zip_filepath = Path.cwd() / "data" / "input" / "article.zip"
+    destination_folder = Path.cwd() / "src" / "test" / "output"
     destination_folder.mkdir(parents=True, exist_ok=True)
 
     handler = DataHandler(zip_filepath, destination_folder)

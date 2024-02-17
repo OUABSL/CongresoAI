@@ -2,7 +2,7 @@ from flask import Flask
 from flask_pymongo import PyMongo
 import sys
 #print(sys.path)
-from config import MONGO_URI, LLAMUS_KEY
+from src.config import MONGO_URI, LLAMUS_KEY
 
 
 
