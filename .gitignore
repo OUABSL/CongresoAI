@@ -1,4 +1,5 @@
 .env
 .venv
 #backend/src/test
-src/config.py
+backend/src/config.py
+backend/src/__pycache__
