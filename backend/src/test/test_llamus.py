@@ -4,22 +4,30 @@ import streamlit as st
 import requests
 import os, sys
 sys.path[0] = os.getcwd()
-from config import LLAMUS_KEY
+from src.config import LLAMUS_KEY
 from chromadb import Client
 from chromadb.utils import embedding_functions
 from langchain_community.embeddings import SentenceTransformerEmbeddings
-from langchain_community.vectorstores import FAISS
+from src.app import mongo
+from bson.objectid import ObjectId
+
 # from langchain.chains import ConversationalRetrievalChain
 # from langchain.memory import ConversationBufferMemory
 # from langchain.embeddings.huggingface import HuggingFaceEmbeddings
 
 API_URL = "https://llamus.cs.us.es/api/chat"
-SYSTEM_PROMPT = ("""Play the role of a LaTeX expert. You will receive LaTeX sections in LaTeX code format.
-        The submit section name is from an article titled '{title}'.
-        Your task is to perform the following functions on each received LaTeX section: 
-        Keep only the text appearing in the section: remove LaTeX commands and LaTeX grammar.
-        When detecting code for inserting a figure, do not make any changes to the text of the section.
-        When detecting a citation to a reference, do not remove it.
+DB = mongo.db.articles
+
+
+SYSTEM_PROMPT_BASE = ("""You are an expert tutor specializing in reviewing and evaluating scientific research articles within the technology domain. Your focus lies on the '{section_name}' section of a manuscript titled "Logical-Mathematical Foundations of a Graph Query Framework for Relational Learning."
+                 Process the provided '{section_name}' section, evaluate it according to the following criteria:
+
+                 Evaluation Levels:
+
+                 YES: The criterion is fully met in the provided section.
+                 Can be improved: The criterion is partially met but could be strengthened.
+                 Must be Improved: The criterion is not adequately met, but there's potential for enhancement.
+                 Not Applicable: The criterion doesn't apply to this type of article.
 
                  """
 )
@@ -31,62 +39,49 @@ def llamus_request(system_prompt, user_prompt):
         'Authorization': f'Bearer {LLAMUS_KEY}'
     }
     data = {
-        'model': 'TheBloke.falcon-180b-chat.Q4_K_M.gguf',
-        'messages': [{'role': 'assistant', 'content': user_prompt}],
+        'model': 'TheBloke.llama-2-13b-chat.Q5_K_M.gguf',
         'prompt': system_prompt,
-        'temperature': 0.4,
+        'messages': [{'role': 'assistant', 'content': user_prompt}],
+        'temperature': 0.5,
         'trimWhitespaceSuffix': False
     }
+
     response = requests.post(API_URL, headers=headers, data=json.dumps(data))
-    return response.json()
-
-
-def create_vector_store(chunks: list):  # Might remove or modify further
-
-    chroma_client = Client(host='localhost', port=8000)
-
-    embedding = SentenceTransformerEmbeddings(
-        model_name="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
-    )
-
-    if not os.path.exists("./db"):
-        print("CREATING DB")
-        vectorstore = FAISS.from_documents(chunks, embedding)
-        vectorstore.save_local("./db")
+    if response.status_code == 200:  # Checking if the request was successful
+        try:
+            return response.json()
+        except json.decoder.JSONDecodeError:  # Catching JSON decode errors
+            print('Failed to decode JSON. Response:', response.content)
     else:
-        print("LOADING DB")
-        vectorstore = FAISS.load_local("./db", embedding)
+        print('Request failed. Status Code:', response.status_code)
+        print('Response:', response.content)
 
-    return vectorstore
+def get_article(query):
+    return DB.find_one(query)
 
-
-def get_conversation_chain(system_message, human_message):  # Might remove or modify further
-    vector_store = create_vector_store([])
-    llm = llamus_request(system_prompt=system_message, user_prompt=human_message)
-
-    # Below code is commented for the time being.
-    # conversation_chain = ConversationalRetrievalChain.from_llm(llm=llm, retriever=vector_store.as_retriever())
-
-    return True
+def updateEvaluationdb(article, query, value):
+    evaluationState = dict(article['evaluation'])
+    evaluationState[value[0]] = value[1]
+    newvalues = { "$set": { "evaluation": evaluationState } }
+    DB.update_one(query,newvalues)
+    print(f"\nUpdated the evaluation of {value[0]} in memorie!")
 
 
-def setup_page():
-    st.set_page_config(
-        page_title="Documentation Chatbot",
-        page_icon=":books:",
-    )
-    st.title("Documentation Chatbot")
-    st.subheader("Chat with LangChain's documentation!")
-    st.image("https://images.unsplash.com/photo-1485827404703-89b55fcc595e")
 
+def run():
+    #section = st.text_input("Ask your question")
+    myquery = {"_id": ObjectId("65d0f693650a61d37039b6e3")}
+    article = get_article(myquery)
+    article_content = dict(article["content"])
+    for section_name, section_content in article_content.items():
+        system_prompt = SYSTEM_PROMPT_BASE.format(section_name = section_name)
+        section_evaluation = llamus_request(system_prompt, section_content)
+        if section_evaluation:
+            #if section_name == "Relational machine learning":
+            #print(f"\n\n para la seccion {section_name} el prompt es:\n\n {system_prompt}")
+            value = (section_name, section_evaluation)
+            updateEvaluationdb(article, myquery, value)
 
-def main():
-    setup_page()
-    user_question = st.text_input("Ask your question")
-
-    if user_question:
-        chat = get_conversation_chain(SYSTEM_PROMPT, user_question)
-        st.write(chat.response)
-
+    
 if __name__ == "__main__":
-    main()
+    run()

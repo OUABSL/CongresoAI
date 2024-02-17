@@ -99,16 +99,20 @@ class DataHandler:
 
             print(sections_text)
 
+
           
             self._save_sections(sections_text, self.dest_path / "res")
         else:
             print("Contenido Nulo!")
 
         user = "beta user"
+        evaluation_init = {key : "" for key in sections_text.keys()}
+        
         article = ScientificArticle(
             user_id=user,
             title= self.title,
             content=sections_text,
+            evaluation =  evaluation_init
         )
         self.insert_into_db(article.to_dict())
 

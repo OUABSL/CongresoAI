@@ -1,12 +1,11 @@
-# Import required libraries
+import re
+import os, sys
+sys.path[0] = os.getcwd() + "/backend"
 from pathlib import Path
 import pydetex.pipelines as pip
 import zipfile
-import re
-import os, sys
-sys.path[0] = os.getcwd()
-from app import mongo
-from models.tabajo import ScientificArticle
+from src.app import mongo
+from src.models.tabajo import ScientificArticle
 
 #from models.user import User
 
