@@ -1,16 +1,12 @@
-import os, sys
-import json
-import requests
-sys.path[0] = os.getcwd()
-from src.config import LLAMUS_KEY
-from src.app import mongo
+import os, json, requests, sys
+sys.path[0] = os.path.join(os.getcwd(), "backend")
+print(sys.path[0])
+from src.app import mongo, LLAMUS_KEY
 from bson.objectid import ObjectId
-
-API_URL = "https://llamus.cs.us.es/api/chat"
-DB = mongo.db.articles
+from src.models.tabajo import ScientificArticle
 
 
-SYSTEM_PROMPT_BASE = ("""You are an expert tutor specializing in reviewing and evaluating scientific research articles within the technology domain. Your focus lies on the "Introduction" section of a manuscript titled "Logical-Mathematical Foundations of a Graph Query Framework for Relational Learning."
+SYSTEM_PROMPT_BASE = ("""You are an expert tutor specializing in reviewing and evaluating scientific research articles within the technology domain. Your focus lies on the '{section_name}' section of a manuscript titled "Logical-Mathematical Foundations of a Graph Query Framework for Relational Learning."
                  Process the provided {section_name} section, evaluate it according to the following criteria:
 
                  Evaluation Levels:
@@ -42,49 +38,69 @@ SYSTEM_PROMPT_BASE = ("""You are an expert tutor specializing in reviewing and e
                  """
 )
 
-
-def create_request_headers_and_data(user_prompt, system_prompt):
-    headers = {
-        'Content-Type': 'application/json',
-        'Authorization': f'Bearer {LLAMUS_KEY}'
-    }
-    data = {
-        'model': 'TheBloke.llama-2-13b-chat.Q5_K_M.gguf',
-        'prompt': system_prompt,
-        'messages': [{'role': 'assistant', 'content': user_prompt}],
-        'temperature': 0.5,
-        'trimWhitespaceSuffix': False
-    }
-    return headers, data
-
-def handle_llamus_response(response):
-    if response.status_code == 200:
+class PreEvaluation:
+    def __init__(self, db, query, system_prompt_base, llamus_key):
+        self.API_URL = "https://llamus.cs.us.es/api/chat"
+        self.LLAMUS_KEY = llamus_key
+        self.chat_model = 'TheBloke.llama-2-13b-chat.Q5_K_M.gguf'
+        self.temperature = 0.5
+        self.DB = db.db.articles
+        self.SYSTEM_PROMPT_BASE = system_prompt_base
+        self.query = query
+        self.article = self.get_article(self.query)
+        self.title = "Logical-Mathematical Foundations of a Graph Query Framework for Relational Learning." #self.get_article(query).title
         try:
-            return response.json()
-        except json.decoder.JSONDecodeError:
-            print('Failed to decode JSON. Response:', response.content)
-    else:
-        print('Request failed. Status Code:', response.status_code)
-        print('Response:', response.content)
+            self.article_content = dict(self.article["content"])
+        except KeyError:
+            print('KeyError: Article contents not found')
+            self.article_content = {}
 
-def update_evaluation_db(article, query, value):
-    evaluation_state = article['evaluation']
-    evaluation_state[value[0]] = value[1]
-    DB.update_one(query, {"$set": {"evaluation": evaluation_state}})
-    print(f"\nUpdated the evaluation of {value[0]} srction in database!")
 
-def evaluate_article_sections():
-    query = {"_id": ObjectId("65d0f693650a61d37039b6e3")}
-    article = DB.find_one(query)
+    def llamus_request(self, system_prompt, user_prompt):
+        headers = {
+            'Content-Type': 'application/json',
+            'Authorization': f'Bearer {self.LLAMUS_KEY}'
+        }
+        data = {
+            'model': self.chat_model,
+            'prompt': system_prompt,
+            'messages': [{'role': 'assistant', 'content': user_prompt}],
+            'temperature': self.temperature,
+            'trimWhitespaceSuffix': False
+        }
 
-    for section_name, section_content in article["content"].items():
-        system_prompt = SYSTEM_PROMPT_BASE.format(section_name=section_name)
-        headers, data = create_request_headers_and_data(section_content, system_prompt)
-        response = requests.post(API_URL, headers=headers, data=json.dumps(data))
-        section_evaluation = handle_llamus_response(response)
-        
-        if section_evaluation:
-            update_evaluation_db(article, query, (section_name, section_evaluation))
+        response = requests.post(self.API_URL, headers=headers, data=json.dumps(data))
+        if response.status_code == 200:  # Checking if the request was successful
+            try:
+                return response.json()
+            except json.decoder.JSONDecodeError:  # Catching JSON decode errors
+                print('Failed to decode JSON. Response:', response.content)
+        else:
+            print('Request failed. Status Code:', response.status_code)
+            print('Response:', response.content)
+
+    def get_article(self, query)->ScientificArticle:
+        return self.DB.find_one(query)
+
+    def updateEvaluationdb(self, value):
+        evaluationState = dict(self.article['evaluation'])
+        evaluationState[value[0]] = value[1]
+        newvalues = { "$set": { "evaluation": evaluationState } }
+        self.DB.update_one(self.query,newvalues)
+        self.article = self.get_article(self.query)
+        print(f"\nUpdated the evaluation of {value[0]} in memory!\n")
+
+    def run(self):
+        for section_name, section_content in self.article_content.items():
+            system_prompt = self.SYSTEM_PROMPT_BASE.format(section_name = section_name)
+            section_evaluation = self.llamus_request(system_prompt, section_content)
+            if section_evaluation:
+                value = (section_name, section_evaluation)
+                # Está pensado actualizar el resumen de todas las secciones en la bd de una vez
+                self.updateEvaluationdb(value)
+
 
 if __name__ == "__main__":
-    evaluate_article_sections()
+    myquery = {"_id": ObjectId("65d22d8d9a142a7b8be3d0e7")}
+    evaluation_instance = PreEvaluation(mongo, myquery,  SYSTEM_PROMPT_BASE, LLAMUS_KEY)
+    evaluation_instance.run()
