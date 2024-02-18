@@ -4,7 +4,7 @@ import pydetex.pipelines as pip
 import zipfile
 import re, json, requests
 import os, sys
-sys.path[0] = os.getcwd()
+sys.path[0] = os.path.join(os.getcwd(), "backend")
 from src.app import mongo
 from src.models.tabajo import ScientificArticle
 from typing import Type, List, Dict
@@ -16,7 +16,7 @@ class DataHandler:
     """This class assists with file and directory management tasks."""
     
     def __init__(self, zip_path: str, dest_path: str):
-        self.title = "Extraido de la entrega"
+        self.title = "Logical-Mathematical Foundations of a Graph Query Framework for Relational Learning"
         self.db = mongo.db.articles
         self.zip_path = Path(zip_path)
         self.dest_path = Path(dest_path)
@@ -107,18 +107,20 @@ class DataHandler:
 
         user = "beta user"
         evaluation_init = {key : "" for key in sections_text.keys()}
-        
+        summary_init = {key : "" for key in sections_text.keys()}
+
         article = ScientificArticle(
             user_id=user,
             title= self.title,
             content=sections_text,
-            evaluation =  evaluation_init
+            evaluation =  evaluation_init,
+            summary = summary_init
         )
         self.insert_into_db(article.to_dict())
 
 if __name__ == "__main__":
-    zip_filepath = Path.cwd() / "data" / "input" / "article.zip"
-    destination_folder = Path.cwd() / "src" / "test" / "output"
+    zip_filepath = Path.cwd() / "backend" / "data" / "input" / "article.zip"
+    destination_folder = Path.cwd() / "backend" / "src" / "test" / "output"
     destination_folder.mkdir(parents=True, exist_ok=True)
 
     handler = DataHandler(zip_filepath, destination_folder)

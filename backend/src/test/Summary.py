@@ -1,3 +1,4 @@
+#from langchain import ChatOpenAI, LLMChain, StuffDocumentsChain, PromptTemplate
 from typing import Type
 import requests, json, os, sys
 from bson.objectid import ObjectId
@@ -5,6 +6,9 @@ sys.path[0] = os.path.join(os.getcwd(), "backend")
 print(sys.path[0])
 from src.app import mongo, LLAMUS_KEY
 from src.models.tabajo import ScientificArticle
+
+
+
 
 SYSTEM_PROMPT_BASE = """Act as a research paper summarizer. I will provide you with a research paper section by section, and you will create a summary of the main points and findings of the paper section. 
                         Your focus lies on the '{section_name}' section of a manuscript titled {article_title}, Process the provided {section_name} section, summarize it according to the following instructions:
@@ -80,6 +84,13 @@ class ArticleSummarizer:
 
 
 if __name__ == "__main__":
+    #    def __init__(self, db, system_prompt_base, query, llamus_key):
     myquery = {"_id": ObjectId("65d22d8d9a142a7b8be3d0e7")}
     evaluation_instance = ArticleSummarizer(mongo, SYSTEM_PROMPT_BASE, myquery,  LLAMUS_KEY)
     evaluation_instance.run()
+
+# Example usage:
+# summarizer = DocumentSummarizer(PyPDFLoader(pdf_path))
+# summarizer.insert_db(data)
+# document = summarizer.load_document()
+# summarizer.generate_summary(document, "Document Title")

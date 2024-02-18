@@ -17,7 +17,7 @@ def fetch_model_names():
 
 def print_model_names(model_names : list):
     for model in model_names:
-        print(f"ID: '{model['id']}'    ---> NAME:   '{model['name']}'")
+        print(f"ID: {model['id']}    ---> NAME:   '{model['name']}'")
 
 if __name__ == "__main__":
     model_names = fetch_model_names()
