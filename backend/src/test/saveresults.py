@@ -9,7 +9,8 @@ import subprocess
 import locale
 
 
-doc = Document("ScientificArticle")
+
+doc = Document("./test/ScientificArticle")
 
 db = mongo.db.articles
 query = {"_id": ObjectId("65d22d8d9a142a7b8be3d0e7")}
@@ -30,12 +31,12 @@ for section_name in sections.keys():
         with doc.create(Section(section_name)):
             with doc.create(Subsection('Contenido:')):
                 doc.append(section_content)
-"""
+
             with doc.create(Subsection('Resumen:')):
                 doc.append(section_summary)
 
             with doc.create(Subsection('Evaluación:')):
-                doc.append(section_evaluation)"""
+                doc.append(section_evaluation)
 
 
 try:

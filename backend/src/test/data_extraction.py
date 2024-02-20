@@ -8,6 +8,9 @@ sys.path[0] = os.path.join(os.getcwd(), "backend")
 from src.app import mongo
 from src.models.tabajo import ScientificArticle
 from typing import Type, List, Dict
+from langchain.text_splitter import LatexTextSplitter
+
+
 
 
 #from models.user import User
@@ -52,6 +55,12 @@ class DataHandler:
     def _remove_commented_lines(content):
          return "\n".join([line for line in content.split("\n") if not line.strip().startswith("%")])
 
+    @staticmethod
+    def split_latex(content):
+        latex_splitter = LatexTextSplitter(chunk_size = 1500, chunk_overlap = 10)
+        docs = latex_splitter.create_documents([content])
+        print(docs)
+        return docs
 
     
     @staticmethod
@@ -63,23 +72,28 @@ class DataHandler:
         section_contents = {}
         for idx, section_name in enumerate(sections):
             section_content = document_content[positions[idx]:positions[idx + 1]].strip()
-            section_content = section_content[section_content.find('}') + 1:]
+            #section_content = section_content[section_content.find('}') + 1:]
             section_contents[section_name] = section_content
         return section_contents
     
     def _extract_just_text(self, section_content):
         #print(section_content)
         res = pip.simple(section_content)
-        print(f"res: {section_content}")
+        #print(f"res: {section_content}")
         return res
 
 
 
     @staticmethod
-    def _save_sections(sections: dict, destination: Path):
+    def _save_sections(sections: dict, destination: Path, esResFinal = False):
         """Save the provided sections dictionary as individual files in the provided destination."""
         destination.mkdir(parents=True, exist_ok=True)
+        tmp = ''
         for idx, (section_name, section_content) in enumerate(sections.items(), start=1):
+            if esResFinal:
+                for chunk in section_content:
+                    tmp = tmp + "\n\n" + chunk.page_content + "\n---------------------------fin chunk----------------\n"
+                section_content = tmp
             (destination / f"section_{idx}_{section_name.replace('/', '_')}.txt").write_text(section_content, encoding='utf-8')
 
     def run(self):
@@ -90,18 +104,26 @@ class DataHandler:
         if content is not None:
             content = self._remove_commented_lines(content)
             sections = self._get_section_data(content)
+            self._save_sections(sections, self.dest_path / "res")
 
             sections_text = sections.copy()
+            result = {sm: [] for sm in sections.keys()}
             for section_name, section_content in sections.items():
-                print(section_content)
                 res = self._extract_just_text(section_content)
-                sections_text[section_name]= res
+                #sections_text[section_name]= res
+                res_split = self.split_latex(section_content)
+                if(res_split):
+                    result[section_name].extend(res_split)
 
-            print(sections_text)
+            #print(result)
+
+
+            self._save_sections(result, self.dest_path / "res/jst", True)
+
+
 
 
           
-            self._save_sections(sections_text, self.dest_path / "res")
         else:
             print("Contenido Nulo!")
 
@@ -116,7 +138,7 @@ class DataHandler:
             evaluation =  evaluation_init,
             summary = summary_init
         )
-        self.insert_into_db(article.to_dict())
+        #self.insert_into_db(article.to_dict())
 
 if __name__ == "__main__":
     zip_filepath = Path.cwd() / "backend" / "data" / "input" / "article.zip"
