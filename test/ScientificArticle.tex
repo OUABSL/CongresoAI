@@ -1,0 +1,1172 @@
+\documentclass{article}%
+\usepackage[T1]{fontenc}%
+\usepackage[utf8]{inputenc}%
+\usepackage{lmodern}%
+\usepackage{textcomp}%
+\usepackage{lastpage}%
+%
+%
+%
+\begin{document}%
+\normalsize%
+\clearpage%
+\section{Introduction}%
+\label{sec:Introduction}%
+\subsection{Contenido:}%
+\label{subsec:Contenido}%
+Typically, machine learning algorithms take as input a set of objects, each described by a vector of numerical or categorical attributes, and produce (learn) a mapping from the input to the output predictions: a class label, a regression score, an associated cluster, or a latent representation, among others. In relational learning, relationships between objects are also taken into account during the learning process, and data is represented as a graph composed of nodes (entities) and links (relationships), both with possible associated properties.\newline%
+\newline%
+The fact that relational learning methods can learn from the connections between data makes them very powerful in different domains {[}1{-}4{]}. Learning to classify profiles in social networks based on their relationships with other objects {[}5, 6{]}, characterising proteins based on functional connections that arise in organisms {[}7{]}, and identifying molecules or molecular fragments with the potential to produce toxic effects {[}8{]} are some prominent examples of relational machine learning applications.\newline%
+\newline%
+There are two basic approaches to relational learning, the latent feature or connectionist approach and the graph pattern{-}based approach or symbolic approach. {[}9{]}. The connectionist approach has proven its effectiveness in many different tasks {[}10{-}15{]}. In comparison, the pattern{-}based approach has been less successful. Two of the most important reasons for this fact are the computational complexity arising from relational queries and the lack of robust and general frameworks to serve as a basis for this kind of symbolic relational learning methods. On the one hand, most of the existing relational query systems are based on graph isomorphisms and their computational complexity is NP{-}complete, which affects the efficiency of learning methods using them {[}16{]}. On the other hand, most existing query systems do not allow atomic operations to expand queries in a partitioned manner, preventing learning systems from efficiently searching the query space {[}17{]}.\newline%
+\newline%
+The novel graph query framework presented in this paper attempts to solve these two fundamental problems. The goal is to obtain a query system that allows graph pattern matching with controlled complexity and provides stepwise pattern expansion using well{-}defined operations. A framework that satisfies these requirements is suitable for use in relational machine learning techniques because, combined with appropriate exploration techniques, it allows the automatic extraction of characteristic relational patterns from data.\newline%
+\newline%
+Computational capacity needed to assess the performance of graph query methods is significant. Our study centres on formalising an efficient graph query system and defining a set of operations to refine queries. However, it does not conduct an extensive analysis of performance or efficiency in comparison to other methods. The primary result of our study is a mathematical formalisation for a graph query system that enables: The graph query system must fulfill three characteristics: (1) conducting atomic operations (refinements) to expand queries in a partitioned manner, (2) assessing any substructure in a graph (beyond isolated nodes or complete graphs), and (3) evaluating cyclic patterns in polynomial time. To the best of our knowledge, no other approach meets these requirements.\newline%
+\newline%
+The paper is structured as follows. Section 1 provides an overview of related research. Section 2 introduces a novel graph query framework, outlining its main definitions and properties that guarantee its utility. Representative query examples and an analysis of the computational complexity arising from the model are also presented. Section 3 describes the implementation of the framework to perform relational machine learning. Finally, Section 4 presents the conclusions that can be drawn from this investigation and identifies potential avenues for future research.
+
+%
+\subsection{Resumen:}%
+\label{subsec:Resumen}%
+The introduction of the research paper discusses how machine learning algorithms typically process data by taking a set of objects and their attributes as input, and producing predictions. However, in relational learning, relationships between these objects are also considered, with data represented as graphs composed of nodes and links. The paper highlights two basic approaches to relational learning: the latent feature or connectionist approach and the graph pattern{-}based approach or symbolic approach, with the former being more effective than the latter due to its ability to handle connections efficiently.\newline%
+\newline%
+The paper introduces a novel graph query framework that attempts to solve the computational complexity issues associated with existing relational query systems, which are based on graph isomorphisms and have NP{-}complete complexity. The proposed framework allows for controlled complexity in graph pattern matching and well{-}defined operations for stepwise pattern expansion. The primary goal of this study is to provide a mathematical formalization of the graph query system that meets these requirements, with no other approach meeting them to the best of their knowledge.\newline%
+\newline%
+The paper's structure includes an overview of related research, an introduction of the novel graph query framework, a description of its implementation for relational machine learning, and conclusions drawn from the investigation along with potential avenues for future research.
+
+%
+\subsection{Evaluación:}%
+\label{subsec:Evaluacin}%
+The section provides a clear overview of the research topic, relational learning, and its significance. The introduction highlights the potential benefits of using graph{-}based methods for machine learning tasks. However, there are some areas where improvements can be made:\newline%
+\newline%
+Motivation:\newline%
+\newline%
+* Clarity: The motivation section could benefit from more specific examples to illustrate the importance of relational learning in real{-}world applications. For instance, the section could mention how relational learning has been used in social network analysis or recommendation systems.\newline%
+* Novelty:\newline%
+\newline%
+Originality: The introduction does not explicitly compare the proposed approach with existing methods, which could be done to emphasize its novelty. Additionally, the section could benefit from more details on what makes the proposed framework unique and different from other graph{-}based learning methods.\newline%
+\newline%
+Clarity:\newline%
+\newline%
+* Comprehension: Some of the sentences in the introduction are quite long and complex, making them difficult to understand. For example, the sentence "Learning to classify profiles in social networks based on their relationships with other objects {[}5, 6{]}, characterising proteins based on functional connections that arise in organisms {[}7{]}, and identifying molecules or molecular fragments with the potential to produce toxic effects {[}8{]} are some prominent examples of relational machine learning applications." could be broken down into simpler sentences for better comprehension.\newline%
+* Grammar and Style: The section contains a few grammatical errors, such as missing articles and incorrect verb tenses. Additionally, some of the sentences could be rephrased for better style and readability.\newline%
+\newline%
+Typos and Errors:\newline%
+\newline%
+* Accuracy: There is one typo in the section: "The primary result of our study is a mathematical formalisation for a graph query system that enables." should be "The primary result of our study is a mathematical formalization for a graph query system that enables."\newline%
+\newline%
+Overall, the introduction provides a good overview of the research topic and its significance. However, there are some areas where improvements could be made to enhance clarity, novelty, and accuracy.
+
+%
+\clearpage%
+\section{Related work}%
+\label{sec:Relatedwork}%
+\subsection{Contenido:}%
+\label{subsec:Contenido}%
+A common approach to executing relational queries entails developing patterns in an abstract representation of data and searching for their occurrences in actual datasets\textbackslash{}nocite\{phdthesis,Barcelo,gupta2015neo4j,Segaran:2009:PSW:1696488,graphlog,van2016pgql\}. This working method falls under the scope of Graph Pattern Matching, an area of study that has been actively researched for more than three decades. Depending on various aspects to consider, there are customary distinctions in pattern matching methods. (a) Structural, semantic, exact, inexact, optimal, and approximate are distinctions that can be made in matching relations between patterns and subgraphs {[}1{]}. Additionally, graph pattern matching can be based on isomorphisms, graph simulation, and bounded simulation, among other methods {[}2{-}4{]}. While systems for querying based on graph isomorphism present NP complexity, those based on simulations present polynomial complexity {[}5, 6{]}. However, both types are based on relations between the set of elements in the query and the set of elements in the graph data, which prevents the evaluation of the non{-}existence of elements. Our proposal is within the scope of semantic, exact, and optimal graph pattern matching implemented with an approach similar to simulations.\newline%
+\newline%
+As stated above, there are two fundamentally different types of relational learning models {[}7{]}. The first type, known as 'the latent feature approach', is founded upon latent feature learning, for example, tensor factorization and neural models, and generally performs well when handling uncertainty via probabilistic approximation {[}8{-}10{]}. The second approach, known as the graph{-}pattern based approach, automatically extracts relational patterns, also called observable graph patterns, from data {[}11, 12{]}. Since this work pertains to the second approach, our focus in the subsequent discussion will be on the review of relational learning techniques that utilise the graph{-}pattern based approach and the query systems upon which they rely.\newline%
+\newline%
+Most of the pattern{-}based relational learning methods are derived from Inductive Logic Programming (ILP) {[}13{]}. ILP does not inherently offer relational classifiers, though it does permit the automatic creation of logical decision trees capable of managing relational predicates, provided that data relationships have been properly transformed into logical predicates. Binary decision trees are logical decision trees, in which all tests in internal nodes are expressed as conjunctions of literals of a prefixed first{-}order language. TILDE (Top{-}down Induction of Logical Decision Trees) is one of the representative algorithms that can learn this type of decision tree from a given set of examples {[}14{]}. TILDE provides a framework for generating logical decision trees that can be further adapted for relational decision trees. Nevertheless, it does not cater to relational learning and therefore fails to offer certain operations for refining relational queries. We shall refer to atomic operations as those that bring about minor structural modifications to the query (typically the addition or deletion of a node or an edge, or some of their characteristics).\newline%
+\newline%
+Multi{-}relational decision tree learning (MRDTL {[}11{]}) is a learning algorithm for relationships and is supported by Selection Graphs {[}15{]}, a graph representation of SQL queries that selects records from a relational database based on certain constraints. Selection graphs enable atomic operations to enhance queries, but they lack the ability to distinguish between query elements that constitute the query result and those that relate to objects that should or should not be linked to the query result. Consequently, queries performed using selection graphs yield records that satisfy the given selection graph conditions, but cannot identify subgraphs. The refinement operations presented on the selection graphs are: adding positive conditions, adding negative conditions, adding present edges and opening nodes, adding absent edges and closing nodes. This set of operations does not allow for the construction of cyclic patterns.\newline%
+\newline%
+Another noteworthy pattern{-}based method for relational learning is Graph{-}Based Induction of Decision Trees (DT{-}GBI {[}16{]}), which is a decision tree construction algorithm for learning graph classifiers using graph{-}based induction (GBI), a data mining technique for extracting network motifs from labelled graphs by connecting pairs of nodes. In DT{-}GBI, the attributes (referred to as patterns or substructures) are generated during the execution of the algorithm {[}12{]}.\newline%
+\newline%
+As we have seen, some pattern{-}based approaches are able to learn to classify complete graphs, and some others construct node classifiers; our proposal supports learning from general subgraphs as base cases. Moreover, our technique can execute cyclic queries, hence allowing for extraction of cyclic patterns from data during the learning process.
+
+%
+\subsection{Resumen:}%
+\label{subsec:Resumen}%
+The Related work section in the paper titled "Logical{-}Mathematical Foundations of a Graph Query Framework for Relational Learning" discusses different approaches to executing relational queries, particularly focusing on graph pattern matching. The study highlights various distinctions in pattern matching methods such as structural, semantic, exact, and approximate matchings. It also mentions that graph pattern matching can be based on isomorphisms, graph simulation, and bounded simulation. The paper further distinguishes between two relational learning models: the latent feature approach and the graph{-}pattern based approach.\newline%
+\newline%
+The paper then delves into some of the existing methods for pattern{-}based relational learning, such as Inductive Logic Programming (ILP), Multi{-}relational decision tree learning (MRDTL), and Graph{-}Based Induction of Decision Trees (DT{-}GBI). ILP is noted to not inherently provide relational classifiers but can create logical decision trees. MRDTL utilizes selection graphs for query enhancement, while DT{-}GBI generates attributes during the execution of the algorithm.\newline%
+\newline%
+Finally, the paper highlights that their proposed method supports learning from general subgraphs as base cases and can execute cyclic queries, allowing for extraction of cyclic patterns from data during the learning process.
+
+%
+\subsection{Evaluación:}%
+\label{subsec:Evaluacin}%
+\newline%
+1. Motivation:\newline%
+\newline%
+The section provides a clear explanation of the significance and relevance of the study, highlighting the importance of relational learning in graph{-}based data and the limitations of existing approaches. The text also justifies the need for a new approach that can handle cyclic queries and extract cyclic patterns from data during the learning process.\newline%
+\newline%
+YES\newline%
+\newline%
+2. Novelty:\newline%
+\newline%
+The section effectively describes the proposed approach's novelty and originality, particularly in its ability to execute cyclic queries and extract cyclic patterns from data. The text also highlights the differences between our proposal and existing approaches, such as those based on selection graphs that cannot handle cyclic queries.\newline%
+\newline%
+YES\newline%
+\newline%
+3. Clarity:\newline%
+\newline%
+The section is well{-}written and easy to understand, using appropriate terminology and avoiding ambiguity. However, some complex sentences could be restructured for improved clarity.\newline%
+\newline%
+Can be Improved\newline%
+\newline%
+4. Grammar and Style:\newline%
+\newline%
+The section is generally free of grammatical and stylistic errors, but there are a few instances of unclear phrasing and missing articles.\newline%
+\newline%
+Can be Improved\newline%
+\newline%
+5. Typos and Errors:\newline%
+\newline%
+There are no typos or other errors in the section.\newline%
+\newline%
+NO\newline%
+\newline%
+Overall, the section provides a clear and motivated description of the related work in the field of relational learning, highlighting the novelty and potential benefits of the proposed approach. The text could be improved by restructuring complex sentences for enhanced clarity and correcting minor grammatical errors.
+
+%
+\clearpage%
+\section{Graph query framework}%
+\label{sec:Graphqueryframework}%
+\subsection{Contenido:}%
+\label{subsec:Contenido}%
+In graph pattern matching, precise definitions are fundamental for research. They create a shared terminology, whilst theorems illustrated by mathematical proofs reveal essential characteristics and direct the development of algorithms. This paper presents a mathematical tool for conducting graph pattern matching. We will do this by utilising these mathematical tools.\newline%
+\newline%
+We are exploring graph queries that enable atomic specialisations. We aim to produce pattern specialisations that select only a particular subset of elements by utilising a set of elements that satisfy a specific relational pattern. Selection Graphs serves as an instance of this query tool and has been developed for use in relational learning procedures. However, it has a fundamental limitation, as its patterns are unable to include cycles. Furthermore, when dealing with high relational data, incorporating a graphical representation of SQL queries can lead to efficiency issues. Our proposal draws inspiration from this method while bypassing its possible constraints.\newline%
+\newline%
+When searching for query specialization, we aim to also create complementary queries to cover new conditions. Exploring the pattern space and characterizing elements in a top{-}down method would be helpful. In particular, we seek a group of specialized queries that create embedded partitions of a single query.\newline%
+\newline%
+We would like to emphasise that our primary aim is to offer formalisation and examples of how the model can be applied, with the added goal of producing a real implementation that is practical for use\textbackslash{}footnote\{\textbackslash{}url\{https://github.com/palmagro/ggq\}\}.\newline%
+\newline%
+Preliminaries\newline%
+\newline%
+This passage presents preliminary concepts for defining graph queries. For a more complete review, refer to {[}2{]}.\newline%
+\newline%
+We will begin with a graph definition that encompasses several common types found in literature, such as directed/undirected graphs, multi{-}relational graphs, and hypergraphs. This definition serves as a foundational basis for general graph dataset structures and queries.\newline%
+\newline%
+\textbackslash{}begin\{definition\}\newline%
+A Graph is a tuple G= (V, E, μ) where:\newline%
+\newline%
+{-}  V and E are sets, called, respectively, set of nodes and set of edges of G.\newline%
+{-}  μ associates each node/edge in the graph with a set of properties μ: (V ∪ E) × R → J, where R represents the set of keys for properties, and J the set of values.\newline%
+\newline%
+Furthermore, it is necessary to have a distinct key for the edges of the graph, called incidences and denoted by γ, which associates each edge in E with a set of vertices in V.\newline%
+\textbackslash{}end\{definition\}\newline%
+\textbackslash{}medskip\newline%
+The domain of μ is the Cartesian product of the sets V ∪ E and R. Generally, we denote α(x) instead of μ(x,α) for each x∈ V∪ E and α ∈ R, treating properties as maps from nodes/edges to values. Note that unlike standard definitions, the items in E are symbols that indicate the edges, rather than pairs of elements from V. Additionally, gamma is the function that matches each edge to the group of nodes, ordered or otherwise, that it connects.\newline%
+\newline%
+We will use γ(v) to denote the edges in which node v∈ V participates. The neighbourhood of v is the set of nodes, including itself, connected to it, that is, 𝓝(v)= ⋃\_\{e ∈ γ (v)\} γ (e).\newline%
+\newline%
+For instance, we could depict a binary social graph G, which encompasses a set of nodes V, a set of edges E, and a function μ that associates each node/edge in the graph with a set of properties R. Our social graph would comprise the attribute τ ∈ R that may assume the values person and photo for the nodes and follows and like for edges. The attribute gamma ∈ R would be responsible for associating a pair of nodes in V with each edge. Furthermore, nodes and edges may possess additional attributes, such as age for nodes with τ= person or date for edges with τ= like.\newline%
+\newline%
+We need to provide an understanding of the position of a node in an edge. We offer a basic definition of position, but a more comprehensive one can be provided to distinguish between directed and undirected edges:\newline%
+\newline%
+\textbackslash{}begin\{definition\}\{\}\newline%
+If e∈ E and γ(e)=(v₁,\textbackslash{}dots,vₙ)∈ Vⁿ, then we define the position of each vᵢ∈ γ(e) in e as ordₑ(vᵢ)=i. We denote u\textbackslash{}leqₑ v to indicate ordₑ(u)\textbackslash{}leq ordₑ(v).\newline%
+\textbackslash{}end\{definition\}\newline%
+\newline%
+From this ordering of the nodes on an edge, we can establish paths within a graph.\newline%
+\newline%
+\textbackslash{}begin\{definition\}\{\}\newline%
+Given a graph G=(V,E,μ), we define the set of paths in G as 𝓟\_G, which is the smallest set that satisfies the conditions:\newline%
+\newline%
+1. If e∈ E and u, v∈ γ (e) with u \textbackslash{}leqₑ v, then ρ=u v∈ 𝓟\_G. We will say that ρ connects the nodes u and v of G, and we will denote it by u v.\newline%
+2. If ρ₁, ρ₂∈ 𝓟\_G, with u v and v w then ρ₁·ρ₂ ∈ 𝓟\_G, with u w.\newline%
+\textbackslash{}end\{definition\}\textbackslash{}medskip\newline%
+\newline%
+Some useful notations are as follows:\newline%
+\newline%
+{-} If u v, then we write ρᵒ=u and ρⁱ=v.\newline%
+{-} We denote the paths through u, starting in u, and ending in u, respectively, by:\newline%
+𝓟\_u(G)=\textbackslash{}\{ρ ∈ 𝓟(G): u∈ ρ\textbackslash{}\},\newline%
+𝓟\_u\^{}o(G)=\textbackslash{}\{ρ ∈ 𝓟(G): ρ\^{}o=u\textbackslash{}\},\newline%
+𝓟\_u\^{}i(G)=\textbackslash{}\{ρ ∈ 𝓟(G): ρ\^{}i=u\textbackslash{}\}.\newline%
+For example, for a graph G with V=\textbackslash{}\{v₁,v₂,v₃\textbackslash{}\} and E=\textbackslash{}\{e₁,e₂\textbackslash{}\}, γ(e₁)= \textbackslash{}\{v₁,v₂\textbackslash{}\} and γ(e₂)= \textbackslash{}\{v₂,v₃\textbackslash{}\}, the set of paths comprises 𝓟\_G= \textbackslash{}\{ v₁ \textbackslash{}stackrel\{e₁\}\{⇝\} v₂,v₂ \textbackslash{}stackrel\{e2\}\{⇝\} v₃,v₁ \textbackslash{}stackrel\{e1· e2\}\{⇝\} v₃\textbackslash{}\} with 𝓟ᵒ\_\{v₁\}(G)=\textbackslash{}\{ v₁ \textbackslash{}stackrel\{e1\}\{⇝\} v₂,v₁ \textbackslash{}stackrel\{e1· e₂\}\{⇝\} v₃\textbackslash{}\} and 𝓟ⁱ\_\{v₁\}(G)=\textbackslash{}emptyset.\newline%
+The concept of a subgraph is acquired by employing the customary procedure of enforcing that the features are sustained within the intersecting elements.\newline%
+\newline%
+\textbackslash{}begin\{definition\}\{\}\newline%
+A subgraph of G= (V, E,μ) is defined as a graph S= (V\_S, E\_S,μ\_S) where V\_S is a subset of V, E\_S is a subset of E, and μ\_S is a subset of μ\_\{|V\_S ∪ E\_S\}. We denote S \textbackslash{}subseteq G.\newline%
+\textbackslash{}end\{definition\}\newline%
+\newline%
+An instance of a subgraph from the graph stated earlier could be constituted by V\_S=\textbackslash{}\{v₁,v₂\textbackslash{}\}, E\_S=\textbackslash{}\{e₁\textbackslash{}\}, and γ\{|V\_S ∪ E\_S\}.\newline%
+\newline%
+Graph queries\newline%
+\newline%
+As mentioned previously, our graph query framework aims to enable the generation of complementary queries based on a given query. This entails ensuring that if a subgraph does not comply with a query, it must always comply with one of its complementaries. However, since projection hinders the evaluation of non{-}existent elements, which is necessary for achieving complementarity, we propose the use of logical predicates instead of projections.\newline%
+\newline%
+In the following, we examine a graph that is prefixed, denoted by G=(V,E,μ). We will provide a brief formalization of our understanding of a predicate for G. More details on this topic can be found in {[}1{]}.\newline%
+\newline%
+Consider a collection of function, predicate, and constant symbols, called Θ, which includes all the properties in μ, together with constants associated with elements of G, and possibly some additional symbols (for example, metrics defined in G, such as degree). We can use Θ as a set of non{-}logical symbols in the first{-}order language with equality, L. In this scenario, a predicate in G is an element of the set of first{-}order formulas of L (Form(L)). The binary predicates on G are indicated as Form²(L).\newline%
+\newline%
+\textbackslash{}begin\{definition\}\{\}\newline%
+A Query for G is a graph, specifically Q= (V\_Q, E\_Q, μ\_Q), possessing α and θ properties in μ\_Q, and satisfying the following conditions:\newline%
+\newline%
+{-} α:V\_Q∪ E\_Q→ \textbackslash{}\{+,{-}\textbackslash{}\}.\newline%
+{-} θ:V\_Q∪ E\_Q→ Form²(L).\newline%
+\textbackslash{}end\{definition\}\textbackslash{}medskip\newline%
+\newline%
+Formally, Q depends on L and G, but since we will consider L and G as prefixed, we will write Q ∈ 𝓠 (instead of Q ∈ 𝓠(L, G) ) to denote that Q is a query on G using L. Note that once a query is defined, it can be applied to multiple graphs using the same language.\newline%
+\newline%
+Intuitively, when examining a query, we utilize the second input of binary predicates to place limitations on the membership of subgraphs within G. Conversely, the first input should receive elements of the corresponding type with which it is associated.\newline%
+\newline%
+For example, if a,b∈ V\_Q and e∈ E\_Q, and (we will denote θₓ:=θ(x)):\newline%
+\newline%
+θₐ(v,S)\&:=v∈ S,\newline%
+\newline%
+θ\_b(v,S)\&:=∃ z∈ S (z \textbackslash{}stackrel\{\}\{⇝\} v),\newline%
+\newline%
+θₑ(ρ,S)\&:=∃ y,z (y \textbackslash{}stackrel\{ρ\}\{⇝\} z ∧ y ∉ S∧ z∈ S).\newline%
+\newline%
+The node{-}based θₐ(v,S) is defined to check whether the subgraph evaluation of S contains v∈ V. The node{-}based θ\_b(v,S) is verified only when a path in G connects a node of S with v∈ G. Lastly, the path{-}based θₑ(ρ,S) is defined to verify if the evaluated path ρ∈ 𝓟\_G connects S with its outward in G.\newline%
+\newline%
+Given a query under the stated conditions, x⁺ (resp. x⁻) is used to denote α (x)= + (resp. α (x)= {-} ), and V\_Q⁺/V\_Q⁻ (resp. E\_Q⁺/E\_Q⁻) represent the set of positive/negative nodes (resp. edges). If θₓ is not explicitly defined for an element, it is assumed to be a tautology.\newline%
+\newline%
+According to the following definition, positive elements impose constraints on the presence of queries, while negative elements impose constraints on their absence. To be more specific, each positive/negative node in a query requires the existence/non{-}existence of a node in G which satisfies its conditions (imposed by θₓ and its edges):\newline%
+\newline%
+\textbackslash{}begin\{definition\}\{\}\newline%
+Given S\textbackslash{}subseteq G, and Q∈ 𝓠, we say that S matches Q (S\textbackslash{}vDash Q), if the following formula holds:\newline%
+\newline%
+Q(S)=⋀\_\{n∈ V\_Q\} Q\_n\^{}\{α(n)\}(S)\newline%
+where, for each node, n∈ V\_Q:\newline%
+Q\_n\^{}+= Q\_n,\textbackslash{}hspace\{1cm\} Q\_n\^{}{-}= \textbackslash{}neg Q\_n,\newline%
+Q\_n(S)=∃ v∈ V (⋀\_\{e∈ γ(n)\} Q\_\{e\^{}*\}\^{}\{α(e)\}(v,S)\textbackslash{}right)\newline%
+and, for each edge, e∈ E\_Q, *∈ \textbackslash{}\{o,i\textbackslash{}\}:\newline%
+Q\_\{e\^{}*\}\^{}+= Q\_\{e\^{}*\}, Q\_\{e\^{}*\}\^{}{-}= \textbackslash{}neg Q\_\{e\^{}*\},\newline%
+\newline%
+Q\_\{e\^{}o\}(v,S)=∃ ρ∈ 𝓟\_v\^{}o(G) (θ\_e(ρ,S)∧ θ\_\{e\^{}o\}(ρ\^{}o,S) ∧ θ\_\{e\^{}i\}(ρ\^{}i,S)\textbackslash{}right),\newline%
+Q\_\{e\^{}i\}(v,S)=∃ ρ∈ 𝓟\_v\^{}i(G) (θ\_e(ρ,S)∧ θ\_\{e\^{}o\}(ρ\^{}o,S) ∧ θ\_\{e\^{}i\}(ρ\^{}i,S)\textbackslash{}right).\newline%
+\newline%
+\textbackslash{}end\{definition\}\textbackslash{}medskip\newline%
+\newline%
+A generic query example is shown in Figure 1.\newline%
+\newline%
+\textbackslash{}begin\{figure\}{[}h!{]}\newline%
+\textbackslash{}begin\{center\}\newline%
+\textbackslash{}includegraphics{[}scale=0.5{]}\{png/Fig1.pdf\}\newline%
+\textbackslash{}end\{center\}\newline%
+\textbackslash{}caption\{Graph Query Example\}\newline%
+\textbackslash{}end\{figure\}\newline%
+\newline%
+Unlike other previous graph query systems, this system can efficiently satisfy the following requirements: (1) the ability to contain cycles; (2) the capability to evaluate subgraphs; (3) projecting edges in the query onto paths in the graph; (4) evaluating structural and/or semantic characteristics; and (5) the added benefit of specialization through atomic operations (as will be discussed in the next section).\newline%
+\newline%
+Refinement sets\newline%
+\newline%
+To properly characterize the elements within a graph, it is crucial to utilize computationally effective methods when constructing queries based on basic operations. This section will introduce a query construction method optimized for use in relational learning tasks. To begin, let us first define the concept of relative refinements between queries.\newline%
+\newline%
+\textbackslash{}begin\{definition\}\{\}\newline%
+Given Q₁, Q₂∈ 𝓠, we say:\newline%
+\newline%
+1. Q₁ refines Q₂ in G (Q₁\textbackslash{}preceq\_G Q₂) if:\newline%
+∀ S\textbackslash{}subseteq G (S\textbackslash{}vDash Q₁ ⇒ S\textbackslash{}vDash Q₂).\newline%
+2. They are equivalent in G (Q₁≡\_G Q₂) if:\newline%
+Q₁\textbackslash{}preceq\_G Q₂ and Q₂\textbackslash{}preceq\_G Q₁.\newline%
+\textbackslash{}end\{definition\}\textbackslash{}medskip\newline%
+\newline%
+Two queries are deemed equivalent when they are confirmed to be exactly the same by identical subgraphs. From this definition, it is straightforward the following result is straightforward (the proof of which may be omitted):\newline%
+\newline%
+\textbackslash{}begin\{theorem\}\{\}\newline%
+\textbackslash{}preceq\_G is a partial order in 𝓠. That is, for every Q₁, Q₂, Q₃ ∈ 𝓠:\newline%
+\newline%
+1. Q₁\textbackslash{}preceq\_G Q₁.\newline%
+2. Q₁\textbackslash{}preceq\_G Q₂ ∧ Q₂\textbackslash{}preceq\_G Q₁ ⇒ Q₁≡\_G Q₂.\newline%
+3. Q₁\textbackslash{}preceq\_G Q₂ ∧ Q₂\textbackslash{}preceq\_G Q₃ ⇒ Q₁\textbackslash{}preceq\_G Q₃.\newline%
+\textbackslash{}end\{theorem\}\textbackslash{}medskip\newline%
+\newline%
+Next, we examine the relationship between the topological structure of a query and its functionality as a predicate on subgraphs. Generally, extracting logical properties of the predicate from the structural properties of the graph that represents it is difficult. However, we can obtain useful conditions to manipulate the structures and modify the query's semantics in a controlled manner.\newline%
+\newline%
+\textbackslash{}begin\{definition\}\{\}\newline%
+Given Q₁, Q₂∈𝓠, we say that Q₁ is a Q⁻{-}conservative extension of Q₂ (Q₂\textbackslash{}subseteq⁻ Q₁) if:\newline%
+\newline%
+1. Q₂\textbackslash{}subseteq Q₁.\newline%
+2. ∀ n∈ V\_\{Q₂\}⁻\textbackslash{}, ∀ e∈ γ\_\{Q₁\}(n)\textbackslash{}, ∃ e'∈ γ\_\{Q₂\}(n) (Qₑ≡ Q\_\{e'\}).\newline%
+\textbackslash{}end\{definition\}\textbackslash{}medskip\newline%
+\newline%
+Figure 2 illustrates an example of a Q⁻{-}conservative extension. The novel element in the right query mandates fresh constraints on the positive node, but it does not introduce any additional constraints to the negative one.\newline%
+\newline%
+\textbackslash{}begin\{figure\}{[}h{]}\newline%
+\textbackslash{}begin\{center\}\newline%
+\textbackslash{}includegraphics{[}scale=0.5{]}\{png/FIG2.pdf\}\newline%
+\textbackslash{}end\{center\}\newline%
+\textbackslash{}caption\{Q⁻{-}conservative extension\}\newline%
+\textbackslash{}end\{figure\}\newline%
+\newline%
+Since negative nodes introduce non{-}existence constraints to subgraph verification, Q⁻{-}conservative extensions guarantee that no new constraints are added to them. Therefore:\newline%
+\newline%
+\textbackslash{}begin\{theorem\}\{\}\newline%
+If Q₂\textbackslash{}subseteq⁻ Q₁ then Q₁\textbackslash{}preceq Q₂.\newline%
+\textbackslash{}end\{theorem\}\newline%
+\textbackslash{}begin\{proof\}\{\}\newline%
+Since predicates associated to edges are solely based on the information within the edge itself (which takes into account the value of θ in its incident nodes, irrespective of their α value), we can assert that:\newline%
+∀ e∈ E\_\{Q\_2\} (\{Q\_1\}\_e\^{}\{α(e)\}=\{Q\_2\}\_e\^{}\{α(e)\})\newline%
+\newline%
+Considering this fact, we examine the behaviour of predicates associated with the nodes for both queries:\newline%
+\newline%
+{-} If n∈ V\_Q₂⁻, since Q₂\textbackslash{}subseteq⁻ Q₁, then Q₁ₙ⁻=Q₂ₙ⁻.\newline%
+{-} If n∈ V\_Q₂⁺, then Q₁ₙ⁺→ Q₂ₙ⁺, because (γ₁, γ₂ are the incidence functions of Q₁ and Q₂, respectively):\newline%
+ₙ⁺ \&= ∃ v∈ V ( ⋀\_e∈ γ₁(n) Q₁ₑ\^{}α(e)\textbackslash{}right)\newline%
+\&= ∃ v∈ V( ⋀\_e∈ γ₁(n)∩ E\_Q₂ Q₁ₑ\^{}α(e) ∧ ⋀\_e∈ γ₁(n)∖ E\_Q₂ Q₁ₑ\^{}α(e)\textbackslash{}right)\newline%
+\&= ∃ v∈ V( ⋀\_e∈ γ₂(n)∩ E\_Q₂ Q₂ₑ\^{}α(e) ∧ ⋀\_e∈ γ₁(n)∖ E\_Q₂ Q₁ₑ\^{}α(e)\textbackslash{}right)\newline%
+\&→ Q₂ₙ⁺\newline%
+\newline%
+Hence:\newline%
+\newline%
+Q₁ \&= ⋀\_\{n∈ V\_\{Q₁\}\} \{Q₁\}ₙ\^{}\{α(n)\}= ⋀\_\{n∈ V\_\{Q₂\}\} \{Q₁\}ₙ\^{}\{α(n)\} ∧ ⋀\_\{n∈ V\_\{Q₁\}∖ V\_\{Q₂\}\} \{Q₁\}ₙ\^{}\{α(n)\}\newline%
+\newline%
+\&= ⋀\_\{n∈ V\_\{Q₂\}⁺\} \{Q₁\}ₙ\^{}\{α(n)\} ∧ ⋀\_\{n∈ V\_\{Q₂\}⁻\} \{Q₁\}ₙ\^{}\{α(n)\} ∧ ⋀\_\{n∈ V\_\{Q₁\}∖ V\_\{Q₂\}\} \{Q₁\}ₙ\^{}\{α(n)\}\newline%
+\newline%
+\&→ ⋀\_\{n∈ V\_\{Q₂\}⁺\} \{Q₂\}ₙ\^{}\{α(n)\} ∧ ⋀\_\{n∈ V\_\{Q₂\}⁻\} \{Q₂\}ₙ\^{}\{α(n)\} ∧ ⋀\_\{n∈ V\_\{Q₁\}∖ V\_\{Q₂\}\} \{Q₁\}ₙ\^{}\{α(n)\}\newline%
+\newline%
+\&= ⋀\_\{n∈ V\_\{Q₂\}\} \{Q₂\}ₙ\^{}\{α(n)\} ∧ ⋀\_\{n∈ V\_\{Q₁\}∖ V\_\{Q₂\}\} \{Q₁\}ₙ\^{}\{α(n)\}\newline%
+\newline%
+\&→ \{Q₂\}\newline%
+\newline%
+\textbackslash{}end\{proof\}\newline%
+Previous result suggests that a query can be refined by adding nodes (of any sign) and edges to the existing positive nodes, but because of the (negated) interpretation of predicates associated with negative nodes, care must be taken to maintain their neighborhood to be sure that adding more edges does not weaken the imposed conditions (which consequently will not provide refined predicates).\newline%
+\newline%
+To achieve controlled methods of query generation, we will outline processes for refining queries through unit steps. We shall accomplish this by defining the cloning operation, whereby existing nodes are duplicated, and all incident edges (including those between the nodes) on the original graph are also cloned:\newline%
+\newline%
+\textbackslash{}begin\{definition\}\{\}\newline%
+Given G=(V,E,μ), and W\textbackslash{}subseteq V, we define the clone of G by duplication of W, Cl\_Gᵂ, as:\newline%
+\newline%
+Cl\_G\^{}W=(V∪ W',E∪ E',μ∪ \textbackslash{}\{(n',μ(n))\textbackslash{}\}\_\{n∈ W\}∪ \textbackslash{}\{(e',μ(e))\textbackslash{}\}\_\{e'∈ E'\})\newline%
+where W'=\textbackslash{}\{n': n∈ W\textbackslash{}\} are new cloned nodes from W, and E ' is a set of new edges obtained from incident edges on nodes of W where nodes of W are replaced by copies of W' (edges connecting original nodes with cloned nodes and edges connecting cloned nodes, are cloned).\newline%
+\textbackslash{}end\{definition\}\textbackslash{}medskip\newline%
+\newline%
+Figure 3 shows an example of a cloned graph by duplicating two nodes (in the original graph, left side, the set of nodes to be duplicated is highlighted).\newline%
+\textbackslash{}begin\{figure\}{[}h{]}\newline%
+\textbackslash{}begin\{center\}\newline%
+\textbackslash{}includegraphics{[}width=\textbackslash{}columnwidth{]}\{png/FIG3.pdf\}\newline%
+\textbackslash{}end\{center\}\newline%
+\textbackslash{}caption\{Clone of a graph by duplication\}\newline%
+\textbackslash{}end\{figure\}\newline%
+\newline%
+The next result indicates that duplicating positive nodes does not change the meaning of the queries.\newline%
+\newline%
+\textbackslash{}begin\{theorem\}\{\}\newline%
+If W\textbackslash{}subseteq V⁺\_Q, then Cl\_Qᵂ≡ Q.\newline%
+\textbackslash{}end\{theorem\}\newline%
+\textbackslash{}begin\{proof\}\{\}\newline%
+Let us denote Q₁= Cl\_Qᵂ. Then:\newline%
+\newline%
+Q₁ \&= ⋀\_\{n∈ V\_\{Q₁\}\} \{Q₁\}ₙ\^{}\{α(n)\}\newline%
+=⋀\_\{n∈ V\_Q\} \{Q₁\}ₙ\^{}\{α(n)\} ∧ ⋀\_\{n∈ W\} \{Q₁\}\_\{n'\}\^{}\{α(n')\}\newline%
+\newline%
+\&= ⋀\_\{n∈ V\_Q∖ γ\_Q(W)\} \{Q₁\}ₙ\^{}\{α(n)\} ∧ ⋀\_\{n∈γ\_Q(W)\} \{Q₁\}ₙ\^{}\{α(n)\} ∧ ⋀\_\{n∈ W\} \{Q₁\}\_\{n'\}\^{}\{α(n')\}\newline%
+\newline%
+\&= ⋀\_\{n∈ V\_Q∖ γ\_Q(W)\} Qₙ\^{}\{α(n)\} ∧ ⋀\_\{n∈γ\_Q(W)\} Qₙ\^{}\{α(n)\} ∧ ⋀\_\{n∈ W\} Qₙ\^{}\{α(n)\}\newline%
+\newline%
+\&= Q\newline%
+\newline%
+\textbackslash{}end\{proof\}\newline%
+\newline%
+When refining a query to find complementary sets of selected subgraphs, we define the concept of a refinement set as central:\newline%
+\newline%
+\textbackslash{}begin\{definition\}\{\}\newline%
+Given Q∈ 𝓠, R\textbackslash{}subseteq 𝓠 is a refinement set of Q in G if:\newline%
+\newline%
+1. ∀ Q'∈ R (Q'\textbackslash{}preceq\_G Q).\newline%
+2. ∀ S\textbackslash{}subseteq G (S\textbackslash{}vDash Q⇒ ∃! Q'∈ R (S\textbackslash{}vDash Q')).\newline%
+\textbackslash{}end\{definition\}\textbackslash{}medskip\newline%
+\newline%
+Let us now introduce refinement sets to enhance simpler queries for expressiveness. Q∈𝓠 is prefixed, and ⊤ represents a tautology:\newline%
+\newline%
+\textbackslash{}begin\{theorem\}\{(Add new node)\}\newline%
+If m∉ V\_Q, the set Q+\textbackslash{}\{m\textbackslash{}\}, formed by:\newline%
+\newline%
+Q₁ \&= (V\_Q∪\textbackslash{}\{m\textbackslash{}\}, E\_Q, α\_Q∪(m,+), θ\_Q∪(m,⊤)),\newline%
+\newline%
+Q₂ \&= (V\_Q∪\textbackslash{}\{m\textbackslash{}\}, E\_Q, α\_Q∪(m,{-}), θ\_Q∪(m,⊤))\newline%
+\newline%
+is a refinement set of Q in G (Fig. 4).\newline%
+\textbackslash{}end\{theorem\}\newline%
+\textbackslash{}begin\{proof\}\{\}\newline%
+We must verify the two necessary conditions for refinement sets:\newline%
+\newline%
+1. Since Q\textbackslash{}subseteq⁻ Q₁ and Q\textbackslash{}subseteq⁻ Q₂, thus Q₁\textbackslash{}preceq Q and Q₂\textbackslash{}preceq Q.\newline%
+2. Given S\textbackslash{}subseteq G such that S\textbackslash{}vDash Q. Then:\newline%
+\newline%
+Q₁\&= Q ∧ Qₘ,\newline%
+Q₂\&= Q ∧ \textbackslash{}neg Qₘ\newline%
+\newline%
+where Qₘ=∃ v∈ V (⊤).\newline%
+If G\textbackslash{}neq \textbackslash{}emptyset, then S\textbackslash{}vDash Q₁ and S\textbackslash{}nvDash Q₂.\newline%
+If G= \textbackslash{}emptyset, then S\textbackslash{}nvDash Q₁ and S\textbackslash{}vDash Q₂.\newline%
+\textbackslash{}end\{proof\}\newline%
+\newline%
+Since G \textbackslash{}neq \textbackslash{}emptyset (usually), Q₁ ≡ Q. However, although we obtain an equivalent query, this operation is beneficial for adding new nodes and restrictions in the future.\newline%
+\newline%
+\textbackslash{}begin\{figure\}{[}h{]}\newline%
+\textbackslash{}begin\{center\}\newline%
+\textbackslash{}includegraphics{[}scale=0.3{]}\{png/REF1.pdf\}\newline%
+\textbackslash{}end\{center\}\newline%
+\textbackslash{}caption\{Add node refinement\}\newline%
+\textbackslash{}end\{figure\}\newline%
+\newline%
+The second refinement allows for the establishment of edges between query nodes that already exist. To obtain a valid refinement set, the inclusion of edges is limited to positive nodes. Subsequently, the nodes marked with a positive/negative sign represent cloned nodes whose α property has been designated as positive/negative.\newline%
+\newline%
+\textbackslash{}begin\{theorem\}\{(Add new edge between + nodes)\}\newline%
+If n,m∈ V\_Q⁺, the set Q+\textbackslash{}\{n\textbackslash{}stackrel \{e\^{}*\}\{⟶\} m\textbackslash{}\} (*∈\textbackslash{}\{+,{-}\textbackslash{}\}), formed by:\newline%
+\newline%
+Q₁ \&= (V\_\{Q'\}, E\_\{Q'\}∪\textbackslash{}\{n⁺\textbackslash{}stackrel \{e\^{}*\}\{⟶\} m⁺\textbackslash{}\}, θ\_\{Q'\}∪(e,⊤)),\newline%
+\newline%
+Q₂ \&= (V\_\{Q'\}, E\_\{Q'\}∪\textbackslash{}\{n⁺\textbackslash{}stackrel \{e\^{}*\}\{⟶\} m⁻\textbackslash{}\}, θ\_\{Q'\}∪(e,⊤)),\newline%
+\newline%
+Q₃ \&= (V\_\{Q'\}, E\_\{Q'\}∪\textbackslash{}\{n⁻\textbackslash{}stackrel \{e\^{}*\}\{⟶\} m⁺\textbackslash{}\}, θ\_\{Q'\}∪(e,⊤)),\newline%
+\newline%
+Q₄ \&= (V\_\{Q'\}, E\_\{Q'\}∪\textbackslash{}\{n⁻\textbackslash{}stackrel \{e\^{}*\}\{⟶\} m⁻\textbackslash{}\}, θ\_\{Q'\}∪(e,⊤))\newline%
+\newline%
+(where Q'=Cl\_Q\^{}\{\textbackslash{}\{n,m\textbackslash{}\}\}) is a refinement set of Q in G (Fig. 5).\newline%
+\textbackslash{}end\{theorem\}\newline%
+\textbackslash{}begin\{proof\}\{\}\newline%
+\textbackslash{}quad\newline%
+\newline%
+1. Since Q' is a clone of Q, then Q≡ Q'. In addition, Q'\textbackslash{}subseteq⁻ Q₁,Q₂,Q₃,Q₄, thus Q₁,Q₂,Q₃,Q₄\textbackslash{}preceq Q'≡ Q.\newline%
+2. Let us consider the predicates:\newline%
+\newline%
+Pₙ \&= ∃ v∈ V ( ⋀\_a∈ γ(n) Qₐ\^{}α(a) ∧ Q\_eᵒ\^{}α(e)\textbackslash{}right),\newline%
+Pₘ \&= ∃ v∈ V ( ⋀\_a∈ γ(m) Qₐ\^{}α(a) ∧ Q\_eⁱ\^{}α(e)\textbackslash{}right).\newline%
+\newline%
+If S\textbackslash{}vDash Qₙ and S\textbackslash{}vDash Qₘ, then we have four mutually complementary options:\newline%
+   • S\textbackslash{}vDash Pₙ ∧ S\textbackslash{}vDash Pₘ ⇒ S\textbackslash{}vDash Q₁\newline%
+   • S\textbackslash{}vDash Pₙ ∧ S\textbackslash{}nvDash Pₘ ⇒ S\textbackslash{}vDash Q₂\newline%
+   • S\textbackslash{}nvDash Pₙ ∧ S\textbackslash{}vDash Pₘ ⇒ S\textbackslash{}vDash Q₃\newline%
+   • S\textbackslash{}nvDash Pₙ ∧ S\textbackslash{}nvDash Pₘ ⇒ S\textbackslash{}vDash Q₄\newline%
+\textbackslash{}end\{proof\}\newline%
+\newline%
+\textbackslash{}begin\{figure\}{[}h{]}\newline%
+\textbackslash{}begin\{center\}\newline%
+\textbackslash{}includegraphics{[}width=\textbackslash{}columnwidth{]}\{png/REF2SIM.pdf\}\newline%
+\textbackslash{}end\{center\}\newline%
+\textbackslash{}caption\{Add edge refinement (simplified)\}\newline%
+\textbackslash{}end\{figure\}\newline%
+\newline%
+Next, an additional predicate is added to an existing edge through the following operation, limited to positive edges connecting positive nodes.\newline%
+\newline%
+\textbackslash{}begin\{theorem\}\{(Add predicate to + edge between + nodes)\}\newline%
+If n,m∈ V\_Q⁺, with n\textbackslash{}stackrel \{e⁺\}\{⟶\} m, and 𝜑∈ Form²(L), the set Q+\textbackslash{}\{n\textbackslash{}stackrel \{e ∧ 𝜑\}\{⟶\} m\textbackslash{}\}, formed by:\newline%
+\newline%
+Q₁ \&= (V\_\{Q'\}, E\_\{Q'\}∪\textbackslash{}\{n⁺\textbackslash{}stackrel \{e'\}\{⟶\} m⁺\textbackslash{}\}, θ\_\{Q'\}∪(e',θₑ∧ 𝜑)),\newline%
+\newline%
+Q₂ \&= (V\_\{Q'\}, E\_\{Q'\}∪\textbackslash{}\{n⁺\textbackslash{}stackrel \{e'\}\{⟶\} m⁻\textbackslash{}\}, θ\_\{Q'\}∪(e',θₑ∧ 𝜑)),\newline%
+\newline%
+Q₃ \&= (V\_\{Q'\}, E\_\{Q'\}∪\textbackslash{}\{n⁻\textbackslash{}stackrel \{e'\}\{⟶\} m⁺\textbackslash{}\}, θ\_\{Q'\}∪(e',θₑ∧ 𝜑)),\newline%
+\newline%
+Q₄ \&= (V\_\{Q'\}, E\_\{Q'\}∪\textbackslash{}\{n⁻\textbackslash{}stackrel \{e'\}\{⟶\} m⁻\textbackslash{}\}, θ\_\{Q'\}∪(e',θₑ∧ 𝜑))\newline%
+\newline%
+(where Q'=Cl\_Q\^{}\{\textbackslash{}\{n,m\textbackslash{}\}\}) is a refinement set of Q in G (Fig. 6).\newline%
+\textbackslash{}end\{theorem\}\newline%
+\textbackslash{}begin\{proof\}\{\}\newline%
+The proof is similar to the previous ones.\newline%
+\textbackslash{}end\{proof\}\newline%
+\newline%
+\textbackslash{}begin\{figure\}{[}h{]}\newline%
+\textbackslash{}begin\{center\}\newline%
+\textbackslash{}includegraphics{[}width=\textbackslash{}columnwidth{]}\{png/REF3SIM.pdf\}\newline%
+\textbackslash{}end\{center\}\newline%
+\textbackslash{}caption\{Add predicate to edge refinement (simplified)\}\newline%
+\textbackslash{}end\{figure\}\newline%
+\newline%
+Finally, the last step involves adding predicates to existing nodes. This operation is only permitted when the affected nodes are positive, including the node where the predicate is added and those connected to it.\newline%
+\newline%
+\textbackslash{}begin\{theorem\}\{(Add predicate to + node with + neighborhood)\}\newline%
+If 𝜑∈ Form²(L), and n∈ V\_Q⁺ with 𝓝\_Q(n)\textbackslash{}subseteq V\_Q⁺, then the set Q+\textbackslash{}\{n∧ 𝜑\textbackslash{}\} formed by:\newline%
+\textbackslash{}\{Q\_\{σ\}=(V\_\{Q'\},E\_\{Q'\},α\_\{Q'\}∪ σ,θ\_\{Q'\}∪(n',θ\_n∧𝜑)): σ∈ \textbackslash{}\{+,{-}\textbackslash{}\}\^{}\{𝓝\_Q(n)\}\textbackslash{}\}\newline%
+(where Q'=Cl\_Q\^{}\{𝓝\_Q(n)\}, and \textbackslash{}\{+,{-}\textbackslash{}\}\^{}\{𝓝\_Q(n)\} is the set of all possible assignments of signs to elements in 𝓝\_Q(n))\newline%
+is a refinement set of Q in G (Fig. 7).\newline%
+\textbackslash{}end\{theorem\}\newline%
+\textbackslash{}normalsize\newline%
+\textbackslash{}begin\{proof\}\{\}\newline%
+The proof resembles earlier ones. It is important to consider that modifying node n not only alters the associated predicate, but also those of its neighboring nodes. Additionally, the set of functions \textbackslash{}\{+, {-}\textbackslash{}\}\^{}\{𝓝\_Q(n)\} encompasses all feasible sign assignments for the nodes within the neighborhood.\newline%
+\textbackslash{}end\{proof\}\newline%
+\newline%
+\textbackslash{}begin\{figure\}{[}h{]}\newline%
+\textbackslash{}begin\{center\}\newline%
+\textbackslash{}includegraphics{[}width=\textbackslash{}columnwidth{]}\{png/REF4SIM.pdf\}\newline%
+\textbackslash{}end\{center\}\newline%
+\textbackslash{}caption\{Add predicate to node refinement (simplified)\}\newline%
+\textbackslash{}end\{figure\}\newline%
+\newline%
+Also note that simplified versions of the refinement sets are shown in Figures 4{-}7. Section 8 provides an explanation on how to obtain these simplifications.\newline%
+\newline%
+Obtaining a complementary query from the structure is a challenging task. Nonetheless, graph analyses often require sequences of queries to verify properties related to refinement and complementarity. To bridge this gap, this section introduces refinement operations. These operations facilitate the construction of an embedded partition tree, where nodes are labelled as illustrated in Figure 9:\newline%
+\newline%
+{-} The root node is labeled with Q₀ (some initial query).\newline%
+{-} If a node on the tree is labelled with Q, and R=\textbackslash{}\{Q₁,\textbackslash{}dots,Qₙ\textbackslash{}\} is a set that refines Q, then the child nodes will be labelled with the elements of R.\newline%
+\newline%
+\textbackslash{}begin\{figure\}{[}h{]}\newline%
+\textbackslash{}begin\{center\}\newline%
+\textbackslash{}includegraphics{[}scale=0.3{]}\{png/FIG4.pdf\}\newline%
+\textbackslash{}end\{center\}\newline%
+\textbackslash{}caption\{Refinements tree\}\newline%
+\textbackslash{}end\{figure\}\newline%
+\newline%
+Refinement sets presented herein offer one approach, rather than the sole approach. For example, we could consider refinements that, instead of adding constraints to positive elements, lighten the conditions over negative elements, for example, by using disjunction of predicates instead of conjunction of them.\newline%
+\newline%
+Simplified refinement sets\newline%
+\newline%
+Let us simplify a query into an equivalent one by applying certain operations.\newline%
+\newline%
+\textbackslash{}begin\{definition\}\{\}\newline%
+We define Q'\textbackslash{}subseteq Q as redundant in Q if Q≡ Q{-}Q'. Here, Q{-}Q' represents the subgraph of Q given by:\newline%
+(V\_Q∖ V\_\{Q'\}, E\_Q∖ (E\_\{Q'\}∪\textbackslash{}\{γ(n): n∈ V\_\{Q'\}\textbackslash{}\}),μ\_Q)\newline%
+\newline%
+\textbackslash{}end\{definition\}\textbackslash{}medskip\newline%
+\newline%
+One initial finding that enables the acquisition of simplified versions of a query by eliminating superfluous nodes is (from the following two results we only give an idea of the proof, which can be very laborious but straightforward from the above constructions):\newline%
+\newline%
+\textbackslash{}begin\{theorem\}\{\}\newline%
+Given a query Q, and n,m∈ V\_Q verifying:\newline%
+\newline%
+{-} α(n)=α(m)\newline%
+{-} θₙ≡θₘ\newline%
+{-} For each e∈ γ(n), exists e'∈ γ(m), with α(e)=α(e'), θₑ≡θ\_\{e'\} and γ(e)∖\textbackslash{}\{n\textbackslash{}\}=γ(e')∖\textbackslash{}\{m\textbackslash{}\}\newline%
+Then, n is redundant in Q.\newline%
+\textbackslash{}end\{theorem\}\newline%
+\newline%
+\textbackslash{}begin\{proof\}\{\}\newline%
+\newline%
+A query Q comprises nodes and their relationships. Each query node imposes constraints on the subgraph that is evaluated, including the presence or absence of nodes and the paths in which they participate. These restrictions should be considered during the evaluation. If there are two nodes n,m ∈ V\_Q with α(n)= α(m) and θₙ≡θₘ, and for each e∈ γ(n), there exists e'∈ γ(m), with α(e)=α(e'), θₑ≡θ\_\{e'\} and γ(e)∖\textbackslash{}\{n\textbackslash{}\}=γ(e')∖\textbackslash{}\{m\textbackslash{}\}, both nodes apply identical restrictions to the subgraph being evaluated. Therefore, deleting one of them will not change the assessment on the subgraph.\newline%
+\textbackslash{}end\{proof\}\newline%
+\newline%
+Essentially, m is a duplicate of n, but potentially with additional connected edges. A comparable outcome for the edges can be achieved:\newline%
+\newline%
+\textbackslash{}begin\{theorem\}\{\}\newline%
+Given a query Q, and two edges, e, e'∈ E\_Q, such that α(e)=α(e'), n\textbackslash{}stackrel \{e\}\{⟶\} m and n\textbackslash{}stackrel \{e'\}\{⟶\} m with n,m ∈ V\_Q⁺. If θₑ→ θ\_\{e'\} then e' is redundant in Q.\newline%
+\textbackslash{}end\{theorem\}\newline%
+\newline%
+\textbackslash{}begin\{proof\}\{\}\newline%
+\newline%
+Following the same reasoning as the previous theorem, if there are two edges, e and e', in E\_Q, which connect the same two nodes in a query and α(e)=α(e') and θₑ→ θ\_\{e'\}, the constraint imposed by e implies the constraint imposed by e'. Therefore, eliminating e' would maintain the set of matching subgraphs.\newline%
+\newline%
+\textbackslash{}end\{proof\}\newline%
+\newline%
+From these two findings, we can streamline the refinement sets that were established in section 10 by removing redundant elements in succession after cloning.\newline%
+\newline%
+Graph query examples\newline%
+\newline%
+For illustrative purposes, this section presents a series of queries on a toy graph dataset. Figure 11 illustrates a segment of the Starwars graph\textbackslash{}footnote\{http://console.neo4j.org/?id=StarWars\}.\newline%
+\newline%
+\textbackslash{}begin\{figure\}{[}h!{]}\newline%
+\textbackslash{}begin\{center\}\newline%
+\textbackslash{}includegraphics{[}width=\textbackslash{}columnwidth{]}\{png/FIG5.pdf\}\newline%
+\textbackslash{}end\{center\}\newline%
+\textbackslash{}caption\{Section of Starwars Graph\}\newline%
+\textbackslash{}end\{figure\}\newline%
+\newline%
+To streamline query and graph representation, we will convert τ, a property denoting node and edge types, into labels for edges or icons for nodes. Additionally, the node properties denoted by name will be written on them, and the undirected edges will be represented by bidirectional arrows. The property α will be represented directly on query elements using + / {-} symbols, and we will write the binary predicate θ directly on the elements (except for tautologies). When expressions such as τ (ρ)= X are in the predicate of an edge, X is written directly and interpreted as a regular expression to be verified by the sequence of τ properties of the links in the associated graph path.\newline%
+\newline%
+\textbackslash{}begin\{figure\}{[}h!{]}\newline%
+\textbackslash{}begin\{center\}\newline%
+\textbackslash{}includegraphics{[}width=\textbackslash{}columnwidth{]}\{png/PQG1.pdf\}\newline%
+\textbackslash{}end\{center\}\newline%
+\textbackslash{}caption\{Query 1\}\newline%
+\textbackslash{}end\{figure\}\newline%
+\newline%
+Query 1 (Figure 12) can be interpreted as follows: Two characters are connected by a TEACHES relationship, where the master is over 500 years old and both are devoted to the Jedi. This query utilizes structural constraints through the presence of edges and predicates with properties such as τ, name, and age. For example, in Figure 11, the subgraph comprising Yoda, Luke, and their TEACHES relationship satisfies this query.\newline%
+\newline%
+\textbackslash{}begin\{figure\}{[}h{]}\newline%
+\textbackslash{}begin\{center\}\newline%
+\textbackslash{}includegraphics{[}width=\textbackslash{}columnwidth{]}\{png/PQG3.pdf\}\newline%
+\textbackslash{}end\{center\}\newline%
+\textbackslash{}caption\{Query 2\}\newline%
+\textbackslash{}end\{figure\}\newline%
+\newline%
+Query 2 (Figure 13) outlines a cyclic query that utilises FRIENDS relationships. It will be verified on any subgraph containing three characters who are friends with each other (for example, the subgraph formed by Hans Solo, Chewbaka, Princess Leia and the FRIENDS relationships between them in Figure 11).\newline%
+\newline%
+\textbackslash{}begin\{figure\}{[}h{]}\newline%
+\textbackslash{}begin\{center\}\newline%
+\textbackslash{}includegraphics{[}width=\textbackslash{}columnwidth{]}\{png/PQG4.pdf\}\newline%
+\textbackslash{}end\{center\}\newline%
+\textbackslash{}caption\{Query 3\}\newline%
+\textbackslash{}end\{figure\}\newline%
+\newline%
+Query 3 (Figure 14) can be interpreted as follows: A character with more than 3 outgoing relationships, not belonging to the Sith clan, connected through a path consisting of any number of FRIENDS and TEACHES relationships with an individual from Alderaan. In this scenario, a regular expression has been employed to denote a path consisting of an unspecified amount of FRIENDS and TEACHES relationships. Additionally, an auxiliary function, grₛ(v) ∈ L, has been utilised to reference the outgoing degree of node v. This query will be validated by any subgraph that contains Luke or Obi Wan Kenobi.\newline%
+\newline%
+Computational complexity\newline%
+\newline%
+Query systems based on graph isomorphisms (most of the existing ones) face NP{-}complete complexity {[}3, 4{]}.\newline%
+\newline%
+The preceding section presented our graph query framework that is reliant on logical predicates. In this section, we will demonstrate that the assessment of queries is polynomial, even in the case of cyclic queries. This is achievable by imposing two constraints. First, the length of paths that are illustrated by links in the query is restricted by the constant k, and second, the complexity of the predicates used in nodes and edges is polynomial.\newline%
+\newline%
+To verify S⊧ Q, it is necessary to examine each predicate Qₙ(S) linked to all nodes n ∈ V\_Q. Furthermore, each predicate Qₙ(S) linked to a node in Q requires assessing one Qₑ(v,S) predicate for every link e∈γ\_Q(n). Thus, initially, we shall focus on evaluating the computational complexity linked with the link predicates Qₑ(v,S). Subsequently, we shall proceed to examine the complexity associated with the node predicates Qₙ(S). Ultimately, we shall exhibit that the query complexity is polynomial.\newline%
+\newline%
+As previously defined, the computational complexity of evaluating predicates attributed to both nodes and edges within a query Q is polynomial, denoted by 𝓞(p). The predicates Qₑ(v,S) related to edges in a query verify the existence of a path ρ in the graph G starting/ending in v that satisfies its own predicate θₑ (ρ, S) and with the source and destination nodes that satisfy the predicates θ\_\{eᵒ\} (ρᵒ, S) and θ\_\{eⁱ\} (ρⁱ, S) respectively. Thus, the complexity involved in evaluating a particular path is 𝓞(3p)= 𝓞(p).\newline%
+\newline%
+The computational complexity to verify the existence of a path beginning or ending at a node v in V, satisfying the aforementioned criteria, is 𝓞(p × |V|ᵏ). Here, |V|ᵏ denotes the number of paths that start or end at v under the condition that they are no longer than k in length. As the number of links commencing or ending at a node n ∈ V\_Q is bound by |E\_Q|, the computational complexity involved in the node predicate Qₙ(S) is 𝓞(p× |V|ᵏ × |E\_Q|).\newline%
+\newline%
+Finally, if the query consists of |V\_Q| nodes, the complexity of checking the query Q(S) is 𝓞(p× |V|ᵏ × |E\_Q| × |V\_Q|). It is evident that the constant k (path length bound) significantly impacts the execution of such queries, as it determines the exponent of the complexity.\newline%
+\newline%
+Efficient operation of a graph query framework is crucial when dealing with large{-}scale data sets that are commonly found in real{-}world applications. Notably, when such a system is employed as the kernel of relational machine learning algorithms, as we will demonstrate in the following section, the ability to perform query operations in polynomial time, even for cyclic queries, is fundamental.
+
+%
+\subsection{Resumen:}%
+\label{subsec:Resumen}%
+
+%
+\subsection{Evaluación:}%
+\label{subsec:Evaluacin}%
+
+%
+\clearpage%
+\section{Relational machine learning}%
+\label{sec:Relationalmachinelearning}%
+\subsection{Contenido:}%
+\label{subsec:Contenido}%
+In this section, we shall leverage the advantages of the framework presented to acquire relational classifiers on graph data sets. To elaborate, we shall initiate from a labelled subgraph set within a graph data set then develop a pattern search technique founded on information gain to obtain typical patterns for each subgraph class.\newline%
+\newline%
+Information{-}gain pattern mining\newline%
+\newline%
+To obtain characteristic patterns of subgraph classes using the previous graph query framework, a top{-}down decision tree induction will be conducted to explore the pattern space. Within the trees' internal nodes, graph queries will serve as test tools. The best refinement sets will be identified during the tree construction process, resulting in queries that define classes within the graph dataset.\newline%
+\newline%
+The training set, 𝓛, consists of pairs (Sᵢ, yᵢ), where Sᵢ denotes a subgraph of G and yᵢ represents its associated class. Every node n in the resulting decision tree is linked to:\newline%
+\newline%
+{-} a subset of the training set: 𝓛ₙ \textbackslash{}subseteq 𝓛,\newline%
+{-} a query Qₙ such that: ∀ S ∈ ₙ (S \textbackslash{}vDash Qₙ).\newline%
+\newline%
+The procedure for tree learning is standard: a tree is initialized comprising one node (the root) linked to the entire set of training, 𝓛. The initial query, Q₀, corresponds to all its constituents (∀ S ∈ 𝓛, S \textbackslash{}vDash Q₀). The subsequent stage involves determining which refinement set generates the maximum information gain while separating 𝓛, and applying it to Q₀. For each query in the refinement set, a corresponding child node is created, and 𝓛 samples are transmitted through it. A child with a matching associated query is guaranteed to exist since it is a refinement set of Q₀. The recursive process continues for each new node until a stop condition is met. At that point, the node becomes a leaf associated with a class. Note that the decision trees derived from this approach are not predominantly binary, unlike the prevalent trees in the literature.\newline%
+\newline%
+Relational tree learning examples\newline%
+\newline%
+Here, we introduce some practical instances to demonstrate the process of performing relational learning by using the query framework and refinement sets. The refinement operations will be as mentioned in Section 1. A critical factor is that all subgraphs in a decision node belong to the same class, which we require as the stopping condition. Initially, we will focus on node classification problems before proceeding to classify more intricate structures.\newline%
+\newline%
+Consider the small social network illustrated in Figure 2, portraying users and items in a graph. The objective is to classify the nodes based on the patterns extracted from the dataset.\newline%
+\newline%
+\textbackslash{}begin\{figure\}{[}h!{]}\newline%
+\textbackslash{}centering\newline%
+\textbackslash{}includegraphics{[}scale=0.6{]}\{png/FIG8.pdf\}\newline%
+\textbackslash{}caption\{Social Network toy\}\newline%
+\newline%
+\textbackslash{}end\{figure\}\newline%
+\newline%
+Beginning with a training set composed of all nodes in the graph, Figure 3 displays the relational decision tree acquired through the process elucidated in Section 4. Negative nodes/edges are identified with a cross, while nodes with predicate θ(v,S):= v ∈ S are larger and white in hue. This tree accurately assigns types (User A, User B, or Item) to all nodes in the graph by exploiting relational information from the network. Furthermore, on the leaves of the tree, distinctive patterns are acquired for each node type, which can be used to directly assess nodes and clarify future classifications.\newline%
+\newline%
+\textbackslash{}begin\{figure\}{[}h!{]}\newline%
+\textbackslash{}centering\newline%
+\textbackslash{}includegraphics{[}scale= 0.3{]}\{png/FIG6.pdf\}\newline%
+\textbackslash{}caption\{Node type classifier\}\newline%
+\newline%
+\textbackslash{}end\{figure\}\newline%
+\newline%
+Similarly, by utilizing each character node in the Star Wars toy graph (Figure 5) and the corresponding specie property as a training dataset, the relational decision tree shown in Figure 6 categorizes and explains each character's species in the graph. The leaf patterns of the tree characterize each species: human characters are born friends of Luke, while droids are unborn friends of Luke, wookies are those born in Kashyyk, etc.\newline%
+\newline%
+\textbackslash{}begin\{figure\}{[}htb{]}\newline%
+\textbackslash{}begin\{center\}\newline%
+\textbackslash{}includegraphics{[}scale=0.3{]}\{png/FIG7.pdf\}\newline%
+\textbackslash{}end\{center\}\newline%
+\textbackslash{}caption\{Character specie classifier\}\newline%
+\newline%
+\textbackslash{}end\{figure\}
+
+%
+\subsection{Resumen:}%
+\label{subsec:Resumen}%
+This section of the manuscript focuses on leveraging relational machine learning for graph data sets. The process begins with a labelled subgraph set within a graph data set, and develops a pattern search technique based on information gain to obtain typical patterns for each subgraph class. To achieve this, a top{-}down decision tree induction is conducted, where graph queries serve as test tools. The best refinement sets are identified during the tree construction process, resulting in queries that define classes within the graph dataset.\newline%
+\newline%
+The training set consists of pairs (Sᵢ, yᵢ), where Sᵢ denotes a subgraph of G and yᵢ represents its associated class. Each node n in the resulting decision tree is linked to a subset of the training set and a query Qₙ such that S ∈ ₙ (S \textbackslash{}vDash Qₙ). The procedure for tree learning follows standard tree construction methods, with initial queries corresponding to all constituents and subsequent stages involving determining which refinement sets generate maximum information gain while separating the training set.\newline%
+\newline%
+The section also provides practical examples of relational learning using the query framework and refinement sets, such as classifying nodes in a small social network and categorizing characters' species in the Star Wars toy graph. These examples demonstrate the effectiveness of the decision tree method for obtaining distinctive patterns that can be used to directly assess nodes and clarify future classifications.
+
+%
+\subsection{Evaluación:}%
+\label{subsec:Evaluacin}%
+\newline%
+Based on the provided section text, here is an evaluation of how well it fulfills each of the criteria for a good scientific research article within the technology domain:\newline%
+\newline%
+Motivation:\newline%
+\newline%
+* YES: The section clearly explains the study's significance and relevance. It justifies the problem's importance and its wider impacts, providing specific examples from the text.\newline%
+\newline%
+Novelty:\newline%
+\newline%
+* Can be improved: The section does not explicitly describe the proposed approach's novelty or originality. It would benefit from more explicit comparisons with related work and highlighting unique contributions.\newline%
+\newline%
+Clarity:\newline%
+\newline%
+* YES: The section is well{-}written and easy to understand, using appropriate terminology and avoiding ambiguity.\newline%
+\newline%
+Grammar and Style:\newline%
+\newline%
+* Can be improved: While the section is generally grammatically correct, there are some instances of awkward phrasing or word choice that could be improved for clarity and concision.\newline%
+\newline%
+Typos and Errors:\newline%
+\newline%
+* None found.\newline%
+\newline%
+Overall, the section provides a clear and well{-}motivated introduction to the proposed approach, but it could benefit from more explicit discussion of its novelty and unique contributions relative to existing work. Additionally, some minor improvements in grammar and style could help to enhance clarity and readability.
+
+%
+\clearpage%
+\section{Conclusions and future work}%
+\label{sec:Conclusionsandfuturework}%
+\subsection{Contenido:}%
+\label{subsec:Contenido}%
+The paper's main contribution lies in a novel framework for graph queries that permits the polynomial cyclic assessment of queries and refinements based on atomic operations. The framework's ability to apply refinements in relational learning processes was also demonstrated. In addition, the presented framework fulfils several essential requirements. The system utilises a consistent grammar for both queries and evaluated structures. It allows the assessment of subgraphs beyond individual nodes and supports cyclic queries within polynomial time (where the length of the query path is limited). The system offers a controlled and automated query construction via refinements, and the refinement sets constitute embedded partitions of the evaluated structure set, making them effective tools for top{-}down learning techniques.\newline%
+\newline%
+Graph isomorphism{-}based query systems exhibit exponential complexity when presented with cyclic queries. Additionally, if a projection is necessary for pattern verification, evaluating the non{-}existence of specific elements becomes difficult or even impossible. However, the query graph framework offered here assesses the existence/non{-}existence of paths and nodes in a graph rather than demanding isomorphisms, thus enabling the evaluation of cyclic patterns in polynomial time.\newline%
+\newline%
+After conducting an initial and fully functional proof{-}of{-}concept implementation, the graph query framework's capabilities have been demonstrated through experimentation. This methodology has been explicitly applied in relational learning procedures, as demonstrated in section 1, and the results of these experiments have shown that interesting patterns can be extracted from relational data. This is of great significance in both explainable learning and automatic feature extraction tasks. The results' graphs were obtained via our proof{-}of{-}concept implementation on a graph database and employing the matplotlib library {[}1{]}.\newline%
+\newline%
+Despite the presented query definition utilizing binary graph data sets (rather than hypergraphs), it can be implemented on hypergraph data as well. This is due to the fact that the concept of a path, which connects pairs of nodes, is independent of the edge arity involved. For the sake of simplicity, and due to the absence of true hypergraph databases, our queries have been limited to the binary case. Nevertheless, they can be adapted to more universal cases once the usage of hypergraphs becomes more widespread.\newline%
+\newline%
+Also, in Section 2, a basic and reliable set of refinement operations have been provided. However, they should not be considered the most suitable solution for all types of learning tasks. To achieve complex queries and to prevent plateaus in the pattern space, more complex refinement families can be established. For example, it is possible to combine the operations add edge and adding property to an edge into one step, thereby reducing the number of steps required. If executed properly, unifying the refinements based on the frequency of structural occurrences in a graph, for instance, can lead to faster versions of learning algorithms at the expense of covering a broader query space. This work provides theoretical tools to support the accuracy of new refinement families. Future research will focus on developing automated methods to generate refinement sets based on a given learning task and the specific characteristics of the graph dataset. Extracting statistics from the graph data for automatic generation of such sets can result in significant optimizations.\newline%
+\newline%
+It is concluded that it is feasible to establish effective techniques for matching graph patterns and learning symbolic relationships, resulting in systematic exploration of the pattern space, a high degree of expressiveness in queries and computational cost of implementations kept in reasonable orders.\newline%
+\newline%
+Patterns associated with the leaves in obtained decision trees can be used to characterize subgraph categories. Moreover, the path from the root node to the corresponding leaf of the decision tree for a particular input can be used to justify decisions, a beneficial feature in various sensitive applications as in decision trees. In addition, patterns obtained from the graph learning procedure presented can serve as features in other machine learning methods. Once the patterns have been acquired, they can serve as Boolean features for subgraph modeling, enabling non{-}relational machine learning methods to learn from them.\newline%
+\newline%
+Learning of relational decision trees can be utilised by ensemble methods (such as Random Forest), and although the explanatory power is diluted when multiple trees are combined, its predictive power can be greatly enhanced. Therefore, it is essential to investigate the probabilistic amalgamation of queries to generate patterns that can be interpreted as probabilistic decision tools.\newline%
+\newline%
+Furthermore, while a relational decision tree learning technique has been employed, additional machine learning algorithms can be evaluated alongside this query framework to investigate more opportunities for relational learning.
+
+%
+\subsection{Resumen:}%
+\label{subsec:Resumen}%
+The paper introduces a novel graph query framework that enables polynomial cyclic assessment of queries and refinements based on atomic operations, demonstrating its applicability in relational learning processes. The system utilizes consistent grammar for both queries and evaluated structures, allowing the assessment of subgraphs beyond individual nodes and supporting cyclic queries within polynomial time. The paper's proof{-}of{-}concept implementation has been demonstrated through experimentation, showcasing that interesting patterns can be extracted from relational data.\newline%
+\newline%
+The query definition utilizes binary graph data sets but can be adapted to hypergraph data once the usage of hypergraphs becomes more widespread. A basic and reliable set of refinement operations is provided in Section 2, with future research focusing on developing automated methods for generating refinement sets based on a given learning task and graph dataset's specific characteristics.\newline%
+\newline%
+The paper concludes that it is feasible to establish effective techniques for matching graph patterns and learning symbolic relationships, resulting in systematic exploration of the pattern space and high{-}degree expressiveness in queries with reasonable computational cost. Patterns obtained from graph learning can be used as features in other machine learning methods, enabling non{-}relational machine learning methods to learn from them.\newline%
+\newline%
+Future research will investigate ensemble methods for utilizing learning techniques and additional machine learning algorithms alongside the query framework, aiming to enhance predictive power and interpret patterns as probabilistic decision tools.
+
+%
+\subsection{Evaluación:}%
+\label{subsec:Evaluacin}%
+\newline%
+Based on the provided section, here is the evaluation:\newline%
+\newline%
+Motivation:\newline%
+\newline%
+* Clarity: The motivation section clearly explains the study's significance and relevance. The problem of efficiently querying graph data is well{-}justified, and the proposed approach's potential impact on explainable learning and automatic feature extraction tasks is highlighted. (Provide specific examples from the text.)\newline%
+\newline%
+Originality:\newline%
+\newline%
+* Novelty: The section clearly describes the proposed approach's novelty or originality. The framework's ability to assess cyclic queries in polynomial time and its potential for top{-}down learning techniques are highlighted. However, it could be improved by explicitly comparing with related work and highlighting unique contributions.\newline%
+\newline%
+Clarity:\newline%
+\newline%
+* Comprehension: The section is well{-}written and easy to understand. It uses appropriate terminology and avoids ambiguity. However, some complex sentences could be restructured for better clarity.\newline%
+\newline%
+Grammar and Style:\newline%
+\newline%
+* Correctness: The section is generally free of grammatical and stylistic errors. However, there are a few minor errors that could be corrected, such as missing articles and inconsistent capitalization.\newline%
+\newline%
+Typos and Errors:\newline%
+\newline%
+* Accuracy: There are no typos or other errors in the section.\newline%
+\newline%
+Overall, the motivation section provides a clear explanation of the study's significance and relevance, and it highlights the proposed approach's novelty and potential impact. However, there is room for improvement in terms of clarity and comparisons with related work.\newline%
+\newline%
+Evaluation Level: Must be Improved
+
+%
+\clearpage%
+\section{Acknowledgements}%
+\label{sec:Acknowledgements}%
+\subsection{Contenido:}%
+\label{subsec:Contenido}%
+\textbackslash{}vspace\{6pt\}\newline%
+\newline%
+\textbackslash{}funding\{Proyecto PID2019{-}109152G financiado por MCIN/AEI/10.13039/501100011033\}\newline%
+\newline%
+\textbackslash{}acknowledgments\{DISARM project {-} Grant n. PDC2021{-}121197, and the HORUS project {-} Grant n. PID2021{-}126359OB{-}I00 funded by MCIN/AEI/310.13039/501100011033 and by the “European Union NextGenerationEU/PRTR”\}\newline%
+\newline%
+\textbackslash{}begin\{adjustwidth\}\{{-}\textbackslash{}extralength\}\{0cm\}\newline%
+\newline%
+\textbackslash{}reftitle\{References\}\newline%
+\newline%
+\textbackslash{}begin\{thebibliography\}\{31\}\newline%
+\textbackslash{}expandafter\textbackslash{}ifx\textbackslash{}csname natexlab\textbackslash{}endcsname\textbackslash{}relax\textbackslash{}fi\newline%
+\textbackslash{}providecommand\{\textbackslash{}url\}{[}1{]}\{\#1\}\newline%
+\textbackslash{}providecommand\{\textbackslash{}href\}{[}2{]}\{\#2\}\newline%
+\textbackslash{}providecommand\{\textbackslash{}path\}{[}1{]}\{\#1\}\newline%
+\textbackslash{}providecommand\{\textbackslash{}DOIprefix\}\{doi:\}\newline%
+\textbackslash{}providecommand\{\textbackslash{}ArXivprefix\}\{arXiv:\}\newline%
+\textbackslash{}providecommand\{\textbackslash{}URLprefix\}\{URL: \}\newline%
+\textbackslash{}providecommand\{\textbackslash{}Pubmedprefix\}\{pmid:\}\newline%
+\textbackslash{}providecommand\{\textbackslash{}doi\}{[}1{]}\{\textbackslash{}href\{http://dx.doi.org/\#1\}\{\textbackslash{}path\{\#1\}\}\}\newline%
+\textbackslash{}providecommand\{\textbackslash{}Pubmed\}{[}1{]}\{\textbackslash{}href\{pmid:\#1\}\{\textbackslash{}path\{\#1\}\}\}\newline%
+\textbackslash{}providecommand\{\textbackslash{}bibinfo\}{[}2{]}\{\#2\}\newline%
+\textbackslash{}ifx\textbackslash{}xfnm\textbackslash{}relax \textbackslash{}fi\newline%
+\textbackslash{}bibitem{[}\{Almagro\{{-}\}Blanco \&\newline%
+Sancho\{{-}\}Caparrini(2017)\}{]}\{DBLP:journals/corr/abs{-}1708{-}03734\}\newline%
+\textbackslash{}bibinfo\{author\}\{Almagro\{{-}\}Blanco, P.\}, \& \textbackslash{}bibinfo\{author\}\{Sancho\{{-}\}Caparrini,\newline%
+F.\} (\textbackslash{}bibinfo\{year\}\{2017\}).\newline%
+\textbackslash{}newblock \textbackslash{}bibinfo\{title\}\{Generalized graph pattern matching\}.\newline%
+\textbackslash{}newblock \{\textbackslash{}it \textbackslash{}bibinfo\{journal\}\{CoRR\}\textbackslash{}/\}, \{\textbackslash{}it\newline%
+\textbackslash{}bibinfo\{volume\}\{abs/1708.03734\}\textbackslash{}/\}. \textbackslash{}URLprefix\newline%
+\textbackslash{}url\{http://arxiv.org/abs/1708.03734\}.\newline%
+\textbackslash{}href\{http://arxiv.org/abs/1708.03734\}\{\textbackslash{}tt arXiv:1708.03734\}.\newline%
+\textbackslash{}bibitem{[}\{Barcel\{\textbackslash{}'o\} et al.(2011)Barcel\{\textbackslash{}'o\}, Libkin \& Reutter\}{]}\{Barcelo\}\newline%
+\textbackslash{}bibinfo\{author\}\{Barcel\{\textbackslash{}'o\}, P.\}, \textbackslash{}bibinfo\{author\}\{Libkin, L.\}, \&\newline%
+\textbackslash{}bibinfo\{author\}\{Reutter, J. L.\} (\textbackslash{}bibinfo\{year\}\{2011\}).\newline%
+\textbackslash{}newblock \textbackslash{}bibinfo\{title\}\{Querying graph patterns\}.\newline%
+\textbackslash{}newblock In \{\textbackslash{}it \textbackslash{}bibinfo\{booktitle\}\{Proceedings of the Thirtieth ACM\newline%
+SIGMOD{-}SIGACT{-}SIGART Symposium on Principles of Database Systems\}\textbackslash{}/\} PODS '11\newline%
+(pp. \textbackslash{}bibinfo\{pages\}\{199–210\}).\newline%
+\textbackslash{}newblock \textbackslash{}bibinfo\{address\}\{New York, NY, USA\}: \textbackslash{}bibinfo\{publisher\}\{ACM\}.\newline%
+\textbackslash{}newblock \textbackslash{}URLprefix \textbackslash{}url\{http://doi.acm.org/10.1145/1989284.1989307\}.\newline%
+\textbackslash{}DOIprefix\textbackslash{}doi\{10.1145/1989284.1989307\}.\newline%
+\textbackslash{}bibitem{[}\{Blockeel \& Raedt(1998)\}{]}\{BLOCKEEL1998285\}\newline%
+\textbackslash{}bibinfo\{author\}\{Blockeel, H.\}, \& \textbackslash{}bibinfo\{author\}\{Raedt, L. D.\}\newline%
+(\textbackslash{}bibinfo\{year\}\{1998\}).\newline%
+\textbackslash{}newblock \textbackslash{}bibinfo\{title\}\{Top{-}down induction of first{-}order logical decision\newline%
+trees\}.\newline%
+\textbackslash{}newblock \{\textbackslash{}it \textbackslash{}bibinfo\{journal\}\{Artificial Intelligence\}\textbackslash{}/\}, \{\textbackslash{}it\newline%
+\textbackslash{}bibinfo\{volume\}\{101\}\textbackslash{}/\}, \textbackslash{}bibinfo\{pages\}\{285–297\}. \textbackslash{}URLprefix\newline%
+\textbackslash{}url\{http://www.sciencedirect.com/science/article/pii/S0004370298000344\}.\newline%
+\textbackslash{}DOIprefix\textbackslash{}doi\{10.1016/S0004{-}3702(98)00034{-}4\}.\newline%
+\newline%
+\textbackslash{}bibitem{[}\{Bonifati, Angela and Fletcher, George and Voigt, Hannes and Yakovets, Nikolay and Jagadish, H. V.\}{]}\{Bonifati\}\newline%
+\textbackslash{}bibinfo\{author\}\{Bonifati, A.\} \textbackslash{}bibinfo\{author\}\{Fletcher, G.\}\textbackslash{}bibinfo\{author\}\{Voigt, H.\}\textbackslash{}bibinfo\{author\}\{Yakovets, N.\}\textbackslash{}bibinfo\{author\}\{Jagadish, H. V.\} (\textbackslash{}bibinfo\{year\}\{2018\}\newline%
+\textbackslash{}newblock \textbackslash{}bibinfo\{title\}\{Querying Graphs\}\newline%
+\textbackslash{}newblock \textbackslash{}bibinfo\{publisher\}\{Morgan \& Claypool Publishers\}\newline%
+\newline%
+\textbackslash{}bibitem{[}\{Bordes et al.(2013)Bordes, Usunier, Garcia{-}Duran, Weston \&\newline%
+Yakhnenko\}{]}\{transe\}\newline%
+\textbackslash{}bibinfo\{author\}\{Bordes, A.\}, \textbackslash{}bibinfo\{author\}\{Usunier, N.\},\newline%
+\textbackslash{}bibinfo\{author\}\{Garcia{-}Duran, A.\}, \textbackslash{}bibinfo\{author\}\{Weston, J.\}, \&\newline%
+\textbackslash{}bibinfo\{author\}\{Yakhnenko, O.\} (\textbackslash{}bibinfo\{year\}\{2013\}).\newline%
+\textbackslash{}newblock \textbackslash{}bibinfo\{title\}\{Translating embeddings for modeling multi{-}relational\newline%
+data\}.\newline%
+\textbackslash{}newblock In \textbackslash{}bibinfo\{editor\}\{C. J. C. Burges\}, \textbackslash{}bibinfo\{editor\}\{L. Bottou\},\newline%
+\textbackslash{}bibinfo\{editor\}\{M. Welling\}, \textbackslash{}bibinfo\{editor\}\{Z. Ghahramani\}, \&\newline%
+\textbackslash{}bibinfo\{editor\}\{K. Q. Weinberger\} (Eds.), \{\textbackslash{}it \textbackslash{}bibinfo\{booktitle\}\{Advances\newline%
+in Neural Information Processing Systems 26\}\textbackslash{}/\} (pp.\newline%
+\textbackslash{}bibinfo\{pages\}\{2787–2795\}).\newline%
+\textbackslash{}newblock \textbackslash{}bibinfo\{publisher\}\{Curran Associates, Inc.\}\newline%
+\textbackslash{}newblock \textbackslash{}URLprefix\newline%
+\textbackslash{}url\{http://papers.nips.cc/paper/5071{-}translating{-}embeddings{-}for{-}modeling{-}multi{-}relational{-}data.pdf\}.\newline%
+\newline%
+\textbackslash{}bibitem{[}\{Brynjolfsson \& Mitchell(2017)\}{]}\{brynjolfsson2017can\}\newline%
+\textbackslash{}bibinfo\{author\}\{Brynjolfsson, E.\}, \& \textbackslash{}bibinfo\{author\}\{Mitchell, T.\}\newline%
+(\textbackslash{}bibinfo\{year\}\{2017\}).\newline%
+\textbackslash{}newblock \textbackslash{}bibinfo\{title\}\{What can machine learning do? workforce\newline%
+implications\}.\newline%
+\textbackslash{}newblock \{\textbackslash{}it \textbackslash{}bibinfo\{journal\}\{Science\}\textbackslash{}/\}, \{\textbackslash{}it \textbackslash{}bibinfo\{volume\}\{358\}\textbackslash{}/\},\newline%
+\textbackslash{}bibinfo\{pages\}\{1530–1534\}.\newline%
+\textbackslash{}bibitem{[}\{Camacho et al.(2011)Camacho, Pereira, Costa, Fonseca, Adriano,\newline%
+Sim\{ o\}es \& Brito\}{]}\{camacho2011relational\}\newline%
+\textbackslash{}bibinfo\{author\}\{Camacho, R.\}, \textbackslash{}bibinfo\{author\}\{Pereira, M.\},\newline%
+\textbackslash{}bibinfo\{author\}\{Costa, V. S.\}, \textbackslash{}bibinfo\{author\}\{Fonseca, N. A.\},\newline%
+\textbackslash{}bibinfo\{author\}\{Adriano, C.\}, \textbackslash{}bibinfo\{author\}\{Sim\{ o\}es, C. J.\}, \&\newline%
+\textbackslash{}bibinfo\{author\}\{Brito, R. M.\} (\textbackslash{}bibinfo\{year\}\{2011\}).\newline%
+\textbackslash{}newblock \textbackslash{}bibinfo\{title\}\{A relational learning approach to structure{-}activity\newline%
+relationships in drug design toxicity studies\}.\newline%
+\textbackslash{}newblock \{\textbackslash{}it \textbackslash{}bibinfo\{journal\}\{Journal of integrative bioinformatics\}\textbackslash{}/\},\newline%
+\{\textbackslash{}it \textbackslash{}bibinfo\{volume\}\{8\}\textbackslash{}/\}, \textbackslash{}bibinfo\{pages\}\{176–194\}.\newline%
+\textbackslash{}bibitem{[}\{Chang et al.(2014)Chang, Yih, Yang \& Meek\}{]}\{typed\}\newline%
+\textbackslash{}bibinfo\{author\}\{Chang, K.{-}W.\}, \textbackslash{}bibinfo\{author\}\{Yih, S. W.{-}t.\},\newline%
+\textbackslash{}bibinfo\{author\}\{Yang, B.\}, \& \textbackslash{}bibinfo\{author\}\{Meek, C.\}\newline%
+(\textbackslash{}bibinfo\{year\}\{2014\}).\newline%
+\textbackslash{}newblock \textbackslash{}bibinfo\{title\}\{Typed tensor decomposition of knowledge bases for\newline%
+relation extraction\}.\newline%
+\textbackslash{}newblock In \{\textbackslash{}it \textbackslash{}bibinfo\{booktitle\}\{Proceedings of the 2014 Conference on\newline%
+Empirical Methods in Natural Language Processing\}\textbackslash{}/\}.\newline%
+\textbackslash{}newblock \textbackslash{}bibinfo\{publisher\}\{ACL – Association for Computational\newline%
+Linguistics\}.\newline%
+\textbackslash{}newblock \textbackslash{}URLprefix\newline%
+\textbackslash{}url\{https://www.microsoft.com/en{-}us/research/publication/typed{-}tensor{-}decomposition{-}of{-}knowledge{-}bases{-}for{-}relation{-}extraction/\}.\newline%
+\textbackslash{}bibitem{[}\{Consens \& Mendelzon(1990)\}{]}\{graphlog\}\newline%
+\textbackslash{}bibinfo\{author\}\{Consens, M. P.\}, \& \textbackslash{}bibinfo\{author\}\{Mendelzon, A. O.\}\newline%
+(\textbackslash{}bibinfo\{year\}\{1990\}).\newline%
+\textbackslash{}newblock \textbackslash{}bibinfo\{title\}\{Graphlog: A visual formalism for real life\newline%
+recursion\}.\newline%
+\textbackslash{}newblock In \{\textbackslash{}it \textbackslash{}bibinfo\{booktitle\}\{Proceedings of the Ninth ACM\newline%
+SIGACT{-}SIGMOD{-}SIGART Symposium on Principles of Database Systems\}\textbackslash{}/\} PODS '90\newline%
+(pp. \textbackslash{}bibinfo\{pages\}\{404–416\}).\newline%
+\textbackslash{}newblock \textbackslash{}bibinfo\{address\}\{New York, NY, USA\}: \textbackslash{}bibinfo\{publisher\}\{ACM\}.\newline%
+\textbackslash{}newblock \textbackslash{}URLprefix \textbackslash{}url\{http://doi.acm.org/10.1145/298514.298591\}.\newline%
+\textbackslash{}DOIprefix\textbackslash{}doi\{10.1145/298514.298591\}.\newline%
+\textbackslash{}bibitem{[}\{Cook(1971)\}{]}\{Cook:1971:CTP:800157.805047\}\newline%
+\textbackslash{}bibinfo\{author\}\{Cook, S. A.\} (\textbackslash{}bibinfo\{year\}\{1971\}).\newline%
+\textbackslash{}newblock \textbackslash{}bibinfo\{title\}\{The complexity of theorem{-}proving procedures\}.\newline%
+\textbackslash{}newblock In \{\textbackslash{}it \textbackslash{}bibinfo\{booktitle\}\{Proceedings of the Third Annual ACM\newline%
+Symposium on Theory of Computing\}\textbackslash{}/\} STOC '71 (pp.\newline%
+\textbackslash{}bibinfo\{pages\}\{151–158\}).\newline%
+\textbackslash{}newblock \textbackslash{}bibinfo\{address\}\{New York, NY, USA\}: \textbackslash{}bibinfo\{publisher\}\{ACM\}.\newline%
+\textbackslash{}newblock \textbackslash{}URLprefix \textbackslash{}url\{http://doi.acm.org/10.1145/800157.805047\}.\newline%
+\textbackslash{}DOIprefix\textbackslash{}doi\{10.1145/800157.805047\}.\newline%
+\textbackslash{}bibitem{[}\{Dong et al.(2014)Dong, Gabrilovich, Heitz, Horn, Lao, Murphy,\newline%
+Strohmann, Sun \& Zhang\}{]}\{webscale\}\newline%
+\textbackslash{}bibinfo\{author\}\{Dong, X.\}, \textbackslash{}bibinfo\{author\}\{Gabrilovich, E.\},\newline%
+\textbackslash{}bibinfo\{author\}\{Heitz, G.\}, \textbackslash{}bibinfo\{author\}\{Horn, W.\},\newline%
+\textbackslash{}bibinfo\{author\}\{Lao, N.\}, \textbackslash{}bibinfo\{author\}\{Murphy, K.\},\newline%
+\textbackslash{}bibinfo\{author\}\{Strohmann, T.\}, \textbackslash{}bibinfo\{author\}\{Sun, S.\}, \&\newline%
+\textbackslash{}bibinfo\{author\}\{Zhang, W.\} (\textbackslash{}bibinfo\{year\}\{2014\}).\newline%
+\textbackslash{}newblock \textbackslash{}bibinfo\{title\}\{Knowledge vault: A web{-}scale approach to\newline%
+probabilistic knowledge fusion\}.\newline%
+\textbackslash{}newblock In \{\textbackslash{}it \textbackslash{}bibinfo\{booktitle\}\{Proceedings of the 20th ACM SIGKDD\newline%
+International Conference on Knowledge Discovery and Data Mining\}\textbackslash{}/\} KDD '14\newline%
+(pp. \textbackslash{}bibinfo\{pages\}\{601–610\}).\newline%
+\textbackslash{}newblock \textbackslash{}bibinfo\{address\}\{New York, NY, USA\}: \textbackslash{}bibinfo\{publisher\}\{ACM\}.\newline%
+\textbackslash{}newblock \textbackslash{}URLprefix \textbackslash{}url\{http://doi.acm.org/10.1145/2623330.2623623\}.\newline%
+\textbackslash{}DOIprefix\textbackslash{}doi\{10.1145/2623330.2623623\}.\newline%
+\textbackslash{}bibitem{[}\{Fan et al.(2010)Fan, Li, Ma, Tang, Wu \& Wu\}{]}\{Fan\}\newline%
+\textbackslash{}bibinfo\{author\}\{Fan, W.\}, \textbackslash{}bibinfo\{author\}\{Li, J.\}, \textbackslash{}bibinfo\{author\}\{Ma, S.\},\newline%
+\textbackslash{}bibinfo\{author\}\{Tang, N.\}, \textbackslash{}bibinfo\{author\}\{Wu, Y.\}, \& \textbackslash{}bibinfo\{author\}\{Wu,\newline%
+Y.\} (\textbackslash{}bibinfo\{year\}\{2010\}).\newline%
+\textbackslash{}newblock \textbackslash{}bibinfo\{title\}\{Graph pattern matching: From intractable to\newline%
+polynomial time\}.\newline%
+\textbackslash{}newblock \{\textbackslash{}it \textbackslash{}bibinfo\{journal\}\{Proc. VLDB Endow.\}\textbackslash{}/\}, \{\textbackslash{}it\newline%
+\textbackslash{}bibinfo\{volume\}\{3\}\textbackslash{}/\}, \textbackslash{}bibinfo\{pages\}\{264–275\}. \textbackslash{}URLprefix\newline%
+\textbackslash{}url\{http://dx.doi.org/10.14778/1920841.1920878\}.\newline%
+\textbackslash{}DOIprefix\textbackslash{}doi\{10.14778/1920841.1920878\}.\newline%
+\newline%
+\textbackslash{}bibitem{[}\{Gallagher(2006)\}{]}\{matching\}\newline%
+\textbackslash{}bibinfo\{author\}\{Gallagher, B.\} (\textbackslash{}bibinfo\{year\}\{2006\}).\newline%
+\textbackslash{}newblock \textbackslash{}bibinfo\{title\}\{Matching structure and semantics: A survey on\newline%
+graph{-}based pattern matching\}.\newline%
+\textbackslash{}newblock \{\textbackslash{}it \textbackslash{}bibinfo\{journal\}\{AAAI FS\}\textbackslash{}/\}, \{\textbackslash{}it \textbackslash{}bibinfo\{volume\}\{6\}\textbackslash{}/\},\newline%
+\textbackslash{}bibinfo\{pages\}\{45–53\}.\newline%
+\textbackslash{}bibitem{[}\{García{-}Jiménez et al.(2014)García{-}Jiménez, Pons, Sanchis \&\newline%
+Valencia\}{]}\{6802366\}\newline%
+\textbackslash{}bibinfo\{author\}\{García{-}Jiménez, B.\}, \textbackslash{}bibinfo\{author\}\{Pons, T.\},\newline%
+\textbackslash{}bibinfo\{author\}\{Sanchis, A.\}, \& \textbackslash{}bibinfo\{author\}\{Valencia, A.\}\newline%
+(\textbackslash{}bibinfo\{year\}\{2014\}).\newline%
+\textbackslash{}newblock \textbackslash{}bibinfo\{title\}\{Predicting protein relationships to human pathways\newline%
+through a relational learning approach based on simple sequence features\}.\newline%
+\textbackslash{}newblock \{\textbackslash{}it \textbackslash{}bibinfo\{journal\}\{IEEE/ACM Transactions on Computational Biology\newline%
+and Bioinformatics\}\textbackslash{}/\}, \{\textbackslash{}it \textbackslash{}bibinfo\{volume\}\{11\}\textbackslash{}/\},\newline%
+\textbackslash{}bibinfo\{pages\}\{753–765\}. \textbackslash{}DOIprefix\textbackslash{}doi\{10.1109/TCBB.2014.2318730\}.\newline%
+\textbackslash{}bibitem{[}\{Geamsakul et al.(2003)Geamsakul, Matsuda, Yoshida, Motoda \&\newline%
+Washio\}{]}\{Geamsakul2003\}\newline%
+\textbackslash{}bibinfo\{author\}\{Geamsakul, W.\}, \textbackslash{}bibinfo\{author\}\{Matsuda, T.\},\newline%
+\textbackslash{}bibinfo\{author\}\{Yoshida, T.\}, \textbackslash{}bibinfo\{author\}\{Motoda, H.\}, \&\newline%
+\textbackslash{}bibinfo\{author\}\{Washio, T.\} (\textbackslash{}bibinfo\{year\}\{2003\}).\newline%
+\textbackslash{}newblock \textbackslash{}bibinfo\{title\}\{Classifier construction by graph{-}based induction for\newline%
+graph{-}structured data\}.\newline%
+\textbackslash{}newblock In \textbackslash{}bibinfo\{editor\}\{K.{-}Y. Whang\}, \textbackslash{}bibinfo\{editor\}\{J. Jeon\},\newline%
+\textbackslash{}bibinfo\{editor\}\{K. Shim\}, \& \textbackslash{}bibinfo\{editor\}\{J. Srivastava\} (Eds.), \{\textbackslash{}it\newline%
+\textbackslash{}bibinfo\{booktitle\}\{Advances in Knowledge Discovery and Data Mining: 7th\newline%
+Pacific{-}Asia Conference, PAKDD 2003, Seoul, Korea, April 30 – May 2, 2003\newline%
+Proceedings\}\textbackslash{}/\} (pp. \textbackslash{}bibinfo\{pages\}\{52–62\}).\newline%
+\textbackslash{}newblock \textbackslash{}bibinfo\{address\}\{Berlin, Heidelberg\}: \textbackslash{}bibinfo\{publisher\}\{Springer\newline%
+Berlin Heidelberg\}.\newline%
+\textbackslash{}newblock \textbackslash{}URLprefix \textbackslash{}url\{http://dx.doi.org/10.1007/3{-}540{-}36175{-}8\_6\}.\newline%
+\textbackslash{}DOIprefix\textbackslash{}doi\{10.1007/3{-}540{-}36175{-}8\_6\}.\newline%
+\textbackslash{}bibitem{[}\{Gupta(2015)\}{]}\{gupta2015neo4j\}\newline%
+\textbackslash{}bibinfo\{author\}\{Gupta, S.\} (\textbackslash{}bibinfo\{year\}\{2015\}).\newline%
+\textbackslash{}newblock \{\textbackslash{}it \textbackslash{}bibinfo\{title\}\{Neo4j Essentials\}\textbackslash{}/\}.\newline%
+\textbackslash{}newblock Community experience distilled.\newline%
+\textbackslash{}newblock \textbackslash{}bibinfo\{publisher\}\{Packt Publishing\}.\newline%
+\textbackslash{}newblock \textbackslash{}URLprefix \textbackslash{}url\{https://books.google.es/books?id=WJ7NBgAAQBAJ\}.\newline%
+\textbackslash{}bibitem\{de\_raedt\_2021\}\newline%
+Luc De Raedt, Sebastijan Duman\textbackslash{}v\{c\}i\textbackslash{}'\{c\}, Robin Manhaeve, Giuseppe Marra.\newline%
+From Statistical Relational to Neural{-}Symbolic Artificial Intelligence.\newline%
+In Proceedings of the Twenty{-}Ninth International Joint Conference on Artificial Intelligence (IJCAI'20), 2021.\newline%
+ISBN: 9780999241165.\newline%
+Article No.: 688.\newline%
+Pages: 8.\newline%
+Yokohama, Japan.\newline%
+\textbackslash{}bibitem{[}\{Henzinger et al.(1995)Henzinger, Henzinger \&\newline%
+Kopke\}{]}\{henzinger1995computing\}\newline%
+\textbackslash{}bibinfo\{author\}\{Henzinger, M. R.\}, \textbackslash{}bibinfo\{author\}\{Henzinger, T. A.\}, \&\newline%
+\textbackslash{}bibinfo\{author\}\{Kopke, P. W.\} (\textbackslash{}bibinfo\{year\}\{1995\}).\newline%
+\textbackslash{}newblock \textbackslash{}bibinfo\{title\}\{Computing simulations on finite and infinite graphs\}.\newline%
+\textbackslash{}newblock In \{\textbackslash{}it \textbackslash{}bibinfo\{booktitle\}\{Foundations of Computer Science, 1995.\newline%
+Proceedings., 36th Annual Symposium on\}\textbackslash{}/\} (pp. \textbackslash{}bibinfo\{pages\}\{453–462\}).\newline%
+\textbackslash{}newblock \textbackslash{}bibinfo\{organization\}\{IEEE\}.\newline%
+\textbackslash{}bibitem{[}\{Jacob et al.(2014)Jacob, Denoyer \&\newline%
+Gallinari\}{]}\{Jacob:2014:LLR:2556195.2556225\}\newline%
+\textbackslash{}bibinfo\{author\}\{Jacob, Y.\}, \textbackslash{}bibinfo\{author\}\{Denoyer, L.\}, \&\newline%
+\textbackslash{}bibinfo\{author\}\{Gallinari, P.\} (\textbackslash{}bibinfo\{year\}\{2014\}).\newline%
+\textbackslash{}newblock \textbackslash{}bibinfo\{title\}\{Learning latent representations of nodes for\newline%
+classifying in heterogeneous social networks\}.\newline%
+\textbackslash{}newblock In \{\textbackslash{}it \textbackslash{}bibinfo\{booktitle\}\{Proceedings of the 7th ACM International\newline%
+Conference on Web Search and Data Mining\}\textbackslash{}/\} WSDM '14 (pp.\newline%
+\textbackslash{}bibinfo\{pages\}\{373–382\}).\newline%
+\textbackslash{}newblock \textbackslash{}bibinfo\{address\}\{New York, NY, USA\}: \textbackslash{}bibinfo\{publisher\}\{ACM\}.\newline%
+\textbackslash{}newblock \textbackslash{}URLprefix \textbackslash{}url\{http://doi.acm.org/10.1145/2556195.2556225\}.\newline%
+\textbackslash{}DOIprefix\textbackslash{}doi\{10.1145/2556195.2556225\}.\newline%
+\textbackslash{}bibitem{[}\{Jiang(2011)\}{]}\{10.1007/978{-}3{-}642{-}23038{-}7\_12\}\newline%
+\textbackslash{}bibinfo\{author\}\{Jiang, J. Q.\} (\textbackslash{}bibinfo\{year\}\{2011\}).\newline%
+\textbackslash{}newblock \textbackslash{}bibinfo\{title\}\{Learning protein functions from bi{-}relational graph\newline%
+of proteins and function annotations\}.\newline%
+\textbackslash{}newblock In \textbackslash{}bibinfo\{editor\}\{T. M. Przytycka\}, \& \textbackslash{}bibinfo\{editor\}\{M.{-}F.\newline%
+Sagot\} (Eds.), \{\textbackslash{}it \textbackslash{}bibinfo\{booktitle\}\{Algorithms in Bioinformatics\}\textbackslash{}/\} (pp.\newline%
+\textbackslash{}bibinfo\{pages\}\{128–138\}).\newline%
+\textbackslash{}newblock \textbackslash{}bibinfo\{address\}\{Berlin, Heidelberg\}: \textbackslash{}bibinfo\{publisher\}\{Springer\newline%
+Berlin Heidelberg\}.\newline%
+\newline%
+\textbackslash{}bibitem{[}\{Hunter(2007\}{]}\{hunter\}\newline%
+\textbackslash{}bibinfo\{author\}\{Hunter, J. D.\} (\textbackslash{}bibinfo\{year\}\{2007\}).\newline%
+\textbackslash{}newblock \textbackslash{}bibinfo\{title\}\{Matplotlib: A 2D Graphics Environment\}.\newline%
+\textbackslash{}newblock \{\textbackslash{}it \textbackslash{}bibinfo\{journal\}\{Computing in Science \& Engineering\}\textbackslash{}/\}, \{\textbackslash{}it \textbackslash{}bibinfo\{volume\}\{9\}\textbackslash{}/\},\newline%
+\textbackslash{}bibinfo\{pages\}\{3\}.\newline%
+\textbackslash{}bibitem{[}\{Karp(1975)\}{]}\{karp1975computational\}\newline%
+\textbackslash{}bibinfo\{author\}\{Karp, R. M.\} (\textbackslash{}bibinfo\{year\}\{1975\}).\newline%
+\textbackslash{}newblock \textbackslash{}bibinfo\{title\}\{On the computational complexity of combinatorial\newline%
+problems\}.\newline%
+\textbackslash{}newblock \{\textbackslash{}it \textbackslash{}bibinfo\{journal\}\{Networks\}\textbackslash{}/\}, \{\textbackslash{}it \textbackslash{}bibinfo\{volume\}\{5\}\textbackslash{}/\},\newline%
+\textbackslash{}bibinfo\{pages\}\{45–68\}.\newline%
+\textbackslash{}bibitem{[}\{Knobbe et al.(1999)Knobbe, Siebes, Wallen \& \{Syllogic\newline%
+B.\}\}{]}\{Knobbe99multi{-}relationaldecision\}\newline%
+\textbackslash{}bibinfo\{author\}\{Knobbe, A. J.\}, \textbackslash{}bibinfo\{author\}\{Siebes, A.\},\newline%
+\textbackslash{}bibinfo\{author\}\{Wallen, D. V. D.\}, \& \textbackslash{}bibinfo\{author\}\{\{Syllogic B.\}, V.\}\newline%
+(\textbackslash{}bibinfo\{year\}\{1999\}).\newline%
+\textbackslash{}newblock \textbackslash{}bibinfo\{title\}\{Multi{-}relational decision tree induction\}.\newline%
+\textbackslash{}newblock In \{\textbackslash{}it \textbackslash{}bibinfo\{booktitle\}\{In Proceedings of PKDD\{\textbackslash{}rq\} 99, Prague,\newline%
+Czech Republic, Septembre\}\textbackslash{}/\} (pp. \textbackslash{}bibinfo\{pages\}\{378–383\}).\newline%
+\textbackslash{}newblock \textbackslash{}bibinfo\{publisher\}\{Springer\}.\newline%
+\textbackslash{}bibitem{[}\{Latouche \& Rossi(2015)\}{]}\{latouche2015graphs\}\newline%
+\textbackslash{}bibinfo\{author\}\{Latouche, P.\}, \& \textbackslash{}bibinfo\{author\}\{Rossi, F.\}\newline%
+(\textbackslash{}bibinfo\{year\}\{2015\}).\newline%
+\textbackslash{}newblock \textbackslash{}bibinfo\{title\}\{Graphs in machine learning: an introduction\}.\newline%
+\textbackslash{}bibitem{[}\{Leiva et al.(2002)Leiva, Gadia \& Dobbs\}{]}\{Leiva02mrdtl:a\}\newline%
+\textbackslash{}bibinfo\{author\}\{Leiva, H. A.\}, \textbackslash{}bibinfo\{author\}\{Gadia, S.\}, \&\newline%
+\textbackslash{}bibinfo\{author\}\{Dobbs, D.\} (\textbackslash{}bibinfo\{year\}\{2002\}).\newline%
+\textbackslash{}newblock \textbackslash{}bibinfo\{title\}\{Mrdtl: A multi{-}relational decision tree learning\newline%
+algorithm\}.\newline%
+\textbackslash{}newblock In \{\textbackslash{}it \textbackslash{}bibinfo\{booktitle\}\{Proceedings of the 13th International\newline%
+Conference on Inductive Logic Programming (ILP 2003\}\textbackslash{}/\} (pp.\newline%
+\textbackslash{}bibinfo\{pages\}\{38–56\}).\newline%
+\textbackslash{}newblock \textbackslash{}bibinfo\{publisher\}\{Springer{-}Verlag\}.\newline%
+\textbackslash{}bibitem{[}\{Milner(1989)\}{]}\{Milner\}\newline%
+\textbackslash{}bibinfo\{author\}\{Milner, R.\} (\textbackslash{}bibinfo\{year\}\{1989\}).\newline%
+\textbackslash{}newblock \{\textbackslash{}it \textbackslash{}bibinfo\{title\}\{Communication and Concurrency\}\textbackslash{}/\}.\newline%
+\textbackslash{}newblock \textbackslash{}bibinfo\{address\}\{Upper Saddle River, NJ, USA\}:\newline%
+\textbackslash{}bibinfo\{publisher\}\{Prentice{-}Hall, Inc.\}\newline%
+\textbackslash{}bibitem{[}\{Nguyen et al.(2005)Nguyen, Ohara, Motoda \& Washio\}{]}\{Nguyen2005\}\newline%
+\textbackslash{}bibinfo\{author\}\{Nguyen, P. C.\}, \textbackslash{}bibinfo\{author\}\{Ohara, K.\},\newline%
+\textbackslash{}bibinfo\{author\}\{Motoda, H.\}, \& \textbackslash{}bibinfo\{author\}\{Washio, T.\}\newline%
+(\textbackslash{}bibinfo\{year\}\{2005\}).\newline%
+\textbackslash{}newblock \textbackslash{}bibinfo\{title\}\{Cl{-}gbi: A novel approach for extracting typical\newline%
+patterns from graph{-}structured data\}.\newline%
+\textbackslash{}newblock In \textbackslash{}bibinfo\{editor\}\{T. B. Ho\}, \textbackslash{}bibinfo\{editor\}\{D. Cheung\}, \&\newline%
+\textbackslash{}bibinfo\{editor\}\{H. Liu\} (Eds.), \{\textbackslash{}it \textbackslash{}bibinfo\{booktitle\}\{Advances in\newline%
+Knowledge Discovery and Data Mining: 9th Pacific{-}Asia Conference, PAKDD 2005,\newline%
+Hanoi, Vietnam, May 18{-}20, 2005. Proceedings\}\textbackslash{}/\} (pp.\newline%
+\textbackslash{}bibinfo\{pages\}\{639–649\}).\newline%
+\textbackslash{}newblock \textbackslash{}bibinfo\{address\}\{Berlin, Heidelberg\}: \textbackslash{}bibinfo\{publisher\}\{Springer\newline%
+Berlin Heidelberg\}.\newline%
+\textbackslash{}newblock \textbackslash{}URLprefix \textbackslash{}url\{http://dx.doi.org/10.1007/11430919\_74\}.\newline%
+\textbackslash{}DOIprefix\textbackslash{}doi\{10.1007/11430919\_74\}.\newline%
+\textbackslash{}bibitem\{fan\_2012\}\newline%
+Wenfei Fan.\newline%
+Graph Pattern Matching Revised for Social Network Analysis.\newline%
+In Proceedings of the 15th International Conference on Database Theory (ICDT '12), 2012.\newline%
+ISBN: 9781450307918.\newline%
+Publisher: Association for Computing Machinery.\newline%
+Address: New York, NY, USA.\newline%
+Pages: 8–21.\newline%
+Num. Pages: 14.\newline%
+Location: Berlin, Germany.\newline%
+DOI: \textbackslash{}href\{https://doi.org/10.1145/2274576.2274578\}\{10.1145/2274576.2274578\}.\newline%
+\newline%
+\textbackslash{}bibitem\{wang2020nodeaug\}\newline%
+Yiwei Wang, Wei Wang, Yuxuan Liang, Yujun Cai, Juncheng Liu, Bryan Hooi.\newline%
+NodeAug: Semi{-}Supervised Node Classification with Data Augmentation.\newline%
+En Proceedings of the 26th ACM SIGKDD International Conference on Knowledge Discovery \& Data Mining (KDD '20), 2020, páginas 207–217.\newline%
+DOI: \textbackslash{}url\{https://doi.org/10.1145/3394486.3403063\}.\newline%
+\newline%
+\textbackslash{}bibitem\{kazemi2018relational\}\newline%
+Seyed Mehran Kazemi and David Poole.\newline%
+RelNN: A Deep Neural Model for Relational Learning.\newline%
+In Proceedings of the Thirty{-}Second AAAI Conference on Artificial Intelligence (AAAI{-}18), University of British Columbia, Vancouver, Canada, 2018.\newline%
+Email: smkazemi@cs.ubc.ca, poole@cs.ubc.ca.\newline%
+\newline%
+\textbackslash{}bibitem\{pacheco2021modeling\}\newline%
+Maria Leonor Pacheco and Dan Goldwasser.\newline%
+Modeling Content and Context with Deep Relational Learning.\newline%
+Transactions of the Association for Computational Linguistics, 2021; 9, 100–119.\newline%
+DOI: \textbackslash{}url\{https://doi.org/10.1162/tacl\_a\_00357\}.\newline%
+\newline%
+\textbackslash{}bibitem\{ahmed2023adalnn\}\newline%
+K. Ahmed, A. Altaf, N.S.M. Jamail, F. Iqbal, R. Latif.\newline%
+ADAL{-}NN: Anomaly Detection and Localization Using Deep Relational Learning in Distributed Systems.\newline%
+Applied Sciences, 2023, 13, 7297.\newline%
+DOI: \textbackslash{}url\{https://doi.org/10.3390/app13127297\}.\newline%
+\newline%
+\textbackslash{}bibitem\{zhou2020graph\}\newline%
+Jie Zhou, Ganqu Cui, Zhengyan Zhang, Cheng Yang, Zhiyuan Liu, Maosong Sun.\newline%
+Graph Neural Networks: A Review of Methods and Applications.\newline%
+AI open, 2020, 1, 57{-}81.\newline%
+\newline%
+\textbackslash{}bibitem\{wu2022graph\}\newline%
+Lingfei Wu, Peng Cui, Jian Pei, Liang Zhao, Xiaojie Guo.\newline%
+Graph Neural Networks: Foundation, Frontiers and Applications.\newline%
+En Proceedings of the 28th ACM SIGKDD Conference on Knowledge Discovery and Data Mining (KDD '22), 2022, páginas 4840–4841.\newline%
+DOI: \textbackslash{}url\{https://doi.org/10.1145/3534678.3542609\}.\newline%
+\newline%
+\textbackslash{}bibitem{[}\{Nickel et al.(2016)Nickel, Murphy, Tresp \&\newline%
+Gabrilovich\}{]}\{nickel2016review\}\newline%
+\textbackslash{}bibinfo\{author\}\{Nickel, M.\}, \textbackslash{}bibinfo\{author\}\{Murphy, K.\},\newline%
+\textbackslash{}bibinfo\{author\}\{Tresp, V.\}, \& \textbackslash{}bibinfo\{author\}\{Gabrilovich, E.\}\newline%
+(\textbackslash{}bibinfo\{year\}\{2016\}).\newline%
+\textbackslash{}newblock \textbackslash{}bibinfo\{title\}\{A review of relational machine learning for knowledge\newline%
+graphs\}.\newline%
+\textbackslash{}newblock \{\textbackslash{}it \textbackslash{}bibinfo\{journal\}\{Proceedings of the IEEE\}\textbackslash{}/\}, \{\textbackslash{}it\newline%
+\textbackslash{}bibinfo\{volume\}\{104\}\textbackslash{}/\}, \textbackslash{}bibinfo\{pages\}\{11–33\}.\newline%
+\textbackslash{}bibitem{[}\{Lee(2023)\}{]}\{lee2023conditional\}\newline%
+\textbackslash{}bibinfo\{author\}\{Namkyeong L., Dongmin H., Gyoung S. Na, Sungwon K., Junseok L. and Chanyoung P.\} (\textbackslash{}bibinfo\{year\}\{2023\}).\newline%
+\textbackslash{}newblock \textbackslash{}bibinfo\{title\}\{Conditional Graph Information Bottleneck for Molecular Relational Learning\}.\newline%
+\textbackslash{}bibitem{[}\{Plotkin(1972)\}{]}\{plotkin1972automatic\}\newline%
+\textbackslash{}bibinfo\{author\}\{Plotkin, G.\} (\textbackslash{}bibinfo\{year\}\{1972\}).\newline%
+\textbackslash{}newblock \textbackslash{}bibinfo\{title\}\{Automatic methods of inductive inference\}.\newline%
+\textbackslash{}bibitem{[}\{van Rest et al.(2016)van Rest, Hong, Kim, Meng \&\newline%
+Chafi\}{]}\{van2016pgql\}\newline%
+\textbackslash{}bibinfo\{author\}\{van Rest, O.\}, \textbackslash{}bibinfo\{author\}\{Hong, S.\},\newline%
+\textbackslash{}bibinfo\{author\}\{Kim, J.\}, \textbackslash{}bibinfo\{author\}\{Meng, X.\}, \&\newline%
+\textbackslash{}bibinfo\{author\}\{Chafi, H.\} (\textbackslash{}bibinfo\{year\}\{2016\}).\newline%
+\textbackslash{}newblock \textbackslash{}bibinfo\{title\}\{Pgql: a property graph query language\}.\newline%
+\textbackslash{}newblock In \{\textbackslash{}it \textbackslash{}bibinfo\{booktitle\}\{Proceedings of the Fourth International\newline%
+Workshop on Graph Data Management Experiences and Systems\}\textbackslash{}/\}\newline%
+(p. \textbackslash{}bibinfo\{pages\}\{7\}).\newline%
+\textbackslash{}newblock \textbackslash{}bibinfo\{organization\}\{ACM\}.\newline%
+\textbackslash{}bibitem{[}\{Reutter(2013)\}{]}\{phdthesis\}\newline%
+\textbackslash{}bibinfo\{author\}\{Reutter, J. L.\} (\textbackslash{}bibinfo\{year\}\{2013\}).\newline%
+\textbackslash{}newblock \{\textbackslash{}it \textbackslash{}bibinfo\{title\}\{Graph Patterns: Structure, Query Answering and\newline%
+Applications in Schema Mappings and Formal Language Theory\}\textbackslash{}/\}.\newline%
+\textbackslash{}newblock Ph.D. thesis\newline%
+\textbackslash{}bibinfo\{address\}\{Laboratory for Foundations of Computer Science School of\newline%
+Informatics University of Edinburgh\}.\newline%
+\textbackslash{}bibitem{[}\{Segaran et al.(2009)Segaran, Evans, Taylor, Toby, Colin \&\newline%
+Jamie\}{]}\{Segaran:2009:PSW:1696488\}\newline%
+\textbackslash{}bibinfo\{author\}\{Segaran, T.\}, \textbackslash{}bibinfo\{author\}\{Evans, C.\},\newline%
+\textbackslash{}bibinfo\{author\}\{Taylor, J.\}, \textbackslash{}bibinfo\{author\}\{Toby, S.\},\newline%
+\textbackslash{}bibinfo\{author\}\{Colin, E.\}, \& \textbackslash{}bibinfo\{author\}\{Jamie, T.\}\newline%
+(\textbackslash{}bibinfo\{year\}\{2009\}).\newline%
+\textbackslash{}newblock \{\textbackslash{}it \textbackslash{}bibinfo\{title\}\{Programming the Semantic Web\}\textbackslash{}/\}.\newline%
+\textbackslash{}newblock (\textbackslash{}bibinfo\{edition\}\{1st\} ed.).\newline%
+\textbackslash{}newblock \textbackslash{}bibinfo\{publisher\}\{O'Reilly Media, Inc.\}\newline%
+\textbackslash{}bibitem{[}\{Tang \& Liu(2009)\}{]}\{tang2009relational\}\newline%
+\textbackslash{}bibinfo\{author\}\{Tang, L.\}, \& \textbackslash{}bibinfo\{author\}\{Liu, H.\}\newline%
+(\textbackslash{}bibinfo\{year\}\{2009\}).\newline%
+\textbackslash{}newblock \textbackslash{}bibinfo\{title\}\{Relational learning via latent social dimensions\}.\newline%
+\textbackslash{}newblock In \{\textbackslash{}it \textbackslash{}bibinfo\{booktitle\}\{Proceedings of the 15th ACM SIGKDD\newline%
+international conference on Knowledge discovery and data mining\}\textbackslash{}/\} (pp.\newline%
+\textbackslash{}bibinfo\{pages\}\{817–826\}).\newline%
+\textbackslash{}newblock \textbackslash{}bibinfo\{organization\}\{ACM\}.\newline%
+\textbackslash{}bibitem{[}\{Zou et al.(2009)Zou, Chen \& \{\textbackslash{}"O\}zsu\}{]}\{distance{-}join\}\newline%
+\textbackslash{}bibinfo\{author\}\{Zou, L.\}, \textbackslash{}bibinfo\{author\}\{Chen, L.\}, \&\newline%
+\textbackslash{}bibinfo\{author\}\{\{\textbackslash{}"O\}zsu, M. T.\} (\textbackslash{}bibinfo\{year\}\{2009\}).\newline%
+\textbackslash{}newblock \textbackslash{}bibinfo\{title\}\{Distance{-}join: Pattern match query in a large graph\newline%
+database\}.\newline%
+\textbackslash{}newblock \{\textbackslash{}it \textbackslash{}bibinfo\{journal\}\{Proc. VLDB Endow.\}\textbackslash{}/\}, \{\textbackslash{}it\newline%
+\textbackslash{}bibinfo\{volume\}\{2\}\textbackslash{}/\}, \textbackslash{}bibinfo\{pages\}\{886–897\}. \textbackslash{}URLprefix\newline%
+\textbackslash{}url\{http://dx.doi.org/10.14778/1687627.1687727\}.\newline%
+\textbackslash{}DOIprefix\textbackslash{}doi\{10.14778/1687627.1687727\}.\newline%
+\newline%
+\textbackslash{}bibitem\{ma\_2014\}\newline%
+Shuai Ma, Yang Cao, Wenfei Fan, Jinpeng Huai, Tianyu Wo.\newline%
+Strong Simulation: Capturing Topology in Graph Pattern Matching.\newline%
+ACM Trans. Database Syst., January 2014, Volume 39, Number 1, Article No. 4.\newline%
+ISSN: 0362{-}5915.\newline%
+Publisher: Association for Computing Machinery.\newline%
+Address: New York, NY, USA.\newline%
+DOI: \textbackslash{}href\{https://doi.org/10.1145/2528937\}\{10.1145/2528937\}.\newline%
+Keywords: dual simulation, graph simulation, data locality, Strong simulation, subgraph isomorphism.\newline%
+\newline%
+\textbackslash{}end\{thebibliography\}\newline%
+\newline%
+\textbackslash{}PublishersNote\{\}\newline%
+\textbackslash{}end\{adjustwidth\}
+
+%
+\subsection{Resumen:}%
+\label{subsec:Resumen}%
+
+%
+\subsection{Evaluación:}%
+\label{subsec:Evaluacin}%
+
+%
+\end{document}

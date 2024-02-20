@@ -1,0 +1,1732 @@
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 23.10.12) (preloaded format=pdflatex 2023.11.23)  20 FEB 2024 12:32
+entering extended mode
+ restricted \write18 enabled.
+ %&-line parsing enabled.
+**./ScientificArticle.tex
+(ScientificArticle.tex
+LaTeX2e <2023-11-01>
+L3 programming layer <2023-11-09>
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/base\article.cls
+Document Class: article 2023/05/17 v1.4n Standard LaTeX document class
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/base\size10.clo
+File: size10.clo 2023/05/17 v1.4n Standard LaTeX file (size option)
+)
+\c@part=\count186
+\c@section=\count187
+\c@subsection=\count188
+\c@subsubsection=\count189
+\c@paragraph=\count190
+\c@subparagraph=\count191
+\c@figure=\count192
+\c@table=\count193
+\abovecaptionskip=\skip48
+\belowcaptionskip=\skip49
+\bibindent=\dimen140
+)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/base\fontenc.sty
+Package: fontenc 2021/04/29 v2.0v Standard LaTeX package
+)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/base\inputenc.sty
+Package: inputenc 2021/02/14 v1.3d Input encoding file
+\inpenc@prehook=\toks17
+\inpenc@posthook=\toks18
+)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/lm\lmodern.sty
+Package: lmodern 2015/05/01 v1.6.1 Latin Modern Fonts
+LaTeX Font Info:    Overwriting symbol font `operators' in version `normal'
+(Font)                  OT1/cmr/m/n --> OT1/lmr/m/n on input line 22.
+LaTeX Font Info:    Overwriting symbol font `letters' in version `normal'
+(Font)                  OML/cmm/m/it --> OML/lmm/m/it on input line 23.
+LaTeX Font Info:    Overwriting symbol font `symbols' in version `normal'
+(Font)                  OMS/cmsy/m/n --> OMS/lmsy/m/n on input line 24.
+LaTeX Font Info:    Overwriting symbol font `largesymbols' in version `normal'
+(Font)                  OMX/cmex/m/n --> OMX/lmex/m/n on input line 25.
+LaTeX Font Info:    Overwriting symbol font `operators' in version `bold'
+(Font)                  OT1/cmr/bx/n --> OT1/lmr/bx/n on input line 26.
+LaTeX Font Info:    Overwriting symbol font `letters' in version `bold'
+(Font)                  OML/cmm/b/it --> OML/lmm/b/it on input line 27.
+LaTeX Font Info:    Overwriting symbol font `symbols' in version `bold'
+(Font)                  OMS/cmsy/b/n --> OMS/lmsy/b/n on input line 28.
+LaTeX Font Info:    Overwriting symbol font `largesymbols' in version `bold'
+(Font)                  OMX/cmex/m/n --> OMX/lmex/m/n on input line 29.
+LaTeX Font Info:    Overwriting math alphabet `\mathbf' in version `normal'
+(Font)                  OT1/cmr/bx/n --> OT1/lmr/bx/n on input line 31.
+LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `normal'
+(Font)                  OT1/cmss/m/n --> OT1/lmss/m/n on input line 32.
+LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `normal'
+(Font)                  OT1/cmr/m/it --> OT1/lmr/m/it on input line 33.
+LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `normal'
+(Font)                  OT1/cmtt/m/n --> OT1/lmtt/m/n on input line 34.
+LaTeX Font Info:    Overwriting math alphabet `\mathbf' in version `bold'
+(Font)                  OT1/cmr/bx/n --> OT1/lmr/bx/n on input line 35.
+LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `bold'
+(Font)                  OT1/cmss/bx/n --> OT1/lmss/bx/n on input line 36.
+LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `bold'
+(Font)                  OT1/cmr/bx/it --> OT1/lmr/bx/it on input line 37.
+LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `bold'
+(Font)                  OT1/cmtt/m/n --> OT1/lmtt/m/n on input line 38.
+)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/base\textcomp.sty
+Package: textcomp 2020/02/02 v2.0n Standard LaTeX package
+)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/lastpage\lastpage.sty
+Package: lastpage 2023/10/14 v2.0e lastpage: 2.09 or 2e? (HMM)
+
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/lastpage\lastpage2e.sty
+Package: lastpage2e 2023/10/14 v2.0e Decide which 2e lastpage version to use (H
+MM)
+
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/lastpage\lastpagemodern
+.sty
+Package: lastpagemodern 2023-10-14 v2.0e Refers to last page's name (HMM; JPG)
+\c@lastpagecount=\count194
+) 
+))
+LaTeX Font Info:    Trying to load font information for T1+lmr on input line 10
+.
+ (C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/lm\t1lmr.fd
+File: t1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
+)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/l3backend\l3backend-pdf
+tex.def
+File: l3backend-pdftex.def 2023-11-09 L3 backend support: PDF output (pdfTeX)
+\l__color_backend_stack_int=\count195
+\l__pdf_internal_box=\box51
+) (ScientificArticle.aux
+
+LaTeX Warning: Label `subsec:Contenido' multiply defined.
+
+
+LaTeX Warning: Label `subsec:Resumen' multiply defined.
+
+
+LaTeX Warning: Label `subsec:Evaluacin' multiply defined.
+
+)
+\openout1 = `ScientificArticle.aux'.
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 10.
+LaTeX Font Info:    ... okay on input line 10.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 10.
+LaTeX Font Info:    ... okay on input line 10.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 10.
+LaTeX Font Info:    ... okay on input line 10.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 10.
+LaTeX Font Info:    ... okay on input line 10.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 10.
+LaTeX Font Info:    ... okay on input line 10.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 10.
+LaTeX Font Info:    ... okay on input line 10.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 10.
+LaTeX Font Info:    ... okay on input line 10.
+
+Underfull \hbox (badness 10000) in paragraph at lines 17--28
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 17--28
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 17--28
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 17--28
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 17--28
+
+ []
+
+[1
+
+
+{C:/Users/Ouael/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}{C:/Users/Ouae
+l/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-ec.enc}]
+Underfull \hbox (badness 10000) in paragraph at lines 32--37
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 32--37
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 41--60
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 41--60
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 41--60
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 41--60
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 41--60
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 41--60
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 41--60
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 41--60
+
+ []
+
+[2] [3]
+Overfull \hbox (122.2502pt too wide) in paragraph at lines 67--78
+\T1/lmr/m/n/10 tual datasets\nocite{phdthesis,Barcelo,gupta2015neo4j,Segaran:20
+09:PSW:1696488,graphlog,van2016pgql}.
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 67--78
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 67--78
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 67--78
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 67--78
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 67--78
+
+ []
+
+[4
+
+]
+Underfull \hbox (badness 10000) in paragraph at lines 82--87
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 82--87
+
+ []
+
+[5]
+
+! LaTeX Error: There's no line here to end.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.91 \newline
+             %
+Your command was ignored.
+Type  I <command> <return>  to replace it with another command,
+or  <return>  to continue without it.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 92--123
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 92--123
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 92--123
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 92--123
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 92--123
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 92--123
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 92--123
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 92--123
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 92--123
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 92--123
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 92--123
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 92--123
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 92--123
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 92--123
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 92--123
+
+ []
+
+[6] [7]
+
+! LaTeX Error: Unicode character μ (U+03BC)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.145 A Graph is a tuple G= (V, E, μ
+                                     ) where:\newline%
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character μ (U+03BC)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.148 {-}  μ
+              associates each node/edge in the graph with a set of propertie...
+
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character μ (U+03BC)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.148 ... in the graph with a set of properties μ
+                                                  : (V ∪ E) × R → J, wh...
+
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character ∪ (U+222A)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.148 ...graph with a set of properties μ: (V ∪
+                                                   E) × R → J, where R re...
+
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 1
+48.
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/lm\ts1lmr.fd
+File: ts1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
+)
+
+! LaTeX Error: Unicode character γ (U+03B3)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.150 ...raph, called incidences and denoted by γ
+                                                  , which associates each ed...
+
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character μ (U+03BC)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.153 The domain of μ
+                       is the Cartesian product of the sets V ∪ E and R. G...
+
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character ∪ (U+222A)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.153 ...s the Cartesian product of the sets V ∪
+                                                   E and R. Generally, we de...
+
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character α (U+03B1)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.153 ...ts V ∪ E and R. Generally, we denote α
+                                                  (x) instead of μ(x,α) fo...
+
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character μ (U+03BC)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.153 ... Generally, we denote α(x) instead of μ
+                                                  (x,α) for each x∈ V∪ ...
+
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character α (U+03B1)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.153 ...rally, we denote α(x) instead of μ(x,α
+                                                  ) for each x∈ V∪ E and...
+
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character ∈ (U+2208)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.153 ...e α(x) instead of μ(x,α) for each x∈
+                                                   V∪ E and α ∈ R, trea...
+
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character ∪ (U+222A)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.153 ...x) instead of μ(x,α) for each x∈ V∪
+                                                   E and α ∈ R, treating ...
+
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character α (U+03B1)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.153 ...d of μ(x,α) for each x∈ V∪ E and α
+                                                   ∈ R, treating propertie...
+
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character ∈ (U+2208)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.153 ... μ(x,α) for each x∈ V∪ E and α ∈
+                                                   R, treating properties as...
+
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character γ (U+03B3)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.155 We will use γ
+                    (v) to denote the edges in which node v∈ V participate...
+
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character ∈ (U+2208)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.155 ...v) to denote the edges in which node v∈
+                                                   V participates. The neigh...
+
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character 𝓝 (U+1D4DD)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.155 ...ng itself, connected to it, that is, 𝓝
+                                                  (v)= ⋃\_\{e ∈ γ (v)\}...
+
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character ⋃ (U+22C3)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.155 ...f, connected to it, that is, 𝓝(v)= ⋃
+                                                  \_\{e ∈ γ (v)\} γ (e)....
+
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character ∈ (U+2208)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.155 ...ted to it, that is, 𝓝(v)= ⋃\_\{e ∈
+                                                   γ (v)\} γ (e).\newline%
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character γ (U+03B3)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.155 ... to it, that is, 𝓝(v)= ⋃\_\{e ∈ γ
+                                                   (v)\} γ (e).\newline%
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character γ (U+03B3)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.155 ...hat is, 𝓝(v)= ⋃\_\{e ∈ γ (v)\} γ
+                                                   (e).\newline%
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character μ (U+03BC)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.157 ...es V, a set of edges E, and a function μ
+                                                   that associates each node...
+
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character τ (U+03C4)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.157 ...ial graph would comprise the attribute τ
+                                                   ∈ R that may assume the...
+
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character ∈ (U+2208)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.157 ...graph would comprise the attribute τ ∈
+                                                   R that may assume the val...
+
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character ∈ (U+2208)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.157 ...d like for edges. The attribute gamma ∈
+                                                   R would be responsible fo...
+
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character τ (U+03C4)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.157 ...attributes, such as age for nodes with τ
+                                                  = person or date for edges...
+
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character τ (U+03C4)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.157 ...with τ= person or date for edges with τ
+                                                  = like.\newline%
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character ∈ (U+2208)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.162 If e∈
+              E and γ(e)=(v₁,\textbackslash{}dots,vₙ)∈ Vⁿ, then we ...
+
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character γ (U+03B3)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.162 If e∈ E and γ
+                      (e)=(v₁,\textbackslash{}dots,vₙ)∈ Vⁿ, then we ...
+
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character ₁ (U+2081)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.162 If e∈ E and γ(e)=(v₁
+                               ,\textbackslash{}dots,vₙ)∈ Vⁿ, then we ...
+
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character ₙ (U+2099)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.162 ...and γ(e)=(v₁,\textbackslash{}dots,vₙ
+                                                  )∈ Vⁿ, then we define ...
+
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character ∈ (U+2208)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.162 ...γ(e)=(v₁,\textbackslash{}dots,vₙ)∈
+                                                   Vⁿ, then we define the ...
+
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character ⁿ (U+207F)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.162 ...=(v₁,\textbackslash{}dots,vₙ)∈ Vⁿ
+                                                  , then we define the posit...
+
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character ᵢ (U+1D62)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.162 ... then we define the position of each vᵢ
+                                                  ∈ γ(e) in e as ordₑ(v...
+
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character ∈ (U+2208)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.162 ...en we define the position of each vᵢ∈
+                                                   γ(e) in e as ordₑ(vᵢ...
+
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character γ (U+03B3)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.162 ...we define the position of each vᵢ∈ γ
+                                                  (e) in e as ordₑ(vᵢ)=i...
+
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character ₑ (U+2091)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.162 ...tion of each vᵢ∈ γ(e) in e as ordₑ
+                                                  (vᵢ)=i. We denote u\text...
+
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character ᵢ (U+1D62)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.162 ...of each vᵢ∈ γ(e) in e as ordₑ(vᵢ
+                                                  )=i. We denote u\textbacks...
+
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character ₑ (U+2091)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.162 ...ᵢ)=i. We denote u\textbackslash{}leqₑ
+                                                   v to indicate ordₑ(u)\t...
+
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character ₑ (U+2091)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.162 ...extbackslash{}leqₑ v to indicate ordₑ
+                                                  (u)\textbackslash{}leq ord...
+
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character ₑ (U+2091)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.162 ...icate ordₑ(u)\textbackslash{}leq ordₑ
+                                                  (v).\newline%
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character μ (U+03BC)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.168 Given a graph G=(V,E,μ
+                             ), we define the set of paths in G as 𝓟\_G, ...
+
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character 𝓟 (U+1D4DF)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.168 ..., we define the set of paths in G as 𝓟
+                                                  \_G, which is the smallest...
+
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character ∈ (U+2208)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.170 1. If e∈
+                 E and u, v∈ γ (e) with u \textbackslash{}leqₑ v, then ...
+
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character ∈ (U+2208)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.170 1. If e∈ E and u, v∈
+                               γ (e) with u \textbackslash{}leqₑ v, then ...
+
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character γ (U+03B3)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.170 1. If e∈ E and u, v∈ γ
+                                  (e) with u \textbackslash{}leqₑ v, then ...
+
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character ₑ (U+2091)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.170 ...v∈ γ (e) with u \textbackslash{}leqₑ
+                                                   v, then ρ=u v∈ 𝓟\_G...
+
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character ρ (U+03C1)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.170 ... with u \textbackslash{}leqₑ v, then ρ
+                                                  =u v∈ 𝓟\_G. We will s...
+
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character ∈ (U+2208)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.170 ... \textbackslash{}leqₑ v, then ρ=u v∈
+                                                   𝓟\_G. We will say that...
+
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character 𝓟 (U+1D4DF)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.170 ...tbackslash{}leqₑ v, then ρ=u v∈ 𝓟
+                                                  \_G. We will say that ρ c...
+
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character ρ (U+03C1)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.170 ...en ρ=u v∈ 𝓟\_G. We will say that ρ
+                                                   connects the nodes u and ...
+
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character ρ (U+03C1)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.171 2. If ρ
+              ₁, ρ₂∈ 𝓟\_G, with u v and v w then ρ₁·ρ₂ ∈ ...
+
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character ₁ (U+2081)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.171 2. If ρ₁
+                 , ρ₂∈ 𝓟\_G, with u v and v w then ρ₁·ρ₂ ∈ ...
+
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character ρ (U+03C1)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.171 2. If ρ₁, ρ
+                     ₂∈ 𝓟\_G, with u v and v w then ρ₁·ρ₂ ∈ ...
+
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character ₂ (U+2082)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.171 2. If ρ₁, ρ₂
+                        ∈ 𝓟\_G, with u v and v w then ρ₁·ρ₂ ∈ ...
+
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character ∈ (U+2208)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.171 2. If ρ₁, ρ₂∈
+                            𝓟\_G, with u v and v w then ρ₁·ρ₂ ∈ ...
+
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character 𝓟 (U+1D4DF)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.171 2. If ρ₁, ρ₂∈ 𝓟
+                                \_G, with u v and v w then ρ₁·ρ₂ ∈ ...
+
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character ρ (U+03C1)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.171 ...�₂∈ 𝓟\_G, with u v and v w then ρ
+                                                  ₁·ρ₂ ∈ 𝓟\_G, wi...
+
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character ₁ (U+2081)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.171 ...�∈ 𝓟\_G, with u v and v w then ρ₁
+                                                  ·ρ₂ ∈ 𝓟\_G, with ...
+
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character ρ (U+03C1)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.171 ... 𝓟\_G, with u v and v w then ρ₁·ρ
+                                                  ₂ ∈ 𝓟\_G, with u w....
+
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character ₂ (U+2082)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.171 ...��\_G, with u v and v w then ρ₁·ρ₂
+                                                   ∈ 𝓟\_G, with u w.\ne...
+
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character ∈ (U+2208)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.171 ...G, with u v and v w then ρ₁·ρ₂ ∈
+                                                   𝓟\_G, with u w.\newline%
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character 𝓟 (U+1D4DF)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.171 ...th u v and v w then ρ₁·ρ₂ ∈ 𝓟
+                                                  \_G, with u w.\newline%
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character ρ (U+03C1)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.176 {-} If u v, then we write ρ
+                                  ᵒ=u and ρⁱ=v.\newline%
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character ᵒ (U+1D52)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.176 {-} If u v, then we write ρᵒ
+                                     =u and ρⁱ=v.\newline%
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character ρ (U+03C1)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.176 {-} If u v, then we write ρᵒ=u and ρ
+                                              ⁱ=v.\newline%
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character ⁱ (U+2071)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.176 {-} If u v, then we write ρᵒ=u and ρⁱ
+                                                 =v.\newline%
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character 𝓟 (U+1D4DF)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.178 𝓟
+          \_u(G)=\textbackslash{}\{ρ ∈ 𝓟(G): u∈ ρ\textbackslash{}\}...
+
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character ρ (U+03C1)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.178 𝓟\_u(G)=\textbackslash{}\{ρ
+                                      ∈ 𝓟(G): u∈ ρ\textbackslash{}\}...
+
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character ∈ (U+2208)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.178 𝓟\_u(G)=\textbackslash{}\{ρ ∈
+                                          𝓟(G): u∈ ρ\textbackslash{}\}...
+
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character 𝓟 (U+1D4DF)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.178 𝓟\_u(G)=\textbackslash{}\{ρ ∈ 𝓟
+                                              (G): u∈ ρ\textbackslash{}\}...
+
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character ∈ (U+2208)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.178 ...G)=\textbackslash{}\{ρ ∈ 𝓟(G): u∈
+                                                   ρ\textbackslash{}\},\new...
+
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character ρ (U+03C1)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.178 ...\textbackslash{}\{ρ ∈ 𝓟(G): u∈ ρ
+                                                  \textbackslash{}\},\newline%
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character 𝓟 (U+1D4DF)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.179 𝓟
+          \_u\^{}o(G)=\textbackslash{}\{ρ ∈ 𝓟(G): ρ\^{}o=u\textbacksl...
+
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character ρ (U+03C1)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.179 𝓟\_u\^{}o(G)=\textbackslash{}\{ρ
+                                           ∈ 𝓟(G): ρ\^{}o=u\textbacksl...
+
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character ∈ (U+2208)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.179 𝓟\_u\^{}o(G)=\textbackslash{}\{ρ ∈
+                                               𝓟(G): ρ\^{}o=u\textbacksl...
+
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character 𝓟 (U+1D4DF)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.179 ...\_u\^{}o(G)=\textbackslash{}\{ρ ∈ 𝓟
+                                                  (G): ρ\^{}o=u\textbacksla...
+
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character ρ (U+03C1)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.179 ...o(G)=\textbackslash{}\{ρ ∈ 𝓟(G): ρ
+                                                  \^{}o=u\textbackslash{}\},...
+
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character 𝓟 (U+1D4DF)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.180 𝓟
+          \_u\^{}i(G)=\textbackslash{}\{ρ ∈ 𝓟(G): ρ\^{}i=u\textbacksl...
+
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character ρ (U+03C1)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.180 𝓟\_u\^{}i(G)=\textbackslash{}\{ρ
+                                           ∈ 𝓟(G): ρ\^{}i=u\textbacksl...
+
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character ∈ (U+2208)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.180 𝓟\_u\^{}i(G)=\textbackslash{}\{ρ ∈
+                                               𝓟(G): ρ\^{}i=u\textbacksl...
+
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character 𝓟 (U+1D4DF)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.180 ...\_u\^{}i(G)=\textbackslash{}\{ρ ∈ 𝓟
+                                                  (G): ρ\^{}i=u\textbacksla...
+
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character ρ (U+03C1)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.180 ...i(G)=\textbackslash{}\{ρ ∈ 𝓟(G): ρ
+                                                  \^{}i=u\textbackslash{}\}....
+
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character ₁ (U+2081)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.181 ...r a graph G with V=\textbackslash{}\{v₁
+                                                  ,v₂,v₃\textbackslash{}...
+
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character ₂ (U+2082)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.181 ...raph G with V=\textbackslash{}\{v₁,v₂
+                                                  ,v₃\textbackslash{}\} an...
+
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character ₃ (U+2083)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.181 ...G with V=\textbackslash{}\{v₁,v₂,v₃
+                                                  \textbackslash{}\} and E=\...
+
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character ₁ (U+2081)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.181 ...ackslash{}\} and E=\textbackslash{}\{e₁
+                                                  ,e₂\textbackslash{}\}, �...
+
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character ₂ (U+2082)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.181 ...ash{}\} and E=\textbackslash{}\{e₁,e₂
+                                                  \textbackslash{}\}, γ(e�...
+
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character γ (U+03B3)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.181 ...kslash{}\{e₁,e₂\textbackslash{}\}, γ
+                                                  (e₁)= \textbackslash{}\{...
+
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character ₁ (U+2081)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.181 ...h{}\{e₁,e₂\textbackslash{}\}, γ(e₁
+                                                  )= \textbackslash{}\{v₁,...
+
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character ₁ (U+2081)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.181 ...ash{}\}, γ(e₁)= \textbackslash{}\{v₁
+                                                  ,v₂\textbackslash{}\} an...
+
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character ₂ (U+2082)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.181 ...\}, γ(e₁)= \textbackslash{}\{v₁,v₂
+                                                  \textbackslash{}\} and γ(...
+
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character γ (U+03B3)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.181 ...ash{}\{v₁,v₂\textbackslash{}\} and γ
+                                                  (e₂)= \textbackslash{}\{...
+
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character ₂ (U+2082)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.181 ...\{v₁,v₂\textbackslash{}\} and γ(e₂
+                                                  )= \textbackslash{}\{v₂,...
+
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character ₂ (U+2082)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.181 ...{}\} and γ(e₂)= \textbackslash{}\{v₂
+                                                  ,v₃\textbackslash{}\}, t...
+
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character ₃ (U+2083)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.181 ...and γ(e₂)= \textbackslash{}\{v₂,v₃
+                                                  \textbackslash{}\}, the se...
+
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character 𝓟 (U+1D4DF)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.181 ...lash{}\}, the set of paths comprises 𝓟
+                                                  \_G= \textbackslash{}\{ v�...
+
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character ₁ (U+2081)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.181 ...omprises 𝓟\_G= \textbackslash{}\{ v₁
+                                                   \textbackslash{}stackrel\...
+
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character ₁ (U+2081)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.181 ...h{}\{ v₁ \textbackslash{}stackrel\{e₁
+                                                  \}\{⇝\} v₂,v₂ \textb...
+
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+! LaTeX Error: Unicode character ⇝ (U+21DD)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.181 ...₁ \textbackslash{}stackrel\{e₁\}\{⇝
+                                                  \} v₂,v₂ \textbackslas...
+(That makes 100 errors; please try again.) 
+Here is how much of TeX's memory you used:
+ 937 strings out of 474587
+ 17256 string characters out of 5745693
+ 1934558 words of memory out of 5000000
+ 23169 multiletter control sequences out of 15000+600000
+ 574181 words of font info for 43 fonts, out of 8000000 for 9000
+ 1141 hyphenation exceptions out of 8191
+ 70i,5n,65p,1367b,111s stack positions out of 10000i,1000n,20000p,200000b,200000s
+
+!  ==> Fatal error occurred, no output PDF file produced!
