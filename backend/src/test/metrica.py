@@ -10,15 +10,14 @@ def fetch_model_names():
 
     response = requests.get(url, headers=headers)
     response_data = response.json()
-    print_model_names(response_data)
     model_names = {model['name']: model['id'] for model in response_data}
     
     return model_names
 
-def print_model_names(model_names : list):
-    for model in model_names:
-        print(f"ID: {model['id']}    ---> NAME:   '{model['name']}'")
+def print_model_names(model_names : dict):
+    for name, id in model_names.items():
+        print(f"NAME: {id}    ---> ID:   '{name}'")
 
 if __name__ == "__main__":
     model_names = fetch_model_names()
-    print_model_names(model_names)
+    print_model_names(dict(model_names))

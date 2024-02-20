@@ -105,7 +105,7 @@ class DataHandler:
         else:
             print("Contenido Nulo!")
 
-        user = "beta user"
+        user = "beta user" #user connected
         evaluation_init = {key : "" for key in sections_text.keys()}
         summary_init = {key : "" for key in sections_text.keys()}
 

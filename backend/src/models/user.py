@@ -15,6 +15,7 @@ class User(Document):
     tipo_usuario = StringField(required=True)
     area_conocimiento = StringField()
     matricula = StringField()
+    
 
     meta = {
         'indexes': [
