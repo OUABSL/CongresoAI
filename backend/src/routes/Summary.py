@@ -82,6 +82,6 @@ class ArticleSummarizer:
 
 
 if __name__ == "__main__":
-    myquery = {"_id": ObjectId("65d22d8d9a142a7b8be3d0e7")}
+    myquery = {"_id": ObjectId("65d35430bb52400ef325f827")} #65d22d8d9a142a7b8be3d0e7
     evaluation_instance = ArticleSummarizer(mongo, SYSTEM_PROMPT_BASE, myquery,  LLAMUS_KEY)
     evaluation_instance.run()

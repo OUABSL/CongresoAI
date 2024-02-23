@@ -105,6 +105,6 @@ class PreEvaluation:
 
 
 if __name__ == "__main__":
-    myquery = {"_id": ObjectId("65d22d8d9a142a7b8be3d0e7")}
+    myquery = {"_id": ObjectId("65d35430bb52400ef325f827")}
     evaluation_instance = PreEvaluation(mongo, myquery,  SYSTEM_PROMPT_BASE, LLAMUS_KEY)
     evaluation_instance.run()

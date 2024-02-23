@@ -9,6 +9,7 @@ from src.app import mongo
 from src.models.tabajo import ScientificArticle
 from typing import Type, List, Dict
 from langchain.text_splitter import LatexTextSplitter
+from bson.objectid import ObjectId
 
 
 
@@ -55,12 +56,6 @@ class DataHandler:
     def _remove_commented_lines(content):
          return "\n".join([line for line in content.split("\n") if not line.strip().startswith("%")])
 
-    @staticmethod
-    def split_latex(content):
-        latex_splitter = LatexTextSplitter(chunk_size = 1500, chunk_overlap = 10)
-        docs = latex_splitter.create_documents([content])
-        print(docs)
-        return docs
 
     
     @staticmethod
@@ -100,6 +95,7 @@ class DataHandler:
         """Execute the main actions of the class"""
         self._perform_extraction(self.zip_path, self.dest_path)
         content = self._parse_document_content(self._read_file_data(self.tex_path))
+        #print(content)
         sections = {}
         if content is not None:
             content = self._remove_commented_lines(content)
@@ -107,22 +103,14 @@ class DataHandler:
             self._save_sections(sections, self.dest_path / "res")
 
             sections_text = sections.copy()
-            result = {sm: [] for sm in sections.keys()}
             for section_name, section_content in sections.items():
                 res = self._extract_just_text(section_content)
-                #sections_text[section_name]= res
-                res_split = self.split_latex(section_content)
-                if(res_split):
-                    result[section_name].extend(res_split)
+                sections_text[section_name]= res
 
             #print(result)
 
 
-            self._save_sections(result, self.dest_path / "res/jst", True)
-
-
-
-
+            #self._save_sections(sections_text, self.dest_path / "res/jst", True)
           
         else:
             print("Contenido Nulo!")
@@ -138,7 +126,13 @@ class DataHandler:
             evaluation =  evaluation_init,
             summary = summary_init
         )
-        #self.insert_into_db(article.to_dict())
+
+        myquery = {"_id": ObjectId("65d22d8d9a142a7b8be3d0e7")}
+        newvalues = { "$set": { "content": sections } }
+        #self.db.update_one(myquery,newvalues)
+        id = self.insert_into_db(article.to_dict())
+        return sections, id
+
 
 if __name__ == "__main__":
     zip_filepath = Path.cwd() / "backend" / "data" / "input" / "article.zip"
