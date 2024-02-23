@@ -3,3 +3,5 @@
 #backend/src/test
 backend/src/config.py
 backend/src/__pycache__
+test
+backend/test_results

@@ -1,105 +1,116 @@
-import os
-import json
-import requests
-import os, sys
-sys.path[0] = os.getcwd()
-from app import mongo
-from typing import Type
-from langchain.prompts import PromptTemplate
-from app import mongo
-from config import LLAMUS_KEY
+import os, json, requests, sys
+sys.path[0] = os.path.join(os.getcwd(), "backend")
+print(sys.path[0])
+from src.app import mongo, LLAMUS_KEY
+from bson.objectid import ObjectId
+from src.models.tabajo import ScientificArticle
 
 
-class ChatBotAPI:
-    def __init__(self, article):
-        """ Initializes necessary constants, and the headers and data required for the API connection """
-        self.api_url = 'https://llamus.cs.us.es/api/chat'
-        self.key = LLAMUS_KEY
-        self.chat_model = 'TheBloke.falcon-180b-chat.Q4_K_M.gguf'
-        self.title = article["title"]
-        self.content = self.generete_content(self, article)
-        self.system_prompt = self.generate_system_prompt(self.title, self.content)
-        self.temperature = 0.2
-        self.use_stream = True
-        self.headers = self.create_headers()
-        self.data = self.create_data()
+SYSTEM_PROMPT_BASE = ("""You are an expert tutor specializing in reviewing and evaluating scientific research articles within the technology domain. Your focus lies on the '{section_name}' section of a manuscript titled "{title}"
+                      Process the provided {section_name} section, evaluate it according to the following criteria and respecting the defined evaluation format:
 
-    def create_headers(self):
-        """ Returns the headers required for the API connection """
-        return {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer {}'.format(self.key)
-        }
+                      Evaluation Levels:                 
+                      - YES: The criterion is fully met in the provided section.
+                      - Can be improved: The criterion is partially met but could be strengthened.                    
+                      - Must be Improved: The criterion is not adequately met, but there's potential for enhancement.                 
+                      - Not Applicable: The criterion doesn't apply to this type of article.
 
-    @staticmethod
-    def generate_system_prompt(title, pdf_content):
-        prompt_template = f"""Do the rule of a reviewer of scientific paper and articles, you need to reviewing our manuscript titled {title}. Ignore all latex code and take into account just the content of the article 'Text, Tables and mathematical formulas'  
-        """
-        prompt = prompt_template
-        return prompt
+                      Criteria for Evaluation:                 
+                      - Motivation:                 
+                      Clarity: Does the section clearly explain the study's significance and relevance? Are the problem's importance and its wider impacts justified? (Provide specific examples from the text).                 
+                      Improvement: Suggest ways to strengthen the motivation, such as using data or references to highlight the problem's importance.                 
+                      - Novelty:                              
+                      Originality: Does the section clearly describe the proposed approach's novelty or originality? Does it differentiate itself from existing work? (Provide specific examples from the text).                                   
+                      Improvement: Suggest ways to emphasize the novelty, such as explicitly comparing with related work and highlighting unique contributions.
+                      - Clarity:                 
+                      Comprehension: Is the section well-written and easy to understand? Does it use appropriate terminology and avoid ambiguity? (Provide specific examples from the text).                 
+                      Improvement: Suggest ways to improve clarity, such as restructuring complex sentences, defining technical terms, and using illustrative examples.                 
+                      - Grammar and Style:                 
+                      Correctness: Is the section free of grammatical and stylistic errors? Does it use language appropriate for an academic setting? (Provide specific examples from the text).                 
+                      Improvement: Suggest specific grammatical corrections and stylistic improvements, such as using more concise and precise language.          
+                      - Typos and Errors:                 
+                      Accuracy: Is the section free of typos and other errors? (Provide specific examples from the text).
+                      Improvement: Suggest specific corrections for typos and other errors.
+                
+                      Evaluation format: 
+                      Evaluation Criteria: Evaluation Level, Evaluation justification and exemples from the evaluated section.
 
-    @staticmethod
-    def generete_content(self, article):
-        sections = dict(article["content"])
-        sections_name= list(sections.keys())
-        chunks = [[] for _ in range(len(sections_name))]  # initialize chunks with empty lists
-        for i, section_name in enumerate(sections_name):
-           sections_name[i] = (i+1, section_name)
-           chunks[i].append(self.prepare_data((section_name, sections[section_name])))
-        
-        print(chunks)
-        
-        print(sections_name)
+                Section Text:
+                """
+)
 
-        return chunks
-
-    def prepare_data(self, tuple_data):
-        
-
-        return []
-    def create_data(self):
-        """ Returns the data required for the API connection """
-        return {
-            'model': self.chat_model,
-            'messages': [
-                {
-                    'role': 'assistant',
-                    'content': '{section_content}'
-                }
-            ],
-            'prompt': self.system_prompt,
-            'temperature': self.temperature,
-            'useStream': self.use_stream
-        }
-
-    def send_request(self):
-        """ Sends a post request to the API and returns the response """
-        return requests.post(self.api_url, headers=self.headers, data=json.dumps(self.data), stream=self.use_stream, timeout=5)
-
-    def process_response(self, response):
-        """ Handles the response from the API """
+class PreEvaluation:
+    def __init__(self, db, query, system_prompt_base, llamus_key):
+        self.API_URL = "https://llamus.cs.us.es/api/chat"
+        self.LLAMUS_KEY = llamus_key
+        self.chat_model = 'TheBloke.llama-2-13b-chat.Q5_K_M.gguf'
+        self.temperature = 0.5
+        self.DB = db.db.articles
+        self.SYSTEM_PROMPT_BASE = system_prompt_base
+        self.query = query
+        self.article = self.get_article(self.query)
+        self.title = "Logical-Mathematical Foundations of a Graph Query Framework for Relational Learning." #self.get_article(query).title
         try:
-            for chunk in response.iter_content():
-                if chunk:
-                    print(chunk.decode('utf-8'))
-        except requests.exceptions.RequestException as e:
-            print("Timeout error..")
-        except Exception as e:
-            print(f"Error: {e}")
-        finally:
-            response.close()
+            self.article_content = dict(self.article["content"])
+        except KeyError:
+            print('KeyError: Article contents not found')
+            self.article_content = {}
 
-    def chat(self):
-        """ Connects to the API, handles the response and carries out the chat operations """
-        response = self.send_request()
-        if self.use_stream:
-            self.process_response(response)
 
-def main():
-    """ Instanciates the ChatBotAPI class and calls the chat method """
-    article = mongo.db.articles.find_one({"user": "beta user"})
-    chat_bot_api = ChatBotAPI(article)
-    #chat_bot_api.chat()
+    def llamus_request(self, system_prompt, user_prompt):
+        headers = {
+            'Content-Type': 'application/json',
+            'Authorization': f'Bearer {self.LLAMUS_KEY}'
+        }
+        data = {
+            'model': self.chat_model,
+            'prompt': system_prompt,
+            'messages': [{'role': 'assistant', 'content': user_prompt + "\n\n Section Evaluation:"}],
+            'temperature': self.temperature,
+            'trimWhitespaceSuffix': False
+        }
+
+        response = requests.post(self.API_URL, headers=headers, data=json.dumps(data))
+        if response.status_code == 200:  # Checking if the request was successful
+            try:
+                #print(response.text)
+                print('Summary done!')
+                return response.json()
+            except json.decoder.JSONDecodeError:  # Catching JSON decode errors
+                print('Failed to decode JSON. Response:', response.content)
+        else:
+            print('Request failed. Status Code:', response.status_code)
+            print('Response:', response.content)
+            return None
+
+    def get_article(self, query)->ScientificArticle:
+        return self.DB.find_one(query)
+
+    def updateEvaluationdb(self, value):
+        evaluationState = dict(self.article['evaluation'])
+        evaluationState[value[0]] = value[1]
+        newvalues = { "$set": { "evaluation": evaluationState } }
+        self.DB.update_one(self.query,newvalues)
+        self.article = self.get_article(self.query)
+        print(f"\nUpdated the evaluation of {value[0]} in memory!\n")
+
+    def run(self):
+        evaluation = {section_name:"" for section_name in self.article_content.keys()}
+        for section_name, section_content in self.article_content.items():
+            if section_name != "Graph query framework" and section_name != "Acknowledgements":
+                system_prompt = self.SYSTEM_PROMPT_BASE.format(section_name = section_name, title = self.title)
+                section_evaluation = self.llamus_request(system_prompt, section_content)
+                if section_evaluation:
+                    tmp = dict(section_evaluation)
+                    res = tmp['response']
+                    value = (section_name, res)
+                    evaluation[section_name] = res
+                    # Está pensado actualizar el resumen de todas las secciones en la bd de una vez
+                    #self.updateEvaluationdb(value)
+        return dict(evaluation)
+
 
 if __name__ == "__main__":
-    main()
+    myquery = {"_id": ObjectId("65d35430bb52400ef325f827")}
+    evaluation_instance = PreEvaluation(mongo, myquery,  SYSTEM_PROMPT_BASE, LLAMUS_KEY)
+    evaluation_instance.run()

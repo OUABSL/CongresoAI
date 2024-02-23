@@ -1,4 +1,6 @@
 numpy
+torch
+ntlk
 pandas
 flask
 requests
