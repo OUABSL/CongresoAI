@@ -1,11 +1,18 @@
-import re
-import os, sys
-sys.path[0] = os.getcwd() + "/backend"
+# Import required libraries
 from pathlib import Path
 import pydetex.pipelines as pip
 import zipfile
+import re, json, requests
+import os, sys
+sys.path[0] = os.path.join(os.getcwd(), "backend")
 from src.app import mongo
 from src.models.tabajo import ScientificArticle
+from typing import Type, List, Dict
+from langchain.text_splitter import LatexTextSplitter
+from bson.objectid import ObjectId
+
+
+
 
 #from models.user import User
 
@@ -13,11 +20,12 @@ class DataHandler:
     """This class assists with file and directory management tasks."""
     
     def __init__(self, zip_path: str, dest_path: str):
-        self.title = "Extraido de la entrega"
+        self.title = "Logical-Mathematical Foundations of a Graph Query Framework for Relational Learning"
         self.db = mongo.db.articles
         self.zip_path = Path(zip_path)
         self.dest_path = Path(dest_path)
         self.tex_path = self.dest_path / "PQG.tex"
+
 
     
     def insert_into_db(self, data: dict):
@@ -59,58 +67,76 @@ class DataHandler:
         section_contents = {}
         for idx, section_name in enumerate(sections):
             section_content = document_content[positions[idx]:positions[idx + 1]].strip()
-            section_content = section_content[section_content.find('}') + 1:]
+            #section_content = section_content[section_content.find('}') + 1:]
             section_contents[section_name] = section_content
         return section_contents
     
     def _extract_just_text(self, section_content):
         #print(section_content)
         res = pip.simple(section_content)
-        print(f"res: {section_content}")
+        #print(f"res: {section_content}")
         return res
 
 
 
     @staticmethod
-    def _save_sections(sections: dict, destination: Path):
+    def _save_sections(sections: dict, destination: Path, esResFinal = False):
         """Save the provided sections dictionary as individual files in the provided destination."""
         destination.mkdir(parents=True, exist_ok=True)
+        tmp = ''
         for idx, (section_name, section_content) in enumerate(sections.items(), start=1):
+            if esResFinal:
+                for chunk in section_content:
+                    tmp = tmp + "\n\n" + chunk.page_content + "\n---------------------------fin chunk----------------\n"
+                section_content = tmp
             (destination / f"section_{idx}_{section_name.replace('/', '_')}.txt").write_text(section_content, encoding='utf-8')
 
     def run(self):
         """Execute the main actions of the class"""
         self._perform_extraction(self.zip_path, self.dest_path)
         content = self._parse_document_content(self._read_file_data(self.tex_path))
+        #print(content)
         sections = {}
         if content is not None:
             content = self._remove_commented_lines(content)
             sections = self._get_section_data(content)
+            self._save_sections(sections, self.dest_path / "res")
 
             sections_text = sections.copy()
             for section_name, section_content in sections.items():
-                print(section_content)
                 res = self._extract_just_text(section_content)
                 sections_text[section_name]= res
 
-            print(sections_text)
+            #print(result)
 
+
+            #self._save_sections(sections_text, self.dest_path / "res/jst", True)
           
-            self._save_sections(sections_text, self.dest_path / "res")
         else:
             print("Contenido Nulo!")
 
-        user = "beta user"
+        user = "beta user" #user connected
+        evaluation_init = {key : "" for key in sections_text.keys()}
+        summary_init = {key : "" for key in sections_text.keys()}
+
         article = ScientificArticle(
             user_id=user,
             title= self.title,
             content=sections_text,
+            evaluation =  evaluation_init,
+            summary = summary_init
         )
-        self.insert_into_db(article.to_dict())
+
+        myquery = {"_id": ObjectId("65d22d8d9a142a7b8be3d0e7")}
+        newvalues = { "$set": { "content": sections } }
+        #self.db.update_one(myquery,newvalues)
+        id = self.insert_into_db(article.to_dict())
+        return sections, id
+
 
 if __name__ == "__main__":
-    zip_filepath = Path.cwd() / "test" / "article.zip"
-    destination_folder = Path.cwd() / "test" / "output"
+    zip_filepath = Path.cwd() / "backend" / "data" / "input" / "article.zip"
+    destination_folder = Path.cwd() / "backend" / "src" / "test" / "output"
     destination_folder.mkdir(parents=True, exist_ok=True)
 
     handler = DataHandler(zip_filepath, destination_folder)

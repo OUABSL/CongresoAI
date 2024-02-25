@@ -1,0 +1,90 @@
+/* Fixed size for a full-width navbar */
+.navbar{
+    width: 100%;
+    max-width: 100%;
+  }
+  
+  /* Centering items within the navbar */
+  .navbar .container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+  }
+
+
+  /* Modern look with subtle shadow */
+  .shadow-sm {
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); /* Adjust shadow as desired */
+  }
+  
+  /* Emphasize active link with distinct color change */
+  .nav-link.active {
+    color: #007bff;
+    position: relative;
+    background-color: #f8f9fa; /* Lighter background for visual clarity */
+  }
+  
+  .shadow-sm{
+    display: flex;
+    flex-direction: row;
+    background-color: aquamarine;
+}
+
+.navbar-brand {
+    font-weight: bold;
+    color: #333; /* Customize the text color to match your brand */
+  }
+
+.mr-auto{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;    
+}
+
+.nav-drop{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+  
+  .nav-link {
+    color: #333; /* Customize the link color to match your brand */
+    padding: 10px;
+    margin: 20px;
+    background-color: rgb(255, 172, 47);
+    transition: color 0.3s ease-in-out;
+  }
+  
+  .nav-link:hover {
+    color: #320014; /* Add hover effect */
+    background-color: gray;
+    
+  }
+  
+  .dropdown-menu {
+    background-color: #fff; /* Set background color for dropdown */
+  }
+  
+  .dropdown-item {
+    color: #333; /* Customize dropdown item color */
+  }
+  
+  .dropdown-item:hover {
+    background-color: #f8f9fa; /* Add hover effect for dropdown items */
+  }
+  
+  .btn-primary {
+    background-color: #007bff; /* Customize button color */
+    border-color: #007bff;
+    transition: background-color 0.3s ease-in-out, border-color 0.3s ease-in-out;
+  }
+  
+  .btn-primary:hover {
+    background-color: #0067cc; /* Change button color on hover */
+    border-color: #0067cc;
+  }
+  
+  
