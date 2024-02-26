@@ -1,28 +1,25 @@
 import datetime
 from mongoengine import Document, StringField, IntField, DateTimeField, DateField
 import json
-import sys
-from app import db #db = PyMongo(app).user
+import os, sys
+sys.path.insert(0, os.path.join(os.getcwd(), 'backend'))
+from src.app import mongo #db = PyMongo(app).user
+from werkzeug.security import generate_password_hash
+
 
 
 
 class User(Document):
-    nombre = StringField(required=True)
-    apellido = StringField(required=True)
-    DNI = IntField(required=True, unique=True)
-    fecha_nacimiento = DateField(required=True)
-    fecha_alta = DateTimeField(default=datetime.datetime.now)
-    tipo_usuario = StringField(required=True)
-    area_conocimiento = StringField()
-    matricula = StringField()
-    
+    def __init__(self, email, username, password, fullname, birthdate, phonenumber, interestarea):
+        self.email = email
+        self.username = username
+        self.password = generate_password_hash(password, method='sha256')
+        self.fullname = fullname
+        self.birthdate = birthdate
+        self.phonenumber = phonenumber
+        self.interestarea = interestarea
 
-    meta = {
-        'indexes': [
-            'DNI',
-            'tipo_usuario'
-        ]
-    }
+
 
     def to_json(self):
         user_dict = self.to_mongo()

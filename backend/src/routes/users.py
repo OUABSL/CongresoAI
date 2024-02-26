@@ -1,65 +1,71 @@
-from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
-from flask import Flask, render_template, request, redirect, url_for
-from src.app import mongo
-from src.models.user import User 
-from src.config import FLASK_SECRET_KEY
+from flask import Flask, request, Blueprint
+from flask_login import UserMixin, LoginManager, login_user
+from werkzeug.security import generate_password_hash
+import sys,os
+sys.path.insert(0, os.path.join(os.getcwd(), 'backend'))
+from src.models.user import User
+from src.app import app, mongo
+from werkzeug.security import check_password_hash
+from flask_login import logout_user
 
-app = Flask(__name__)
-app.config['SECRET_KEY'] = FLASK_SECRET_KEY
 
-db = mongo.db.users
+
+users_bp = Blueprint('users', __name__)
+
+mycol = mongo.db.users
+
+
 login_manager = LoginManager()
-login_manager.init_app(app)
+login_manager.init_app(users_bp)
 
-def get_user_from_db(username):
-    user_data = db.find_one({'username': username})
-    return User(user_data) if user_data else None
 
 @login_manager.user_loader
-def load_user(user_id):
-    return get_user_from_db(user_id)
+def load_user(username):
+    u = mycol.find_one({'username': username})
+    if not u:
+        return None
+    return User(u['email'],u['username'],u['password'],u['fullname'],u['birthdate'],u['phonenumber'],u['interestarea'])
 
-@app.route("/login", methods=["GET", "POST"])
+
+@users_bp.route('/login', methods=['POST'])
 def login():
-    if request.method == "POST":
-        username = request.form["username"]
-        password = request.form["password"]
+    data = request.get_json()
 
-        user = get_user_from_db(username)
-        if user and user.check_password(password):
-            login_user(user)
-            return "Logged in successfully!"
-            
-        return "Invalid username or password."
-    return render_template("login.html")
+    username = data.get('username')
+    password = data.get('password')
 
-@app.route("/logout")
-@login_required
+    user = mycol.find_one({'username': username})
+
+    if user and check_password_hash(user['password'], password):
+        return 'Login successful!'
+    else:
+        return 'Wrong username or password!'
+    
+
+@users_bp.route('/signup', methods=['POST'])
+def SignUp():
+    data = request.get_json()
+
+    email = data.get('email')
+    username = data.get('username')
+    password = data.get('password')
+    fullname = data.get('fullname')
+    birthdate = data.get('birthdate')
+    phonenumber = data.get('phonenumber')
+    interestarea = data.get('interestarea')
+
+    user = mycol.find_one({'username': username})
+    if user:
+        return 'Username already exists!'
+    else:
+        new_user = User(email, username, password, fullname, birthdate, phonenumber, interestarea)
+        mycol.insert_one({'email': new_user.email, 'username': new_user.username, 'password': new_user.password,
+                          'fullname': new_user.fullname, 'birthdate': new_user.birthdate, 'phonenumber': new_user.phonenumber,
+                          'interestarea': new_user.interestarea})
+        return 'Registration successful!'
+    
+
+@users_bp.route('/logout')
 def logout():
     logout_user()
-    return "Logged out successfully!"
-
-@app.route("/register", methods=["GET", "POST"])
-def register():
-    if request.method == "POST":
-        username = request.form["username"]
-        password = request.form["password"]
-        existing_user = get_user_from_db(username)
-
-        if existing_user:
-            return "Username already exists. Please choose a different one."
-        
-        new_user = User(username, password)
-        db.insert_one({'username': new_user.username, 'password': new_user.password})
-        login_user(new_user)
-        return "Registered and logged in successfully!"
-    
-    return render_template("register.html")
-
-@app.route("/secret")
-@login_required
-def secret():
-    return f"Welcome, {current_user.user.nombre}!"
-
-if __name__ == "__main__":
-    app.run(debug=True)
+    return 'Logged out!'

@@ -1,28 +1,38 @@
 from flask import Flask, request, jsonify
 from flask_pymongo import PyMongo
 import os, sys
+sys.path.insert(0, os.path.join(os.getcwd(), 'backend'))
 from bson import json_util
 from flask_cors import CORS
-
-
-sys.path[0] = os.path.join(os.getcwd(), "backend")
 from src.config import MONGO_URI, LLAMUS_KEY
 
 def create_app():
-    # Create the Flask application
     app = Flask(__name__)
     CORS(app)
-
-    # Set up additional configurations
     app.config['LLAMUS_KEY'] = LLAMUS_KEY
     app.config['MONGO_URI'] = MONGO_URI
+    return app
 
-    # Initialize PyMongo with the Flask application
-    mongo = PyMongo(app)
+def create_mongo(app):
+    print(f"Created Database")
+    return PyMongo(app)
 
-    return app, mongo
+def register_blueprints():
+    from src.routes.users import users_bp
+    app.register_blueprint(users_bp)
+    print(f"Created Blueprint for {users_bp}")
 
-app, mongo = create_app()
+def get_users_from_db(db):
+    return list(db.users.find())
+
+def create_response(users):
+    if users:
+        return jsonify(json_util.dumps(users))
+    else:
+        return jsonify({"error": "No users found"})
+
+app = create_app()
+mongo = create_mongo(app)
 
 @app.route("/users", methods=["GET"])
 def get_users():
@@ -37,7 +47,9 @@ def get_user():
 
 def main():
     """Run the Flask application"""
+    register_blueprints()
     app.run(host='localhost', port=5000, debug=True)
 
+    
 if __name__ == "__main__":
     main()
