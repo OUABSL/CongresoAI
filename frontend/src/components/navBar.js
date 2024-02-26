@@ -25,7 +25,7 @@ const MyNavbar = () => {
             <Link to="/contactus" onClick={() => handleLinkClick('/contactus')} className={activeLink === '/contactus' ? 'nav-link active' : 'nav-link'} >Contáctanos</Link>
             <NavDropdown title="Portal" id="collapsible-nav-dropdown">
               <NavDropdown.Item as={Link} className='nav-drop-item' to="/portal-author/login" onClick={() => handleLinkClick('/portal-author')}>Portal de Autor</NavDropdown.Item>
-              <NavDropdown.Item as={Link} className ='nav-drop-item' to="/portal-reviewer" onClick={() => handleLinkClick('/portal-reviewer')}>Portal de Revisor</NavDropdown.Item>
+              <NavDropdown.Item as={Link} className ='nav-drop-item' to="/portal-revisor/login" onClick={() => handleLinkClick('/portal-reviewer')}>Portal de Revisor</NavDropdown.Item>
             </NavDropdown>
           </Nav>
         </Navbar.Collapse>

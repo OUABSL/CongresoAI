@@ -8,9 +8,10 @@ import "../estilos/login.css";
 const Login = () => {
   const [username, setInputUsername] = useState("");
   const [password, setInputPassword] = useState("");
-
   const [show, setShow] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [alertMessage, setAlertMessage] = useState(""); 
+  const [alertVariant, setAlertVariant] = useState("danger");
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -31,12 +32,17 @@ const Login = () => {
 
     const result = await response.json()
 
-    if (result.data) {
+    if (response.status===200) {
       // El login fue exitoso, redirige al usuario a donde quieras
+      console.log(result)
       console.log("Login Exitoso");
+      setAlertVariant("success");
+      setAlertMessage("Login Exitoso");
     } else {
       // Mostrar mensaje de error
-      console.log("Error en el Login");
+      console.log(`Error en el Login ${response.status}`);
+      setAlertVariant("danger");
+      setAlertMessage(`Error en el Login`);
     }
 
     await delay(500);
@@ -65,14 +71,14 @@ const Login = () => {
         <div className="h4 mb-2 text-center">Acceso de autor</div>
         {/* Alert */}
         {show ? (
-          <Alert
-            className="mb-2"
-            variant="danger"
-            onClose={() => setShow(false)}
-            dismissible
-          >
-            Nombre de usuario o contraseña incorrectos.
-          </Alert>
+        <Alert
+          className="mb-2"
+          variant={alertVariant}
+          onClose={() => setShow(false)}
+          dismissible
+        >
+        {alertMessage}
+        </Alert>
         ) : (
           <div />
         )}
