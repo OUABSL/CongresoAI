@@ -3,6 +3,8 @@ import MyNavbar from './components/navBar';
 import Footer from './components/footer';
 import Login from './components/author/login';
 import SignUp from './components/author/register';
+import LoginRevisor from './components/revisor/login';
+
 
 
 import 'react-bootstrap';
@@ -47,7 +49,7 @@ function App() {
           }/>
         <Route path="/portal-author/login" element={<Login />} />
         <Route path="/portal-author/register" element={<SignUp />} />
-
+        <Route path="/portal-revisor/login" element={<LoginRevisor />} />
         </Routes>
       </div>
       <Footer/>
