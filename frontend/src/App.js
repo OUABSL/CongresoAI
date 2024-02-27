@@ -1,10 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect} from 'react';
 import MyNavbar from './components/navBar';
 import Footer from './components/footer';
+import Login from './components/author/login';
+import SignUp from './components/author/register';
+import LoginRevisor from './components/revisor/login';
+
+
+
 import 'react-bootstrap';
 
 
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, BrowserRouter } from "react-router-dom";
 
 function App() {
   const [data, setData] = useState([]);
@@ -21,7 +27,7 @@ function App() {
   }, []);
 
   return (
-    <Router>
+    <BrowserRouter>
       <MyNavbar />
       <div className="container p-4">
         <Routes>
@@ -41,11 +47,16 @@ function App() {
               }
             </div>
           }/>
+        <Route path="/portal-author/login" element={<Login />} />
+        <Route path="/portal-author/register" element={<SignUp />} />
+        <Route path="/portal-revisor/login" element={<LoginRevisor />} />
         </Routes>
       </div>
       <Footer/>
-    </Router>
+    </BrowserRouter>
   );
 }
+
+
 
 export default App;
