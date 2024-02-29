@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Form, Button } from 'react-bootstrap';
+import { Card, Form, Button } from 'react-bootstrap';
 
 const SubmitArticle = () => {
     const [title, setTitle] = useState("");
@@ -47,31 +47,34 @@ const SubmitArticle = () => {
     }
 
     return (
-        <Form onSubmit={submitForm}>
-            <Form.Group>
-                <Form.Label>Title</Form.Label>
-                <Form.Control type="text" value={title} onChange={(e) => setTitle(e.target.value)} required />
-            </Form.Group>
+        <Card className="mt-5 p-5">
+            <Form onSubmit={submitForm} className="form-class">
+                <h2>Rellene el formulario</h2>
+                <Form.Group>
+                    <Form.Label className="label-class">Title</Form.Label>
+                    <Form.Control type="text" value={title} onChange={(e) => setTitle(e.target.value)} required className="input-class" />
+                </Form.Group>
 
-            <Form.Group>
-                <Form.Label>Description</Form.Label>
-                <Form.Control type="text" value={description} onChange={(e) => setDescription(e.target.value)} required />
-            </Form.Group>
+                <Form.Group>
+                    <Form.Label className="label-class">Description</Form.Label>
+                    <Form.Control type="text" value={description} onChange={(e) => setDescription(e.target.value)} required className="input-class" />
+                </Form.Group>
 
-            <Form.Group>
-                <Form.Label>Key Words</Form.Label>
-                <Form.Control type="text" value={keyWords} onChange={(e) => setKeyWords(e.target.value)} required />
-            </Form.Group>
+                <Form.Group>
+                    <Form.Label className="label-class">Key Words</Form.Label>
+                    <Form.Control type="text" value={keyWords} onChange={(e) => setKeyWords(e.target.value)} required className="input-class" />
+                </Form.Group>
 
-            <Form.Group>
-                <Form.Label>Latex Project</Form.Label>
-                <Form.Control type="file" onChange={(e) => setFile(e.target.files[0])} required />
-            </Form.Group>
+                <Form.Group>
+                    <Form.Label className="label-class">Latex Project</Form.Label>
+                    <Form.Control type="file" onChange={(e) => setFile(e.target.files[0])} required className="input-class" />
+                </Form.Group>
 
-            <Button variant="primary" type="submit">
-                Submit
-            </Button>
-        </Form>
+                <Button variant="primary" type="submit" className="button-class">
+                    Submit
+                </Button>
+            </Form>
+        </Card>
     );
 };
 
