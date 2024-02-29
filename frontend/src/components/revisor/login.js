@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Form, Button, Alert } from "react-bootstrap";
+import { Form, Button, Alert, Card } from "react-bootstrap";
 import { Link } from 'react-router-dom';
 
 import "../estilos/login.css";
@@ -62,7 +62,7 @@ const LoginRevisor = () => {
 
 
   return (
-    <div className="sign-in__wrapper">
+    <Card>
       {/* Overlay */}
       {/* Form */}
       <Form className="shadow p-4 bg-white rounded" onSubmit={handleSubmit}>
@@ -121,7 +121,7 @@ const LoginRevisor = () => {
         <Link to="/portal-revisor/register" className='text-muted link-above'>¿No tienes una cuenta aún? Contáctenos!</Link>
         </div>
       </Form>
-    </div>
+    </Card>
   );
 };
 
