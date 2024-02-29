@@ -1,0 +1,16 @@
+flask
+flask_cors
+flask_login
+flask_pymongo
+flask_jwt_extended
+mongoengine
+langchain
+langchain_community
+numpy
+pandas
+pydetex
+requests
+streamlit
+werkzeug
+gridfs
+pylatex

@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { Form, Button, Alert } from "react-bootstrap";
 import { Link } from 'react-router-dom';
 
-export default class SignUp extends Component {
+export default class SignUpAuthor  extends Component {
 
   state = {
     email: '',

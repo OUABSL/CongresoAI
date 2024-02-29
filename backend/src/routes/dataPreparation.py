@@ -2,6 +2,7 @@ import re
 import os, sys
 sys.path[0] = os.getcwd() + "/backend"
 from pathlib import Path
+from bson.objectid import ObjectId
 import pydetex.pipelines as pip
 import zipfile
 from src.app import mongo
@@ -12,18 +13,24 @@ from src.models.tabajo import ScientificArticle
 class DataHandler:
     """This class assists with file and directory management tasks."""
     
-    def __init__(self, zip_path: str, dest_path: str):
+    def __init__(self, zip_path: str, dest_path: str, article_query):
         self.title = "Extraido de la entrega"
         self.db = mongo.db.articles
         self.zip_path = Path(zip_path)
         self.dest_path = Path(dest_path)
         self.tex_path = self.dest_path / "PQG.tex"
+        self.article = self.fetch_article(article_query)
+
 
     
     def insert_into_db(self, data: dict):
         """Insert provided data into the database and return the inserted ID"""
         result = self.db.insert_one(data)
         return str(result.inserted_id)
+    
+    def fetch_article(db, id_string):
+        query = {"_id": ObjectId(id_string)}
+        return db.find_one(query)
     
 
     
@@ -69,6 +76,12 @@ class DataHandler:
         print(f"res: {section_content}")
         return res
 
+    def update_summary_db(self, value):
+        to_update = dict(self.article['content'])
+        to_update[value[0]] = value[1]
+        self.DB.update_one(self.query, {"$set": {"content": to_update}})
+        self.article = self.get_article(self.query)
+        print(f"\nUpdated the summary of {value[0]} srction in database!")
 
 
     @staticmethod
@@ -100,18 +113,14 @@ class DataHandler:
         else:
             print("Contenido Nulo!")
 
-        user = "beta user"
-        article = ScientificArticle(
-            user_id=user,
-            title= self.title,
-            content=sections_text,
-        )
-        self.insert_into_db(article.to_dict())
+
+
+        self.db.update_one(self.query, {"$set": {"content": sections_text}})
 
 if __name__ == "__main__":
     zip_filepath = Path.cwd() / "test" / "article.zip"
     destination_folder = Path.cwd() / "test" / "output"
     destination_folder.mkdir(parents=True, exist_ok=True)
-
-    handler = DataHandler(zip_filepath, destination_folder)
+    query = ''
+    handler = DataHandler(zip_filepath, destination_folder, query)
     handler.run()

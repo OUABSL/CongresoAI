@@ -2,12 +2,12 @@
 
 .navbar {
   /* Adjust background color based on preference */
-  background-color: #70b8ff;
+  background-color: #c8c8c8;
   color: #000000; /* Text color */
   /* Add subtle box-shadow for depth */
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 5px rgba(170, 170, 170, 0.1);
   /* Increase padding for better spacing */
-  padding: 1rem 1.5rem;
+  padding: 2rem;
   /* Adjust font size for readability */
   font-size: 16px;
   /* Add transition for smooth hover effects */
@@ -55,7 +55,7 @@
   /* Adjust dropdown menu background color */
   background-color: #2c2f33;
   /* Adjust dropdown menu text color */
-  color: #000000;
+  color: #ffffff;
 }
 
 .nav-drop-item {
@@ -71,5 +71,5 @@
 
 .nav-drop-item:hover {
   /* Change hover color for dropdown items to a contrasting shade */
-  color: #48c8ff;
+  color: #454545;
 }
