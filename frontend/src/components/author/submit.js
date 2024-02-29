@@ -6,9 +6,8 @@ const SubmitArticle = () => {
     const [description, setDescription] = useState("");
     const [keyWords, setKeyWords] = useState("");
     const [file, setFile] = useState(null);
+
     const token = localStorage.getItem('access_token');
-
-
     const submitForm = async (e) => {
         e.preventDefault();
 
@@ -16,36 +15,36 @@ const SubmitArticle = () => {
         formData.append('title', title);
         formData.append('description', description);
         formData.append('key_words', keyWords);
+
         if (file) {
             formData.append('latex_project', file);
         }
-        let headers = new Headers();
-        headers.append('Access-Control-Allow-Origin', 'http://localhost:3000');
-        headers.append('Access-Control-Allow-Credentials', 'true');
-        headers.append('Authorization','Bearer ' + token);
 
-        console.log(formData)
-        try {
-            const response = await fetch('http://localhost:5000/submit', {
-                method: 'POST',
-                body: formData,
-                headers: headers
-                
-            })
-            
-            const responseData = await response.json();
+        const requestOptions = {
+            method: 'POST',
+            headers: { 'Authorization': 'Bearer ' + token },
+            body: formData
+        };
 
-            if (responseData.error) {
-                alert(responseData.error);
+        fetch('http://localhost:5000/submit', requestOptions)
+        .then((response) => {
+            return response.json().then((data) => ({
+                ok: response.ok,
+                ...data,
+            }));
+        })
+        .then(({ ok, message }) => {
+            if (!ok) {
+                throw new Error(message);
             }
-
-            if(responseData.message) {
-                alert(responseData.message);
-            }
-        } catch (err) {
-            console.error(err);
-        }
-    };
+            console.log(message);
+            alert(message);
+        })
+        .catch((error) => {
+            console.error(error.toString());
+            alert(error.toString());
+        });
+    }
 
     return (
         <Form onSubmit={submitForm}>
