@@ -1,91 +1,60 @@
-import pymongo
-# from mongoengine import Document, StringField, DateTimeField, ReferenceField, ListField
-from mongoengine import Document
+from mongoengine import Document, StringField, DateTimeField, ReferenceField, ListField, ObjectIdField
+import bson
 from datetime import datetime
 import json
 import gridfs
 import os, sys
 sys.path.insert(0, os.path.join(os.getcwd(), 'backend'))
-from src.app import mongo
+from src.app import mongo, mongo_engine
 from src.models.user import User
 
-
-
 class Articulo(Document):
+    meta = {'db_alias': mongo_engine}
+    user_id = StringField()  # Assuming a separate 'Usuario' model
+    title = StringField(required=True)
+    description = StringField(required=True)
+    key_words = ListField(StringField(required=True))
+    submission_date = DateTimeField(default=datetime.utcnow)
+    content = StringField()
+    summary = StringField()
+    evaluation = StringField()
+    reviewer = StringField()
+    latex_project_id = ObjectIdField()
+    submitted_pdf_id = ObjectIdField()
 
-    def __init__(self, user_id, title, description, key_words, content, knowledge_field, summary, evaluation, reviewer, latex_project=None,submitted_pdf=None):
- 
-        self.user_id = user_id #ReferenceField(User, required=True)  # Assuming a separate 'Usuario' model
-        self.title = title #StringField(required=True)
-        self.description = description # StringField(required=True)
-        self.key_words = key_words #ListField(StringField(required=True))
-        self.submission_date = datetime.utcnow # DateTimeField(default=datetime.utcnow)
-        self.content = content # StringField()
-        self.summary = summary #StringField()
-        self.evaluation = evaluation #StringField()
-        self.reviewer = reviewer #StringField()
-
-    def save_files(self, latex_project=None, submitted_pdf=None):
-        """
-        Saves the provided ZIP and PDF files to GridFS and updates the document with file IDs.
-
-        Args:
-            latex_project (bytes): The binary content of the ZIP file.
-            submitted_pdf (bytes): The binary content of the PDF file.
-
-        Returns:
-            None
-        """
-
-        if not self.pk:  # Ensure document is saved before storing files
-            self.save()
-
-        # client = pymongo.MongoClient()  # Commented out or removed
-        db = mongo.db  # Use directly
-
-        fs = gridfs.GridFS(db)
-
+    def save_files(self, query, latex_project=None, submitted_pdf=None):
+        fs = gridfs.GridFS(mongo.db)
         if latex_project:
-            self.latex_project_id = fs.put(latex_project, filename="latex_project.zip")
-        else:
-            self.latex_project_id = None
-
+            latex_project_id = fs.put(latex_project)
+            self.update_article_db(query, value=('latex_project_url', latex_project_id))
+            return latex_project_id
         if submitted_pdf:
-            self.submitted_pdf_id = fs.put(submitted_pdf, filename="submitted_pdf.pdf")
-        else:
-            self.submitted_pdf_id = None
+            self.submitted_pdf_id = fs.put(submitted_pdf)
+            self.reload()
 
-        self.reload()  # Update the document with file IDs
+    def update_article_db(self, query, value=None):
+        article_id = bson.ObjectId(str(query))
+        print("updated \n", mongo.db.articles.find_one(article_id))
+        return mongo.db.articles.find_one_and_update({'_id': article_id}, {"$set": {value[0]: value[1]}})
 
+
+    def set_latex_project_url(self, file_id):
+        self.latex_project_url = file_id
+
+
+    
     def get_file_url(self, file_id):
-        """
-        Retrieves the download URL for the file with the given ID from GridFS.
-
-        Args:
-            file_id (ObjectId): The ID of the file in GridFS.
-
-        Returns:
-            str: The download URL for the file, or None if not found.
-        """
-
-        try:
-            #client = pymongo.MongoClient()
-            client = mongo.db
-            db = client['articles']
-            fs = gridfs.GridFS(db)
-            file = fs.get(file_id)
-            return file.url
-        except gridfs.errors.NoFile:
-            return None
+        if file_id:
+            fs = gridfs.GridFS(mongo.db)
+            try:
+                filename = fs.find_one({'_id': bson.ObjectId(str(file_id))}).filename
+            except:
+                filename = None
+            if filename:
+                return f"/file/{str(file_id)}"
+        return None
 
     def to_dict(self):
-        """
-        Converts the document to a dictionary representation.
-
-        Returns:
-            dict: A dictionary containing the document's fields and file download URLs.
-        """
-
         return {
             'user_id': str(self.user_id) if self.user_id else None,
             'title': self.title,
@@ -100,11 +69,4 @@ class Articulo(Document):
         }
 
     def to_json(self):
-        """
-        Serializes the document dictionary to JSON format.
-
-        Returns:
-            str: The JSON representation of the document.
-        """
-
         return json.dumps(self.to_dict())

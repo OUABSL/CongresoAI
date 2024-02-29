@@ -9,46 +9,57 @@ from src.models.tabajo import Articulo
 from src.app import app, mongo
 
 submit_bp = Blueprint('submit', __name__)
+UPLOAD_FOLDER = sys.path[0] + "/data" 
 
 @submit_bp.route('/submit', methods=['POST'])
-#@jwt_required()
+@jwt_required()
 def submit_article():
+    target =os.path.join(UPLOAD_FOLDER,'test_docs')
+    if not os.path.isdir(target):
+        os.mkdir(target)
 
-    current_user = User.objects.get(username=get_jwt_identity())
-    print("mega mega   ",current_user)
 
-    # Since the request contains both JSON and File data, we need to use CombinedMultiDict
-    data = CombinedMultiDict([request.files, request.form])
-    print("lol mega ",current_user)
+    current_user = mongo.db.users.find_one({'username':get_jwt_identity()})
+    print("mega mega   ",get_jwt_identity())
+
+    data_file = request.files
+    data_form = request.form
+    print("hola ",data_form)
  
     
-    required_fields = ['title', 'description', 'key_words', 'latex_project']
+    required_fields = ['title', 'description', 'key_words']
 
-    if not all(field in data for field in required_fields):
+    if not all(field in data_form for field in required_fields) or not data_file:
         return jsonify({'error': 'Missing required fields'}), 400
 
-    """article = Articulo(
-        user_id = current_user,  
-        title = data["title"],
-        description = data["description"],
-        key_words = data.getlist('key_words'), 
+    user = mongo.db.users.find_one({'username':'ouael'})
+    if not user:
+        return jsonify({'error': 'User not found'}), 404
+    print(user)
+    article = Articulo(
+        user_id=current_user['username'],
+        title = data_form["title"],
+        description = data_form["description"],
+        key_words = data_form['key_words'].split(','), 
         content = "",
         summary = "",
         evaluation = "",
         reviewer = ""
     )
-"""
-    if 'latex_project' in request.files:
-        file = request.files['latex_project']
 
-        if file.filename != '':
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(file.filename)) + ".zip")
+    file=''
+    filename = ''
+    for file in data_file.values():
+        file = file
+        filename = secure_filename(file.filename) # obtener el nombre seguro del archivo
+        print(filename) # este es el nombre de tu archivo zip
 
-        # should be file instead of la
-        #article.save_files(file)
+        # if file.filename != '':
+        #     file.save(os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(file.filename)) + ".zip")
     
-    #article.save()
+    query = mongo.db.articles.insert_one(article.to_dict())
+    print(query)
+    article.save_files(query = query.inserted_id, latex_project=file)
 
-    # return the newly created article in the response
-    #return jsonify({'article': article.to_json()}), 201
-    return jsonify({'lol': 'b'}), 201
+
+    return jsonify({'article': str(article), 'fileinfo' : str(filename), 'query' : str(query)}), 201
