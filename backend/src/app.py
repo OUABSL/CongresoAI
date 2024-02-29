@@ -1,7 +1,10 @@
-from flask import Flask, request, jsonify
+import bson
+from flask import Flask, Response, request, jsonify
 from flask_pymongo import PyMongo
+import gridfs
+import mongoengine as me
+
 import os, sys
-from pymongo import MongoClient
 sys.path.insert(0, os.path.join(os.getcwd(), 'backend'))
 from bson import json_util
 from flask_cors import CORS
@@ -14,7 +17,6 @@ from src.config import MONGO_URI, LLAMUS_KEY, JWT_KEY
 def create_app():
     app = Flask(__name__)
     CORS(app)
-    CORS(app, origins=['http://localhost:3000'])  # Allows requests only from this origin
 
     app.config['LLAMUS_KEY'] = LLAMUS_KEY
     app.config['MONGO_URI'] = MONGO_URI
@@ -23,8 +25,10 @@ def create_app():
 
 def create_mongo(app):
     print(f"Created Database")
+    mongo = PyMongo(app)
+    mongoengine = me.connect('congresodb', host='localhost', port=27017)
 
-    return PyMongo(app)
+    return mongo, mongoengine
 
 def register_blueprints():
     from src.routes.users import users_bp
@@ -48,7 +52,7 @@ def create_response(users):
         return jsonify({"error": "No users found"})
 
 app = create_app()
-mongo = create_mongo(app)
+mongo, mongo_engine = create_mongo(app)
 jwt = JWTManager(app)
 @app.route("/users", methods=["GET"])
 def get_users():
@@ -60,6 +64,13 @@ def get_user():
     users = list(mongo.db.users.find())
     return jsonify(json_util.dumps(users)) if users else jsonify({"error": "No users found"})
 
+@app.route("/file/<file_id>")
+def get_file(file_id):
+    try:
+        file = gridfs.GridFSBucket(mongo.db).open_download_stream(bson.ObjectId(str(file_id)))
+    except:
+        return jsonify({'error': 'file not found'}), 404
+    return Response(file, mimetype='application/octet-stream')
 
 def main():
     """Run the Flask application"""

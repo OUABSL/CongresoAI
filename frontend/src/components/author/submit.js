@@ -19,14 +19,18 @@ const SubmitArticle = () => {
         if (file) {
             formData.append('latex_project', file);
         }
+        let headers = new Headers();
+        headers.append('Access-Control-Allow-Origin', 'http://localhost:3000');
+        headers.append('Access-Control-Allow-Credentials', 'true');
+        headers.append('Authorization','Bearer ' + token);
 
+        console.log(formData)
         try {
             const response = await fetch('http://localhost:5000/submit', {
                 method: 'POST',
-                body: JSON.stringify(formData),
-                headers: {
-                    'Authorization': 'Bearer ' + token,
-                }
+                body: formData,
+                headers: headers
+                
             })
             
             const responseData = await response.json();
