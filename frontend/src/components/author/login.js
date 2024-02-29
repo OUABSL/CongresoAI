@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import { Form, Button, Alert } from "react-bootstrap";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import "../estilos/login.css";
-
 
 const Login = () => {
   const [username, setInputUsername] = useState("");
@@ -12,6 +11,8 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [alertMessage, setAlertMessage] = useState(""); 
   const [alertVariant, setAlertVariant] = useState("danger");
+
+  const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -38,28 +39,29 @@ const Login = () => {
       console.log("Login Exitoso");
       setAlertVariant("success");
       setAlertMessage("Login Exitoso");
+
+      // store the token in localStorage
+      localStorage.setItem('access_token', result.access_token);
+
+      // redirect to the protected page or wherever you want
+      navigate('/portal-author/profile');
     } else {
       // Mostrar mensaje de error
       console.log(`Error en el Login ${response.status}`);
       setAlertVariant("danger");
       setAlertMessage(`Error en el Login`);
     }
-
-    await delay(500);
-    console.log(`Usuario :${username}, Contraseña :${password}`);
-    if (username !== "admin" || password !== "admin") {
-      setShow(true);
-    }
+    setShow(true);
     setLoading(false);
   };
 
   const handlePassword = () => {
   };
-
+/*
   function delay(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
-
+*/
 
   return (
     <div className="sign-in__wrapper">

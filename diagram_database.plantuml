@@ -29,11 +29,13 @@ class Autor {
 }
 
 class Articulo {
-  - Título: string
   - ID-Trabajo: int
   - ID-Autor: int
+  - Título: string
+  - Description: Text
   - Fecha de entrega: Date
-  - Documento PDF: string
+  - Archivo ZIP: Binary
+  - Documento PDF: Binary
   - Contenido: string
   - Resumen: string
   - Evaluación: string

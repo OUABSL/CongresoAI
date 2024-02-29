@@ -13,7 +13,7 @@ class User(Document):
     def __init__(self, email, username, password, fullname, birthdate, phonenumber, interestarea):
         self.email = email
         self.username = username
-        self.password = generate_password_hash(password, method='sha256')
+        self.password = password
         self.fullname = fullname
         self.birthdate = birthdate
         self.phonenumber = phonenumber

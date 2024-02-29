@@ -2,8 +2,15 @@ import React, { useState, useEffect} from 'react';
 import MyNavbar from './components/navBar';
 import Footer from './components/footer';
 import Login from './components/author/login';
-import SignUp from './components/author/register';
+import SignUpAuthor from './components/author/register';
+import AuthorProfile from './components/author/authorProfile';
+import SubmitArticle from './components/author/submit';
+
+
 import LoginRevisor from './components/revisor/login';
+import SignUpRevisor from './components/revisor/register';
+import RevisorProfile from './components/revisor/profile';
+
 
 
 
@@ -48,8 +55,19 @@ function App() {
             </div>
           }/>
         <Route path="/portal-author/login" element={<Login />} />
-        <Route path="/portal-author/register" element={<SignUp />} />
+        <Route path="/portal-author/register" element={<SignUpAuthor />} />
+        <Route path="/portal-author/profile" element={<AuthorProfile />} />
+        <Route path="/portal-author/submit" element={<SubmitArticle />} />
+        
+
+
         <Route path="/portal-revisor/login" element={<LoginRevisor />} />
+        <Route path="/portal-revisor/register" element={<SignUpRevisor />} />
+        <Route path="/portal-revisor/profile" element={<RevisorProfile />} />
+        <Route path="/portal-revisor/evaluate" element={<LoginRevisor />} />
+
+
+        
         </Routes>
       </div>
       <Footer/>
