@@ -21,7 +21,7 @@ def load_user(username):
     u = mycol.find_one({'username': username})
     if not u:
         return None
-    return User(u['email'],u['username'],u['password'],u['fullname'],u['birthdate'],u['phonenumber'],u['interestarea'])
+    return User(u['email'],u['username'],u['_password'],u['fullname'],u['birthdate'],u['phonenumber'],u['interestarea'])
 
 """
 # Create a route to authenticate your users and return JWTs. The
@@ -31,15 +31,15 @@ def login():
     username = request.json.get("username", None)
     password = request.json.get("password", None)
     user = mycol.find_one({'username': username})
-    if user and check_password_hash(user['password'], password):
+    if user and '_password' in user and check_password_hash(user['_password'], password):
         access_token = create_access_token(identity=username)
-        make_response(jsonify({'message': 'Login successful!'}), 200)
-        return jsonify(access_token=access_token)
-
+        res = make_response(jsonify({
+            'access_token': access_token,
+            'message': 'Login successful!'
+        }), 200)
+        return res
     else:
         return make_response(jsonify({"message": "Bad username or password"}), 401)
-
-
 @users_bp.route('/signup', methods=['POST'])
 def SignUp():
     data = request.get_json()
@@ -51,14 +51,15 @@ def SignUp():
     birthdate = data.get('birthdate')
     phonenumber = data.get('phonenumber')
     interestarea = data.get('interestarea')
+    ls_interestarea = str(interestarea).split(',')
 
     user = mycol.find_one({'username': username})
 
     if user:
         return make_response(jsonify({'message':'Username already exists!'}), 400)
     else:
-        new_user = User(email, username, generate_password_hash(password, method='pbkdf2:sha256'), fullname, birthdate, phonenumber, interestarea)
-        mycol.insert_one({'email': new_user.email, 'username': new_user.username, 'password': new_user.password,
+        new_user = User(email=email, username=username, _password=generate_password_hash(password, method='pbkdf2:sha256'), fullname=fullname, birthdate=birthdate, phonenumber=phonenumber, interestarea=ls_interestarea)
+        mycol.insert_one({'email': new_user.email, 'username': new_user.username, '_password': new_user._password,
                           'fullname': new_user.fullname, 'birthdate': new_user.birthdate, 'phonenumber': new_user.phonenumber,
                           'interestarea': new_user.interestarea})
         return make_response(jsonify({'message':'Registration successful!'}), 201)

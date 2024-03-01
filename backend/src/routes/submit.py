@@ -5,8 +5,10 @@ from werkzeug.utils import secure_filename
 import os, sys
 sys.path.insert(0, os.path.join(os.getcwd(), 'backend'))
 from src.models.user import User
-from src.models.tabajo import Articulo  
+from src.models.tabajo import ScientificArticle  
 from src.app import app, mongo
+from src.test.data_extraction import DataHandler
+
 
 submit_bp = Blueprint('submit', __name__)
 UPLOAD_FOLDER = sys.path[0] + "/data" 
@@ -19,7 +21,7 @@ def submit_article():
         os.mkdir(target)
 
 
-    current_user = mongo.db.users.find_one({'username':get_jwt_identity()})
+    current_user = mongo.db.users.find_one({'username':(get_jwt_identity())})
     print("mega mega   ",get_jwt_identity())
 
     data_file = request.files
@@ -36,16 +38,7 @@ def submit_article():
     if not user:
         return jsonify({'error': 'User not found'}), 404
     print(user)
-    article = Articulo(
-        user_id=current_user['username'],
-        title = data_form["title"],
-        description = data_form["description"],
-        key_words = data_form['key_words'].split(','), 
-        content = "",
-        summary = "",
-        evaluation = "",
-        reviewer = ""
-    )
+
 
     file=''
     filename = ''
@@ -57,9 +50,34 @@ def submit_article():
         # if file.filename != '':
         #     file.save(os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(file.filename)) + ".zip")
     
-    query = mongo.db.articles.insert_one(article.to_dict())
-    print(query)
-    article.save_files(query = query.inserted_id, latex_project=file)
+    # query = mongo.db.articles.insert_one(article.to_dict())
+    # print(query)
+    # article.save_files(query = query.inserted_id, latex_project=file)
+    title = request.form.get("title")
+    description = request.form.get("description")
+    key_words = request.form.get('key_words').split(',')
+    
+    content = {}
+    evaluation = {}
+    summary = {}
+    # Create ScientificArticle instance and save to MongoDB
+    saved_article = ScientificArticle(
+        user_id=current_user['username'], 
+        title=title, 
+        description=description,
+        key_words=key_words,
+        content=content,
+        evaluation=evaluation, 
+        summary=summary
+    ).save()
 
+    saved_article.save_files(latex_project=file)
 
-    return jsonify({'article': str(article), 'fileinfo' : str(filename), 'query' : str(query)}), 201
+    article_id = saved_article.id
+
+    # Data processing
+    # data_handler = DataHandler(str(article_id), dest_path=UPLOAD_FOLDER)
+      
+    # data_handler.run()
+
+    return jsonify({'status': 'success', 'msg': 'File uploaded successfully'}), 200
