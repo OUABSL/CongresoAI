@@ -76,8 +76,7 @@ def submit_article():
     article_id = saved_article.id
 
     # Data processing
-    # data_handler = DataHandler(str(article_id), dest_path=UPLOAD_FOLDER)
-      
-    # data_handler.run()
+    data_handler = DataHandler(saved_article, dest_path=UPLOAD_FOLDER)
+    data_handler.run()
 
     return jsonify({'status': 'success', 'msg': 'File uploaded successfully'}), 200
