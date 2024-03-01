@@ -34,7 +34,7 @@ class ScientificArticle(Document):
         if latex_project:
             self.save_files(submitted_pdf=latex_project)
 
-    def update_properties(self,latex_project_id = None, title: str = None, content: str = None, keywords: List[str] = None,summary: str = None, evaluation: str = None, reviewer: str = None):
+    def update_properties(self,latex_project_id = None, submited_pdf_id = None,  title: str = None, content: str = None, keywords: List[str] = None,summary: str = None, evaluation: str = None, reviewer: str = None):
         if title:
             self.title = title
         if content:
@@ -49,6 +49,8 @@ class ScientificArticle(Document):
             self.reviewer = reviewer
         if latex_project_id:
             self.latex_project_id = latex_project_id
+        if submited_pdf_id:
+            self.submitted_pdf_id = submited_pdf_id
         
         self.save()
 
@@ -64,12 +66,14 @@ class ScientificArticle(Document):
 
         fs = gridfs.GridFS(mongo.db)
         if latex_project: 
+            print(latex_project)
             self.update_properties(latex_project_id=fs.put(latex_project) )
 
         if submitted_pdf:
-            self.submitted_pdf_id = fs.put(submitted_pdf)
-            self.reload()
+            print(latex_project)
 
+            self.update_properties(submited_pdf_id=fs.put(submitted_pdf))
+    
     def get_file_url(self, file_id):
         if file_id:
             fs = gridfs.GridFS(mongo)

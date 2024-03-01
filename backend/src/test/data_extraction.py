@@ -12,11 +12,6 @@ from typing import Type, List, Dict
 from langchain.text_splitter import LatexTextSplitter
 from bson.objectid import ObjectId
 
-
-
-
-#from models.user import User
-
 class DataHandler:
     """This class assists with file and directory management tasks."""
     
@@ -27,7 +22,7 @@ class DataHandler:
 
     def _perform_extraction(self, dest_path: Path):
         """Extract files from the provided source ZIP to the destination folder"""
-        with zipfile.ZipFile(io.BytesIO(self.article.get_latex_project), 'r') as file:
+        with zipfile.ZipFile(io.BytesIO(self.article.get_latex_project()), 'r') as file:
             file.extractall(dest_path)
     
     @staticmethod
@@ -35,15 +30,15 @@ class DataHandler:
         """Read and return the contents of the provided file."""
         with open(file_path, 'r', encoding='utf-8') as file:
             return file.read()
-    @staticmethod    
+        
     def _get_tex(self):
+        print(os.listdir(self.dest_path))  # DEBUG PRINT STATEMENT
         tex_file = ''
         for archivo in os.listdir(self.dest_path):
             if re.search(r'\.tex$', archivo):
                 tex_file = archivo
         return tex_file
 
-    @staticmethod
     def _get_pdf(self):
         pdf_file = ''
         for archivo in os.listdir(self.dest_path):
@@ -124,9 +119,21 @@ class DataHandler:
             for section_name, section_content in sections.items():
                 res = self._extract_just_text(section_content)
                 sections_text[section_name]= res"""
+        
+        self._perform_extraction(self.dest_path)
 
 
-        latex_file_text = self._read_file_data(self._get_tex)
+        latex_file_name = self._get_tex()
+        latex_file_path = self.dest_path / latex_file_name # get the full file path here
+        latex_file_text = self._read_file_data(latex_file_path)
+
+        # Get pdf file path
+        pdf_file_name = self._get_pdf()
+        pdf_file_path = self.dest_path / pdf_file_name
+        # Open PDF in binary mode and save
+        with open(pdf_file_path, "rb") as pdf_file:
+            self.article.save_files(submitted_pdf=pdf_file)
+
 
             # Process LaTeX file text
         document_content = self._parse_document_content(latex_file_text)
