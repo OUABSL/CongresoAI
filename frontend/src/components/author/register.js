@@ -8,6 +8,7 @@ const SignUpAuthor = () => {
   const [alertMessage, setAlertMessage] = useState("");
 
   const initialState = {
+    rol:'author',
     email: '',
     username: '',
     password: '',

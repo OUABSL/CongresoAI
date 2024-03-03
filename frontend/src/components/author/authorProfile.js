@@ -1,52 +1,50 @@
 import React, { useEffect, useState } from 'react';
+import { Card, ListGroup } from 'react-bootstrap';
+import { useParams } from 'react-router-dom';
+
 
 function AuthorProfile() {
-    const [profileData, setProfileData] = useState(null);
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState(null);
+  const [profileData, setProfileData] = useState(null);
+  const { username } = useParams();
 
-    useEffect(() => {
-        const token = localStorage.getItem('access_token');
 
-        const fetchProfile = async () => {
-          try {
-            const response = await fetch('http://localhost:5000/profile', {
-                method: 'GET',
-                headers: {
-                    'Authorization': 'Bearer ' + token,
-                    'Content-Type': 'application/json'
-                }
-            });
-            const data = await response.json();
-            console.log(data)
-            setProfileData(data);
-          } catch (error) {
-            setError(error);
-          } finally {
-            setIsLoading(false);
-          }
-        };
-    
-        fetchProfile();
-      }, []);
-
-    return (
-        <div className="container">
-          {isLoading && <div className="text-center">Loading profile...</div>}
-          {error && <div className="alert alert-danger">{error.message}</div>}
-          {profileData && (
-            <div className="card mb-3">
-              <div className="card-header">
-                <h3>{profileData.fullname}</h3>
-              </div>
-              <div className="card-body">
-                <h5 className="card-title">Username: {profileData.username}</h5>
-                <h6 className="card-subtitle mb-2 text-muted">Email: {profileData.email}</h6>
-              </div>
-            </div>
-          )}
-        </div>
+  useEffect(() => {
+    const getProfile = async () => {
+      const response = await fetch(
+        `http://localhost:5000/authors/profile/${username}`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+          },
+        }
       );
-    }
+
+      const data = await response.json();
+      setProfileData(data);
+    };
+    getProfile();
+  }, [username]);
+
+  if (!profileData) {
+    return <div>Loading...</div>;
+  }
+  return (
+    <Card style={{ width: '18rem' }} className="mt-5">
+      <Card.Body>
+        <Card.Title>{profileData.fullname}</Card.Title>
+        <Card.Subtitle className="mb-2 text-muted">{profileData.username}</Card.Subtitle>
+        <Card.Text>{profileData.email}</Card.Text>
+      </Card.Body>
+      <ListGroup variant="flush">
+        <ListGroup.Item>{profileData.birthdate}</ListGroup.Item>
+        <ListGroup.Item>{profileData.phonenumber}</ListGroup.Item>
+        <ListGroup.Item>{`Interests: ${profileData.interests}`}</ListGroup.Item>
+        <ListGroup.Item>{`Registration date: ${profileData.registration_date}`}</ListGroup.Item>
+      </ListGroup>
+    </Card>
+  );
+}
 
 export default AuthorProfile;

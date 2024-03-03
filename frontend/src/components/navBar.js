@@ -1,13 +1,27 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
-import { Link } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import './estilos/navBar.css'
 
 const MyNavbar = () => {
   const [activeLink, setActiveLink] = useState(null);
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [username, setUsername] = useState("");
+
+  // Your actual logic to check user login status and retrieve username
+  const isLoggedIn = () => true;
+  const getLoggedInUser = () => localStorage.getItem('username') || '';
+  const handleLogout = () => {};
+
+  useEffect(() => {
+    if (isLoggedIn()) {
+      setUsername(getLoggedInUser());
+      setLoggedIn(true);
+    }
+  }, []);
 
   const handleLinkClick = (link) => {
     setActiveLink(link);
@@ -28,6 +42,22 @@ const MyNavbar = () => {
               <NavDropdown.Item as={Link} className ='nav-drop-item' to="/portal-revisor/login" onClick={() => handleLinkClick('/portal-reviewer')}>Portal de Revisor</NavDropdown.Item>
             </NavDropdown>
           </Nav>
+
+          {loggedIn && (
+          <Nav>
+           <NavDropdown title={username} id="nav-dropdown">
+              <NavDropdown.Item>
+                <NavLink to={`/portal-author/profile/${username}`}>
+                  Profile
+                </NavLink>
+              </NavDropdown.Item>
+              <NavDropdown.Divider />
+              <NavDropdown.Item onClick={handleLogout}>
+                Logout
+              </NavDropdown.Item>
+            </NavDropdown>
+          </Nav>
+        )}
         </Navbar.Collapse>
       </Container>
     </Navbar>

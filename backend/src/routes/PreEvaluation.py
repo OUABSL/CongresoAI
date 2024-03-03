@@ -40,16 +40,14 @@ SYSTEM_PROMPT_BASE = ("""You are an expert tutor specializing in reviewing and e
 )
 
 class PreEvaluation:
-    def __init__(self, db, query, system_prompt_base, llamus_key):
+    def __init__(self, db, system_prompt_base, llamus_key, article : ScientificArticle):
         self.API_URL = "https://llamus.cs.us.es/api/chat"
         self.LLAMUS_KEY = llamus_key
         self.chat_model = 'TheBloke.llama-2-13b-chat.Q5_K_M.gguf'
         self.temperature = 0.5
-        self.DB = db.db.articles
+        self.DB = db.db.scientific_article
         self.SYSTEM_PROMPT_BASE = system_prompt_base
-        self.query = query
-        self.article = self.get_article(self.query)
-        self.title = "Logical-Mathematical Foundations of a Graph Query Framework for Relational Learning." #self.get_article(query).title
+        self.article = article
         try:
             self.article_content = dict(self.article["content"])
         except KeyError:
@@ -93,18 +91,21 @@ class PreEvaluation:
         print(f"\nUpdated the evaluation of {value[0]} in memory!\n")
 
     def run(self):
-        for section_name, section_content in self.article_content.items():
-            system_prompt = self.SYSTEM_PROMPT_BASE.format(section_name = section_name, title = self.title)
+        res = self.article["evaluation"]
+        content = dict(self.article['content'])
+        for section_name, section_content in content.items():
+            system_prompt = self.SYSTEM_PROMPT_BASE.format(section_name = section_name, title = self.article['title'])
             section_evaluation = self.llamus_request(system_prompt, section_content)
             if section_evaluation:
                 tmp = dict(section_evaluation)
-                res = tmp['response']
-                value = (section_name, res)
+                response = tmp['response']
                 # Está pensado actualizar el resumen de todas las secciones en la bd de una vez
-                self.updateEvaluationdb(value)
-
+                res[section_name] = response
+        self.article.update_properties(evaluation=res)
 
 if __name__ == "__main__":
-    myquery = {"_id": ObjectId("65d35430bb52400ef325f827")}
-    evaluation_instance = PreEvaluation(mongo, myquery,  SYSTEM_PROMPT_BASE, LLAMUS_KEY)
-    evaluation_instance.run()
+    myquery = {"_id": ObjectId("65e3a472e3a66193cfe6a601")}
+    article = mongo.db.scientific_article.find_one(myquery)
+    print(type(article))
+    evaluation_instance = PreEvaluation(mongo,  SYSTEM_PROMPT_BASE, LLAMUS_KEY, article)
+    #evaluation_instance.run()

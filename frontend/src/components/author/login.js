@@ -18,6 +18,7 @@ const Login = () => {
     event.preventDefault();
     setLoading(true);
     const payload = {
+      "rol":"author",
       username,
       password
     };
@@ -35,6 +36,8 @@ const Login = () => {
 
     if (response.status===200) {
       // El login fue exitoso, redirige al usuario a donde quieras
+      localStorage.setItem('username', username);
+
       console.log(result)
       console.log("Login Exitoso");
       setAlertVariant("success");
@@ -44,7 +47,7 @@ const Login = () => {
       localStorage.setItem('access_token', result.access_token);
 
       // redirect to the protected page or wherever you want
-      navigate('/portal-author/profile');
+      navigate(`/portal-author/profile/${username}`);
     } else {
       // Mostrar mensaje de error
       console.log(`Error en el Login ${response.status}`);
