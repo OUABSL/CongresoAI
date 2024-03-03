@@ -3,25 +3,44 @@ import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
-import { Link, NavLink } from 'react-router-dom';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 import './estilos/navBar.css'
 
 const MyNavbar = () => {
   const [activeLink, setActiveLink] = useState(null);
   const [loggedIn, setLoggedIn] = useState(false);
   const [username, setUsername] = useState("");
+  const [rol, setRol] = useState("");
+  const [portalLink, setPortalLink] = useState("");
 
-  // Your actual logic to check user login status and retrieve username
-  const isLoggedIn = () => true;
+  
+
+
+  const navigate = useNavigate();
+  const isLoggedIn = () => !!localStorage.getItem('access_token');
   const getLoggedInUser = () => localStorage.getItem('username') || '';
-  const handleLogout = () => {};
+  const getLoggedInUserRol = () => localStorage.getItem('rol') || '';
+  
+  const handleLogout = () => {
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('username');
+    setLoggedIn(false);
+    setUsername("");
+    navigate('/');
+  };
 
   useEffect(() => {
     if (isLoggedIn()) {
       setUsername(getLoggedInUser());
+      setRol(getLoggedInUserRol)
       setLoggedIn(true);
     }
   }, []);
+  
+  useEffect(() => {
+    if (rol === "author") {setPortalLink("portal-author")}
+    else if (rol === "reviewer") {setPortalLink("portal-reviewer")}
+  }, [rol]);
 
   const handleLinkClick = (link) => {
     setActiveLink(link);
@@ -37,17 +56,27 @@ const MyNavbar = () => {
             <Link to="/index" onClick={() => handleLinkClick('/index')} className={activeLink === '/index' ? 'nav-link active' : 'nav-link'} >Inicio</Link>
             <Link to="/about" onClick={() => handleLinkClick('/about')} className={activeLink === '/about' ? 'nav-link active' : 'nav-link'} >Sobre Nosotros</Link>
             <Link to="/contactus" onClick={() => handleLinkClick('/contactus')} className={activeLink === '/contactus' ? 'nav-link active' : 'nav-link'} >Contáctanos</Link>
+            {!loggedIn &&(
             <NavDropdown title="Portal" id="collapsible-nav-dropdown">
-              <NavDropdown.Item as={Link} className='nav-drop-item' to="/portal-author/login" onClick={() => handleLinkClick('/portal-author')}>Portal de Autor</NavDropdown.Item>
-              <NavDropdown.Item as={Link} className ='nav-drop-item' to="/portal-revisor/login" onClick={() => handleLinkClick('/portal-reviewer')}>Portal de Revisor</NavDropdown.Item>
+               <NavDropdown.Item as="div" onClick={() => handleLinkClick('/portal-author')}>
+              <Link className='nav-drop-item' to="/portal-author/login">
+                  Portal de Autor
+                </Link>
+              </NavDropdown.Item>
+              <NavDropdown.Item as="div"  onClick={() => handleLinkClick('/portal-reviewer')}>
+                <Link className='nav-drop-item' to="/portal-reviewer/login">
+                  Portal de Revisor
+                </Link>
+              </NavDropdown.Item>
             </NavDropdown>
-          </Nav>
+            )}
+            </Nav>
 
           {loggedIn && (
           <Nav>
            <NavDropdown title={username} id="nav-dropdown">
-              <NavDropdown.Item>
-                <NavLink to={`/portal-author/profile/${username}`}>
+              <NavDropdown.Item as="div">
+                <NavLink to={`/${portalLink}/profile/${username}`}>
                   Profile
                 </NavLink>
               </NavDropdown.Item>

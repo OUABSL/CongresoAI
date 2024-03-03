@@ -1,6 +1,6 @@
 from flask import Flask, request, Blueprint, jsonify, make_response
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token, unset_jwt_cookies
 from flask_jwt_extended import get_jwt_identity
 from flask_jwt_extended import jwt_required
 #from flask_jwt_extended import JWTManagerfrom 
@@ -45,12 +45,10 @@ def login():
 @users_bp.route('/signup', methods=['POST'])
 def SignUp():
     data = request.get_json()
-
     role = data.get('rol')
     username = data.get('username')
     
     user = None
-
     if role == 'reviewer':
         user = reviewers_col.find_one({'username': username})
         if user:
@@ -83,9 +81,14 @@ def SignUp():
     else:
         return make_response(jsonify({'message':'Unauthorized!'}), 401)
     return make_response(jsonify({'message':'Registration successful!'}), 201)
-
     
-
+@users_bp.route('/logout', methods=['POST'])
+@jwt_required()
+def logout():
+    global ACCESS_TOKEN
+    ACCESS_TOKEN = ''
+    unset_jwt_cookies() 
+    return make_response(jsonify({'message': 'Logged out successfully!'}), 200)
 
 
 @users_bp.route("/authors/profile/<username>", methods=["GET"])
@@ -104,12 +107,14 @@ def profile_author(username):
 @users_bp.route("/reviewers/profile/<username>", methods=["GET"])
 @jwt_required()
 def profile_reviewer(username):
-    #user = reviewers_col.find_one({'username': username})
-    user = Reviewer.objects(username=username).first()
-    if Reviewer(user):
-        user  =Reviewer(user)
-        # user.pop('password', None)
-        # user.pop('_id', None)       
-        return user.to_json, 200
+    user = reviewers_col.find_one({'username': username})
+    print(user)
+
+    #user = Reviewer.objects(username=username).first()
+    if user:
+        #user  =Reviewer(user)
+        user.pop('password', None)
+        user.pop('_id', None)       
+        return jsonify(user), 200
     else:
         return jsonify({'error': 'User not found'}), 404

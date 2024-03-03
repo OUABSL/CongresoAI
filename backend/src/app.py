@@ -33,13 +33,17 @@ def create_mongo(app):
 def register_blueprints():
     from src.routes.users import users_bp
     from src.routes.submit import submit_bp
+    from src.routes.evaluate import evaluate_bp
 
     app.register_blueprint(users_bp)
     app.register_blueprint(submit_bp)
+    app.register_blueprint(evaluate_bp)
+
 
 
     print(f"Created Blueprint for {users_bp}")
     print(f"Created Blueprint for {submit_bp}")
+    print(f"Created Blueprint for {evaluate_bp}")
 
 
 def get_users_from_db(db):

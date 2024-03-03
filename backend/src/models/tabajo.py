@@ -76,7 +76,7 @@ class ScientificArticle(Document):
     
     def get_file_url(self, file_id):
         if file_id:
-            fs = gridfs.GridFS(mongo)
+            fs = gridfs.GridFS(mongo.db)
             try:
                 filename = fs.find_one({'_id': bson.ObjectId(str(file_id))}).filename
             except:
@@ -85,12 +85,6 @@ class ScientificArticle(Document):
                 return f"/file/{str(file_id)}"
         return None
     
-    def get_file(self, file_id):
-        fs = gridfs.GridFS(mongo.db)
-        try:
-            return fs.get(ObjectId(file_id)).read()
-        except Exception as err:
-            print(f'Error getting file: {err}')
         
     def get_latex_project(self):
         if self.latex_project_id:
@@ -119,3 +113,11 @@ class ScientificArticle(Document):
     def to_json(self):
         return json.dumps(self.to_dict())
     
+
+
+def get_file(file_id):
+    fs = gridfs.GridFS(mongo.db)
+    try:
+        return fs.get(ObjectId(file_id)).read()
+    except Exception as err:
+        print(f'Error getting file: {err}')
