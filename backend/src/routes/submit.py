@@ -44,13 +44,11 @@ def submit_article():
     if role != "author":
         return jsonify({"msg": "You do not have access to this resource"}), 403
     
-    
     temp_dir = create_temp_dir(UPLOAD_FOLDER)
 
     current_user = mongo.db.authors.find_one({'username':(get_jwt_identity())})
     print("username:   ",get_jwt_identity())
     
-
     data_file = request.files
     data_form = request.form
     #print("data form:  ",data_form)
