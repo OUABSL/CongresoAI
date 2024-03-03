@@ -14,21 +14,20 @@ SYSTEM_PROMPT_BASE = """Act as a research paper summarizer. I will provide you w
                         Section text:"""
 
 class ArticleSummarizer:
-    def __init__(self, db, system_prompt_base, query, llamus_key):
+    def __init__(self, db, system_prompt_base, llamus_key, article:ScientificArticle):
         self.API_URL = "https://llamus.cs.us.es/api/chat"
         self.LLAMUS_KEY = llamus_key
         self.chat_model = 'TheBloke.openbuddy-zephyr-7b-v14.1.Q5_K_M.gguf'
         self.temperature = 0.5
-        self.DB = db.db.articles
-        self.query = query
+        self.DB = db.db.scientific_article
         self.SYSTEM_PROMPT_BASE = system_prompt_base
-        self.article = self.get_article(self.query)
+        self.article = article
         try:
             self.article_content = dict(self.article["content"])
         except KeyError:
             print('KeyError: Article contents not found')
             self.article_content = {} 
-        self.title = "Logical-Mathematical Foundations of a Graph Query Framework for Relational Learning" #self.get_article(query).title
+        self.title = self.article['title']
 
 
 
@@ -69,16 +68,18 @@ class ArticleSummarizer:
 
 
     def run(self):
+        res = self.article["summary"]
+
         for section_name, section_content in self.article_content.items():
             system_prompt = self.SYSTEM_PROMPT_BASE.format(section_name = section_name, article_title = self.title)
             section_summury = self.llamus_request(system_prompt, section_content)
             if section_summury:
                 print(section_summury)
                 tmp = dict(section_summury)
-                res = tmp['response']
-                value = (section_name, res)
+                response = tmp['response']
                 # Está pensado actualizar el resumen de todas las secciones en la bd de una vez
-                self.update_summary_db(value)
+                res[section_name] = response
+        self.article.update_properties(summary=res)
 
 
 if __name__ == "__main__":

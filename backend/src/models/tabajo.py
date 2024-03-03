@@ -1,11 +1,11 @@
 from typing import List
-from mongoengine import Document, StringField, DateTimeField, ReferenceField, ListField, ObjectIdField, DictField, get_db
+from mongoengine import Document, StringField, DateTimeField, ReferenceField, ListField, ObjectIdField, DictField, get_db, LazyReferenceField
 from datetime import datetime
 from bson import ObjectId
 import gridfs, pymongo
 import bson
 import json
-from mongoengine.base.fields import BaseField # correct import
+from mongoengine.base.fields import BaseField 
 
 import os, sys
 sys.path.insert(0, os.path.join(os.getcwd(), 'backend'))
@@ -15,7 +15,7 @@ from src.models.user import User
 
 class ScientificArticle(Document):
     meta = {'alias': 'default'}
-    user_id = ReferenceField(User)  # Assuming a separate 'Usuario' model
+    user = LazyReferenceField(User, passthrough=True) 
     title = StringField(required=True, max_length=200)
     description = StringField(required=True, max_length=500)
     key_words = ListField(StringField(required=True, max_length=50))
@@ -104,7 +104,7 @@ class ScientificArticle(Document):
 
     def to_dict(self):
         return {
-            'user_id': str(self.user_id.id) if self.user_id else None,
+            'user': self.user if self.user else None,
             'title': self.title,
             'content': self.content,
             'submission_date': self.submission_date.strftime('%Y-%m-%d %H:%M:%S'),

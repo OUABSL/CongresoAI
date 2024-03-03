@@ -56,15 +56,15 @@ function App() {
           }/>
         <Route path="/portal-author/login" element={<Login />} />
         <Route path="/portal-author/register" element={<SignUpAuthor />} />
-        <Route path="/portal-author/profile" element={<AuthorProfile />} />
+        <Route path="/portal-author/profile/:username" element={<AuthorProfile />} />
         <Route path="/portal-author/submit" element={<SubmitArticle />} />
         
 
 
-        <Route path="/portal-revisor/login" element={<LoginRevisor />} />
-        <Route path="/portal-revisor/register" element={<SignUpRevisor />} />
-        <Route path="/portal-revisor/profile" element={<RevisorProfile />} />
-        <Route path="/portal-revisor/evaluate" element={<LoginRevisor />} />
+        <Route path="/portal-reviewer/login" element={<LoginRevisor />} />
+        <Route path="/portal-reviewer/register" element={<SignUpRevisor />} />
+        <Route path={`/portal-reviewer/profile/:username`} element={<RevisorProfile />} />
+        <Route path="/portal-reviewer/evaluate" element={<LoginRevisor />} />
 
 
         
