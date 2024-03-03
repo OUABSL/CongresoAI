@@ -7,9 +7,7 @@ from flask_jwt_extended import jwt_required
 import sys,os
 sys.path.insert(0, os.path.join(os.getcwd(), 'backend'))
 from src.models.user import User, Reviewer, Author
-from src.app import app, mongo, jwt
-
-
+from src.app import app, mongo, jwt, API
 
 
 ACCESS_TOKEN = ''
@@ -22,7 +20,7 @@ def to_list(form_element : str):
     return form_element.split(',')
 
 # Route for reviewer or author login
-@users_bp.route("/login", methods=["POST"])
+@users_bp.route(API + "/login", methods=["POST"])
 def login():
     role = request.json.get("rol", None)
     username = request.json.get("username", None)
@@ -42,7 +40,7 @@ def login():
         return make_response(jsonify({"message": "Bad username or password"}), 401)
 
 # Route for reviewer or author sign up
-@users_bp.route('/signup', methods=['POST'])
+@users_bp.route(API + '/signup', methods=['POST'])
 def SignUp():
     data = request.get_json()
     role = data.get('rol')
@@ -82,7 +80,7 @@ def SignUp():
         return make_response(jsonify({'message':'Unauthorized!'}), 401)
     return make_response(jsonify({'message':'Registration successful!'}), 201)
     
-@users_bp.route('/logout', methods=['POST'])
+@users_bp.route(API + '/logout', methods=['POST'])
 @jwt_required()
 def logout():
     global ACCESS_TOKEN
@@ -91,7 +89,7 @@ def logout():
     return make_response(jsonify({'message': 'Logged out successfully!'}), 200)
 
 
-@users_bp.route("/authors/profile/<username>", methods=["GET"])
+@users_bp.route(API + "/authors/profile/<username>", methods=["GET"])
 @jwt_required()
 def profile_author(username):
     user = authors_col.find_one({'username': username})
@@ -104,7 +102,7 @@ def profile_author(username):
     
 
     
-@users_bp.route("/reviewers/profile/<username>", methods=["GET"])
+@users_bp.route(API + "/reviewers/profile/<username>", methods=["GET"])
 @jwt_required()
 def profile_reviewer(username):
     user = reviewers_col.find_one({'username': username})

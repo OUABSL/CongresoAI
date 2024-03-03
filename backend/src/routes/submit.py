@@ -7,7 +7,7 @@ import os, sys
 sys.path.insert(0, os.path.join(os.getcwd(), 'backend'))
 from src.models.user import User, Author
 from src.models.tabajo import ScientificArticle  
-from src.app import app, mongo, LLAMUS_KEY
+from src.app import app, mongo, LLAMUS_KEY, API
 from src.test.data_extraction import DataHandler
 from src.routes.PreEvaluation import PreEvaluation
 from src.routes.Summary import ArticleSummarizer
@@ -36,7 +36,7 @@ def process_submit(article, dest_path):
     evaluation_instance.run()
     return None
 
-@submit_bp.route('/submit', methods=['POST'])
+@submit_bp.route(API + '/submit', methods=['POST'])
 @jwt_required()
 def submit_article():
     claims = get_jwt()

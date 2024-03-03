@@ -1,26 +1,66 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Container, Modal } from 'react-bootstrap';
-import PDFViewer from '..view_pdf';
+import { Table, Container, Modal, Button } from 'react-bootstrap';
+import PDFViewer from '../view_pdf';
+import { redirect, useParams } from 'react-router-dom';
 
-function ShowArticles({ reviewer_usrname }) {
+function ShowArticles() {
+  const { username } = useParams();
   const [articles, setArticles] = useState([])
   const [selectedPdf, setSelectedPdf] = useState(null)
   const [showModal, setShowModal] = useState(false)
 
   useEffect(() => {
     const fetchArticles = async () => {
-      const response = await fetch(`/evaluate/${reviewer_usrname}`)
-      setArticles(response.data)
+      const response = await fetch(`/api/v1/evaluate/${username}`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+        },
+      })
+      const data = await response.json();
+      setArticles(data);
     }
     fetchArticles()
-  }, [reviewer_usrname])
+  }, [username])
 
   const handleShowPdf = async (pdfUrl) => {
-    const response = await fetch(pdfUrl)
-    const blob = await response.blob()
-    setSelectedPdf(blob)
-    setShowModal(true)
-  }
+    try {
+      const response = await fetch(`/api/v1${pdfUrl}`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      const blob = await response.blob();
+      const pdf = window.URL.createObjectURL(blob);
+      setSelectedPdf(pdf);
+      setShowModal(true);
+    } catch (error) {
+      console.error('Error fetching PDF:', error);
+    }
+  };
+
+  const handleDownloadPdf = async (pdfUrl, filename) => {
+    try {
+      const response = await fetch(`/api/v1${pdfUrl}`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `${filename}.pdf`); // asume que filename es el nombre del archivo sin la extensión
+      document.body.appendChild(link);
+      link.click();
+      link.parentNode.removeChild(link);
+    } catch (error) {
+      console.error('Error fetching PDF:', error);
+    }
+  };
+
+
+  
 
   return (
     <Container className="my-5">
@@ -30,6 +70,8 @@ function ShowArticles({ reviewer_usrname }) {
             <th>#</th>
             <th>Title</th>
             <th>PDF Link</th>
+            <th>Download</th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
@@ -37,7 +79,10 @@ function ShowArticles({ reviewer_usrname }) {
             <tr key={index}>
               <td>{index + 1}</td>
               <td>{article.title}</td>
-              <td><button onClick={() => handleShowPdf(article.pdf)}>View PDF</button></td>
+              <td><button onClick={() => handleShowPdf(article.pdf)}>Visualizar Artículo</button></td>
+              <td><Button onClick={() => handleDownloadPdf(article.pdf)}>Descargar PDF</Button></td>
+              <td><Button href = {`/portal-reviewer/articles/${username}/${article.title}`}>Evaluar Artículo</Button></td>
+
             </tr>
           ))}
         </tbody>

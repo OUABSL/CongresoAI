@@ -55,20 +55,23 @@ def create_response(users):
     else:
         return jsonify({"error": "No users found"})
 
+API = '/api/v1'
 app = create_app()
 mongo, mongo_engine = create_mongo(app)
 jwt = JWTManager(app)
-@app.route("/users", methods=["GET"])
+
+
+@app.route(API + "/users", methods=["GET"])
 def get_users():
     users = list(mongo.db.users.find())
     return jsonify(json_util.dumps(users)) if users else jsonify({"error": "No users found"})
 
-@app.route("/", methods=["GET"])
+@app.route(API + "/", methods=["GET"])
 def get_user():
     users = list(mongo.db.users.find())
     return jsonify(json_util.dumps(users)) if users else jsonify({"error": "No users found"})
 
-@app.route("/file/<file_id>")
+@app.route(API + "/file/<file_id>")
 def get_file(file_id):
     try:
         file = gridfs.GridFSBucket(mongo.db).open_download_stream(bson.ObjectId(str(file_id)))
