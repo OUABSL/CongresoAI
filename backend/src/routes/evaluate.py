@@ -9,17 +9,17 @@ import os, sys
 sys.path.insert(0, os.path.join(os.getcwd(), 'backend'))
 from src.models.user import User, Author
 from src.models.tabajo import ScientificArticle, get_file
-from src.app import app, mongo, LLAMUS_KEY
+from src.app import app, mongo, LLAMUS_KEY, API
 
 
 evaluate_bp = Blueprint('evaluate', __name__)
 db = mongo.db.scientific_article
 
-@evaluate_bp.route('/evaluate/<reviewer>', methods = ['GET'])
+@evaluate_bp.route(API + '/evaluate/<reviewer>', methods = ['GET'])
 @jwt_required()
 def show_articles(reviewer):
-    #articles = list(db.find({reviewer=str(reviewer), "pending":True})
-    articles = list(db.find({"title": "Title Test"}))
+    articles = list(db.find({"reviewer":str(reviewer)}))
+    #articles = list(db.find({"title": "Title Test"}))
     if articles:
         result = []
         for article in articles:
@@ -36,17 +36,17 @@ def show_articles(reviewer):
     
 
 
-@evaluate_bp.route('/file/<file_id>', methods=['GET'])
+@evaluate_bp.route(API + '/file/<file_id>', methods=['GET'])
 def serve_pdf(file_id):
     pdf_file = get_file(file_id)
-    return send_file(BytesIO(pdf_file), mimetype='application/pdf', as_attachment=True, attachment_filename='pdf_file.pdf')
+    return send_file(BytesIO(pdf_file), mimetype='application/pdf', as_attachment=False, attachment_filename='pdf_file.pdf')
     
 
 
 
 
 
-@evaluate_bp.route('/evaluate/<reviewer>/<article_title>', methods = ['GET'])
+@evaluate_bp.route(API + '/evaluate/<reviewer>/<article_title>', methods = ['GET'])
 #@jwt_required()
 def show_article(reviewer, article_title):
     #article = db.find_one({"reviewer":str(reviewer), "title":title, "pending":True})
@@ -63,7 +63,7 @@ def show_article(reviewer, article_title):
         return make_response(jsonify({"msg": "No articles found for this reviewer."}), 404)
     
 
-@evaluate_bp.route('/evaluate/<reviewer>/<article_title>', methods = ['POST'])
+@evaluate_bp.route(API + '/evaluate/<reviewer>/<article_title>', methods = ['POST'])
 def add_review(reviewer, article_title):
     #article = db.find_one({"reviewer":str(reviewer), "title":title, "pending":True})
     review_data = request.get_json()
@@ -72,12 +72,12 @@ def add_review(reviewer, article_title):
     if article:
         new_review = { "review": review_data }
         db.update_one({"title":article_title}, {"$set": new_review})
-        return make_response(jsonify({"msg": "Review successfully added!"}), 200)
+        return make_response(jsonify({"msg": "Review successfully added!"}), 201)
     else:
         return make_response(jsonify({"msg": "No articles found for this reviewer."}), 404)
     
     
-@evaluate_bp.route('/evaluate/<reviewer>/<article_title>', methods = ['PUT'])
+@evaluate_bp.route(API + '/evaluate/<reviewer>/<article_title>', methods = ['PUT'])
 def update_status(reviewer, article_title):
     #article = db.find_one({"reviewer":str(reviewer), "title":title, "pending":True})
     status = request.get_json()
@@ -85,7 +85,7 @@ def update_status(reviewer, article_title):
     if article:
         update_status = { "pending": status }
         db.update_one({"title":article_title}, {"$set": update_status})
-        return make_response(jsonify({"msg": "Status successfully updated!"}), 200)
+        return make_response(jsonify({"msg": "Status successfully updated!"}), 201)
     else:
         return make_response(jsonify({"msg": "No articles found for this reviewer."}), 404)
 

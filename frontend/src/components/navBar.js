@@ -56,7 +56,10 @@ const MyNavbar = () => {
             <Link to="/index" onClick={() => handleLinkClick('/index')} className={activeLink === '/index' ? 'nav-link active' : 'nav-link'} >Inicio</Link>
             <Link to="/about" onClick={() => handleLinkClick('/about')} className={activeLink === '/about' ? 'nav-link active' : 'nav-link'} >Sobre Nosotros</Link>
             <Link to="/contactus" onClick={() => handleLinkClick('/contactus')} className={activeLink === '/contactus' ? 'nav-link active' : 'nav-link'} >Contáctanos</Link>
-            {!loggedIn &&(
+            </Nav>
+
+          <Nav>
+          {!loggedIn &&(
             <NavDropdown title="Portal" id="collapsible-nav-dropdown">
                <NavDropdown.Item as="div" onClick={() => handleLinkClick('/portal-author')}>
               <Link className='nav-drop-item' to="/portal-author/login">
@@ -70,7 +73,7 @@ const MyNavbar = () => {
               </NavDropdown.Item>
             </NavDropdown>
             )}
-            </Nav>
+          </Nav>
 
           {loggedIn && (
           <Nav>
