@@ -1,0 +1,3 @@
+.register-card{
+    width: clamp(350px, 80%, 600px);
+}

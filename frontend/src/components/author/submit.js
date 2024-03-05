@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Card, Form, Button, Alert } from 'react-bootstrap';
+import "../estilos/submit.css"
 
 const SubmitArticle = () => {
   const [title, setTitle] = useState("");
@@ -52,27 +53,27 @@ const SubmitArticle = () => {
   };
 
   return (
-    <Card className="mt-5 p-5">
+    <Card className="submit-card mt-4 p-4 mx-auto">
       <Form onSubmit={submitForm} className="form-class">
         <h2>Rellene el formulario</h2>
         {alert.show && <Alert variant={alert.variant}>{alert.message}</Alert>}
         <Form.Group>
-          <Form.Label className="label-class">Title</Form.Label>
+          <Form.Label className="label-class">Titulo del artículo</Form.Label>
           <Form.Control type="text" value={title} onChange={(e) => setTitle(e.target.value)} required className="input-class" />
         </Form.Group>
 
         <Form.Group>
-          <Form.Label className="label-class">Description</Form.Label>
-          <Form.Control type="text" value={description} onChange={(e) => setDescription(e.target.value)} required className="input-class" />
+          <Form.Label className="label-class">Descripción breve de su contenido</Form.Label>
+          <Form.Control as="textarea" rows={2} value={description} onChange={(e) => setDescription(e.target.value)} required className="input-class" />
         </Form.Group>
 
         <Form.Group>
-          <Form.Label className="label-class">Key Words</Form.Label>
+          <Form.Label className="label-class">Palabras clave</Form.Label>
           <Form.Control type="text" value={keyWords} onChange={(e) => setKeyWords(e.target.value)} required className="input-class" />
         </Form.Group>
 
         <Form.Group>
-          <Form.Label className="label-class">Latex Project</Form.Label>
+          <Form.Label className="label-class">Proyecto Latex</Form.Label>
           <Form.Control type="file" onChange={(e) => setFile(e.target.files[0])} required className="input-class" />
         </Form.Group>
 

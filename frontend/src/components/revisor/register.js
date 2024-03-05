@@ -1,11 +1,13 @@
 import React, { useState } from 'react'
 import { Card, Form, Row, Col, Button, Alert } from "react-bootstrap";
 import { Link } from 'react-router-dom';
+import "../estilos/register.css"
+
 
 const SignUpRevisor = () => {
-  const [show, setShow] = useState(false);
-  const [alertVariant, setAlertVariant] = useState("");
-  const [alertMessage, setAlertMessage] = useState("");
+  const [alert, setAlert] = useState({ show: false, message: '', variant: 'success' });
+  const [loading, setLoading] = useState(false);
+
 
   const initialState = {
     email: '',
@@ -20,41 +22,42 @@ const SignUpRevisor = () => {
   const [state, setState] = useState(initialState);
 
   const onSubmit = (e) => {
+    setLoading(true);
     e.preventDefault();
 
     fetch('http://localhost:5000/signup', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(state)
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(state)
     })
     .then(response => response.json())
     .then(data => {
         console.log(data.message);
 
-        setShow(true); 
-        setAlertMessage(data.message);
-        setAlertVariant(data.success ? "success": "danger"); // assume data.success is a boolean
-
+        setAlert({
+          show: true, 
+          message: data.message, 
+          variant: data.success ? "success": "danger"
+        });
     });
-
+    setLoading(false);
     setState(initialState)
   }
 
-  const onChange = (e) => setState(prevState => ({...prevState, [e.target.name]: e.target.value}));
+  const onChange = (e) => setState({...state, [e.target.name]: e.target.value});
 
   return (
-    <Card className="mt-5 p-5">
+    <Card className="register-card mt-2 p-5 mx-0">
         <Form onSubmit={onSubmit} className="form-class">
             <div className="h4 mb-4 form-heading text-center">Registro de revisor</div>
-            
-            {show && (
-                <Alert variant={alertVariant} onClose={() => setShow(false)} dismissible>
-                    {alertMessage}
-                </Alert>
+              
+            {alert.show && (
+              <Alert variant={alert.variant} onClose={() => setAlert({...alert, show: false})} dismissible>
+                {alert.message}
+              </Alert>
             )}
-            
           <Row>
             <Col>
               <Form.Group className="mb-3 form-group-class">
@@ -66,7 +69,7 @@ const SignUpRevisor = () => {
                   value={state.fullname}
                   onChange={onChange}
                   className="input-class"
-                />
+                  required                />
               </Form.Group>
             </Col>
             <Col>
@@ -78,7 +81,7 @@ const SignUpRevisor = () => {
                   name="username"
                   value={state.username}
                   onChange={onChange}
-                  className="input-class"
+                className="input-class"
                 />
               </Form.Group>
             </Col>
@@ -94,7 +97,7 @@ const SignUpRevisor = () => {
                   value={state.birthdate}
                   onChange={onChange}
                   className="input-class"
-                />
+                  required                />
               </Form.Group>
             </Col>
             <Col>
@@ -107,7 +110,7 @@ const SignUpRevisor = () => {
                   value={state.phonenumber}
                   onChange={onChange}
                   className="input-class"
-                />
+                  required                />
               </Form.Group>
             </Col>
           </Row>
@@ -153,11 +156,19 @@ const SignUpRevisor = () => {
           />
         </Form.Group>
 
-        <div className="d-grid">
-          <Button variant="primary" type="submit" className="button-class">
-            Registrarse
-          </Button>
-      </div>
+        {!loading ? (
+          <div className="d-grid gap-2">
+            <Button className="w-50 mx-auto" variant="primary" type="submit">
+              Registrarse
+            </Button>
+          </div>
+        ) : (
+          <div className="d-grid gap-2">
+            <Button className="w-50 mx-auto" variant="primary" type="submit" disabled>
+              Registrandose...
+            </Button>
+          </div>
+        )}
       <p className="forgot-password text-right">
         ¿Ya está registrado? <Link to="/portal-revisor/login">iniciar sesión!</Link>
       </p>

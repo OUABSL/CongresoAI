@@ -1,100 +1,69 @@
 import React, { useState } from "react";
 import { Form, Button, Alert, Card } from "react-bootstrap";
 import { Link, useNavigate } from 'react-router-dom';
-
 import "../estilos/login.css";
 
 const Login = () => {
   const [username, setInputUsername] = useState("");
   const [password, setInputPassword] = useState("");
-  const [show, setShow] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [alertMessage, setAlertMessage] = useState(""); 
-  const [alertVariant, setAlertVariant] = useState("danger");
-
+  const [alert, setAlert] = useState({ show: false, message: '', variant: 'danger' });
   const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     setLoading(true);
+
     const payload = {
       "rol":"author",
       username,
       password
     };
-
-    // fetch() método para hacer una solicitud POST
     const response = await fetch('/api/v1/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(payload) // Pasamos la información del payload a JSON
+      body: JSON.stringify(payload)
     });
-
     const result = await response.json()
 
     if (response.status===200) {
-      // El login fue exitoso, redirige al usuario a donde quieras
       localStorage.setItem('username', username);
       localStorage.setItem('rol', "author");
-      // store the token in localStorage
       localStorage.setItem('access_token', result.access_token);
 
-
-      console.log(result)
-      console.log("Login Exitoso");
-      setAlertVariant("success");
-      setAlertMessage("Login Exitoso");
-
+      setAlert({ show: true, message: "Login Exitoso", variant: "success" });
       navigate(`/portal-author/profile/${username}`, { replace: true });
-      window.location.reload();  // Need to refresh page for new token to take effect
+      window.location.reload(); 
     } else {
-      // Mostrar mensaje de error
-      console.log(`Error en el Login ${response.status}`);
-      setAlertVariant("danger");
-      setAlertMessage(`Error en el Login`);
+      setAlert({ show: true, message: "Error en el Login", variant: "danger" });
     }
-    setShow(true);
     setLoading(false);
   };
-
-  const handlePassword = () => {
-  };
-/*
-  function delay(ms) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-  }
-*/
+  
+  const handlePassword = () => {};
 
   return (
-    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center'}}>  {/* Added this line to center login card */}
-    <Card  style={{ width: '50%' }} className="mt-5">
-      {/* Overlay */}
-      {/* Form */}
-      <Form className="shadow p-4 bg-white rounded" onSubmit={handleSubmit}>
-        {/* Header */}
-
+    <Card className="form-card mx-auto">
+      <Form className="login-form shadow p-4 bg-white rounded" onSubmit={handleSubmit}>
         <div className="h4 mb-2 text-center">Acceso de autor</div>
-        {/* Alert */}
-        {show ? (
-        <Alert
-          className="mb-2"
-          variant={alertVariant}
-          onClose={() => setShow(false)}
-          dismissible
-        >
-        {alertMessage}
-        </Alert>
-        ) : (
-          <div />
-        )}
+        {alert.show && 
+          <Alert
+            className="mb-2 mx-auto"
+            variant={alert.variant}
+            onClose={() => setAlert({ ...alert, show: false })}
+            dismissible
+          >
+            {alert.message}
+          </Alert>
+        }
         <Form.Group className="mb-2" controlId="username">
           <Form.Label>Usuario</Form.Label>
           <Form.Control
             type="text"
             value={username}
-            placeholder="Nombre de usuario / Correo eléctronico"
+            placeholder="Nombre de usuario / Correo electrónico"
             onChange={(e) => setInputUsername(e.target.value)}
             required
           />
@@ -113,24 +82,26 @@ const Login = () => {
           <Form.Check type="checkbox" label="Recuérdame" />
         </Form.Group>
         {!loading ? (
-          <Button className="w-100" variant="primary" type="submit">
-            Iniciar Sesión
-          </Button>
+          <div className="d-grid gap-2">
+            <Button className="mx-auto" variant="primary" type="submit">
+              Iniciar Sesión
+            </Button>
+          </div>
         ) : (
-          <Button className="w-100" variant="primary" type="submit" disabled>
-            Iniciando Sesión...
-          </Button>
+          <div className="d-grid gap-2">
+            <Button className="mx-auto" variant="primary" type="submit" disabled>
+              Iniciando Sesión...
+            </Button>
+          </div>
         )}
         <div className="d-grid">
-        <Link onClick={handlePassword} className='text-muted link-above'>¿Olvidaste tu contraseña?</Link>
-          </div>
+          <Link onClick={handlePassword} className='text-muted link-above'>¿Olvidaste tu contraseña?</Link>
+        </div>
         <div className="d-grid">
-        <Link to="/portal-author/register" className='text-muted link-above'>¿No tienes una cuenta aún? Registrese!</Link>
+          <Link to="/portal-author/register" className='text-muted link-above'>¿No tienes una cuenta aún? ¡Regístrate!</Link>
         </div>
       </Form>
     </Card>
-    </div>
   );
 };
-
 export default Login;
