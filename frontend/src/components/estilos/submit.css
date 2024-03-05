@@ -1,0 +1,3 @@
+.submit-card{
+    width: clamp(350px, 90%, 700px);
+}

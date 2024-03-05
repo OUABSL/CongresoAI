@@ -3,16 +3,23 @@ import { Form, Button, Alert, Card } from "react-bootstrap";
 import { Link, useNavigate } from 'react-router-dom';
 
 import "../estilos/login.css";
+import { useContext } from "react";
+import AuthContext from "../../context/context";
+
+
+
 
 
 const LoginRevisor = () => {
-  const [username, setInputUsername] = useState("");
+  const [usernameInput, setInputUsername] = useState("");
   const [password, setInputPassword] = useState("");
   const [show, setShow] = useState(false);
   const [loading, setLoading] = useState(false);
   const [alertMessage, setAlertMessage] = useState(""); 
   const [alertVariant, setAlertVariant] = useState("danger");
   const navigate = useNavigate();
+  const { setSessionToken, setRole, setUsername } = useContext(AuthContext);
+
 
 
   const handleSubmit = async (event) => {
@@ -20,7 +27,7 @@ const LoginRevisor = () => {
     setLoading(true);
     const payload = {
       "rol": "reviewer",
-      username,
+      usernameInput,
       password
     };
 
@@ -36,31 +43,37 @@ const LoginRevisor = () => {
     const result = await response.json()
 
     if (response.status === 200) {
+      setSessionToken(result.access_token);
+      setUsername(usernameInput);
+      setRole("reviewer")
       setAlertVariant("success");
       setAlertMessage("Login Successful");
+      setShow(true);
 
+      /*   
       localStorage.setItem('rol', "reviewer");
       localStorage.setItem('username', username);
       localStorage.setItem('access_token', result.access_token);
+      */
+      setLoading(false);
 
-      navigate(`/portal-reviewer/profile/${username}`);
+      navigate(`/portal-reviewer/profile/${usernameInput}`);
     } else {
       // Show error message
       console.log(`Login failed ${response.status}`);
       setAlertVariant("danger");
       setAlertMessage(`Login failed`);
-    }
-    
-    setShow(true);
+      setShow(true);
+      setLoading(false);
+    }    
     setInputPassword("");
-    setLoading(false);
   };
 
 
-  return (
-    <Card>
+return (
+    <Card className="form-card mx-auto">
       <Form className="shadow p-4 bg-white rounded" onSubmit={handleSubmit}>
-        <div className="h4 mb-2 text-center">Reviewer Access</div>
+        <div className="h4 mb-2 text-center">Acceso de revisor</div>
        
         {show ? (
         <Alert
@@ -76,51 +89,54 @@ const LoginRevisor = () => {
         )}
 
         <Form.Group className="mb-2" controlId="username">
-          <Form.Label>Username</Form.Label>
+          <Form.Label>Nombre de usuario</Form.Label>
           <Form.Control
             type="text"
-            value={username}
-            placeholder="Username / Email"
+            value={usernameInput}
+            placeholder="Nombre de usuario / Email"
             onChange={(e) => setInputUsername(e.target.value)}
             required
           />
         </Form.Group>
 
         <Form.Group className="mb-2" controlId="password">
-          <Form.Label>Password</Form.Label>
+          <Form.Label>Contraseña</Form.Label>
           <Form.Control
             type="password"
             value={password}
-            placeholder="Password"
+            placeholder="Contraseña"
             onChange={(e) => setInputPassword(e.target.value)}
             required
           />
         </Form.Group>
 
         <Form.Group className="mb-2" controlId="checkbox">
-          <Form.Check type="checkbox" label="Remember me" />
+          <Form.Check type="checkbox" label="Recuérdame" />
         </Form.Group>
    
         {!loading ? (
-          <Button className="w-100" variant="primary" type="submit">
-            Log In
-          </Button>
+          <div className="d-grid gap-2">
+            <Button className="w-50 mx-auto" variant="primary" type="submit">
+              Iniciar Sesión
+            </Button>
+          </div>
         ) : (
-          <Button className="w-100" variant="primary" type="submit" disabled>
-            Logging In...
-          </Button>
+          <div className="d-grid gap-2">
+            <Button className="w-50 mx-auto" variant="primary" type="submit" disabled>
+              Iniciando Sesión...
+            </Button>
+          </div>
         )}
    
         <div className="dm-grid">
-        <Link style={{ cursor: "pointer" }} className='text-muted link-above'>Forgot your password?</Link>
+        <Link style={{ cursor: "pointer" }} className='text-muted link-above'>¿Olvidaste tu contraseña?</Link>
         </div>
 
         <div className="dm-grid">
-        <Link to="/portal-revisor/register" className='text-muted link-above'>Don't have an account yet? Contact us!</Link>
+        <Link to="/portal-revisor/register" className='text-muted link-above'>¿Aún no tienes una cuenta? ¡Contáctanos!</Link>
         </div>
       </Form>
     </Card>
   );
 };
-
 export default LoginRevisor;

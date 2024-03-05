@@ -1,14 +1,20 @@
 import React, { useState } from 'react'
 import { Card, Form, Row, Col, Button, Alert } from "react-bootstrap";
 import { Link } from 'react-router-dom';
+import "../estilos/register.css"
+
+
+
+
 
 const SignUpAuthor = () => {
-  const [show, setShow] = useState(false);
-  const [alertVariant, setAlertVariant] = useState("");
-  const [alertMessage, setAlertMessage] = useState("");
+  const [alert, setAlert] = useState({ show: false, message: '', variant: 'success' });
+  const [loading, setLoading] = useState(false);
+
+
 
   const initialState = {
-    rol:'author',
+    rol: 'author',
     email: '',
     username: '',
     password: '',
@@ -22,39 +28,61 @@ const SignUpAuthor = () => {
 
   const onSubmit = (e) => {
     e.preventDefault();
+    for (let key in state) {
+      if (state[key] === '') {
+        setAlert({
+          show: true,
+          message: 'Todos los campos son obligatorios',
+          variant: 'danger'
+        });
+        return;
+      }
+    }
+    setLoading(true);
+    
 
-    fetch('http://localhost:5000/signup', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(state)
+    fetch('/api/v1/signup', {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(state)
     })
-    .then(response => response.json())
+    .then(response => {
+      if (!response.ok) { throw Error(response.statusText); }
+      return response.json();
+    })
     .then(data => {
         console.log(data.message);
 
-        setShow(true); 
-        setAlertMessage(data.message);
-        setAlertVariant(data.success ? "success": "danger"); // assume data.success is a boolean
-
+        setAlert({
+          show: true, 
+          message: data.message, 
+          variant: data.success ? "success" : "danger"
+        });
+    })
+    .catch((error) => console.log(error))
+    .finally(() => {
+      setLoading(false);
+      setState(initialState);
     });
 
+    setLoading(false);
     setState(initialState)
   }
 
-  const onChange = (e) => setState(prevState => ({...prevState, [e.target.name]: e.target.value}));
+  const onChange = (e) => setState({...state, [e.target.name]: e.target.value});
 
   return (
-    <Card className="mt-5 p-5">
-        <Form onSubmit={onSubmit} className="form-class">
-            <div className="h4 mb-4 form-heading text-center">Registro de autor</div>
-            
-            {show && (
-                <Alert variant={alertVariant} onClose={() => setShow(false)} dismissible>
-                    {alertMessage}
-                </Alert>
-            )}
+    <Card className="register-card mt-2 p-5 mx-auto">
+      <Form onSubmit={onSubmit} className="form-class">
+        <div className="h4 mb-4 form-heading text-center">Registro de autor</div>
+              
+        {alert.show && (
+          <Alert variant={alert.variant} onClose={() => setAlert({...alert, show: false})} dismissible>
+            {alert.message}
+          </Alert>
+        )}
             
           <Row>
             <Col>
@@ -67,6 +95,7 @@ const SignUpAuthor = () => {
                   value={state.fullname}
                   onChange={onChange}
                   className="input-class"
+                  required
                 />
               </Form.Group>
             </Col>
@@ -80,6 +109,7 @@ const SignUpAuthor = () => {
                   value={state.username}
                   onChange={onChange}
                   className="input-class"
+                  required
                 />
               </Form.Group>
             </Col>
@@ -95,6 +125,7 @@ const SignUpAuthor = () => {
                   value={state.birthdate}
                   onChange={onChange}
                   className="input-class"
+                  required
                 />
               </Form.Group>
             </Col>
@@ -108,6 +139,7 @@ const SignUpAuthor = () => {
                   value={state.phonenumber}
                   onChange={onChange}
                   className="input-class"
+                  required
                 />
               </Form.Group>
             </Col>
@@ -124,6 +156,7 @@ const SignUpAuthor = () => {
                 value={state.email}
                 onChange={onChange}
                 className="input-class"
+                required
               />
             </Form.Group>
           </Col>
@@ -137,6 +170,7 @@ const SignUpAuthor = () => {
                 value={state.password}
                 onChange={onChange}
                 className="input-class"
+                required
               />
             </Form.Group>
             </Col>
@@ -151,14 +185,22 @@ const SignUpAuthor = () => {
             value={state.interestarea}
             onChange={onChange}
             className="input-class"
+            required
           />
         </Form.Group>
-
-        <div className="d-grid">
-          <Button variant="primary" type="submit" className="button-class">
-            Registrarse
-          </Button>
-      </div>
+        {!loading ? (
+          <div className="d-grid gap-2">
+            <Button className="w-50 mx-auto" variant="primary" type="submit">
+              Registrarse
+            </Button>
+          </div>
+        ) : (
+          <div className="d-grid gap-2">
+            <Button className="w-50 mx-auto" variant="primary" type="submit" disabled>
+              Registrandose...
+            </Button>
+          </div>
+        )}
       <p className="forgot-password text-right">
         ¿Ya está registrado? <Link to="/portal-author/login">iniciar sesión!</Link>
       </p>
