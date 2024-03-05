@@ -1,15 +1,11 @@
 # Import required libraries
-import json
 from pathlib import Path
 import pydetex.pipelines as pip
 import zipfile
-import re, io
-import os, sys
+import re, io, os, sys 
 sys.path[0] = os.path.join(os.getcwd(), "backend")
 from src.app import mongo
 from src.models.tabajo import ScientificArticle
-from typing import Type, List, Dict
-from langchain.text_splitter import LatexTextSplitter
 from bson.objectid import ObjectId
 
 class DataHandler:

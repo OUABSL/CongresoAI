@@ -14,10 +14,12 @@ from src.routes.Summary import ArticleSummarizer
 from src.test.test_summary import SYSTEM_PROMPT_BASE as prompt_summary
 from src.test.test_evaluation import  SYSTEM_PROMPT_BASE as prompt_eval
 import tempfile, shutil
+import threading
+
 
 
 submit_bp = Blueprint('submit', __name__)
-UPLOAD_FOLDER = sys.path[0] + "/data" 
+UPLOAD_FOLDER = os.path.join(sys.path[0], "data")
 
 def create_temp_dir(parent_dir):
     return tempfile.mkdtemp(dir=parent_dir)
@@ -34,6 +36,9 @@ def process_submit(article, dest_path):
     evaluation_instance.chat_model = 'TheBloke.llama-2-70b-chat.Q5_K_M.gguf'
     summary_instance.run()
     evaluation_instance.run()
+    if os.path.isdir(dest_path):
+        shutil.rmtree(dest_path)
+
     return None
 
 @submit_bp.route(API + '/submit', methods=['POST'])
@@ -88,7 +93,5 @@ def submit_article():
         summary={}
     ).save()
     saved_article.save_files(latex_project=file)
-    process_submit(saved_article, temp_dir)
-    shutil.rmtree(temp_dir)
-
+    threading.Thread(target=process_submit, args=(saved_article, temp_dir)).start()
     return jsonify({'status': 'success', 'msg': 'File uploaded successfully'}), 201

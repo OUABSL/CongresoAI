@@ -10,7 +10,6 @@ from mongoengine.base.fields import BaseField
 import os, sys
 sys.path.insert(0, os.path.join(os.getcwd(), 'backend'))
 from src.app import mongo, mongo_engine
-from werkzeug.security import generate_password_hash
 from src.models.user import User
 
 class ScientificArticle(Document):
@@ -88,7 +87,7 @@ class ScientificArticle(Document):
         
     def get_latex_project(self):
         if self.latex_project_id:
-            latex_project_data = self.get_file(self.latex_project_id)
+            latex_project_data = get_file(self.latex_project_id)
             if latex_project_data is None:
                 return
             else:

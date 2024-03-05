@@ -24,7 +24,7 @@ const Login = () => {
     };
 
     // fetch() método para hacer una solicitud POST
-    const response = await fetch('http://localhost:5000/login', {
+    const response = await fetch('/api/v1/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -37,7 +37,7 @@ const Login = () => {
     if (response.status===200) {
       // El login fue exitoso, redirige al usuario a donde quieras
       localStorage.setItem('username', username);
-      localStorage.setItem('rol', "reviewer");
+      localStorage.setItem('rol', "author");
       // store the token in localStorage
       localStorage.setItem('access_token', result.access_token);
 
@@ -47,10 +47,8 @@ const Login = () => {
       setAlertVariant("success");
       setAlertMessage("Login Exitoso");
 
-
-
-      // redirect to the protected page or wherever you want
-      navigate(`/portal-author/profile/${username}`);
+      navigate(`/portal-author/profile/${username}`, { replace: true });
+      window.location.reload();  // Need to refresh page for new token to take effect
     } else {
       // Mostrar mensaje de error
       console.log(`Error en el Login ${response.status}`);
@@ -70,7 +68,8 @@ const Login = () => {
 */
 
   return (
-    <Card>
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center'}}>  {/* Added this line to center login card */}
+    <Card  style={{ width: '50%' }} className="mt-5">
       {/* Overlay */}
       {/* Form */}
       <Form className="shadow p-4 bg-white rounded" onSubmit={handleSubmit}>
@@ -130,6 +129,7 @@ const Login = () => {
         </div>
       </Form>
     </Card>
+    </div>
   );
 };
 

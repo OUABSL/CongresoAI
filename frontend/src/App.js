@@ -1,6 +1,6 @@
 import React, { useState, useEffect} from 'react';
 import MyNavbar from './components/navBar';
-import Footer from './components/footer';
+import AppFooter from './components/footer';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 
@@ -70,7 +70,7 @@ function App() {
         
         </Routes>
       </div>
-      <Footer/>
+      <AppFooter/>
     </BrowserRouter>
   );
 }
