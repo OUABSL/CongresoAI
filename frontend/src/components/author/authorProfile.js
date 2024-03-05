@@ -11,7 +11,7 @@ function AuthorProfile() {
   useEffect(() => {
     const getProfile = async () => {
       const response = await fetch(
-        `http://localhost:5000/authors/profile/${username}`,
+        `/api/v1/authors/profile/${username}`,
         {
           method: 'GET',
           headers: {

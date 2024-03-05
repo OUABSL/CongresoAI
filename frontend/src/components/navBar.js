@@ -4,7 +4,7 @@ import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
-import './estilos/navBar.css'
+/*import './estilos/navBar.css'*/
 
 const MyNavbar = () => {
   const [activeLink, setActiveLink] = useState(null);
@@ -47,15 +47,27 @@ const MyNavbar = () => {
   };
 
   return (
-    <Navbar collapseOnSelect expand="lg" className="bg-body-tertiary navbar">
+    <Navbar collapseOnSelect expand="lg" className="navbar navbar-dark bg-primary">
       <Container>
         <Link className="navbar-brand" to="/" onClick={() => handleLinkClick('/')}>The AI Congress</Link>
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse id="responsive-navbar-nav">
           <Nav className="me-auto">
-            <Link to="/index" onClick={() => handleLinkClick('/index')} className={activeLink === '/index' ? 'nav-link active' : 'nav-link'} >Inicio</Link>
-            <Link to="/about" onClick={() => handleLinkClick('/about')} className={activeLink === '/about' ? 'nav-link active' : 'nav-link'} >Sobre Nosotros</Link>
-            <Link to="/contactus" onClick={() => handleLinkClick('/contactus')} className={activeLink === '/contactus' ? 'nav-link active' : 'nav-link'} >Contáctanos</Link>
+          <Nav.Item className={activeLink === '/index' ? 'nav-item active' : 'nav-item'}>
+              <Link className="nav-link" to="/index" onClick={() => handleLinkClick('/index')}>Inicio</Link>
+            </Nav.Item>
+            <Nav.Item className={activeLink === '/about' ? 'nav-item active' : 'nav-item'}>
+              <Link className="nav-link" to="/about" onClick={() => handleLinkClick('/about')}>Sobre Nosotros</Link>
+            </Nav.Item>
+            <Nav.Item className={activeLink === '/contactus' ? 'nav-item active' : 'nav-item'}>
+              <Link className="nav-link" to="/contactus" onClick={() => handleLinkClick('/contactus')}>Contáctanos</Link>
+            </Nav.Item>
+            {
+              loggedIn && rol === "author" &&
+              <Nav.Item className={activeLink === `/${portalLink}/submit` ? 'nav-item active' : 'nav-item'}>
+                <Link className="nav-link" to={`/${portalLink}/submit`} onClick={() => handleLinkClick(`/${portalLink}/submit`)}>Subir Artículo</Link>
+              </Nav.Item>
+            }
             </Nav>
 
           <Nav>

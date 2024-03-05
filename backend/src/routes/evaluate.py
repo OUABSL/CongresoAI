@@ -79,9 +79,9 @@ def add_review(reviewer, article_title):
     
 @evaluate_bp.route(API + '/evaluate/<reviewer>/<article_title>', methods = ['PUT'])
 def update_status(reviewer, article_title):
-    #article = db.find_one({"reviewer":str(reviewer), "title":title, "pending":True})
+    article = db.find_one({"reviewer":str(reviewer), "title":article_title, "pending":True})
     status = request.get_json()
-    article = db.find_one({"title":article_title})
+    #article = db.find_one({"title":article_title})
     if article:
         update_status = { "pending": status }
         db.update_one({"title":article_title}, {"$set": update_status})

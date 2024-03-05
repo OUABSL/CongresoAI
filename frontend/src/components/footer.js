@@ -26,7 +26,7 @@ const ContactSection = () => (
 )
 
 
-const Footer = () => (
+const AppFooter = () => (
     <footer className="page-footer font-small blue pt-4">
         <div className="container-fluid text-center text-md-left">
             <div className="row">
@@ -47,4 +47,4 @@ const Footer = () => (
     </footer>
 )
 
-export default Footer
+export default AppFooter
