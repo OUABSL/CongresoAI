@@ -1,9 +1,14 @@
 import {useContext, useState, useEffect } from "react";
 import AuthContext from "./context";
+import { useNavigate } from "react-router-dom";
+
 
 const useAuth = () => {
   return useContext(AuthContext);
 };
+
+
+
 
 const AppProvider = ({ children }) => {
   const [sessionToken, setSessionToken] = useState(
@@ -13,6 +18,8 @@ const AppProvider = ({ children }) => {
   const [username, setUsername] = useState(
     localStorage.getItem("username") || null
   );
+  const navigate = useNavigate();
+
 
   useEffect(() => {
     localStorage.setItem("sessionToken", sessionToken);
@@ -32,6 +39,25 @@ const AppProvider = ({ children }) => {
     setUsername(newUsername);
   };
 
+  const handleLogout = () => {
+    
+    fetch("http://localhost:5000/api/v1/logout", {
+      method:'POST',
+    })
+
+    // clear context
+    setSessionToken(null);
+    setRole(null);
+    setUsername(null);
+
+    navigate("/")
+
+    // clear localStorage
+    localStorage.removeItem("sessionToken");
+    localStorage.removeItem("role");
+    localStorage.removeItem("username");
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -41,6 +67,7 @@ const AppProvider = ({ children }) => {
         setSessionToken: handleSetSessionToken,
         setRole: handleSetRole,
         setUsername: handleSetUsername,
+        logout: handleLogout 
       }}
     >
       {children}

@@ -7,8 +7,9 @@ import AuthContext from "../../context/context";
 // Use environment variable for API url
 
 function RevisorProfile() {
-  const { username, sessionToken } = useContext(AuthContext); // Accede a username y sessionToken desde el contexto
+  const {sessionToken } = useContext(AuthContext); // Accede a username y sessionToken desde el contexto
   const [profileData, setProfileData] = useState(null);
+  const {username} = useParams();
 
   
   

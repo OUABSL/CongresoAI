@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { Card, Form, Button, Alert } from 'react-bootstrap';
 import "../estilos/submit.css"
+import { useContext } from "react";
+import AuthContext from "../../context/context";
 
 const SubmitArticle = () => {
   const [title, setTitle] = useState("");
@@ -8,14 +10,15 @@ const SubmitArticle = () => {
   const [keyWords, setKeyWords] = useState("");
   const [file, setFile] = useState(null);
   const [alert, setAlert] = useState({ show: false, message: '', variant: 'success' });
+  const { username, sessionToken } = useContext(AuthContext); // Accede a username y sessionToken desde el contexto
 
 
-  const token = localStorage.getItem('access_token');
 
   const submitForm = async (e) => {
     e.preventDefault();
 
     const formData = new FormData();
+    formData.append('username', username);
     formData.append('title', title);
     formData.append('description', description);
     formData.append('key_words', keyWords);
@@ -27,10 +30,7 @@ const SubmitArticle = () => {
     const requestOptions = {
       method: 'POST',
       headers: {
-        'Authorization': 'Bearer ' + token,
-        // Add CORS headers here, e.g.,
-        'Access-Control-Allow-Origin': 'http://localhost:3000'
-
+        'Authorization': `Bearer + ${sessionToken}`,
       },
       body: formData
     };

@@ -2,13 +2,17 @@ import React, { useState } from "react";
 import { Form, Button, Alert, Card } from "react-bootstrap";
 import { Link, useNavigate } from 'react-router-dom';
 import "../estilos/login.css";
+import { useAuth } from "../../context/appProvider";
+
 
 const Login = () => {
-  const [username, setInputUsername] = useState("");
+  const [usernameInput, setInputUsername] = useState("");
   const [password, setInputPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [alert, setAlert] = useState({ show: false, message: '', variant: 'danger' });
   const navigate = useNavigate();
+  const { setSessionToken, setRole, setUsername } = useAuth();
+
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -16,8 +20,8 @@ const Login = () => {
 
     const payload = {
       "rol":"author",
-      username,
-      password
+      "username":usernameInput,
+      "password":password
     };
     const response = await fetch('/api/v1/login', {
       method: 'POST',
@@ -29,12 +33,12 @@ const Login = () => {
     const result = await response.json()
 
     if (response.status===200) {
-      localStorage.setItem('username', username);
-      localStorage.setItem('rol', "author");
-      localStorage.setItem('access_token', result.access_token);
-
+      setSessionToken(result.access_token);
+      setUsername(usernameInput);
+      setRole("author");
+      
       setAlert({ show: true, message: "Login Exitoso", variant: "success" });
-      navigate(`/portal-author/profile/${username}`, { replace: true });
+      navigate(`/portal-author/profile/${usernameInput}`, { replace: true });
       window.location.reload(); 
     } else {
       setAlert({ show: true, message: "Error en el Login", variant: "danger" });
@@ -62,7 +66,7 @@ const Login = () => {
           <Form.Label>Usuario</Form.Label>
           <Form.Control
             type="text"
-            value={username}
+            value={usernameInput}
             placeholder="Nombre de usuario / Correo electrónico"
             onChange={(e) => setInputUsername(e.target.value)}
             required
