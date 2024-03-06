@@ -2,6 +2,7 @@ import React, { useState, useEffect} from 'react';
 import MyNavbar from './components/navBar';
 import AppFooter from './components/footer';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import AppProvider from './context/appProvider'
 
 
 
@@ -22,18 +23,13 @@ import { BrowserRouter as Router, Routes, Route, BrowserRouter } from "react-rou
 
 
 
-const userContext = React.createContext(null);
-const setUserContext = React.createContext(null);
-
-const APIContext = React.createContext();
-const setAPIContext = React.createContext(null);
-
 function App() {
   const [data, setData] = useState([]);
 
  
   return (
     <BrowserRouter>
+      <AppProvider>
       <MyNavbar />
       <div className="container p-4">
         <Routes>
@@ -71,6 +67,7 @@ function App() {
         </Routes>
       </div>
       <AppFooter/>
+      </AppProvider>
     </BrowserRouter>
   );
 }

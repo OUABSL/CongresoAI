@@ -1,37 +1,52 @@
-import AuthContext  from "./context";
-import { useState } from "react";
+import {useContext, useState, useEffect } from "react";
+import AuthContext from "./context";
 
-const AppProvider = (props) => {
-    const [sessionToken, setSessionToken] = useState(null);
-    const [role, setRole] = useState(null);
-    const [username, setUsername] = useState(null);
-  
-    const handleSetSessionToken = (token) => {
-      setSessionToken(token);
-    };
-  
-    const handleSetRole = (role) => {
-      setRole(role);
-    };
-  
-    const handleSetUsername = (username) => {
-      setUsername(username);
-    };
-  
-    return (
-      <AuthContext.Provider
-        value={{
-          sessionToken,
-          role,
-          username,
-          setSessionToken: handleSetSessionToken,
-          setRole: handleSetRole,
-          setUsername: handleSetUsername,
-        }}
-      >
-        {props.children}
-      </AuthContext.Provider>
-    );
+const useAuth = () => {
+  return useContext(AuthContext);
+};
+
+const AppProvider = ({ children }) => {
+  const [sessionToken, setSessionToken] = useState(
+    localStorage.getItem("sessionToken") || null
+  );
+  const [role, setRole] = useState(localStorage.getItem("role") || null);
+  const [username, setUsername] = useState(
+    localStorage.getItem("username") || null
+  );
+
+  useEffect(() => {
+    localStorage.setItem("sessionToken", sessionToken);
+    localStorage.setItem("role", role);
+    localStorage.setItem("username", username);
+  }, [sessionToken, role, username]);
+
+  const handleSetSessionToken = (token) => {
+    setSessionToken(token);
   };
-  
-  export default AppProvider;
+
+  const handleSetRole = (newRole) => {
+    setRole(newRole);
+  };
+
+  const handleSetUsername = (newUsername) => {
+    setUsername(newUsername);
+  };
+
+  return (
+    <AuthContext.Provider
+      value={{
+        sessionToken,
+        role,
+        username,
+        setSessionToken: handleSetSessionToken,
+        setRole: handleSetRole,
+        setUsername: handleSetUsername,
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
+};
+
+export { AuthContext, useAuth };
+export default AppProvider;

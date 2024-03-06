@@ -2,12 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { Table, Container, Modal, Button } from 'react-bootstrap';
 import PDFViewer from '../view_pdf';
 import { redirect, useParams } from 'react-router-dom';
+import { useContext } from "react";
+import AuthContext from "../../context/context";
 
 function ShowArticles() {
-  const { username } = useParams();
-  const [articles, setArticles] = useState([])
-  const [selectedPdf, setSelectedPdf] = useState(null)
-  const [showModal, setShowModal] = useState(false)
+  const { username, sessionToken } = useContext(AuthContext); // Access username from context
+  const [articles, setArticles] = useState([]);
+  const [selectedPdf, setSelectedPdf] = useState(null);
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     const fetchArticles = async () => {
@@ -16,14 +18,14 @@ function ShowArticles() {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+          'Authorization': `Bearer ${sessionToken}`,
         },
       })
       const data = await response.json();
       setArticles(data);
     }
     fetchArticles()
-  }, [username])
+  }, [username, sessionToken])
 
   const handleShowPdf = async (pdfUrl) => {
     try {

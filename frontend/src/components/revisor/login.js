@@ -5,69 +5,63 @@ import { Link, useNavigate } from 'react-router-dom';
 import "../estilos/login.css";
 import { useContext } from "react";
 import AuthContext from "../../context/context";
-
-
-
-
+import { useAuth } from "../../context/appProvider";
 
 const LoginRevisor = () => {
   const [usernameInput, setInputUsername] = useState("");
   const [password, setInputPassword] = useState("");
-  const [show, setShow] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [alertMessage, setAlertMessage] = useState(""); 
-  const [alertVariant, setAlertVariant] = useState("danger");
   const navigate = useNavigate();
-  const { setSessionToken, setRole, setUsername } = useContext(AuthContext);
-
-
+  const { setSessionToken, setRole, setUsername } = useAuth();
+  const [alert, setAlert] = useState({
+    show: false,
+    message: "",
+    variant: "danger",
+  });
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     setLoading(true);
     const payload = {
-      "rol": "reviewer",
-      usernameInput,
-      password
+      rol: "reviewer",
+      username: usernameInput,
+      password: password,
     };
 
-    // fetch() method to make a POST request
-    const response = await fetch('/api/v1/login', {
-      method: 'POST',
+    const response = await fetch("/api/v1/login", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json'
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify(payload) 
+      body: JSON.stringify(payload),
     });
 
-    const result = await response.json()
+    const result = await response.json();
 
     if (response.status === 200) {
       setSessionToken(result.access_token);
       setUsername(usernameInput);
-      setRole("reviewer")
-      setAlertVariant("success");
-      setAlertMessage("Login Successful");
-      setShow(true);
+      setRole("reviewer");
+      setAlert({
+        show: true,
+        message: "Login Successful",
+        variant: "success",
+      });
 
-      /*   
-      localStorage.setItem('rol', "reviewer");
-      localStorage.setItem('username', username);
-      localStorage.setItem('access_token', result.access_token);
-      */
       setLoading(false);
-
       navigate(`/portal-reviewer/profile/${usernameInput}`);
     } else {
-      // Show error message
       console.log(`Login failed ${response.status}`);
-      setAlertVariant("danger");
-      setAlertMessage(`Login failed`);
-      setShow(true);
+      setAlert({
+        show: true,
+        message: "Login failed",
+        variant: "danger",
+      });
       setLoading(false);
-    }    
+    }
     setInputPassword("");
   };
+
 
 
 return (
@@ -75,18 +69,16 @@ return (
       <Form className="shadow p-4 bg-white rounded" onSubmit={handleSubmit}>
         <div className="h4 mb-2 text-center">Acceso de revisor</div>
        
-        {show ? (
-        <Alert
-          className="mb-2"
-          variant={alertVariant}
-          onClose={() => setShow(false)}
-          dismissible
-        >
-        {alertMessage}
-        </Alert>
-        ) : (
-          <div />
-        )}
+        {alert.show ? (
+          <Alert
+            className="mb-2"
+            variant={alert.variant}
+            onClose={() => setAlert({ ...alert, show: false })}
+            dismissible
+          >
+          {alert.message}
+          </Alert>
+          ) : null}
 
         <Form.Group className="mb-2" controlId="username">
           <Form.Label>Nombre de usuario</Form.Label>
