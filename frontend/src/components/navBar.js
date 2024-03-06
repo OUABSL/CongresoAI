@@ -4,43 +4,40 @@ import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { useContext } from "react";
+import AuthContext from "../context/context";
 /*import './estilos/navBar.css'*/
 
 const MyNavbar = () => {
   const [activeLink, setActiveLink] = useState(null);
   const [loggedIn, setLoggedIn] = useState(false);
-  const [username, setUsername] = useState("");
-  const [rol, setRol] = useState("");
   const [portalLink, setPortalLink] = useState("");
+  const { username, sessionToken, role } = useContext(AuthContext); // Accede a username y sessionToken desde el contexto
+  const { setUsername, setSessionToken, setRole } = useContext(AuthContext); // Accede a username y sessionToken desde el contexto
+
 
   
 
 
   const navigate = useNavigate();
-  const isLoggedIn = () => !!localStorage.getItem('access_token');
-  const getLoggedInUser = () => localStorage.getItem('username') || '';
-  const getLoggedInUserRol = () => localStorage.getItem('rol') || '';
-  
+
   const handleLogout = () => {
     localStorage.removeItem('access_token');
     localStorage.removeItem('username');
     setLoggedIn(false);
     setUsername("");
+    setSessionToken("");
+    setRole("");
     navigate('/');
   };
 
-  useEffect(() => {
-    if (isLoggedIn()) {
-      setUsername(getLoggedInUser());
-      setRol(getLoggedInUserRol)
-      setLoggedIn(true);
-    }
-  }, []);
+
   
   useEffect(() => {
-    if (rol === "author") {setPortalLink("portal-author")}
-    else if (rol === "reviewer") {setPortalLink("portal-reviewer")}
-  }, [rol]);
+    setLoggedIn(!!sessionToken);
+    if (role === "author") {setPortalLink("portal-author")}
+    else if (role === "reviewer") {setPortalLink("portal-reviewer")}
+  }, [role, sessionToken]);
 
   const handleLinkClick = (link) => {
     setActiveLink(link);
@@ -63,7 +60,7 @@ const MyNavbar = () => {
               <Link className="nav-link" to="/contactus" onClick={() => handleLinkClick('/contactus')}>Contáctanos</Link>
             </Nav.Item>
             {
-              loggedIn && rol === "author" &&
+              loggedIn && role === "author" &&
               <Nav.Item className={activeLink === `/${portalLink}/submit` ? 'nav-item active' : 'nav-item'}>
                 <Link className="nav-link" to={`/${portalLink}/submit`} onClick={() => handleLinkClick(`/${portalLink}/submit`)}>Subir Artículo</Link>
               </Nav.Item>
