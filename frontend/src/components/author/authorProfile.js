@@ -1,11 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { Card, ListGroup } from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
+import { useContext } from "react";
+import AuthContext from "../../context/context";
+
 
 
 function AuthorProfile() {
   const [profileData, setProfileData] = useState(null);
   const { username } = useParams();
+  const {sessionToken } = useContext(AuthContext); // Accede a username y sessionToken desde el contexto
+
 
 
   useEffect(() => {
@@ -16,7 +21,7 @@ function AuthorProfile() {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+            'Authorization': `Bearer ${sessionToken}`,
           },
         }
       );
@@ -25,7 +30,7 @@ function AuthorProfile() {
       setProfileData(data);
     };
     getProfile();
-  }, [username]);
+  }, [username, sessionToken]);
 
   if (!profileData) {
     return <div>Loading...</div>;

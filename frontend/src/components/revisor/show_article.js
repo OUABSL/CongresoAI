@@ -1,14 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Card, Form, Accordion } from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
+import { useContext } from "react";
+import AuthContext from "../../context/context";
+/*import './estilos/navBar.css'*/
 
 const DisplaySection = ({ section, summarySection, preEvalSection, updateReview }) => {
   const [reviewSection, setReviewSection] = useState("");
   const [editing, setEditing] = useState(true);
 
+
   const handleSave = () => {
       updateReview(section, reviewSection);
-      setEditing(false);
+      setEditing(!editing);
   };
 
   const handleEdit = () => {
@@ -27,21 +31,23 @@ const DisplaySection = ({ section, summarySection, preEvalSection, updateReview 
             {editing ? (
                 <Form.Group>
                     <Form.Control 
-                        type="text" 
+                        as="textarea"
+                        rows = {3}
                         value={reviewSection}
                         onChange={e => setReviewSection(e.target.value)} 
                     />
-                    <Button variant="primary" onClick={handleSave}>
+
+                    <Button className='btn btn-secondary mt-3' variant="primary" onClick={handleSave}>
                         Guardar Revisión de Sección
                     </Button>
                 </Form.Group>
             ) : (
-                <Card.Text 
-                    style={{color: "red", cursor: "pointer"}}
-                    onClick={handleEdit}
-                >
+                <div className='p-2' style={{cursor: "pointer"}} onClick={handleEdit}>
+                    <Card.Text style={{color: "red"}}>
                     {reviewSection}
                 </Card.Text>
+                </div>
+                
             )}
         </Accordion.Body>
     </Accordion.Item>
@@ -50,6 +56,7 @@ const DisplaySection = ({ section, summarySection, preEvalSection, updateReview 
 
 
 function ShowArticle() {
+    const {sessionToken} = useContext(AuthContext); // Accede a username y sessionToken desde el contexto
     const { username, article_title } = useParams();
     const [article, setArticle] = useState({});
     const [review, setReview] = useState({});
@@ -60,7 +67,7 @@ function ShowArticle() {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+                    'Authorization': `Bearer ${sessionToken}`,
                 }
             });
             const data = await response.json();
@@ -70,7 +77,7 @@ function ShowArticle() {
         }
 
         fetchArticle();
-    }, [username, article_title]);
+    }, [username, article_title, sessionToken]);
 
     const addReview = async () => {
         const response = await fetch(`/api/v1/evaluate/${username}/${article_title}`, {
@@ -104,7 +111,7 @@ function ShowArticle() {
                         />
                     ))}
                 </Accordion>
-                <Button variant="primary" onClick={addReview}>
+                <Button className="btn bg-info mt-3" variant="primary" onClick={addReview}>
                     Guardar Revisión
                 </Button>
             </Card.Body>

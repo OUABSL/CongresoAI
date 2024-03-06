@@ -12,29 +12,20 @@ const MyNavbar = () => {
   const [activeLink, setActiveLink] = useState(null);
   const [loggedIn, setLoggedIn] = useState(false);
   const [portalLink, setPortalLink] = useState("");
-  const { username, sessionToken, role } = useContext(AuthContext); // Accede a username y sessionToken desde el contexto
-  const { setUsername, setSessionToken, setRole } = useContext(AuthContext); // Accede a username y sessionToken desde el contexto
+  const { username, sessionToken, role, logout } = useContext(AuthContext); 
 
 
-  
 
-
-  const navigate = useNavigate();
-
-  const handleLogout = () => {
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('username');
-    setLoggedIn(false);
-    setUsername("");
-    setSessionToken("");
-    setRole("");
-    navigate('/');
-  };
 
 
   
   useEffect(() => {
-    setLoggedIn(!!sessionToken);
+    if (sessionToken){
+      setLoggedIn(true);
+    }
+    else{
+      setLoggedIn(false)
+    }
     if (role === "author") {setPortalLink("portal-author")}
     else if (role === "reviewer") {setPortalLink("portal-reviewer")}
   }, [role, sessionToken]);
@@ -93,7 +84,7 @@ const MyNavbar = () => {
                 </NavLink>
               </NavDropdown.Item>
               <NavDropdown.Divider />
-              <NavDropdown.Item onClick={handleLogout}>
+              <NavDropdown.Item onClick={logout}>
                 Logout
               </NavDropdown.Item>
             </NavDropdown>

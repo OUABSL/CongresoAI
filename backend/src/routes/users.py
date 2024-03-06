@@ -81,12 +81,12 @@ def SignUp():
     return make_response(jsonify({'message':'Registration successful!'}), 201)
     
 @users_bp.route(API + '/logout', methods=['POST'])
-@jwt_required()
 def logout():
     global ACCESS_TOKEN
     ACCESS_TOKEN = ''
-    unset_jwt_cookies() 
-    return make_response(jsonify({'message': 'Logged out successfully!'}), 200)
+    response = make_response(jsonify({'message': 'Logged out successfully!'}), 200)
+    unset_jwt_cookies(response) 
+    return response
 
 
 @users_bp.route(API + "/authors/profile/<username>", methods=["GET"])

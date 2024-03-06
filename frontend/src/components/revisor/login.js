@@ -3,8 +3,6 @@ import { Form, Button, Alert, Card } from "react-bootstrap";
 import { Link, useNavigate } from 'react-router-dom';
 
 import "../estilos/login.css";
-import { useContext } from "react";
-import AuthContext from "../../context/context";
 import { useAuth } from "../../context/appProvider";
 
 const LoginRevisor = () => {

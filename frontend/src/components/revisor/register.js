@@ -25,7 +25,7 @@ const SignUpRevisor = () => {
     setLoading(true);
     e.preventDefault();
 
-    fetch('http://localhost:5000/signup', {
+    fetch('/api/v1/signup', {
       method: 'POST',
       headers: {
           'Content-Type': 'application/json'
