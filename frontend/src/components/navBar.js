@@ -1,12 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
-import { Link, NavLink, useNavigate } from 'react-router-dom';
-import { useContext } from "react";
+import {Link, NavLink} from 'react-router-dom';
+import {useContext} from "react";
 import AuthContext from "../context/context";
-/*import './estilos/navBar.css'*/
+import logo from '.././ressources/logo.png';
+import './estilos/navBar.css'
 
 const MyNavbar = () => {
   const [activeLink, setActiveLink] = useState(null);
@@ -20,7 +21,7 @@ const MyNavbar = () => {
 
   
   useEffect(() => {
-    if (sessionToken){
+    if (sessionToken!==null && username!==null && role!==null){
       setLoggedIn(true);
     }
     else{
@@ -28,7 +29,7 @@ const MyNavbar = () => {
     }
     if (role === "author") {setPortalLink("portal-author")}
     else if (role === "reviewer") {setPortalLink("portal-reviewer")}
-  }, [role, sessionToken]);
+  }, [role, sessionToken, username]);
 
   const handleLinkClick = (link) => {
     setActiveLink(link);
@@ -37,7 +38,10 @@ const MyNavbar = () => {
   return (
     <Navbar collapseOnSelect expand="lg" className="navbar navbar-dark bg-primary">
       <Container>
-        <Link className="navbar-brand" to="/" onClick={() => handleLinkClick('/')}>The AI Congress</Link>
+      <Link className="navbar-brand d-flex align-items-center" to="/" onClick={() => handleLinkClick('/')}>
+            <img src={logo} width="60" height="60" className="d-inline-block align-top" alt="logo"/> 
+            <span className="mx-2">The AI Congress</span>
+        </Link>
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse id="responsive-navbar-nav">
           <Nav className="me-auto">

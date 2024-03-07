@@ -1,9 +1,8 @@
 import React, { useState } from "react";
-import { Form, Button, Alert, Card } from "react-bootstrap";
+import { Form, Button, Alert, Card, FloatingLabel } from "react-bootstrap";
 import { Link, useNavigate } from 'react-router-dom';
 import "../estilos/login.css";
 import { useAuth } from "../../context/appProvider";
-
 
 const Login = () => {
   const [usernameInput, setInputUsername] = useState("");
@@ -12,7 +11,6 @@ const Login = () => {
   const [alert, setAlert] = useState({ show: false, message: '', variant: 'danger' });
   const navigate = useNavigate();
   const { setSessionToken, setRole, setUsername } = useAuth();
-
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -23,6 +21,7 @@ const Login = () => {
       "username":usernameInput,
       "password":password
     };
+    
     const response = await fetch('/api/v1/login', {
       method: 'POST',
       headers: {
@@ -46,7 +45,10 @@ const Login = () => {
     setLoading(false);
   };
   
-  const handlePassword = () => {};
+  const handlePassword = () => {
+    setAlert({ show: true, message: "Funcionalidad en desarrollo!", variant: "info" });
+
+  };
 
   return (
     <Card className="form-card mx-auto">
@@ -62,18 +64,22 @@ const Login = () => {
             {alert.message}
           </Alert>
         }
-        <Form.Group className="mb-2" controlId="username">
-          <Form.Label>Usuario</Form.Label>
+        <FloatingLabel
+          controlId="floatingUsername"
+          label="Nombre de usuario"
+          className="mb-3"
+        >
           <Form.Control
             type="text"
             value={usernameInput}
-            placeholder="Nombre de usuario / Correo electrónico"
             onChange={(e) => setInputUsername(e.target.value)}
             required
           />
-        </Form.Group>
-        <Form.Group className="mb-2" controlId="password">
-          <Form.Label>Contraseña</Form.Label>
+        </FloatingLabel>
+        <FloatingLabel
+          controlId="floatingPassword"
+          label="Contraseña"
+        >
           <Form.Control
             type="password"
             value={password}
@@ -81,8 +87,8 @@ const Login = () => {
             onChange={(e) => setInputPassword(e.target.value)}
             required
           />
-        </Form.Group>
-        <Form.Group className="mb-2" controlId="checkbox">
+        </FloatingLabel>
+        <Form.Group className="mt-2" controlId="checkbox">
           <Form.Check type="checkbox" label="Recuérdame" />
         </Form.Group>
         {!loading ? (
@@ -98,10 +104,10 @@ const Login = () => {
             </Button>
           </div>
         )}
-        <div className="d-grid">
+        <div className="d-grid mt-3">
           <Link onClick={handlePassword} className='text-muted link-above'>¿Olvidaste tu contraseña?</Link>
         </div>
-        <div className="d-grid">
+        <div className="d-grid mt-2">
           <Link to="/portal-author/register" className='text-muted link-above'>¿No tienes una cuenta aún? ¡Regístrate!</Link>
         </div>
       </Form>

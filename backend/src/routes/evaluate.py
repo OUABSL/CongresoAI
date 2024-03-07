@@ -14,12 +14,10 @@ from src.app import app, mongo, LLAMUS_KEY, API
 
 evaluate_bp = Blueprint('evaluate', __name__)
 db = mongo.db.scientific_article
-
 @evaluate_bp.route(API + '/evaluate/<reviewer>', methods = ['GET'])
 @jwt_required()
 def show_articles(reviewer):
     articles = list(db.find({"reviewer":str(reviewer)}))
-    #articles = list(db.find({"title": "Title Test"}))
     if articles:
         result = []
         for article in articles:
@@ -27,13 +25,14 @@ def show_articles(reviewer):
             submitted_pdf_id = article.get('submitted_pdf_id')
             if isinstance(submitted_pdf_id, ObjectId):
                 result.append({
-                    "title": article.get("title", ""), 
-                    "pdf": "/file/" + str(submitted_pdf_id)
-                    })
+                    "title": article.get("title"),
+                    "description": article.get("description"),
+                    "pdf": "/file/" + str(submitted_pdf_id),
+                    "zip": "/zip/" + str(article.get("latex_project_id"))
+                })
         return make_response(jsonify(result), 200)
     else:
         return make_response(jsonify({"msg": "No articles found for this reviewer."}), 404)
-    
 
 
 @evaluate_bp.route(API + '/file/<file_id>', methods=['GET'])
@@ -42,6 +41,10 @@ def serve_pdf(file_id):
     return send_file(BytesIO(pdf_file), mimetype='application/pdf', as_attachment=False, attachment_filename='pdf_file.pdf')
     
 
+@evaluate_bp.route(API + '/zip/<file_id>', methods=['GET'])
+def serve_zip(file_id):
+    zip_file = get_file(file_id)
+    return send_file(BytesIO(zip_file), mimetype='application/zip', as_attachment=True, attachment_filename='latex_project.zip')
 
 
 

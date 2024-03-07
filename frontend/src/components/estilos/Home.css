@@ -1,0 +1,23 @@
+.home {
+    padding: 20px;
+  }
+  
+  .home__title {
+    margin-bottom: 30px;
+  }
+  
+  .home__content {
+    padding: 20px;
+  }
+  
+  .home__info, .home__description {
+    margin-bottom: 30px;
+  }
+  
+  .home__benefits {
+    background-color: #dee2e6;
+  }
+
+  .use_case{
+    
+  }

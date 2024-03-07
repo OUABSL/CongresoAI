@@ -1,6 +1,8 @@
-import {useContext, useState, useEffect } from "react";
+import {useContext, useState, useEffect, useCallback } from "react";
 import AuthContext from "./context";
 import { useNavigate } from "react-router-dom";
+
+const INACTIVITY_TIMEOUT = 1000 * 60 * 20; // 20 minutes in milliseconds
 
 
 const useAuth = () => {
@@ -18,6 +20,8 @@ const AppProvider = ({ children }) => {
   const [username, setUsername] = useState(
     localStorage.getItem("username") || null
   );
+  const [lastActivity, setLastActivity] = useState(Date.now());
+
   const navigate = useNavigate();
 
 
@@ -39,24 +43,62 @@ const AppProvider = ({ children }) => {
     setUsername(newUsername);
   };
 
-  const handleLogout = () => {
-    
-    fetch("http://localhost:5000/api/v1/logout", {
-      method:'POST',
-    })
+  const handleLogout = useCallback(
+    async () => {
+      try {
+        await fetch("http://localhost:5000/api/v1/logout", {
+          method: 'POST',
+        });
+      } catch (error) {
+        console.error("Error during logout:", error);
+      }
 
-    // clear context
-    setSessionToken(null);
-    setRole(null);
-    setUsername(null);
+      // Clear context and localStorage
+      setSessionToken(null);
+      setRole(null);
+      setUsername(null);
+      navigate("/");
 
-    navigate("/")
+      localStorage.removeItem("sessionToken");
+      localStorage.removeItem("role");
+      localStorage.removeItem("username");
+    },
+    [navigate] // Only dependency
+  );
 
-    // clear localStorage
-    localStorage.removeItem("sessionToken");
-    localStorage.removeItem("role");
-    localStorage.removeItem("username");
-  };
+  useEffect(() => {
+    const handleWindowFocus = () => {
+      setLastActivity(Date.now());
+    };
+
+    const handleUserInteraction = () => {
+      setLastActivity(Date.now());
+    };
+
+    window.addEventListener("focus", handleWindowFocus);
+    window.addEventListener("click", handleUserInteraction);
+    window.addEventListener("keydown", handleUserInteraction);
+
+    return () => {
+      window.removeEventListener("focus", handleWindowFocus);
+      window.removeEventListener("click", handleUserInteraction);
+      window.removeEventListener("keydown", handleUserInteraction);
+    };
+  }, []); // Empty dependency array to prevent infinite loops
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      const now = Date.now();
+      const isInactive = now - lastActivity > INACTIVITY_TIMEOUT;
+
+      if (isInactive) {
+        handleLogout();
+      }
+    }, INACTIVITY_TIMEOUT);
+
+    return () => clearTimeout(timeout);
+  }, [lastActivity, handleLogout]); // Dependency on `lastActivity` to restart timeout on updates
+
 
   return (
     <AuthContext.Provider
