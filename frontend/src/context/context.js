@@ -1,9 +1,9 @@
 import { createContext } from 'react';
 
 const AuthContext = createContext({
-  sessionToken: null,
-  role: null,
-  username: null,
+  sessionToken: "",
+  role: "",
+  username: "",
   setSessionToken: () => {},
   setRole: () => {},
   setUsername: () => {},
