@@ -21,15 +21,17 @@ def show_articles(reviewer):
     if articles:
         result = []
         for article in articles:
-            article["_id"] = str(article["_id"])
-            submitted_pdf_id = article.get('submitted_pdf_id')
-            if isinstance(submitted_pdf_id, ObjectId):
-                result.append({
-                    "title": article.get("title"),
-                    "description": article.get("description"),
-                    "pdf": "/file/" + str(submitted_pdf_id),
-                    "zip": "/zip/" + str(article.get("latex_project_id"))
-                })
+            print(article.keys())
+            if article and 'submitted_pdf_id' in article.keys() and article.get('summary'):
+                article["_id"] = str(article["_id"])
+                submitted_pdf_id = article.get('submitted_pdf_id')
+                if isinstance(submitted_pdf_id, ObjectId):
+                    result.append({
+                        "title": article.get("title"),
+                        "description": article.get("description"),
+                        "pdf": "/file/" + str(submitted_pdf_id),
+                        "zip": "/zip/" + str(article.get("latex_project_id"))
+                    })
         return make_response(jsonify(result), 200)
     else:
         return make_response(jsonify({"msg": "No articles found for this reviewer."}), 404)
@@ -55,12 +57,12 @@ def show_article(reviewer, article_title):
     #article = db.find_one({"reviewer":str(reviewer), "title":title, "pending":True})
     article = db.find_one({"title":article_title})
 
+    print(article)
     if article:
         article.pop("_id")
         article.pop("content")
-        article['latex_project_id'] = str(article['latex_project_id'])
-        article['submitted_pdf_id'] = str(article['submitted_pdf_id'])
-        print(article)
+        article['latex_project_id'] = str(article.get('latex_project_id'))
+        article['submitted_pdf_id'] = str(article.get('submitted_pdf_id'))
         return make_response(jsonify(article), 200)
     else:
         return make_response(jsonify({"msg": "No articles found for this reviewer."}), 404)

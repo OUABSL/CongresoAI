@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Table, Container, Modal, Button, DropdownButton, Dropdown } from 'react-bootstrap';
-import PDFViewer from '../view_pdf';
 import { redirect, useParams } from 'react-router-dom';
 import { useContext } from "react";
 import AuthContext from "../../context/context";
@@ -8,8 +7,6 @@ import AuthContext from "../../context/context";
 function ShowArticles() {
   const { username, sessionToken } = useContext(AuthContext); // Access username from context
   const [articles, setArticles] = useState([]);
-  const [selectedPdf, setSelectedPdf] = useState(null);
-  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     const fetchArticles = async () => {
@@ -26,21 +23,6 @@ function ShowArticles() {
     }
     fetchArticles()
   }, [username, sessionToken])
-
-  const handleShowPdf = async (pdfUrl) => {
-    try {
-      const response = await fetch(`/api/v1${pdfUrl}`);
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-      const blob = await response.blob();
-      const pdf = window.URL.createObjectURL(blob);
-      setSelectedPdf(pdf);
-      setShowModal(true);
-    } catch (error) {
-      console.error('Error fetching PDF:', error);
-    }
-  };
 
   const handleDownloadPdf = async (pdfUrl, filename) => {
     try {
@@ -113,13 +95,8 @@ function ShowArticles() {
           ))}
         </tbody>
       </Table>
-      <Modal show={showModal} onHide={() => setShowModal(false)}>
-        <Modal.Body>
-          <PDFViewer file={selectedPdf} />
-        </Modal.Body>
-      </Modal>
     </Container>
-  )
+  );
 }
 
 export default ShowArticles;
