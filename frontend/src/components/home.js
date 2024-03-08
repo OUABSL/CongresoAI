@@ -16,21 +16,6 @@ const Home = () => {
       </Card>
 
       <Container className="home__content">
-        <Row className="home__info mb-4">
-          <Col md={12}>
-            <h2>¿Para quién es The AI Congress?</h2>
-            <Card className="home__benefits">
-              <Card.Body>
-                <p>The AI Congress es ideal para:</p>
-                <ListGroup>
-                  <ListGroup.Item>Autores que quieran publicar en revistas de alto impacto.</ListGroup.Item>
-                  <ListGroup.Item>Revisores que deseen optimizar su tiempo.</ListGroup.Item>
-                  <ListGroup.Item>Editores que necesiten eficiencia en sus procesos de revisión.</ListGroup.Item>
-                </ListGroup>
-              </Card.Body>
-            </Card>
-          </Col>
-        </Row>
 
          <Row className="home__description mb-4">
           <Col md={12}>
@@ -67,12 +52,6 @@ const Home = () => {
               </Card.Body>
             </Card>
           </Col>         
-        </Row>
-                
-        <Row className="mb-4">
-          <Col md={12} className="text-center">
-            <Button variant="info" size="lg">¡Comienza tu prueba gratuita hoy!</Button>
-          </Col>
         </Row>
       </Container>
     </div>

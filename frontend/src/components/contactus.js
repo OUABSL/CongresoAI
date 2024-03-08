@@ -95,12 +95,14 @@ const ContactUs = () => {
   };
 
   return (
-    <Container className="my-5 d-flex justify-content-center">
-        {alert.show && (
+    <Container className="d-flex flex-column align-items-center">
+    <Row>
+      {alert.show && (
           <Alert variant={alert.variant} onClose={() => setAlert({...alert, show: false})} dismissible>
             {alert.message}
           </Alert>
         )}
+      </Row>
       <Card style={{ maxWidth: '600px' }} className="mt-2 p-5" >
       <h1 className="text-center mb-4">Contáctanos</h1>
       <Row>

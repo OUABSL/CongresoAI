@@ -7,7 +7,7 @@ import AuthContext from "../../context/context";
 // Use environment variable for API url
 
 function RevisorProfile() {
-  const {sessionToken } = useContext(AuthContext); // Accede a username y sessionToken desde el contexto
+  const {sessionToken, logout } = useContext(AuthContext); // Accede a username y sessionToken desde el contexto
   const [profileData, setProfileData] = useState(null);
   const {username} = useParams();
 
@@ -25,6 +25,12 @@ function RevisorProfile() {
           },
         }
       );
+      
+      if(response.status === 401) {
+        logout();
+        return;
+      }
+
 
       const data = await response.json();
       setProfileData(data);

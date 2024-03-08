@@ -10,7 +10,7 @@ const SubmitArticle = () => {
   const [keyWords, setKeyWords] = useState("");
   const [file, setFile] = useState(null);
   const [alert, setAlert] = useState({ show: false, message: '', variant: 'success' });
-  const { username, sessionToken } = useContext(AuthContext); // Accede a username y sessionToken desde el contexto
+  const { username, sessionToken, logout } = useContext(AuthContext); // Accede a username y sessionToken desde el contexto
 
 
 
@@ -38,8 +38,12 @@ const SubmitArticle = () => {
     try {
       const response = await fetch('http://localhost:5000/api/v1/submit', requestOptions);
       const data = await response.json();
-
       if (!response.ok) {
+        if(response.status === 401) {
+          logout();
+          return;
+        }
+
         throw new Error(data.message);
       }
       else if (response.status === 201) {

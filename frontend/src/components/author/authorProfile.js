@@ -9,7 +9,7 @@ import AuthContext from "../../context/context";
 function AuthorProfile() {
   const [profileData, setProfileData] = useState(null);
   const { username } = useParams();
-  const {sessionToken } = useContext(AuthContext); // Accede a username y sessionToken desde el contexto
+  const {sessionToken, logout } = useContext(AuthContext); // Accede a username y sessionToken desde el contexto
 
 
 
@@ -25,6 +25,12 @@ function AuthorProfile() {
           },
         }
       );
+      
+      if(response.status === 401) {
+        logout();
+        return;
+      }
+
 
       const data = await response.json();
       setProfileData(data);

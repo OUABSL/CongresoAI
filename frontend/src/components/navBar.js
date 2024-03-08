@@ -45,12 +45,12 @@ const MyNavbar = () => {
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse id="responsive-navbar-nav">
           <Nav className="me-auto">
-          <Nav.Item className={activeLink === '/index' ? 'nav-item active' : 'nav-item'}>
-              <Link className="nav-link" to="/index" onClick={() => handleLinkClick('/index')}>Inicio</Link>
+          <Nav.Item className={activeLink === '/' ? 'nav-item active' : 'nav-item'}>
+              <Link className="nav-link" to="/" onClick={() => handleLinkClick('/')}>Inicio</Link>
             </Nav.Item>
-            <Nav.Item className={activeLink === '/about' ? 'nav-item active' : 'nav-item'}>
+            {/* <Nav.Item className={activeLink === '/about' ? 'nav-item active' : 'nav-item'}>
               <Link className="nav-link" to="/about" onClick={() => handleLinkClick('/about')}>Sobre Nosotros</Link>
-            </Nav.Item>
+            </Nav.Item> */}
             <Nav.Item className={activeLink === '/contactus' ? 'nav-item active' : 'nav-item'}>
               <Link className="nav-link" to="/contactus" onClick={() => handleLinkClick('/contactus')}>Contáctanos</Link>
             </Nav.Item>
@@ -58,6 +58,12 @@ const MyNavbar = () => {
               loggedIn && role === "author" &&
               <Nav.Item className={activeLink === `/${portalLink}/submit` ? 'nav-item active' : 'nav-item'}>
                 <Link className="nav-link" to={`/${portalLink}/submit`} onClick={() => handleLinkClick(`/${portalLink}/submit`)}>Subir Artículo</Link>
+              </Nav.Item>
+            }
+            {
+              loggedIn && role === "reviewer" &&
+              <Nav.Item className={activeLink === `/${portalLink}/articles/${username}` ? 'nav-item active' : 'nav-item'}>
+                <Link className="nav-link" to={`/${portalLink}/articles/${username}`} onClick={() => handleLinkClick(`/${portalLink}/submit`)}>Artículos Asignados</Link>
               </Nav.Item>
             }
             </Nav>

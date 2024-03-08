@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { ButtonGroup, Button, Card, Form, Accordion, Col, Row } from 'react-bootstrap';
-import { useParams } from 'react-router-dom';
+import {Button, Card, Form, Accordion, Col, Row, DropdownButton, Dropdown } from 'react-bootstrap';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useContext } from "react";
 import AuthContext from "../../context/context";
 import { Viewer } from '@react-pdf-viewer/core';
 // Plugins
-import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout';
 
 // Import styles
 import '@react-pdf-viewer/core/lib/styles/index.css';
@@ -20,7 +19,7 @@ const DisplaySection = ({ section, summarySection, preEvalSection, updateReview 
   const [editing, setEditing] = useState(true);
   
 
-  const formatPreEvalSection = (preEvalSection, postEvalSummary) => {
+  const formatPreEvalSection = (preEvalSection) => {
     if(!preEvalSection) {
       return '';
     }
@@ -28,6 +27,8 @@ const DisplaySection = ({ section, summarySection, preEvalSection, updateReview 
     const criteria = ['Motivation:', 'Novelty:', 'Clarity:', 'Grammar and Style:', 'Typos and Errors:'];
   
     let formattedPreEvalSection = preEvalSection;
+    formattedPreEvalSection = preEvalSection.replace(/\d+\./g, ''); // Elimina todas las apariciones de "(dígito.)"
+
     
     for (let criterion of criteria) {
       formattedPreEvalSection = formattedPreEvalSection.replaceAll(criterion,
@@ -127,27 +128,40 @@ const DownloadArticle = ({pdf, zip, title}) =>{
     };
 
     return (
-        <Row className="justify-content-between">
-        <Col xs="auto">
-          <Button onClick={() => handleDownloadPdf(pdf, title)}>Descargar PDF</Button>
-        </Col>
-        <Col xs="auto">
-          <Button onClick={() => handleDownloadZip(zip, title)}>Descargar ZIP</Button>
-        </Col>
-      </Row>
+
+        <>
+        <DropdownButton id="dropdown-button" title="Descargar" align='right'>
+        <Dropdown.Item onClick={() => handleDownloadPdf(pdf, title)}>Descargar PDF</Dropdown.Item>
+        <Dropdown.Item onClick={() => handleDownloadZip(zip, title)}>Descargar ZIP</Dropdown.Item>
+        </DropdownButton>
+      </>
         )
   };
 
-
-
 function ShowArticle() {
-    const {sessionToken} = useContext(AuthContext); // Accede a username y sessionToken desde el contexto
+    const {sessionToken, logout} = useContext(AuthContext); // Accede a username y sessionToken desde el contexto
     const { username, article_title } = useParams();
     const [article, setArticle] = useState({});
     const [review, setReview] = useState({});
     const [selectedPdf, setSelectedPdf] = useState(null);
-    const defaultLayoutPluginInstance = defaultLayoutPlugin();
+    const sectionOrder = ["Abstract", "Introduction", "Related Word", "Conclusions and future works"];
+    const navigate = useNavigate();
 
+    const goBack = () => {
+      navigate(-1);
+  }
+
+  const sortSections = Object.entries(article.summary).sort(([firstSection], [secondSection]) => {
+    const firstSectionIndex = sectionOrder.indexOf(firstSection);
+    const secondSectionIndex = sectionOrder.indexOf(secondSection);
+    
+    // If the section is not in the sectionOrder array, find it after the specified sections
+    if (secondSectionIndex === -1) return -1;
+    if (firstSectionIndex === -1) return 1;
+
+    // Else compare based on the sectionOrder array
+    return firstSectionIndex - secondSectionIndex;
+});
 
 
     useEffect(() => {
@@ -159,6 +173,13 @@ function ShowArticle() {
                     'Authorization': `Bearer ${sessionToken}`,
                 }
             });
+
+            
+            if(response.status === 401) {
+              logout();
+              return;
+            }
+
             const data = await response.json();
     
             setArticle(data);
@@ -169,7 +190,7 @@ function ShowArticle() {
         }
     
         fetchArticle();
-    }, [username, article_title, sessionToken]);
+    }, [username, article_title, sessionToken, logout]);
 
   const handleShowPdf = async (pdfUrl) => {
     try {
@@ -202,11 +223,17 @@ function ShowArticle() {
 
     return (
         <>
-        <Row>
-            <DownloadArticle
+          <Row className="justify-content-between mb-4">
+          <Col xs="auto">
+            <Button className="btn bg-secondary" onClick={goBack}>Volver Atrás</Button>
+          </Col>
+
+          <Col xs="auto">
+          <DownloadArticle
                 pdf={`/file/${article.submitted_pdf_id}`}
                 title={article.title}
-                zip={article.latex_project_id}/>
+                zip={`/zip/${article.latex_project_id}`}/>
+          </Col>
         </Row>
         <Row className='mb-5 px-3'>
         <Card style={{ width: '100%' }}>
@@ -214,16 +241,15 @@ function ShowArticle() {
                 <Card.Title>{article.title}</Card.Title>
                 <Card.Text>{article.description}</Card.Text>
                 <Accordion defaultActiveKey={"Introduction"}>
-                {article.summary &&
-                    Object.entries(article.summary).map(([section, summarySection]) => (
-                        <DisplaySection
-                            key={section}
-                            section={section}
-                            summarySection={summarySection}
-                            preEvalSection={article.evaluation[section]}
-                            updateReview={updateReview}
-                        />
-                    ))}
+                  {sortSections.map(([section, summarySection]) => (
+                      <DisplaySection
+                          key={section}
+                          section={section}
+                          summarySection={summarySection}
+                          preEvalSection={article.evaluation[section]}
+                          updateReview={updateReview}
+                      />
+                  ))}
                 </Accordion>
                 <Button className="btn bg-info mt-3" variant="primary" onClick={addReview}>
                     Guardar Revisión
