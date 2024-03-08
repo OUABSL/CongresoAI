@@ -27,7 +27,6 @@ import ContactUs from './components/contactus';
 
 function App() {
   const [data, setData] = useState([]);
-
  
   return (
     <BrowserRouter>
@@ -35,8 +34,8 @@ function App() {
       <MyNavbar />
       <div className="container p-4">
         <Routes>
-          <Route path="" element={ <Home/>}/>
-          <Route path="/contactus" element={<ContactUs />} />
+        <Route path="" element={ <Home/>}/>
+        <Route path="/contactus" element={<ContactUs />} />
 
 
         <Route path={"/portal-author/login"}element={<Login />} />

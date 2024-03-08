@@ -50,20 +50,20 @@ const AppProvider = ({ children }) => {
           method: 'POST',
         });
       } catch (error) {
-        console.error("Error during logout:", error);
+        console.error("Error during ºt:", error);
       }
 
       // Clear context and localStorage
+      navigate(`/portal-${role}/login`);
       setSessionToken(null);
       setRole(null);
       setUsername(null);
-      navigate("/");
 
       localStorage.removeItem("sessionToken");
       localStorage.removeItem("role");
       localStorage.removeItem("username");
     },
-    [navigate] // Only dependency
+    [navigate, role] // Only dependency
   );
 
   useEffect(() => {
