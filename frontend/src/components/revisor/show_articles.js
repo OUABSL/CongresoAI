@@ -1,12 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { Table, Container, Modal, Button, DropdownButton, Dropdown } from 'react-bootstrap';
-import { redirect, useParams } from 'react-router-dom';
+import { redirect, useParams, useNavigate } from 'react-router-dom';
 import { useContext } from "react";
 import AuthContext from "../../context/context";
+
+import '../estilos/show_articles.css'
+
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPenClip, faSpinner, faCircleExclamation } from '@fortawesome/free-solid-svg-icons';
+
 
 function ShowArticles() {
   const { username, sessionToken, logout } = useContext(AuthContext); // Access username from context
   const [articles, setArticles] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchArticles = async () => {
@@ -29,7 +36,7 @@ function ShowArticles() {
       setArticles(data);
     }
     fetchArticles()
-  }, [username, sessionToken])
+  }, [username, sessionToken, logout])
 
 
   return (
@@ -49,7 +56,24 @@ function ShowArticles() {
         <td>{index + 1}</td>
         <td>{article.title}</td>
         <td>{article.description}</td>
-        <td><Button className='btn bg-secondary' href = {`/portal-reviewer/articles/${username}/${article.title}`}>Evaluar</Button></td>
+        <td className='open-article'>
+          {article.processing_state === "Done" ?
+            <div className='center-content' onClick={() => navigate(`/portal-reviewer/articles/${username}/${article.title}`)}>
+              <FontAwesomeIcon icon={faPenClip} />
+              <p>Evaluar</p>
+            </div>
+          : article.processing_state ==="Fail" ?
+            <div className='center-content'>
+              <FontAwesomeIcon icon={faCircleExclamation} />       
+                <p>Faído</p>
+            </div>
+            : 
+            <div className='center-content'>
+              <FontAwesomeIcon icon={faSpinner} />
+              <p>Processing</p>
+            </div>
+          }
+        </td>
       </tr>
           ))}
         </tbody>

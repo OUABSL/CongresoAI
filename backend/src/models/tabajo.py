@@ -1,5 +1,7 @@
 from typing import List
-from mongoengine import Document, StringField, DateTimeField, ReferenceField, ListField, ObjectIdField, DictField, get_db, LazyReferenceField
+from mongoengine import Document, StringField, DateTimeField, ReferenceField, ListField, ObjectIdField, DictField, get_db, LazyReferenceField, BooleanField
+from mongoengine.base import BaseField
+from mongoengine.errors import ValidationError
 from datetime import datetime
 from bson import ObjectId
 import gridfs, pymongo
@@ -12,17 +14,26 @@ sys.path.insert(0, os.path.join(os.getcwd(), 'backend'))
 from src.app import mongo, mongo_engine
 from src.models.user import User
 
+class ProcessingState(BaseField):
+    STATES = ('Done', 'On Process', 'Fail')
+
+    def validate(self, value):
+        if value not in self.STATES:
+            raise ValidationError('Invalid Processing State')
+
 class ScientificArticle(Document):
     meta = {'alias': 'default'}
-    user = LazyReferenceField(User, passthrough=True) 
+    user = StringField(max_length=200) 
     title = StringField(required=True, max_length=200)
     description = StringField(required=True, max_length=500)
     key_words = ListField(StringField(required=True, max_length=50))
     submission_date = DateTimeField(default=datetime.utcnow)
+    processing_state = ProcessingState(default='On Process')
     content = DictField()
     summary = DictField()
     evaluation = DictField()
     reviewer = StringField(max_length=200)
+    review = DictField()
     latex_project_id = ObjectIdField()
     submitted_pdf_id = ObjectIdField()
 
@@ -33,26 +44,27 @@ class ScientificArticle(Document):
         if latex_project:
             self.save_files(submitted_pdf=latex_project)
 
-    def update_properties(self,latex_project_id = None, submited_pdf_id = None,  title: str = None, content: str = None, keywords: List[str] = None,summary: str = None, evaluation: str = None, reviewer: str = None):
+    def update_properties(self,latex_project_id = None, submitted_pdf_id = None,  title: str = None, content: str = None, key_words: List[str] = None, summary: str = None, evaluation: str = None, reviewer: str = None, processing_state: bool = None):
         if title:
             self.title = title
         if content:
             self.content = content
-        if keywords:
-            self.keywords = keywords
+        if key_words:
+            self.key_words = key_words
         if summary:
             self.summary = summary
         if evaluation:
             self.evaluation = evaluation
         if reviewer:
             self.reviewer = reviewer
+        if processing_state is not None:
+            self.processing_state = processing_state
         if latex_project_id:
             self.latex_project_id = latex_project_id
-        if submited_pdf_id:
-            self.submitted_pdf_id = submited_pdf_id
-        
-        self.save()
+        if submitted_pdf_id:
+            self.submitted_pdf_id = submitted_pdf_id
 
+        self.save()
     def set_latex_project_url(self, file_id):
         self.latex_project_url = file_id
 

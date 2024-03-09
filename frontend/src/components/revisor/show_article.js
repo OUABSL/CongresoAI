@@ -12,8 +12,6 @@ import '@react-pdf-viewer/default-layout/lib/styles/index.css';
 
 
 
-/*import './estilos/navBar.css'*/
-
 const DisplaySection = ({ section, summarySection, preEvalSection, updateReview }) => {
   const [reviewSection, setReviewSection] = useState("");
   const [editing, setEditing] = useState(true);
@@ -151,22 +149,11 @@ function ShowArticle() {
       navigate(-1);
   }
 
-  const sortSections = Object.entries(article.summary).sort(([firstSection], [secondSection]) => {
-    const firstSectionIndex = sectionOrder.indexOf(firstSection);
-    const secondSectionIndex = sectionOrder.indexOf(secondSection);
-    
-    // If the section is not in the sectionOrder array, find it after the specified sections
-    if (secondSectionIndex === -1) return -1;
-    if (firstSectionIndex === -1) return 1;
-
-    // Else compare based on the sectionOrder array
-    return firstSectionIndex - secondSectionIndex;
-});
 
 
     useEffect(() => {
         async function fetchArticle() {
-            const response = await fetch(`/api/v1/evaluate/${username}/${article_title}`, {
+            const response = await fetch(`/api/v1/evaluate/${username}/${encodeURIComponent(article_title)}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -191,6 +178,19 @@ function ShowArticle() {
     
         fetchArticle();
     }, [username, article_title, sessionToken, logout]);
+
+
+    const sortSections = article.summary ? Object.entries(article.summary).sort(([firstSection], [secondSection]) => {
+      const firstSectionIndex = sectionOrder.indexOf(firstSection);
+      const secondSectionIndex = sectionOrder.indexOf(secondSection);
+        
+      // If the section is not in the sectionOrder array, find it after the specified sections
+      if (secondSectionIndex === -1) return -1;
+      if (firstSectionIndex === -1) return 1;
+    
+      // Else compare based on the sectionOrder array
+      return firstSectionIndex - secondSectionIndex;
+  }) : [];
 
   const handleShowPdf = async (pdfUrl) => {
     try {
@@ -241,13 +241,13 @@ function ShowArticle() {
                 <Card.Title>{article.title}</Card.Title>
                 <Card.Text>{article.description}</Card.Text>
                 <Accordion defaultActiveKey={"Introduction"}>
-                  {sortSections.map(([section, summarySection]) => (
+                  {article && article.summary && Object.keys(article.summary).length > 0 && sortSections.map(([section, summarySection]) => (
                       <DisplaySection
-                          key={section}
-                          section={section}
-                          summarySection={summarySection}
-                          preEvalSection={article.evaluation[section]}
-                          updateReview={updateReview}
+                        key={section}
+                        section={section}
+                        summarySection={summarySection}
+                        preEvalSection={article.evaluation[section]}
+                        updateReview={updateReview}
                       />
                   ))}
                 </Accordion>

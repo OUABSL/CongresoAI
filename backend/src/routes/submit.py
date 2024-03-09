@@ -90,7 +90,8 @@ def submit_article():
         key_words=key_words,
         content={},
         evaluation={}, 
-        summary={}
+        summary={},
+        reviewer = 'joaquin'
     ).save()
     saved_article.save_files(latex_project=file)
     threading.Thread(target=process_submit, args=(saved_article, temp_dir)).start()
