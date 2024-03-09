@@ -1,0 +1,19 @@
+# api app.yaml
+runtime: python310
+
+env_variables:
+  none_of: "your_business"
+
+# frontend app.yaml
+runtime: nodejs20
+service: banana
+
+handlers:
+  - url: /static
+    static_dir: build/static
+  - url: /(.*\.(json|ico|js))$
+    static_files: build/\1
+    upload: build/.*\.(json|ico|js)$
+  - url: .*
+    static_files: build/index.html
+    upload: build/index.html

@@ -21,7 +21,6 @@ def show_articles(reviewer):
     if articles:
         result = []
         for article in articles:
-            print(article.keys())
             if article and 'submitted_pdf_id' in article.keys() and article.get('summary'):
                 article["_id"] = str(article["_id"])
                 submitted_pdf_id = article.get('submitted_pdf_id')
@@ -30,7 +29,8 @@ def show_articles(reviewer):
                         "title": article.get("title"),
                         "description": article.get("description"),
                         "pdf": "/file/" + str(submitted_pdf_id),
-                        "zip": "/zip/" + str(article.get("latex_project_id"))
+                        "zip": "/zip/" + str(article.get("latex_project_id")),
+                        "processing_state": article.get('processing_state')
                     })
         return make_response(jsonify(result), 200)
     else:
@@ -40,13 +40,13 @@ def show_articles(reviewer):
 @evaluate_bp.route(API + '/file/<file_id>', methods=['GET'])
 def serve_pdf(file_id):
     pdf_file = get_file(file_id)
-    return send_file(BytesIO(pdf_file), mimetype='application/pdf', as_attachment=False, attachment_filename='pdf_file.pdf')
+    return send_file(BytesIO(pdf_file), mimetype='application/pdf', as_attachment=False, download_name='pdf_file.pdf')
     
 
 @evaluate_bp.route(API + '/zip/<file_id>', methods=['GET'])
 def serve_zip(file_id):
     zip_file = get_file(file_id)
-    return send_file(BytesIO(zip_file), mimetype='application/zip', as_attachment=True, attachment_filename='latex_project.zip')
+    return send_file(BytesIO(zip_file), mimetype='application/zip', as_attachment=False, download_name='latex_project.zip')
 
 
 
@@ -55,8 +55,8 @@ def serve_zip(file_id):
 #@jwt_required()
 def show_article(reviewer, article_title):
     #article = db.find_one({"reviewer":str(reviewer), "title":title, "pending":True})
+    print("Hola")
     article = db.find_one({"title":article_title})
-
     print(article)
     if article:
         article.pop("_id")

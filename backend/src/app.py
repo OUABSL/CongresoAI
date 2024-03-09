@@ -67,9 +67,8 @@ def get_users():
     return jsonify(json_util.dumps(users)) if users else jsonify({"error": "No users found"})
 
 @app.route(API + "/", methods=["GET"])
-def get_user():
-    users = list(mongo.db.users.find())
-    return jsonify(json_util.dumps(users)) if users else jsonify({"error": "No users found"})
+def index():
+    return app.send_static_file('index.html')
 
 @app.route(API + "/file/<file_id>")
 def get_file(file_id):
