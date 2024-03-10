@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    restart: unless-stopped
+    volumes:
+      - ./frontend/build:/usr/share/nginx/html
+      - ./conf/nginx-prod.conf:/etc/nginx/conf.d/default.conf
+    ports:
+      - "80:80"
+    depends_on:
+      - server
+    networks:
+      - my-network
+
+  server:
+    build:
+      context: ./backend
+      dockerfile: DockerFile
+    container_name: server
+    expose:
+      - "5000"
+    volumes:
+      - ./backend:/var/www/backend
+    networks:
+      - my-network
+    command: gunicorn --bind 0.0.0.0:5000 --workers 4 --chdir /var/www/backend/src app:app
+
+  client:
+    build:
+      context: ./frontend
+      dockerfile: DockerFile
+    container_name: client
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    networks:
+      my-network:
+        aliases:
+          - client
+
+networks:
+  my-network:

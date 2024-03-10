@@ -1,16 +1,20 @@
-import bson
-from flask import Flask, Response, request, jsonify
+from flask import Flask, Response, jsonify
 from flask_pymongo import PyMongo
-import gridfs
 import mongoengine as me
-
 import os, sys
 sys.path.insert(0, os.path.join(os.getcwd(), 'backend'))
-from bson import json_util
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
+from dotenv import load_dotenv
 
-from src.config import MONGO_URI, LLAMUS_KEY, JWT_KEY
+# Cargar el archivo .env
+load_dotenv()
+
+# Acceder a las variables de entorno
+mongo_uri = os.environ['MONGO_URI']
+llamus_key = os.environ['LLAMUS_KEY']
+jwt_key = os.environ['JWT_KEY']
+
 
 
 
@@ -18,9 +22,9 @@ def create_app():
     app = Flask(__name__)
     CORS(app)
 
-    app.config['LLAMUS_KEY'] = LLAMUS_KEY
-    app.config['MONGO_URI'] = MONGO_URI
-    app.config["JWT_SECRET_KEY"] = JWT_KEY
+    app.config['LLAMUS_KEY'] = llamus_key
+    app.config['MONGO_URI'] = mongo
+    app.config["JWT_SECRET_KEY"] = jwt_key
     return app
 
 def create_mongo(app):
@@ -49,11 +53,6 @@ def register_blueprints():
 def get_users_from_db(db):
     return list(db.users.find())
 
-def create_response(users):
-    if users:
-        return jsonify(json_util.dumps(users))
-    else:
-        return jsonify({"error": "No users found"})
 
 API = '/api/v1'
 app = create_app()
@@ -61,22 +60,9 @@ mongo, mongo_engine = create_mongo(app)
 jwt = JWTManager(app)
 
 
-@app.route(API + "/users", methods=["GET"])
-def get_users():
-    users = list(mongo.db.users.find())
-    return jsonify(json_util.dumps(users)) if users else jsonify({"error": "No users found"})
-
 @app.route(API + "/", methods=["GET"])
 def index():
     return app.send_static_file('index.html')
-
-@app.route(API + "/file/<file_id>")
-def get_file(file_id):
-    try:
-        file = gridfs.GridFSBucket(mongo.db).open_download_stream(bson.ObjectId(str(file_id)))
-    except:
-        return jsonify({'error': 'file not found'}), 404
-    return Response(file, mimetype='application/octet-stream')
 
 def main():
     """Run the Flask application"""

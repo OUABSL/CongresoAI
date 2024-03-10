@@ -4,7 +4,8 @@ from mongoengine.base import BaseField
 from mongoengine.errors import ValidationError
 from datetime import datetime
 from bson import ObjectId
-import gridfs, pymongo
+import pymongo
+from pymongo import GridFS
 import bson
 import json
 from mongoengine.base.fields import BaseField 
@@ -75,7 +76,7 @@ class ScientificArticle(Document):
         if not isinstance(mongo.db, pymongo.database.Database):
             raise TypeError("mongo.db must be an instance of Database")
 
-        fs = gridfs.GridFS(mongo.db)
+        fs = GridFS(mongo.db)
         if latex_project: 
             print(latex_project)
             self.update_properties(latex_project_id=fs.put(latex_project) )
@@ -87,7 +88,7 @@ class ScientificArticle(Document):
     
     def get_file_url(self, file_id):
         if file_id:
-            fs = gridfs.GridFS(mongo.db)
+            fs = GridFS(mongo.db)
             try:
                 filename = fs.find_one({'_id': bson.ObjectId(str(file_id))}).filename
             except:
@@ -127,7 +128,7 @@ class ScientificArticle(Document):
 
 
 def get_file(file_id):
-    fs = gridfs.GridFS(mongo.db)
+    fs = GridFS(mongo.db)
     try:
         return fs.get(ObjectId(file_id)).read()
     except Exception as err:
