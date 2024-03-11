@@ -5,11 +5,9 @@ from flask import send_file, make_response, Response
 from io import BytesIO
 from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 from werkzeug.utils import secure_filename
-import os, sys
-sys.path.insert(0, os.path.join(os.getcwd(), 'backend'))
-from src.models.user import User, Author
-from src.models.tabajo import ScientificArticle, get_file
-from src.app import app, mongo, LLAMUS_KEY, API
+from models.user import User, Author
+from models.tabajo import ScientificArticle, get_file
+from app import mongo, API
 
 
 evaluate_bp = Blueprint('evaluate', __name__)

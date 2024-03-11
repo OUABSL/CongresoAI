@@ -4,10 +4,8 @@ from flask_jwt_extended import create_access_token, unset_jwt_cookies
 from flask_jwt_extended import get_jwt_identity
 from flask_jwt_extended import jwt_required
 #from flask_jwt_extended import JWTManagerfrom 
-import sys,os
-sys.path.insert(0, os.path.join(os.getcwd(), 'backend'))
-from src.models.user import User, Reviewer, Author
-from src.app import app, mongo, jwt, API
+from models.user import User, Reviewer, Author
+from app import app, mongo, jwt, API
 
 
 ACCESS_TOKEN = ''

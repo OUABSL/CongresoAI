@@ -4,10 +4,12 @@ ENV CONTAINER_HOME=/var/www/backend
 
 WORKDIR $CONTAINER_HOME
 
-COPY ./backend/requirements.txt ./
+
+RUN pip install --upgrade pip
+COPY ./requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY backend/ .  
+COPY ./ .  
 
 EXPOSE 5000
 

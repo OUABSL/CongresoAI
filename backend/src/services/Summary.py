@@ -1,10 +1,8 @@
 from typing import Type
 import requests, json, os, sys
 from bson.objectid import ObjectId
-sys.path[0] = os.path.join(os.getcwd(), "backend")
-print(sys.path[0])
-from src.app import mongo, LLAMUS_KEY
-from src.models.tabajo import ScientificArticle
+from app import mongo, llamus_key
+from models.tabajo import ScientificArticle
 
 SYSTEM_PROMPT_BASE = """Act as a research paper summarizer. I will provide you with a research paper section by section, and you will create a summary of the main points and findings of the paper section. 
                         Your focus lies on the '{section_name}' section of a manuscript titled {article_title}, Process the provided {section_name} section, summarize it according to the following instructions:

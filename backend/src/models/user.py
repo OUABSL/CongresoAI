@@ -2,9 +2,7 @@ from datetime import datetime
 """ MongoEngine's syntax for querying objects, similar to Django's ORM (Object-Relational Mapper)."""
 from mongoengine import Document, StringField, DateTimeField, EmailField, ListField, MapField, ReferenceField, IntField, DictField, DateField
 import json
-import os, sys
-sys.path.insert(0, os.path.join(os.getcwd(), 'backend'))
-from src.app import mongo #db = PyMongo(app).users
+from app import mongo #db = PyMongo(app).users
 
 
 class User(Document):

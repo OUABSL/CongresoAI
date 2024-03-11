@@ -1,11 +1,13 @@
 # Import required libraries
 from pathlib import Path
-import pydetex.pipelines as pip
+from pylatexenc.latex2text import LatexNodes2Text
+import os, sys
+sys.path[0] = os.path.join(os.getcwd(), "backend", "src")
+print(sys.path[0])
 import zipfile
 import re, io, os, sys 
-sys.path[0] = os.path.join(os.getcwd(), "backend")
-from src.app import mongo
-from src.models.tabajo import ScientificArticle
+from app import mongo
+from models.tabajo import ScientificArticle
 from bson.objectid import ObjectId
 
 class DataHandler:
@@ -80,25 +82,22 @@ class DataHandler:
         return section_dict"""
     
     def _extract_just_text(self, section_content):
-        #print(section_content)
-        res = pip.simple(section_content)
-        #print(f"res: {section_content}")
+        try:
+            res = LatexNodes2Text().latex_to_text(section_content)
+        except IndexError as e:
+            print(f"Failed to process section content: {section_content}") 
+            raise 
+
         return res
-
-
 
     @staticmethod
     def _save_sections(sections: dict, destination: Path, esResFinal = False):
         """Save the provided sections dictionary as individual files in the provided destination."""
         destination.mkdir(parents=True, exist_ok=True)
-        tmp = ''
         for idx, (section_name, section_content) in enumerate(sections.items(), start=1):
-            if esResFinal:
-                for chunk in section_content:
-                    tmp = tmp + "\n\n" + chunk.page_content + "\n---------------------------fin chunk----------------\n"
-                section_content = tmp
-            (destination / f"section_{idx}_{section_name.replace('/', '_')}.txt").write_text(section_content, encoding='utf-8')
-
+            content_buffer = f"\n\n{section_content}\n---------------------------fin chunk----------------\n" if esResFinal else section_content
+            (destination / f"section_{idx}_{section_name.replace('/', '_')}.txt").write_text(content_buffer, encoding='utf-8')
+    
     def run(self):
         """#Execute the main actions of the class
         self._perform_extraction(self.dest_path)
@@ -136,13 +135,13 @@ class DataHandler:
         document_sections = self._get_section_data(document_content)
 
         # Process LaTeX sections into plain text
-        document_sections_processed = {section: self._extract_just_text(text) for section, text in document_sections.items()}
+        document_sections_processed = {section: self._extract_just_text(text) for section, text in document_sections.items() if section!= "Acknowledgements"}
 
 
             #print(result)
 
 
-            #self._save_sections(sections_text, self.dest_path / "res/jst", True)
+        #self._save_sections(document_sections_processed, self.dest_path / "res/jst", True)
         # Update the ScientificArticle document in the database with the processed sections
 
         evaluation_init = {key : "" for key in document_sections_processed.keys()}
@@ -156,8 +155,10 @@ class DataHandler:
 if __name__ == "__main__":
     destination_folder = Path.cwd() / "backend" / "src" / "test" / "output"
     destination_folder.mkdir(parents=True, exist_ok=True)
+    article = ScientificArticle.objects().get(title="Logic")
+    print(article)
     myquery = {"_id": ObjectId("65d22d8d9a142a7b8be3d0e7")}
 
 
-    handler = DataHandler(mongo.db.articulo.find_one(myquery), destination_folder)
+    handler = DataHandler(article, destination_folder)
     handler.run()

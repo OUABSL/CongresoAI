@@ -3,18 +3,17 @@ from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 from werkzeug.datastructures import CombinedMultiDict
 from werkzeug.utils import secure_filename
-import os, sys
-sys.path.insert(0, os.path.join(os.getcwd(), 'backend'))
-from src.models.user import User, Author
-from src.models.tabajo import ScientificArticle  
-from src.app import app, mongo, LLAMUS_KEY, API
-from src.test.data_extraction import DataHandler
-from src.routes.PreEvaluation import PreEvaluation
-from src.routes.Summary import ArticleSummarizer
-from src.test.test_summary import SYSTEM_PROMPT_BASE as prompt_summary
-from src.test.test_evaluation import  SYSTEM_PROMPT_BASE as prompt_eval
+from models.user import User, Author
+from models.tabajo import ScientificArticle  
+from app import mongo, API, llamus_key
+from services.dataPreparation import DataHandler
+from services.PreEvaluation import PreEvaluation
+from services.Summary import ArticleSummarizer
+from services.Summary import SYSTEM_PROMPT_BASE as prompt_summary
+from services.PreEvaluation import  SYSTEM_PROMPT_BASE as prompt_eval
 import tempfile, shutil
 import threading
+import os, sys
 
 
 
@@ -30,8 +29,8 @@ def process_submit(article, dest_path):
     data_handler = DataHandler(article, dest_path=dest_path)
     data_handler.run()
 
-    summary_instance = ArticleSummarizer(mongo, prompt_summary,  LLAMUS_KEY, article)
-    evaluation_instance = PreEvaluation(mongo,  prompt_eval, LLAMUS_KEY, article)
+    summary_instance = ArticleSummarizer(mongo, prompt_summary,  llamus_key, article)
+    evaluation_instance = PreEvaluation(mongo,  prompt_eval, llamus_key, article)
     
     evaluation_instance.chat_model = 'TheBloke.llama-2-70b-chat.Q5_K_M.gguf'
     summary_instance.run()

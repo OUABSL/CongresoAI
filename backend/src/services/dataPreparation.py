@@ -1,43 +1,23 @@
-import re
-import os, sys
-sys.path[0] = os.getcwd() + "/backend"
+# Import required libraries
 from pathlib import Path
-from bson.objectid import ObjectId
-import pydetex.pipelines as pip
+from pylatexenc.latex2text import LatexNodes2Text
 import zipfile
-from src.app import mongo
-from src.models.tabajo import ScientificArticle
-
-#from models.user import User
+import re, io, os, sys 
+from app import mongo
+from models.tabajo import ScientificArticle
+from bson.objectid import ObjectId
 
 class DataHandler:
     """This class assists with file and directory management tasks."""
     
-    def __init__(self, zip_path: str, dest_path: str, article_query):
-        self.title = "Extraido de la entrega"
-        self.db = mongo.db.articles
-        self.zip_path = Path(zip_path)
+    def __init__(self, article: ScientificArticle, dest_path: str):
+        self.article = article
+        self.db = mongo.db.articulo
         self.dest_path = Path(dest_path)
-        self.tex_path = self.dest_path / "PQG.tex"
-        self.article = self.fetch_article(article_query)
 
-
-    
-    def insert_into_db(self, data: dict):
-        """Insert provided data into the database and return the inserted ID"""
-        result = self.db.insert_one(data)
-        return str(result.inserted_id)
-    
-    def fetch_article(db, id_string):
-        query = {"_id": ObjectId(id_string)}
-        return db.find_one(query)
-    
-
-    
-    @staticmethod
-    def _perform_extraction(zip_path: Path, dest_path: Path):
+    def _perform_extraction(self, dest_path: Path):
         """Extract files from the provided source ZIP to the destination folder"""
-        with zipfile.ZipFile(zip_path, 'r') as file:
+        with zipfile.ZipFile(io.BytesIO(self.article.get_latex_project()), 'r') as file:
             file.extractall(dest_path)
     
     @staticmethod
@@ -45,6 +25,21 @@ class DataHandler:
         """Read and return the contents of the provided file."""
         with open(file_path, 'r', encoding='utf-8') as file:
             return file.read()
+        
+    def _get_tex(self):
+        print(os.listdir(self.dest_path))  # DEBUG PRINT STATEMENT
+        tex_file = ''
+        for archivo in os.listdir(self.dest_path):
+            if re.search(r'\.tex$', archivo):
+                tex_file = archivo
+        return tex_file
+
+    def _get_pdf(self):
+        pdf_file = ''
+        for archivo in os.listdir(self.dest_path):
+            if re.search(r'\.pdf$', archivo):
+                pdf_file = archivo
+        return pdf_file            
 
     @staticmethod
     def _parse_document_content(data):
@@ -66,61 +61,101 @@ class DataHandler:
         section_contents = {}
         for idx, section_name in enumerate(sections):
             section_content = document_content[positions[idx]:positions[idx + 1]].strip()
-            section_content = section_content[section_content.find('}') + 1:]
+            #section_content = section_content[section_content.find('}') + 1:]
             section_contents[section_name] = section_content
         return section_contents
     
+    """def _get_section_data(self, file_text: str):
+        #Split the text into sections and return a dictionary of the section contents.
+        section_dict = {}
+        sections = [m.start() for m in re.finditer('\\\\section', file_text)]
+        for i in range(len(sections)):
+            if i == len(sections) - 1:  # this is the last section
+                section_text = file_text[sections[i]:]
+            else:
+                section_text = file_text[sections[i]:sections[i+1]]
+            section_title = section_text[9:].split('\n')[0].strip()  # the section title follows '\\section'
+            section_dict[section_title] = section_text
+        return section_dict"""
+    
     def _extract_just_text(self, section_content):
-        #print(section_content)
-        res = pip.simple(section_content)
-        print(f"res: {section_content}")
+        try:
+            res = LatexNodes2Text().latex_to_text(section_content)
+        except IndexError as e:
+            print(f"Failed to process section content: {section_content}") 
+            raise 
+
         return res
 
-    def update_summary_db(self, value):
-        to_update = dict(self.article['content'])
-        to_update[value[0]] = value[1]
-        self.DB.update_one(self.query, {"$set": {"content": to_update}})
-        self.article = self.get_article(self.query)
-        print(f"\nUpdated the summary of {value[0]} srction in database!")
-
-
     @staticmethod
-    def _save_sections(sections: dict, destination: Path):
+    def _save_sections(sections: dict, destination: Path, esResFinal = False):
         """Save the provided sections dictionary as individual files in the provided destination."""
         destination.mkdir(parents=True, exist_ok=True)
         for idx, (section_name, section_content) in enumerate(sections.items(), start=1):
-            (destination / f"section_{idx}_{section_name.replace('/', '_')}.txt").write_text(section_content, encoding='utf-8')
-
+            content_buffer = f"\n\n{section_content}\n---------------------------fin chunk----------------\n" if esResFinal else section_content
+            (destination / f"section_{idx}_{section_name.replace('/', '_')}.txt").write_text(content_buffer, encoding='utf-8')
+    
     def run(self):
-        """Execute the main actions of the class"""
-        self._perform_extraction(self.zip_path, self.dest_path)
-        content = self._parse_document_content(self._read_file_data(self.tex_path))
+        """#Execute the main actions of the class
+        self._perform_extraction(self.dest_path)
+        self.article.save_files(submitted_pdf=self._get_pdf())
+        content = self._parse_document_content(self._read_file_data())
+        #print(content)
         sections = {}
         if content is not None:
             content = self._remove_commented_lines(content)
             sections = self._get_section_data(content)
+            #self._save_sections(sections, self.dest_path / "res")
 
             sections_text = sections.copy()
             for section_name, section_content in sections.items():
-                print(section_content)
                 res = self._extract_just_text(section_content)
-                sections_text[section_name]= res
-
-            print(sections_text)
-
-          
-            self._save_sections(sections_text, self.dest_path / "res")
-        else:
-            print("Contenido Nulo!")
+                sections_text[section_name]= res"""
+        
+        self._perform_extraction(self.dest_path)
 
 
+        latex_file_name = self._get_tex()
+        latex_file_path = self.dest_path / latex_file_name # get the full file path here
+        latex_file_text = self._read_file_data(latex_file_path)
 
-        self.db.update_one(self.query, {"$set": {"content": sections_text}})
+        # Get pdf file path
+        pdf_file_name = self._get_pdf()
+        pdf_file_path = self.dest_path / pdf_file_name
+        # Open PDF in binary mode and save
+        with open(pdf_file_path, "rb") as pdf_file:
+            self.article.save_files(submitted_pdf=pdf_file)
+
+
+            # Process LaTeX file text
+        document_content = self._parse_document_content(latex_file_text)
+        document_sections = self._get_section_data(document_content)
+
+        # Process LaTeX sections into plain text
+        document_sections_processed = {section: self._extract_just_text(text) for section, text in document_sections.items() if section!= "Acknowledgements"}
+
+
+            #print(result)
+
+
+        #self._save_sections(document_sections_processed, self.dest_path / "res/jst", True)
+        # Update the ScientificArticle document in the database with the processed sections
+
+        evaluation_init = {key : "" for key in document_sections_processed.keys()}
+        summary_init = {key : "" for key in document_sections_processed.keys()}
+
+        self.article.update_properties(content=document_sections_processed, evaluation=evaluation_init, summary=summary_init)
+
+        return document_sections_processed, id
+
 
 if __name__ == "__main__":
-    zip_filepath = Path.cwd() / "test" / "article.zip"
-    destination_folder = Path.cwd() / "test" / "output"
+    destination_folder = Path.cwd() / "backend" / "src" / "test" / "output"
     destination_folder.mkdir(parents=True, exist_ok=True)
-    query = ''
-    handler = DataHandler(zip_filepath, destination_folder, query)
+    article = ScientificArticle.objects().get(title="Logic")
+    print(article)
+    myquery = {"_id": ObjectId("65d22d8d9a142a7b8be3d0e7")}
+
+
+    handler = DataHandler(article, destination_folder)
     handler.run()

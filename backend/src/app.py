@@ -1,8 +1,7 @@
 from flask import Flask, Response, jsonify
 from flask_pymongo import PyMongo
 import mongoengine as me
-import os, sys
-sys.path.insert(0, os.path.join(os.getcwd(), 'backend'))
+import os
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 from dotenv import load_dotenv
@@ -23,7 +22,7 @@ def create_app():
     CORS(app)
 
     app.config['LLAMUS_KEY'] = llamus_key
-    app.config['MONGO_URI'] = mongo
+    app.config['MONGO_URI'] = mongo_uri
     app.config["JWT_SECRET_KEY"] = jwt_key
     return app
 
@@ -35,9 +34,9 @@ def create_mongo(app):
     return mongo, mongoengine
 
 def register_blueprints():
-    from src.routes.users import users_bp
-    from src.routes.submit import submit_bp
-    from src.routes.evaluate import evaluate_bp
+    from routes.users import users_bp
+    from routes.submit import submit_bp
+    from routes.evaluate import evaluate_bp
 
     app.register_blueprint(users_bp)
     app.register_blueprint(submit_bp)
