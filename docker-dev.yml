@@ -19,7 +19,7 @@ services:
   client:
     build:
       context: ./frontend
-      dockerfile: DockerFile
+      dockerfile: Dockerfile
     container_name: client
     command: npm start
     volumes:
@@ -36,7 +36,7 @@ services:
   server:
     build:
       context: ./backend
-      dockerfile: DockerFile
+      dockerfile: Dockerfile
     container_name: server
     command: gunicorn --bind 0.0.0.0:5000 --workers 4 --chdir /var/www/backend/src app:app
     volumes:

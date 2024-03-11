@@ -1,19 +1,16 @@
 from typing import List
-from mongoengine import Document, StringField, DateTimeField, ReferenceField, ListField, ObjectIdField, DictField, get_db, LazyReferenceField, BooleanField
+from bson import ObjectId
+import bson
+from mongoengine import Document, StringField, DateTimeField, ListField, ObjectIdField, DictField
 from mongoengine.base import BaseField
 from mongoengine.errors import ValidationError
 from datetime import datetime
-from bson import ObjectId
 import pymongo
-from pymongo import GridFS
-import bson
+import gridfs
 import json
 from mongoengine.base.fields import BaseField 
-
-import os, sys
-sys.path.insert(0, os.path.join(os.getcwd(), 'backend'))
-from src.app import mongo, mongo_engine
-from src.models.user import User
+from app import mongo
+from models.user import User
 
 class ProcessingState(BaseField):
     STATES = ('Done', 'On Process', 'Fail')
@@ -76,19 +73,18 @@ class ScientificArticle(Document):
         if not isinstance(mongo.db, pymongo.database.Database):
             raise TypeError("mongo.db must be an instance of Database")
 
-        fs = GridFS(mongo.db)
+        fs = gridfs.GridFS(mongo.db)
         if latex_project: 
             print(latex_project)
             self.update_properties(latex_project_id=fs.put(latex_project) )
 
         if submitted_pdf:
-            print(latex_project)
-
-            self.update_properties(submited_pdf_id=fs.put(submitted_pdf))
+            print(submitted_pdf)
+            self.update_properties(submitted_pdf_id=fs.put(submitted_pdf))
     
     def get_file_url(self, file_id):
         if file_id:
-            fs = GridFS(mongo.db)
+            fs = gridfs.GridFS(mongo.db)
             try:
                 filename = fs.find_one({'_id': bson.ObjectId(str(file_id))}).filename
             except:
@@ -97,15 +93,12 @@ class ScientificArticle(Document):
                 return f"/file/{str(file_id)}"
         return None
     
-        
+
     def get_latex_project(self):
         if self.latex_project_id:
-            latex_project_data = get_file(self.latex_project_id)
-            if latex_project_data is None:
-                return
-            else:
-                return latex_project_data
-
+            return get_file(self.latex_project_id)
+        else:
+            return None
     
 
     def to_dict(self):
@@ -128,7 +121,7 @@ class ScientificArticle(Document):
 
 
 def get_file(file_id):
-    fs = GridFS(mongo.db)
+    fs = gridfs.GridFS(mongo.db)
     try:
         return fs.get(ObjectId(file_id)).read()
     except Exception as err:

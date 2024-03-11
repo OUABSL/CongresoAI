@@ -1,9 +1,7 @@
-import os, json, requests, sys
-sys.path[0] = os.path.join(os.getcwd(), "backend")
-print(sys.path[0])
-from src.app import mongo, LLAMUS_KEY
+import os, json, requests
+from app import mongo, llamus_key
 from bson.objectid import ObjectId
-from src.models.tabajo import ScientificArticle
+from models.tabajo import ScientificArticle
 
 
 SYSTEM_PROMPT_BASE = ("""You are an expert tutor specializing in reviewing and evaluating scientific research articles within the technology domain. Your focus lies on the '{section_name}' section of a manuscript titled "{title}"
