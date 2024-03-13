@@ -1,0 +1,2672 @@
+Error generating PDF for model TheBloke.falcon-180b-chat.Q4_K_M.gguf:
+perl: warning: Setting locale failed.
+perl: warning: Please check that your locale settings:
+	LC_ALL = (unset),
+	(possibly more locale environment variables)
+	LANG = "en_US.UTF-8"
+    are supported and installed on your system.
+perl: warning: Falling back to the system default locale ("Spanish_Spain.1252").
+Initial Win CP for (console input, console output, system): (CP850, CP65001, CP1252)
+I changed them all to CP1252
+Rc files read:
+  NONE
+Latexmk: This is Latexmk, John Collins, 31 Jan. 2024. Version 4.83.
+No existing .aux file, so I'll make a simple one, and require run of *latex.
+Latexmk: applying rule 'pdflatex'...
+Rule 'pdflatex':  Reasons for rerun
+Category 'other':
+  Rerun of 'pdflatex' forced or previously required:
+    Reason or flag: 'Initial setup'
+
+------------
+Run number 1 of rule 'pdflatex'
+------------
+------------
+Running 'pdflatex  --interaction=nonstopmode -recorder  "C:/Users/Ouael/OneDrive/Desktop/TI4/TFG/Proyecto/CongresoAI/backend/test/resultlatex/TheBloke.falcon-180b-chat.Q4_K_M.gguf/ScientificArticle.tex"'
+------------
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 23.10.12) (preloaded format=pdflatex.fmt)
+ restricted \write18 enabled.
+entering extended mode
+
+(C:/Users/Ouael/OneDrive/Desktop/TI4/TFG/Proyecto/CongresoAI/backend/test/resul
+tlatex/TheBloke.falcon-180b-chat.Q4_K_M.gguf/ScientificArticle.tex
+LaTeX2e <2023-11-01>
+L3 programming layer <2023-11-09>
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/base\article.cls
+Document Class: article 2023/05/17 v1.4n Standard LaTeX document class
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/base\size10.clo))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/base\fontenc.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/base\inputenc.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/lm\lmodern.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/base\textcomp.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/lastpage\lastpage.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/lastpage\lastpage2e.sty
+
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/lastpage\lastpagemodern
+.sty) 
+)) (C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/base\fontenc.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/lm\t1lmr.fd))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/tools\calc.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/fancyhdr\fancyhdr.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/graphics\graphicx.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/graphics\keyval.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/graphics\graphics.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/graphics\trig.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cfg\graphics.c
+fg)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/graphics-def\pdftex.def
+))) (C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/base\ifthen.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsmath.sty
+For additional information on amsmath, use the `?' option.
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amstext.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsgen.sty))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsbsy.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsopn.sty))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\amssymb.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\amsfonts.sty))
+ (C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/lineno\lineno.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/etoolbox\etoolbox.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/kvoptions\kvoptions.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/ltxcmds\ltxcmds.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/kvsetkeys\kvsetkeys.sty
+)))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/enumitem\enumitem.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/booktabs\booktabs.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/titlesec\titlesec.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/xcolor\xcolor.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cfg\color.cfg)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/graphics\mathcolor.ltx)
+) (C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/colortbl\colortbl.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/tools\array.sty))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/multirow\multirow.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/microtype\microtype.sty
+
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/microtype\microtype-pdf
+tex.def)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/microtype\microtype.cfg
+))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/pgf/frontendlayer\tikz.
+sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/pgf/basiclayer\pgf.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/pgf/utilities\pgfrcs.st
+y
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfutil
+-common.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfutil
+-latex.def)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfrcs.
+code.tex
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf\pgf.revision.tex)
+))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/pgf/basiclayer\pgfcore.
+sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/pgf/systemlayer\pgfsys.
+sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgfsy
+s.code.tex
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfkeys
+.code.tex
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfkeys
+libraryfiltered.code.tex))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgf.c
+fg)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgfsy
+s-pdftex.def
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgfsy
+s-common-pdf.def)))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgfsy
+ssoftpath.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgfsy
+sprotocol.code.tex))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+e.code.tex
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmath.code
+.tex
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathutil.
+code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathparse
+r.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
+ions.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
+ions.basic.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
+ions.trigonometric.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
+ions.random.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
+ions.comparison.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
+ions.base.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
+ions.round.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
+ions.misc.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
+ions.integerarithmetics.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathcalc.
+code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfloat
+.code.tex))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfint.code.
+tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+epoints.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+epathconstruct.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+epathusage.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+escopes.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+egraphicstate.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+etransformations.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+equick.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+eobjects.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+epathprocessing.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+earrows.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+eshade.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+eimage.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+eexternal.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+elayers.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+etransparency.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+epatterns.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+erdf.code.tex)))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/modules\pgfmodule
+shapes.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/modules\pgfmodule
+plot.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/pgf/compatibility\pgfco
+mp-version-0-65.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/pgf/compatibility\pgfco
+mp-version-1-18.sty))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/pgf/utilities\pgffor.st
+y
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/pgf/utilities\pgfkeys.s
+ty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfkeys
+.code.tex))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/pgf/math\pgfmath.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmath.code
+.tex))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgffor.
+code.tex))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlayer/tik
+z\tikz.code.tex
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/libraries\pgflibr
+aryplothandlers.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/modules\pgfmodule
+matrix.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlayer/tik
+z/libraries\tikzlibrarytopaths.code.tex)))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/totcount\totcount.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/changepage\changepage.s
+ty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/frankenstein\attrib.sty
+
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/frankenstein\moredefs.s
+ty)) (C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/was\upgreek.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/tools\tabularx.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/ragged2e\ragged2e.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/tocloft\tocloft.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/marginnote\marginnote.s
+ty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/marginfix\marginfix.sty
+) (C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/enotez\enotez.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/l3kernel\expl3.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/l3backend\l3backend-pdf
+tex.def))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/l3packages/xparse\xpars
+e.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/l3packages/l3keys2e\l3k
+eys2e.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/l3packages/xtemplate\xt
+emplate.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/translations\translatio
+ns.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pdftexcmds\pdftexcmds
+.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/infwarerr\infwarerr.s
+ty) (C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/iftex\iftex.sty))
+)) (C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/amscls\amsthm.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/natbib\natbib.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hyperref.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/kvdefinekeys\kvdefine
+keys.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pdfescape\pdfescape.s
+ty) (C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/hycolor\hycolor.sty
+)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/letltxmacro\letltxmacro
+.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/auxhook\auxhook.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\nameref.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/refcount\refcount.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/gettitlestring\gettit
+lestring.sty))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\pd1enc.def)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/intcalc\intcalc.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\puenc.def)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/url\url.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/bitset\bitset.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/bigintcalc\bigintcalc
+.sty))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/base\atbegshi-ltx.sty))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hpdftex.def
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/base\atveryend-ltx.sty)
+
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/rerunfilecheck\rerunfil
+echeck.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/uniquecounter\uniquec
+ounter.sty)))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/cleveref\cleveref.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/koma-script\scrextend.s
+ty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/koma-script\scrkbase.st
+y
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/koma-script\scrbase.sty
+
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/koma-script\scrlfile.st
+y
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/koma-script\scrlfile-ho
+ok.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/koma-script\scrlogo.sty
+)))))
+
+LaTeX Warning: Command \@footnotemark  has changed.
+               Check if current package is valid.
+
+) (C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/geometry\geometry.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/iftex\ifvtex.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/geometry\geometry.cfg))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/newfloat\newfloat.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/caption\caption.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/caption\caption3.sty))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/seqsplit\seqsplit.sty)
+(ScientificArticle.aux)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/context/base/mkii\supp-pdf.mk
+ii
+[Loading MPS to PDF converter (version 2006.09.02).]
+)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/epstopdf-pkg\epstopdf-b
+ase.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/00miktex\epstopdf-sys.c
+fg))
+
+Package microtype Warning: Unable to apply patch `footnote' on input line 49.
+
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/microtype\mt-cmr.cfg)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/translations/dicts\tran
+slations-basic-dictionary-english.trsl)
+*geometry* driver: auto-detecting
+*geometry* detected driver: pdftex
+
+! LaTeX Error: There's no line here to end.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.56 \newline
+             %
+
+Underfull \hbox (badness 10000) in paragraph at lines 57--60
+
+
+! LaTeX Error: There's no line here to end.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.64 \newline
+             %
+
+Underfull \hbox (badness 10000) in paragraph at lines 65--94
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 65--94
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 65--94
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 65--94
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 65--94
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 65--94
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 65--94
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 65--94
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 65--94
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 65--94
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 65--94
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 65--94
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 65--94
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 65--94
+
+[1{C:/Users/Ouael/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}{C:/Users/Ou
+ael/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-ec.enc}] [2]
+! Undefined control sequence.
+l.110 \funding
+              {Proyecto PID2019-109152G financiado por MCIN/AEI/10.13039/501...
+
+! Undefined control sequence.
+l.112 \acknowledgments
+                      {DISARM project - Grant n. PDC2021-121197, and the HOR...
+
+
+Overfull \hbox (0.73706pt too wide) in paragraph at lines 112--113
+\T1/lmr/m/n/10 (-20) 126359OB-I00 funded by MCIN/AEI/310.13039/501100011033 and
+ by the ^^PEu-ro-pean Union NextGen-
+! Undefined control sequence.
+<argument> -\extralength 
+                         
+l.118 \begin{adjustwidth}{-\extralength}{0cm}
+                                             
+! Missing number, treated as zero.
+<to be read again> 
+                   !
+l.118 \begin{adjustwidth}{-\extralength}{0cm}
+                                             
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   !
+l.118 \begin{adjustwidth}{-\extralength}{0cm}
+                                             
+! Undefined control sequence.
+l.120 \reftitle
+               {References}
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/lm\t1lmtt.fd)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/lm\ot1lmr.fd)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/lm\omllmm.fd)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/lm\omslmsy.fd)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/lm\omxlmex.fd)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsa.fd)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/microtype\mt-msa.cfg)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsb.fd)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/microtype\mt-msb.cfg)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/microtype\mt-eur.cfg)
+[3] [4] [5]
+! Undefined control sequence.
+l.514 \PublishersNote
+                     {}
+[6] 
+enddocument/afterlastpage: lastpage setting LastPage.
+(ScientificArticle.aux
+
+Package natbib Warning: Citation(s) may have changed.
+(natbib)                Rerun to get citations correct.
+
+
+! Package natbib Error: Bibliography not compatible with author-year citations.
+
+(natbib)                Press <return> to continue in numerical citation style.
+
+
+See the natbib package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.58 ...mand\NAT@force@numbers{}\NAT@force@numbers
+                                                  
+)
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
+
+Package rerunfilecheck Warning: File `ScientificArticle.out' has changed.
+(rerunfilecheck)                Rerun to get outlines right
+(rerunfilecheck)                or use package `bookmark'.
+
+
+Package lastpage Warning: Rerun to get the references right on input line 516.
+
+ )
+(see the transcript file for additional information)<C:/Users/Ouael/AppData/Loc
+al/Programs/MiKTeX/fonts/type1/public/lm/lmbx12.pfb><C:/Users/Ouael/AppData/Loc
+al/Programs/MiKTeX/fonts/type1/public/lm/lmr10.pfb><C:/Users/Ouael/AppData/Loca
+l/Programs/MiKTeX/fonts/type1/public/lm/lmri10.pfb><C:/Users/Ouael/AppData/Loca
+l/Programs/MiKTeX/fonts/type1/public/lm/lmtt10.pfb>
+Output written on ScientificArticle.pdf (6 pages, 159633 bytes).
+Transcript written on ScientificArticle.log.
+Latexmk: Sometimes, the -f option can be used to get latexmk
+  to try to force complete processing.
+  But normally, you will need to correct the file(s) that caused the
+  error, and then rerun latexmk.
+  In some cases, it is best to clean out generated files before rerunning
+  latexmk after you've corrected the files.
+Reverting Windows console CPs to (in,out) = (850,65001)
+Latexmk: Getting log file 'ScientificArticle.log'
+Latexmk: Examining 'ScientificArticle.fls'
+Latexmk: Examining 'ScientificArticle.log'
+Latexmk: References changed.
+Latexmk: References changed.
+Latexmk: References changed.
+Latexmk: References changed.
+Latexmk: Log file says output to 'ScientificArticle.pdf'
+Latexmk: Errors, so I did not complete making targets
+Collected error summary (may duplicate other messages):
+  pdflatex: Command for 'pdflatex' gave return code 1
+      Refer to 'ScientificArticle.log' and/or above output for details
+
+
+Error generating PDF for model TheBloke.llama-2-13b-chat.Q5_K_M.gguf:
+perl: warning: Setting locale failed.
+perl: warning: Please check that your locale settings:
+	LC_ALL = (unset),
+	(possibly more locale environment variables)
+	LANG = "en_US.UTF-8"
+    are supported and installed on your system.
+perl: warning: Falling back to the system default locale ("Spanish_Spain.1252").
+Initial Win CP for (console input, console output, system): (CP850, CP65001, CP1252)
+I changed them all to CP1252
+Rc files read:
+  NONE
+Latexmk: This is Latexmk, John Collins, 31 Jan. 2024. Version 4.83.
+No existing .aux file, so I'll make a simple one, and require run of *latex.
+Latexmk: applying rule 'pdflatex'...
+Rule 'pdflatex':  Reasons for rerun
+Category 'other':
+  Rerun of 'pdflatex' forced or previously required:
+    Reason or flag: 'Initial setup'
+
+------------
+Run number 1 of rule 'pdflatex'
+------------
+------------
+Running 'pdflatex  --interaction=nonstopmode -recorder  "C:/Users/Ouael/OneDrive/Desktop/TI4/TFG/Proyecto/CongresoAI/backend/test/resultlatex/TheBloke.llama-2-13b-chat.Q5_K_M.gguf/ScientificArticle.tex"'
+------------
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 23.10.12) (preloaded format=pdflatex.fmt)
+ restricted \write18 enabled.
+entering extended mode
+
+(C:/Users/Ouael/OneDrive/Desktop/TI4/TFG/Proyecto/CongresoAI/backend/test/resul
+tlatex/TheBloke.llama-2-13b-chat.Q5_K_M.gguf/ScientificArticle.tex
+LaTeX2e <2023-11-01>
+L3 programming layer <2023-11-09>
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/base\article.cls
+Document Class: article 2023/05/17 v1.4n Standard LaTeX document class
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/base\size10.clo))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/base\fontenc.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/base\inputenc.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/lm\lmodern.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/base\textcomp.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/lastpage\lastpage.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/lastpage\lastpage2e.sty
+
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/lastpage\lastpagemodern
+.sty) 
+)) (C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/base\fontenc.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/lm\t1lmr.fd))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/tools\calc.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/fancyhdr\fancyhdr.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/graphics\graphicx.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/graphics\keyval.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/graphics\graphics.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/graphics\trig.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cfg\graphics.c
+fg)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/graphics-def\pdftex.def
+))) (C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/base\ifthen.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsmath.sty
+For additional information on amsmath, use the `?' option.
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amstext.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsgen.sty))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsbsy.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsopn.sty))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\amssymb.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\amsfonts.sty))
+ (C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/lineno\lineno.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/etoolbox\etoolbox.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/kvoptions\kvoptions.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/ltxcmds\ltxcmds.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/kvsetkeys\kvsetkeys.sty
+)))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/enumitem\enumitem.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/booktabs\booktabs.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/titlesec\titlesec.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/xcolor\xcolor.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cfg\color.cfg)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/graphics\mathcolor.ltx)
+) (C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/colortbl\colortbl.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/tools\array.sty))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/multirow\multirow.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/microtype\microtype.sty
+
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/microtype\microtype-pdf
+tex.def)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/microtype\microtype.cfg
+))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/pgf/frontendlayer\tikz.
+sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/pgf/basiclayer\pgf.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/pgf/utilities\pgfrcs.st
+y
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfutil
+-common.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfutil
+-latex.def)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfrcs.
+code.tex
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf\pgf.revision.tex)
+))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/pgf/basiclayer\pgfcore.
+sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/pgf/systemlayer\pgfsys.
+sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgfsy
+s.code.tex
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfkeys
+.code.tex
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfkeys
+libraryfiltered.code.tex))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgf.c
+fg)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgfsy
+s-pdftex.def
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgfsy
+s-common-pdf.def)))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgfsy
+ssoftpath.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgfsy
+sprotocol.code.tex))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+e.code.tex
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmath.code
+.tex
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathutil.
+code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathparse
+r.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
+ions.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
+ions.basic.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
+ions.trigonometric.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
+ions.random.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
+ions.comparison.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
+ions.base.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
+ions.round.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
+ions.misc.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
+ions.integerarithmetics.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathcalc.
+code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfloat
+.code.tex))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfint.code.
+tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+epoints.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+epathconstruct.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+epathusage.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+escopes.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+egraphicstate.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+etransformations.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+equick.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+eobjects.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+epathprocessing.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+earrows.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+eshade.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+eimage.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+eexternal.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+elayers.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+etransparency.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+epatterns.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+erdf.code.tex)))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/modules\pgfmodule
+shapes.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/modules\pgfmodule
+plot.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/pgf/compatibility\pgfco
+mp-version-0-65.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/pgf/compatibility\pgfco
+mp-version-1-18.sty))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/pgf/utilities\pgffor.st
+y
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/pgf/utilities\pgfkeys.s
+ty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfkeys
+.code.tex))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/pgf/math\pgfmath.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmath.code
+.tex))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgffor.
+code.tex))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlayer/tik
+z\tikz.code.tex
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/libraries\pgflibr
+aryplothandlers.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/modules\pgfmodule
+matrix.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlayer/tik
+z/libraries\tikzlibrarytopaths.code.tex)))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/totcount\totcount.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/changepage\changepage.s
+ty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/frankenstein\attrib.sty
+
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/frankenstein\moredefs.s
+ty)) (C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/was\upgreek.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/tools\tabularx.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/ragged2e\ragged2e.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/tocloft\tocloft.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/marginnote\marginnote.s
+ty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/marginfix\marginfix.sty
+) (C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/enotez\enotez.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/l3kernel\expl3.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/l3backend\l3backend-pdf
+tex.def))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/l3packages/xparse\xpars
+e.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/l3packages/l3keys2e\l3k
+eys2e.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/l3packages/xtemplate\xt
+emplate.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/translations\translatio
+ns.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pdftexcmds\pdftexcmds
+.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/infwarerr\infwarerr.s
+ty) (C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/iftex\iftex.sty))
+)) (C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/amscls\amsthm.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/natbib\natbib.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hyperref.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/kvdefinekeys\kvdefine
+keys.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pdfescape\pdfescape.s
+ty) (C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/hycolor\hycolor.sty
+)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/letltxmacro\letltxmacro
+.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/auxhook\auxhook.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\nameref.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/refcount\refcount.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/gettitlestring\gettit
+lestring.sty))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\pd1enc.def)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/intcalc\intcalc.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\puenc.def)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/url\url.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/bitset\bitset.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/bigintcalc\bigintcalc
+.sty))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/base\atbegshi-ltx.sty))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hpdftex.def
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/base\atveryend-ltx.sty)
+
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/rerunfilecheck\rerunfil
+echeck.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/uniquecounter\uniquec
+ounter.sty)))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/cleveref\cleveref.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/koma-script\scrextend.s
+ty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/koma-script\scrkbase.st
+y
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/koma-script\scrbase.sty
+
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/koma-script\scrlfile.st
+y
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/koma-script\scrlfile-ho
+ok.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/koma-script\scrlogo.sty
+)))))
+
+LaTeX Warning: Command \@footnotemark  has changed.
+               Check if current package is valid.
+
+) (C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/geometry\geometry.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/iftex\ifvtex.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/geometry\geometry.cfg))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/newfloat\newfloat.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/caption\caption.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/caption\caption3.sty))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/seqsplit\seqsplit.sty)
+(ScientificArticle.aux)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/context/base/mkii\supp-pdf.mk
+ii
+[Loading MPS to PDF converter (version 2006.09.02).]
+)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/epstopdf-pkg\epstopdf-b
+ase.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/00miktex\epstopdf-sys.c
+fg))
+
+Package microtype Warning: Unable to apply patch `footnote' on input line 49.
+
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/microtype\mt-cmr.cfg)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/translations/dicts\tran
+slations-basic-dictionary-english.trsl)
+*geometry* driver: auto-detecting
+*geometry* detected driver: pdftex
+
+Underfull \hbox (badness 10000) in paragraph at lines 56--63
+
+
+! LaTeX Error: There's no line here to end.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.67 \newline
+             %
+
+Underfull \hbox (badness 10000) in paragraph at lines 68--97
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 68--97
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 68--97
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 68--97
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 68--97
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 68--97
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 68--97
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 68--97
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 68--97
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 68--97
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 68--97
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 68--97
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 68--97
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 68--97
+
+[1{C:/Users/Ouael/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}{C:/Users/Ou
+ael/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-ec.enc}] [2]
+
+! LaTeX Error: There's no line here to end.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.104 \newline
+              %
+
+! LaTeX Error: There's no line here to end.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.110 \newline
+              %
+
+Underfull \hbox (badness 10000) in paragraph at lines 111--139
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 111--139
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 111--139
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 111--139
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 111--139
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 111--139
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 111--139
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 111--139
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 111--139
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 111--139
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 111--139
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 111--139
+
+[3] [4]
+
+! LaTeX Error: There's no line here to end.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.146 \newline
+              %
+
+Underfull \hbox (badness 10000) in paragraph at lines 147--152
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 147--152
+
+
+! LaTeX Error: There's no line here to end.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.156 \newline
+              %
+
+Underfull \hbox (badness 10000) in paragraph at lines 157--203
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 157--203
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 157--203
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 157--203
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 157--203
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 157--203
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 157--203
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 157--203
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 157--203
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 157--203
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 157--203
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 157--203
+
+[5] [6]
+
+! LaTeX Error: There's no line here to end.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.210 \newline
+              %
+
+Underfull \hbox (badness 10000) in paragraph at lines 211--221
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 211--221
+
+
+! LaTeX Error: There's no line here to end.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.225 \newline
+              %
+
+Underfull \hbox (badness 10000) in paragraph at lines 226--261
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 226--261
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 226--261
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 226--261
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 226--261
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 226--261
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 226--261
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 226--261
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 226--261
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 226--261
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 226--261
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 226--261
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 226--261
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 226--261
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 226--261
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 226--261
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 226--261
+
+[7] [8]
+! Undefined control sequence.
+l.277 \funding
+              {Proyecto PID2019-109152G financiado por MCIN/AEI/10.13039/501...
+
+! Undefined control sequence.
+l.279 \acknowledgments
+                      {DISARM project - Grant n. PDC2021-121197, and the HOR...
+
+
+Overfull \hbox (0.73706pt too wide) in paragraph at lines 279--280
+\T1/lmr/m/n/10 (-20) 126359OB-I00 funded by MCIN/AEI/310.13039/501100011033 and
+ by the ^^PEu-ro-pean Union NextGen-
+! Undefined control sequence.
+<argument> -\extralength 
+                         
+l.285 \begin{adjustwidth}{-\extralength}{0cm}
+                                             
+! Missing number, treated as zero.
+<to be read again> 
+                   !
+l.285 \begin{adjustwidth}{-\extralength}{0cm}
+                                             
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   !
+l.285 \begin{adjustwidth}{-\extralength}{0cm}
+                                             
+! Undefined control sequence.
+l.287 \reftitle
+               {References}
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/lm\t1lmtt.fd)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/lm\ot1lmr.fd)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/lm\omllmm.fd)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/lm\omslmsy.fd)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/lm\omxlmex.fd)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsa.fd)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/microtype\mt-msa.cfg)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsb.fd)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/microtype\mt-msb.cfg)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/microtype\mt-eur.cfg)
+[9] [10] [11]
+! Undefined control sequence.
+l.681 \PublishersNote
+                     {}
+[12] 
+enddocument/afterlastpage: lastpage setting LastPage.
+(ScientificArticle.aux
+
+Package natbib Warning: Citation(s) may have changed.
+(natbib)                Rerun to get citations correct.
+
+
+! Package natbib Error: Bibliography not compatible with author-year citations.
+
+(natbib)                Press <return> to continue in numerical citation style.
+
+
+See the natbib package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.85 ...mand\NAT@force@numbers{}\NAT@force@numbers
+                                                  
+)
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
+
+Package rerunfilecheck Warning: File `ScientificArticle.out' has changed.
+(rerunfilecheck)                Rerun to get outlines right
+(rerunfilecheck)                or use package `bookmark'.
+
+
+Package lastpage Warning: Rerun to get the references right on input line 683.
+
+ )
+(see the transcript file for additional information)<C:/Users/Ouael/AppData/Loc
+al/Programs/MiKTeX/fonts/type1/public/lm/lmbx12.pfb><C:/Users/Ouael/AppData/Loc
+al/Programs/MiKTeX/fonts/type1/public/lm/lmr10.pfb><C:/Users/Ouael/AppData/Loca
+l/Programs/MiKTeX/fonts/type1/public/lm/lmri10.pfb><C:/Users/Ouael/AppData/Loca
+l/Programs/MiKTeX/fonts/type1/public/lm/lmtt10.pfb>
+Output written on ScientificArticle.pdf (12 pages, 175925 bytes).
+Transcript written on ScientificArticle.log.
+Latexmk: Sometimes, the -f option can be used to get latexmk
+  to try to force complete processing.
+  But normally, you will need to correct the file(s) that caused the
+  error, and then rerun latexmk.
+  In some cases, it is best to clean out generated files before rerunning
+  latexmk after you've corrected the files.
+Reverting Windows console CPs to (in,out) = (850,65001)
+Latexmk: Getting log file 'ScientificArticle.log'
+Latexmk: Examining 'ScientificArticle.fls'
+Latexmk: Examining 'ScientificArticle.log'
+Latexmk: References changed.
+Latexmk: References changed.
+Latexmk: References changed.
+Latexmk: References changed.
+Latexmk: Log file says output to 'ScientificArticle.pdf'
+Latexmk: Errors, so I did not complete making targets
+Collected error summary (may duplicate other messages):
+  pdflatex: Command for 'pdflatex' gave return code 1
+      Refer to 'ScientificArticle.log' and/or above output for details
+
+
+Error generating PDF for model TheBloke.llama-2-70b-chat.Q5_K_M.gguf:
+perl: warning: Setting locale failed.
+perl: warning: Please check that your locale settings:
+	LC_ALL = (unset),
+	(possibly more locale environment variables)
+	LANG = "en_US.UTF-8"
+    are supported and installed on your system.
+perl: warning: Falling back to the system default locale ("Spanish_Spain.1252").
+Initial Win CP for (console input, console output, system): (CP850, CP65001, CP1252)
+I changed them all to CP1252
+Rc files read:
+  NONE
+Latexmk: This is Latexmk, John Collins, 31 Jan. 2024. Version 4.83.
+No existing .aux file, so I'll make a simple one, and require run of *latex.
+Latexmk: applying rule 'pdflatex'...
+Rule 'pdflatex':  Reasons for rerun
+Category 'other':
+  Rerun of 'pdflatex' forced or previously required:
+    Reason or flag: 'Initial setup'
+
+------------
+Run number 1 of rule 'pdflatex'
+------------
+------------
+Running 'pdflatex  --interaction=nonstopmode -recorder  "C:/Users/Ouael/OneDrive/Desktop/TI4/TFG/Proyecto/CongresoAI/backend/test/resultlatex/TheBloke.llama-2-70b-chat.Q5_K_M.gguf/ScientificArticle.tex"'
+------------
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 23.10.12) (preloaded format=pdflatex.fmt)
+ restricted \write18 enabled.
+entering extended mode
+
+(C:/Users/Ouael/OneDrive/Desktop/TI4/TFG/Proyecto/CongresoAI/backend/test/resul
+tlatex/TheBloke.llama-2-70b-chat.Q5_K_M.gguf/ScientificArticle.tex
+LaTeX2e <2023-11-01>
+L3 programming layer <2023-11-09>
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/base\article.cls
+Document Class: article 2023/05/17 v1.4n Standard LaTeX document class
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/base\size10.clo))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/base\fontenc.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/base\inputenc.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/lm\lmodern.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/base\textcomp.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/lastpage\lastpage.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/lastpage\lastpage2e.sty
+
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/lastpage\lastpagemodern
+.sty) 
+)) (C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/base\fontenc.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/lm\t1lmr.fd))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/tools\calc.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/fancyhdr\fancyhdr.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/graphics\graphicx.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/graphics\keyval.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/graphics\graphics.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/graphics\trig.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cfg\graphics.c
+fg)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/graphics-def\pdftex.def
+))) (C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/base\ifthen.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsmath.sty
+For additional information on amsmath, use the `?' option.
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amstext.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsgen.sty))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsbsy.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsopn.sty))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\amssymb.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\amsfonts.sty))
+ (C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/lineno\lineno.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/etoolbox\etoolbox.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/kvoptions\kvoptions.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/ltxcmds\ltxcmds.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/kvsetkeys\kvsetkeys.sty
+)))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/enumitem\enumitem.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/booktabs\booktabs.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/titlesec\titlesec.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/xcolor\xcolor.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cfg\color.cfg)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/graphics\mathcolor.ltx)
+) (C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/colortbl\colortbl.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/tools\array.sty))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/multirow\multirow.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/microtype\microtype.sty
+
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/microtype\microtype-pdf
+tex.def)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/microtype\microtype.cfg
+))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/pgf/frontendlayer\tikz.
+sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/pgf/basiclayer\pgf.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/pgf/utilities\pgfrcs.st
+y
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfutil
+-common.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfutil
+-latex.def)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfrcs.
+code.tex
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf\pgf.revision.tex)
+))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/pgf/basiclayer\pgfcore.
+sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/pgf/systemlayer\pgfsys.
+sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgfsy
+s.code.tex
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfkeys
+.code.tex
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfkeys
+libraryfiltered.code.tex))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgf.c
+fg)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgfsy
+s-pdftex.def
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgfsy
+s-common-pdf.def)))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgfsy
+ssoftpath.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgfsy
+sprotocol.code.tex))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+e.code.tex
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmath.code
+.tex
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathutil.
+code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathparse
+r.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
+ions.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
+ions.basic.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
+ions.trigonometric.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
+ions.random.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
+ions.comparison.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
+ions.base.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
+ions.round.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
+ions.misc.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
+ions.integerarithmetics.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathcalc.
+code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfloat
+.code.tex))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfint.code.
+tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+epoints.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+epathconstruct.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+epathusage.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+escopes.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+egraphicstate.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+etransformations.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+equick.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+eobjects.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+epathprocessing.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+earrows.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+eshade.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+eimage.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+eexternal.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+elayers.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+etransparency.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+epatterns.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+erdf.code.tex)))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/modules\pgfmodule
+shapes.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/modules\pgfmodule
+plot.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/pgf/compatibility\pgfco
+mp-version-0-65.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/pgf/compatibility\pgfco
+mp-version-1-18.sty))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/pgf/utilities\pgffor.st
+y
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/pgf/utilities\pgfkeys.s
+ty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfkeys
+.code.tex))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/pgf/math\pgfmath.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmath.code
+.tex))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgffor.
+code.tex))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlayer/tik
+z\tikz.code.tex
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/libraries\pgflibr
+aryplothandlers.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/modules\pgfmodule
+matrix.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlayer/tik
+z/libraries\tikzlibrarytopaths.code.tex)))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/totcount\totcount.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/changepage\changepage.s
+ty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/frankenstein\attrib.sty
+
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/frankenstein\moredefs.s
+ty)) (C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/was\upgreek.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/tools\tabularx.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/ragged2e\ragged2e.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/tocloft\tocloft.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/marginnote\marginnote.s
+ty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/marginfix\marginfix.sty
+) (C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/enotez\enotez.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/l3kernel\expl3.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/l3backend\l3backend-pdf
+tex.def))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/l3packages/xparse\xpars
+e.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/l3packages/l3keys2e\l3k
+eys2e.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/l3packages/xtemplate\xt
+emplate.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/translations\translatio
+ns.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pdftexcmds\pdftexcmds
+.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/infwarerr\infwarerr.s
+ty) (C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/iftex\iftex.sty))
+)) (C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/amscls\amsthm.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/natbib\natbib.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hyperref.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/kvdefinekeys\kvdefine
+keys.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pdfescape\pdfescape.s
+ty) (C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/hycolor\hycolor.sty
+)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/letltxmacro\letltxmacro
+.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/auxhook\auxhook.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\nameref.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/refcount\refcount.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/gettitlestring\gettit
+lestring.sty))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\pd1enc.def)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/intcalc\intcalc.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\puenc.def)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/url\url.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/bitset\bitset.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/bigintcalc\bigintcalc
+.sty))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/base\atbegshi-ltx.sty))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hpdftex.def
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/base\atveryend-ltx.sty)
+
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/rerunfilecheck\rerunfil
+echeck.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/uniquecounter\uniquec
+ounter.sty)))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/cleveref\cleveref.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/koma-script\scrextend.s
+ty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/koma-script\scrkbase.st
+y
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/koma-script\scrbase.sty
+
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/koma-script\scrlfile.st
+y
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/koma-script\scrlfile-ho
+ok.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/koma-script\scrlogo.sty
+)))))
+
+LaTeX Warning: Command \@footnotemark  has changed.
+               Check if current package is valid.
+
+) (C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/geometry\geometry.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/iftex\ifvtex.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/geometry\geometry.cfg))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/newfloat\newfloat.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/caption\caption.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/caption\caption3.sty))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/seqsplit\seqsplit.sty)
+(ScientificArticle.aux)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/context/base/mkii\supp-pdf.mk
+ii
+[Loading MPS to PDF converter (version 2006.09.02).]
+)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/epstopdf-pkg\epstopdf-b
+ase.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/00miktex\epstopdf-sys.c
+fg))
+
+Package microtype Warning: Unable to apply patch `footnote' on input line 49.
+
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/microtype\mt-cmr.cfg)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/translations/dicts\tran
+slations-basic-dictionary-english.trsl)
+*geometry* driver: auto-detecting
+*geometry* detected driver: pdftex
+
+Underfull \hbox (badness 10000) in paragraph at lines 56--59
+
+
+! LaTeX Error: There's no line here to end.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.63 \newline
+             %
+
+Underfull \hbox (badness 10000) in paragraph at lines 64--83
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 64--83
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 64--83
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 64--83
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 64--83
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 64--83
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 64--83
+
+[1{C:/Users/Ouael/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}{C:/Users/Ou
+ael/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-ec.enc}] [2]
+Underfull \hbox (badness 10000) in paragraph at lines 90--93
+
+
+! LaTeX Error: There's no line here to end.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.97 \newline
+             %
+
+Underfull \hbox (badness 10000) in paragraph at lines 98--107
+
+[3]
+Underfull \hbox (badness 10000) in paragraph at lines 114--117
+
+
+! LaTeX Error: There's no line here to end.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.121 \newline
+              %
+
+Underfull \hbox (badness 10000) in paragraph at lines 122--133
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 122--133
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 122--133
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 122--133
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 122--133
+
+[4]
+Underfull \hbox (badness 10000) in paragraph at lines 140--154
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 140--154
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 140--154
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 140--154
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 140--154
+
+
+! LaTeX Error: There's no line here to end.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.158 \newline
+              %
+
+Underfull \hbox (badness 10000) in paragraph at lines 159--176
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 159--176
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 159--176
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 159--176
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 159--176
+
+[5] [6]
+! Undefined control sequence.
+l.192 \funding
+              {Proyecto PID2019-109152G financiado por MCIN/AEI/10.13039/501...
+
+! Undefined control sequence.
+l.194 \acknowledgments
+                      {DISARM project - Grant n. PDC2021-121197, and the HOR...
+
+
+Overfull \hbox (0.73706pt too wide) in paragraph at lines 194--195
+\T1/lmr/m/n/10 (-20) 126359OB-I00 funded by MCIN/AEI/310.13039/501100011033 and
+ by the ^^PEu-ro-pean Union NextGen-
+! Undefined control sequence.
+<argument> -\extralength 
+                         
+l.200 \begin{adjustwidth}{-\extralength}{0cm}
+                                             
+! Missing number, treated as zero.
+<to be read again> 
+                   !
+l.200 \begin{adjustwidth}{-\extralength}{0cm}
+                                             
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   !
+l.200 \begin{adjustwidth}{-\extralength}{0cm}
+                                             
+! Undefined control sequence.
+l.202 \reftitle
+               {References}
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/lm\t1lmtt.fd)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/lm\ot1lmr.fd)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/lm\omllmm.fd)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/lm\omslmsy.fd)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/lm\omxlmex.fd)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsa.fd)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/microtype\mt-msa.cfg)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsb.fd)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/microtype\mt-msb.cfg)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/microtype\mt-eur.cfg)
+[7] [8] [9]
+! Undefined control sequence.
+l.596 \PublishersNote
+                     {}
+[10] 
+enddocument/afterlastpage: lastpage setting LastPage.
+(ScientificArticle.aux
+
+Package natbib Warning: Citation(s) may have changed.
+(natbib)                Rerun to get citations correct.
+
+
+! Package natbib Error: Bibliography not compatible with author-year citations.
+
+(natbib)                Press <return> to continue in numerical citation style.
+
+
+See the natbib package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.85 ...mand\NAT@force@numbers{}\NAT@force@numbers
+                                                  
+)
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
+
+Package rerunfilecheck Warning: File `ScientificArticle.out' has changed.
+(rerunfilecheck)                Rerun to get outlines right
+(rerunfilecheck)                or use package `bookmark'.
+
+
+Package lastpage Warning: Rerun to get the references right on input line 598.
+
+ )
+(see the transcript file for additional information)<C:/Users/Ouael/AppData/Loc
+al/Programs/MiKTeX/fonts/type1/public/lm/lmbx12.pfb><C:/Users/Ouael/AppData/Loc
+al/Programs/MiKTeX/fonts/type1/public/lm/lmr10.pfb><C:/Users/Ouael/AppData/Loca
+l/Programs/MiKTeX/fonts/type1/public/lm/lmri10.pfb><C:/Users/Ouael/AppData/Loca
+l/Programs/MiKTeX/fonts/type1/public/lm/lmtt10.pfb>
+Output written on ScientificArticle.pdf (10 pages, 177251 bytes).
+Transcript written on ScientificArticle.log.
+Latexmk: Sometimes, the -f option can be used to get latexmk
+  to try to force complete processing.
+  But normally, you will need to correct the file(s) that caused the
+  error, and then rerun latexmk.
+  In some cases, it is best to clean out generated files before rerunning
+  latexmk after you've corrected the files.
+Reverting Windows console CPs to (in,out) = (850,65001)
+Latexmk: Getting log file 'ScientificArticle.log'
+Latexmk: Examining 'ScientificArticle.fls'
+Latexmk: Examining 'ScientificArticle.log'
+Latexmk: References changed.
+Latexmk: References changed.
+Latexmk: References changed.
+Latexmk: References changed.
+Latexmk: Log file says output to 'ScientificArticle.pdf'
+Latexmk: Errors, so I did not complete making targets
+Collected error summary (may duplicate other messages):
+  pdflatex: Command for 'pdflatex' gave return code 1
+      Refer to 'ScientificArticle.log' and/or above output for details
+
+
+Error generating PDF for model TheBloke.llama2-13b-psyfighter2.Q6_K.gguf:
+perl: warning: Setting locale failed.
+perl: warning: Please check that your locale settings:
+	LC_ALL = (unset),
+	(possibly more locale environment variables)
+	LANG = "en_US.UTF-8"
+    are supported and installed on your system.
+perl: warning: Falling back to the system default locale ("Spanish_Spain.1252").
+Initial Win CP for (console input, console output, system): (CP850, CP65001, CP1252)
+I changed them all to CP1252
+Rc files read:
+  NONE
+Latexmk: This is Latexmk, John Collins, 31 Jan. 2024. Version 4.83.
+No existing .aux file, so I'll make a simple one, and require run of *latex.
+Latexmk: applying rule 'pdflatex'...
+Rule 'pdflatex':  Reasons for rerun
+Category 'other':
+  Rerun of 'pdflatex' forced or previously required:
+    Reason or flag: 'Initial setup'
+
+------------
+Run number 1 of rule 'pdflatex'
+------------
+------------
+Running 'pdflatex  --interaction=nonstopmode -recorder  "C:/Users/Ouael/OneDrive/Desktop/TI4/TFG/Proyecto/CongresoAI/backend/test/resultlatex/TheBloke.llama2-13b-psyfighter2.Q6_K.gguf/ScientificArticle.tex"'
+------------
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 23.10.12) (preloaded format=pdflatex.fmt)
+ restricted \write18 enabled.
+entering extended mode
+
+(C:/Users/Ouael/OneDrive/Desktop/TI4/TFG/Proyecto/CongresoAI/backend/test/resul
+tlatex/TheBloke.llama2-13b-psyfighter2.Q6_K.gguf/ScientificArticle.tex
+LaTeX2e <2023-11-01>
+L3 programming layer <2023-11-09>
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/base\article.cls
+Document Class: article 2023/05/17 v1.4n Standard LaTeX document class
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/base\size10.clo))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/base\fontenc.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/base\inputenc.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/lm\lmodern.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/base\textcomp.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/lastpage\lastpage.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/lastpage\lastpage2e.sty
+
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/lastpage\lastpagemodern
+.sty) 
+)) (C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/base\fontenc.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/lm\t1lmr.fd))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/tools\calc.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/fancyhdr\fancyhdr.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/graphics\graphicx.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/graphics\keyval.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/graphics\graphics.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/graphics\trig.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cfg\graphics.c
+fg)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/graphics-def\pdftex.def
+))) (C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/base\ifthen.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsmath.sty
+For additional information on amsmath, use the `?' option.
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amstext.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsgen.sty))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsbsy.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsopn.sty))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\amssymb.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\amsfonts.sty))
+ (C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/lineno\lineno.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/etoolbox\etoolbox.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/kvoptions\kvoptions.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/ltxcmds\ltxcmds.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/kvsetkeys\kvsetkeys.sty
+)))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/enumitem\enumitem.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/booktabs\booktabs.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/titlesec\titlesec.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/xcolor\xcolor.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cfg\color.cfg)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/graphics\mathcolor.ltx)
+) (C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/colortbl\colortbl.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/tools\array.sty))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/multirow\multirow.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/microtype\microtype.sty
+
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/microtype\microtype-pdf
+tex.def)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/microtype\microtype.cfg
+))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/pgf/frontendlayer\tikz.
+sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/pgf/basiclayer\pgf.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/pgf/utilities\pgfrcs.st
+y
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfutil
+-common.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfutil
+-latex.def)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfrcs.
+code.tex
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf\pgf.revision.tex)
+))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/pgf/basiclayer\pgfcore.
+sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/pgf/systemlayer\pgfsys.
+sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgfsy
+s.code.tex
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfkeys
+.code.tex
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfkeys
+libraryfiltered.code.tex))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgf.c
+fg)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgfsy
+s-pdftex.def
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgfsy
+s-common-pdf.def)))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgfsy
+ssoftpath.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgfsy
+sprotocol.code.tex))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+e.code.tex
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmath.code
+.tex
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathutil.
+code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathparse
+r.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
+ions.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
+ions.basic.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
+ions.trigonometric.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
+ions.random.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
+ions.comparison.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
+ions.base.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
+ions.round.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
+ions.misc.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
+ions.integerarithmetics.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathcalc.
+code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfloat
+.code.tex))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfint.code.
+tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+epoints.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+epathconstruct.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+epathusage.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+escopes.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+egraphicstate.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+etransformations.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+equick.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+eobjects.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+epathprocessing.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+earrows.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+eshade.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+eimage.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+eexternal.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+elayers.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+etransparency.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+epatterns.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+erdf.code.tex)))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/modules\pgfmodule
+shapes.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/modules\pgfmodule
+plot.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/pgf/compatibility\pgfco
+mp-version-0-65.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/pgf/compatibility\pgfco
+mp-version-1-18.sty))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/pgf/utilities\pgffor.st
+y
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/pgf/utilities\pgfkeys.s
+ty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfkeys
+.code.tex))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/pgf/math\pgfmath.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmath.code
+.tex))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgffor.
+code.tex))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlayer/tik
+z\tikz.code.tex
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/libraries\pgflibr
+aryplothandlers.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/modules\pgfmodule
+matrix.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlayer/tik
+z/libraries\tikzlibrarytopaths.code.tex)))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/totcount\totcount.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/changepage\changepage.s
+ty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/frankenstein\attrib.sty
+
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/frankenstein\moredefs.s
+ty)) (C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/was\upgreek.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/tools\tabularx.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/ragged2e\ragged2e.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/tocloft\tocloft.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/marginnote\marginnote.s
+ty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/marginfix\marginfix.sty
+) (C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/enotez\enotez.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/l3kernel\expl3.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/l3backend\l3backend-pdf
+tex.def))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/l3packages/xparse\xpars
+e.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/l3packages/l3keys2e\l3k
+eys2e.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/l3packages/xtemplate\xt
+emplate.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/translations\translatio
+ns.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pdftexcmds\pdftexcmds
+.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/infwarerr\infwarerr.s
+ty) (C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/iftex\iftex.sty))
+)) (C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/amscls\amsthm.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/natbib\natbib.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hyperref.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/kvdefinekeys\kvdefine
+keys.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pdfescape\pdfescape.s
+ty) (C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/hycolor\hycolor.sty
+)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/letltxmacro\letltxmacro
+.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/auxhook\auxhook.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\nameref.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/refcount\refcount.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/gettitlestring\gettit
+lestring.sty))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\pd1enc.def)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/intcalc\intcalc.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\puenc.def)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/url\url.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/bitset\bitset.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/bigintcalc\bigintcalc
+.sty))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/base\atbegshi-ltx.sty))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hpdftex.def
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/base\atveryend-ltx.sty)
+
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/rerunfilecheck\rerunfil
+echeck.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/uniquecounter\uniquec
+ounter.sty)))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/cleveref\cleveref.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/koma-script\scrextend.s
+ty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/koma-script\scrkbase.st
+y
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/koma-script\scrbase.sty
+
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/koma-script\scrlfile.st
+y
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/koma-script\scrlfile-ho
+ok.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/koma-script\scrlogo.sty
+)))))
+
+LaTeX Warning: Command \@footnotemark  has changed.
+               Check if current package is valid.
+
+) (C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/geometry\geometry.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/iftex\ifvtex.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/geometry\geometry.cfg))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/newfloat\newfloat.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/caption\caption.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/caption\caption3.sty))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/seqsplit\seqsplit.sty)
+(ScientificArticle.aux)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/context/base/mkii\supp-pdf.mk
+ii
+[Loading MPS to PDF converter (version 2006.09.02).]
+)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/epstopdf-pkg\epstopdf-b
+ase.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/00miktex\epstopdf-sys.c
+fg))
+
+Package microtype Warning: Unable to apply patch `footnote' on input line 49.
+
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/microtype\mt-cmr.cfg)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/translations/dicts\tran
+slations-basic-dictionary-english.trsl)
+*geometry* driver: auto-detecting
+*geometry* detected driver: pdftex
+
+Underfull \hbox (badness 10000) in paragraph at lines 56--61
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 56--61
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 65--94
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 65--94
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 65--94
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 65--94
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 65--94
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 65--94
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 65--94
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 65--94
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 65--94
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 65--94
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 65--94
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 65--94
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 65--94
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 65--94
+
+[1{C:/Users/Ouael/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}{C:/Users/Ou
+ael/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-ec.enc}] [2]
+Underfull \hbox (badness 10000) in paragraph at lines 101--106
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 101--106
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 110--138
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 110--138
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 110--138
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 110--138
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 110--138
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 110--138
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 110--138
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 110--138
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 110--138
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 110--138
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 110--138
+
+[3] [4]
+Underfull \hbox (badness 10000) in paragraph at lines 145--148
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 152--164
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 152--164
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 152--164
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 152--164
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 152--164
+
+[5]
+Underfull \hbox (badness 10000) in paragraph at lines 171--180
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 171--180
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 171--180
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 171--180
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 184--206
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 184--206
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 184--206
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 184--206
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 184--206
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 184--206
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 184--206
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 184--206
+
+[6] [7]
+! Undefined control sequence.
+l.222 \funding
+              {Proyecto PID2019-109152G financiado por MCIN/AEI/10.13039/501...
+
+! Undefined control sequence.
+l.224 \acknowledgments
+                      {DISARM project - Grant n. PDC2021-121197, and the HOR...
+
+
+Overfull \hbox (0.73706pt too wide) in paragraph at lines 224--225
+\T1/lmr/m/n/10 (-20) 126359OB-I00 funded by MCIN/AEI/310.13039/501100011033 and
+ by the ^^PEu-ro-pean Union NextGen-
+! Undefined control sequence.
+<argument> -\extralength 
+                         
+l.230 \begin{adjustwidth}{-\extralength}{0cm}
+                                             
+! Missing number, treated as zero.
+<to be read again> 
+                   !
+l.230 \begin{adjustwidth}{-\extralength}{0cm}
+                                             
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   !
+l.230 \begin{adjustwidth}{-\extralength}{0cm}
+                                             
+! Undefined control sequence.
+l.232 \reftitle
+               {References}
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/lm\t1lmtt.fd)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/lm\ot1lmr.fd)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/lm\omllmm.fd)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/lm\omslmsy.fd)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/lm\omxlmex.fd)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsa.fd)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/microtype\mt-msa.cfg)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsb.fd)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/microtype\mt-msb.cfg)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/microtype\mt-eur.cfg)
+[8] [9] [10]
+! Undefined control sequence.
+l.626 \PublishersNote
+                     {}
+[11] 
+enddocument/afterlastpage: lastpage setting LastPage.
+(ScientificArticle.aux
+
+Package natbib Warning: Citation(s) may have changed.
+(natbib)                Rerun to get citations correct.
+
+
+! Package natbib Error: Bibliography not compatible with author-year citations.
+
+(natbib)                Press <return> to continue in numerical citation style.
+
+
+See the natbib package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.85 ...mand\NAT@force@numbers{}\NAT@force@numbers
+                                                  
+)
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
+
+Package rerunfilecheck Warning: File `ScientificArticle.out' has changed.
+(rerunfilecheck)                Rerun to get outlines right
+(rerunfilecheck)                or use package `bookmark'.
+
+
+Package lastpage Warning: Rerun to get the references right on input line 628.
+
+ )
+(see the transcript file for additional information)<C:/Users/Ouael/AppData/Loc
+al/Programs/MiKTeX/fonts/type1/public/lm/lmbx12.pfb><C:/Users/Ouael/AppData/Loc
+al/Programs/MiKTeX/fonts/type1/public/lm/lmr10.pfb><C:/Users/Ouael/AppData/Loca
+l/Programs/MiKTeX/fonts/type1/public/lm/lmri10.pfb><C:/Users/Ouael/AppData/Loca
+l/Programs/MiKTeX/fonts/type1/public/lm/lmtt10.pfb>
+Output written on ScientificArticle.pdf (11 pages, 178027 bytes).
+Transcript written on ScientificArticle.log.
+Latexmk: Sometimes, the -f option can be used to get latexmk
+  to try to force complete processing.
+  But normally, you will need to correct the file(s) that caused the
+  error, and then rerun latexmk.
+  In some cases, it is best to clean out generated files before rerunning
+  latexmk after you've corrected the files.
+Reverting Windows console CPs to (in,out) = (850,65001)
+Latexmk: Getting log file 'ScientificArticle.log'
+Latexmk: Examining 'ScientificArticle.fls'
+Latexmk: Examining 'ScientificArticle.log'
+Latexmk: References changed.
+Latexmk: References changed.
+Latexmk: References changed.
+Latexmk: References changed.
+Latexmk: Log file says output to 'ScientificArticle.pdf'
+Latexmk: Errors, so I did not complete making targets
+Collected error summary (may duplicate other messages):
+  pdflatex: Command for 'pdflatex' gave return code 1
+      Refer to 'ScientificArticle.log' and/or above output for details
+
+
+Error generating PDF for model TheBloke.llama2_7b_chat_uncensored.Q5_K_M.gguf:
+perl: warning: Setting locale failed.
+perl: warning: Please check that your locale settings:
+	LC_ALL = (unset),
+	(possibly more locale environment variables)
+	LANG = "en_US.UTF-8"
+    are supported and installed on your system.
+perl: warning: Falling back to the system default locale ("Spanish_Spain.1252").
+Initial Win CP for (console input, console output, system): (CP850, CP65001, CP1252)
+I changed them all to CP1252
+Rc files read:
+  NONE
+Latexmk: This is Latexmk, John Collins, 31 Jan. 2024. Version 4.83.
+No existing .aux file, so I'll make a simple one, and require run of *latex.
+Latexmk: applying rule 'pdflatex'...
+Rule 'pdflatex':  Reasons for rerun
+Category 'other':
+  Rerun of 'pdflatex' forced or previously required:
+    Reason or flag: 'Initial setup'
+
+------------
+Run number 1 of rule 'pdflatex'
+------------
+------------
+Running 'pdflatex  --interaction=nonstopmode -recorder  "C:/Users/Ouael/OneDrive/Desktop/TI4/TFG/Proyecto/CongresoAI/backend/test/resultlatex/TheBloke.llama2_7b_chat_uncensored.Q5_K_M.gguf/ScientificArticle.tex"'
+------------
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 23.10.12) (preloaded format=pdflatex.fmt)
+ restricted \write18 enabled.
+entering extended mode
+
+(C:/Users/Ouael/OneDrive/Desktop/TI4/TFG/Proyecto/CongresoAI/backend/test/resul
+tlatex/TheBloke.llama2_7b_chat_uncensored.Q5_K_M.gguf/ScientificArticle.tex
+LaTeX2e <2023-11-01>
+L3 programming layer <2023-11-09>
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/base\article.cls
+Document Class: article 2023/05/17 v1.4n Standard LaTeX document class
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/base\size10.clo))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/base\fontenc.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/base\inputenc.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/lm\lmodern.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/base\textcomp.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/lastpage\lastpage.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/lastpage\lastpage2e.sty
+
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/lastpage\lastpagemodern
+.sty) 
+)) (C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/base\fontenc.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/lm\t1lmr.fd))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/tools\calc.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/fancyhdr\fancyhdr.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/graphics\graphicx.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/graphics\keyval.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/graphics\graphics.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/graphics\trig.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cfg\graphics.c
+fg)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/graphics-def\pdftex.def
+))) (C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/base\ifthen.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsmath.sty
+For additional information on amsmath, use the `?' option.
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amstext.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsgen.sty))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsbsy.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsopn.sty))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\amssymb.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\amsfonts.sty))
+ (C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/lineno\lineno.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/etoolbox\etoolbox.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/kvoptions\kvoptions.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/ltxcmds\ltxcmds.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/kvsetkeys\kvsetkeys.sty
+)))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/enumitem\enumitem.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/booktabs\booktabs.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/titlesec\titlesec.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/xcolor\xcolor.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cfg\color.cfg)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/graphics\mathcolor.ltx)
+) (C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/colortbl\colortbl.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/tools\array.sty))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/multirow\multirow.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/microtype\microtype.sty
+
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/microtype\microtype-pdf
+tex.def)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/microtype\microtype.cfg
+))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/pgf/frontendlayer\tikz.
+sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/pgf/basiclayer\pgf.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/pgf/utilities\pgfrcs.st
+y
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfutil
+-common.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfutil
+-latex.def)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfrcs.
+code.tex
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf\pgf.revision.tex)
+))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/pgf/basiclayer\pgfcore.
+sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/pgf/systemlayer\pgfsys.
+sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgfsy
+s.code.tex
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfkeys
+.code.tex
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfkeys
+libraryfiltered.code.tex))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgf.c
+fg)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgfsy
+s-pdftex.def
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgfsy
+s-common-pdf.def)))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgfsy
+ssoftpath.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgfsy
+sprotocol.code.tex))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+e.code.tex
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmath.code
+.tex
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathutil.
+code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathparse
+r.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
+ions.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
+ions.basic.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
+ions.trigonometric.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
+ions.random.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
+ions.comparison.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
+ions.base.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
+ions.round.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
+ions.misc.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfunct
+ions.integerarithmetics.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathcalc.
+code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfloat
+.code.tex))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfint.code.
+tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+epoints.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+epathconstruct.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+epathusage.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+escopes.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+egraphicstate.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+etransformations.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+equick.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+eobjects.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+epathprocessing.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+earrows.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+eshade.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+eimage.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+eexternal.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+elayers.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+etransparency.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+epatterns.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcor
+erdf.code.tex)))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/modules\pgfmodule
+shapes.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/modules\pgfmodule
+plot.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/pgf/compatibility\pgfco
+mp-version-0-65.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/pgf/compatibility\pgfco
+mp-version-1-18.sty))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/pgf/utilities\pgffor.st
+y
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/pgf/utilities\pgfkeys.s
+ty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfkeys
+.code.tex))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/pgf/math\pgfmath.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmath.code
+.tex))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgffor.
+code.tex))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlayer/tik
+z\tikz.code.tex
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/libraries\pgflibr
+aryplothandlers.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/modules\pgfmodule
+matrix.code.tex)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlayer/tik
+z/libraries\tikzlibrarytopaths.code.tex)))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/totcount\totcount.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/changepage\changepage.s
+ty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/frankenstein\attrib.sty
+
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/frankenstein\moredefs.s
+ty)) (C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/was\upgreek.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/tools\tabularx.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/ragged2e\ragged2e.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/tocloft\tocloft.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/marginnote\marginnote.s
+ty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/marginfix\marginfix.sty
+) (C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/enotez\enotez.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/l3kernel\expl3.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/l3backend\l3backend-pdf
+tex.def))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/l3packages/xparse\xpars
+e.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/l3packages/l3keys2e\l3k
+eys2e.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/l3packages/xtemplate\xt
+emplate.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/translations\translatio
+ns.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pdftexcmds\pdftexcmds
+.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/infwarerr\infwarerr.s
+ty) (C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/iftex\iftex.sty))
+)) (C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/amscls\amsthm.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/natbib\natbib.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hyperref.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/kvdefinekeys\kvdefine
+keys.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/pdfescape\pdfescape.s
+ty) (C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/hycolor\hycolor.sty
+)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/letltxmacro\letltxmacro
+.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/auxhook\auxhook.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\nameref.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/refcount\refcount.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/gettitlestring\gettit
+lestring.sty))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\pd1enc.def)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/intcalc\intcalc.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\puenc.def)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/url\url.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/bitset\bitset.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/bigintcalc\bigintcalc
+.sty))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/base\atbegshi-ltx.sty))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hpdftex.def
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/base\atveryend-ltx.sty)
+
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/rerunfilecheck\rerunfil
+echeck.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/uniquecounter\uniquec
+ounter.sty)))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/cleveref\cleveref.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/koma-script\scrextend.s
+ty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/koma-script\scrkbase.st
+y
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/koma-script\scrbase.sty
+
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/koma-script\scrlfile.st
+y
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/koma-script\scrlfile-ho
+ok.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/koma-script\scrlogo.sty
+)))))
+
+LaTeX Warning: Command \@footnotemark  has changed.
+               Check if current package is valid.
+
+) (C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/geometry\geometry.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/generic/iftex\ifvtex.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/geometry\geometry.cfg))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/newfloat\newfloat.sty)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/caption\caption.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/caption\caption3.sty))
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/seqsplit\seqsplit.sty)
+(ScientificArticle.aux)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/context/base/mkii\supp-pdf.mk
+ii
+[Loading MPS to PDF converter (version 2006.09.02).]
+)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/epstopdf-pkg\epstopdf-b
+ase.sty
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/00miktex\epstopdf-sys.c
+fg))
+
+Package microtype Warning: Unable to apply patch `footnote' on input line 49.
+
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/microtype\mt-cmr.cfg)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/translations/dicts\tran
+slations-basic-dictionary-english.trsl)
+*geometry* driver: auto-detecting
+*geometry* detected driver: pdftex
+[1{C:/Users/Ouael/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}{C:/Users/Ou
+ael/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-ec.enc}] [2]
+Underfull \hbox (badness 10000) in paragraph at lines 82--91
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 82--91
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 82--91
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 82--91
+
+[3]
+! Undefined control sequence.
+l.112 \funding
+              {Proyecto PID2019-109152G financiado por MCIN/AEI/10.13039/501...
+
+! Undefined control sequence.
+l.114 \acknowledgments
+                      {DISARM project - Grant n. PDC2021-121197, and the HOR...
+
+
+Overfull \hbox (0.73706pt too wide) in paragraph at lines 114--115
+\T1/lmr/m/n/10 (-20) 126359OB-I00 funded by MCIN/AEI/310.13039/501100011033 and
+ by the ^^PEu-ro-pean Union NextGen-
+! Undefined control sequence.
+<argument> -\extralength 
+                         
+l.120 \begin{adjustwidth}{-\extralength}{0cm}
+                                             
+! Missing number, treated as zero.
+<to be read again> 
+                   !
+l.120 \begin{adjustwidth}{-\extralength}{0cm}
+                                             
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   !
+l.120 \begin{adjustwidth}{-\extralength}{0cm}
+                                             
+! Undefined control sequence.
+l.122 \reftitle
+               {References}
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/lm\t1lmtt.fd)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/lm\ot1lmr.fd)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/lm\omllmm.fd)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/lm\omslmsy.fd)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/lm\omxlmex.fd)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsa.fd)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/microtype\mt-msa.cfg)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsb.fd)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/microtype\mt-msb.cfg)
+(C:\Users\Ouael\AppData\Local\Programs\MiKTeX\tex/latex/microtype\mt-eur.cfg)
+[4] [5] [6]
+! Undefined control sequence.
+l.516 \PublishersNote
+                     {}
+[7] 
+enddocument/afterlastpage: lastpage setting LastPage.
+(ScientificArticle.aux
+
+Package natbib Warning: Citation(s) may have changed.
+(natbib)                Rerun to get citations correct.
+
+
+! Package natbib Error: Bibliography not compatible with author-year citations.
+
+(natbib)                Press <return> to continue in numerical citation style.
+
+
+See the natbib package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.76 ...mand\NAT@force@numbers{}\NAT@force@numbers
+                                                  
+)
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
+
+Package rerunfilecheck Warning: File `ScientificArticle.out' has changed.
+(rerunfilecheck)                Rerun to get outlines right
+(rerunfilecheck)                or use package `bookmark'.
+
+
+Package lastpage Warning: Rerun to get the references right on input line 518.
+
+ )
+(see the transcript file for additional information)<C:/Users/Ouael/AppData/Loc
+al/Programs/MiKTeX/fonts/type1/public/lm/lmbx12.pfb><C:/Users/Ouael/AppData/Loc
+al/Programs/MiKTeX/fonts/type1/public/lm/lmr10.pfb><C:/Users/Ouael/AppData/Loca
+l/Programs/MiKTeX/fonts/type1/public/lm/lmri10.pfb><C:/Users/Ouael/AppData/Loca
+l/Programs/MiKTeX/fonts/type1/public/lm/lmtt10.pfb>
+Output written on ScientificArticle.pdf (7 pages, 162682 bytes).
+Transcript written on ScientificArticle.log.
+Latexmk: Sometimes, the -f option can be used to get latexmk
+  to try to force complete processing.
+  But normally, you will need to correct the file(s) that caused the
+  error, and then rerun latexmk.
+  In some cases, it is best to clean out generated files before rerunning
+  latexmk after you've corrected the files.
+Reverting Windows console CPs to (in,out) = (850,65001)
+Latexmk: Getting log file 'ScientificArticle.log'
+Latexmk: Examining 'ScientificArticle.fls'
+Latexmk: Examining 'ScientificArticle.log'
+Latexmk: References changed.
+Latexmk: References changed.
+Latexmk: References changed.
+Latexmk: References changed.
+Latexmk: Log file says output to 'ScientificArticle.pdf'
+Latexmk: Errors, so I did not complete making targets
+Collected error summary (may duplicate other messages):
+  pdflatex: Command for 'pdflatex' gave return code 1
+      Refer to 'ScientificArticle.log' and/or above output for details
+
+
+Error generating PDF for model TheBloke.mixtral-8x7b-v0.1.Q8_0.gguf:
