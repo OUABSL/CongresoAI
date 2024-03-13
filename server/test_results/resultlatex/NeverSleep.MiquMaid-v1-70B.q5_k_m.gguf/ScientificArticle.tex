@@ -1,0 +1,609 @@
+\documentclass{article}%
+\usepackage[T1]{fontenc}%
+\usepackage[utf8]{inputenc}%
+\usepackage{lmodern}%
+\usepackage{textcomp}%
+\usepackage{lastpage}%
+\usepackage{fontenc}%
+\usepackage{inputenc}%
+\usepackage{calc}%
+\usepackage{fancyhdr}%
+\usepackage{graphicx}%
+\usepackage{ifthen}%
+\usepackage{amsmath}%
+\usepackage{amssymb}%
+\usepackage{lineno}%
+\usepackage{enumitem}%
+\usepackage{booktabs}%
+\usepackage{titlesec}%
+\usepackage{etoolbox}%
+\usepackage{xcolor}%
+\usepackage{colortbl}%
+\usepackage{multirow}%
+\usepackage{microtype}%
+\usepackage{tikz}%
+\usepackage{totcount}%
+\usepackage{changepage}%
+\usepackage{attrib}%
+\usepackage{upgreek}%
+\usepackage{array}%
+\usepackage{tabularx}%
+\usepackage{ragged2e}%
+\usepackage{tocloft}%
+\usepackage{marginnote}%
+\usepackage{marginfix}%
+\usepackage{enotez}%
+\usepackage{amsthm}%
+\usepackage{natbib}%
+\usepackage{hyperref}%
+\usepackage{cleveref}%
+\usepackage{scrextend}%
+\usepackage{url}%
+\usepackage{geometry}%
+\usepackage{newfloat}%
+\usepackage{caption}%
+\usepackage{seqsplit}%
+%
+%
+%
+\begin{document}%
+\normalsize%
+\clearpage%
+\section{Introduction}%
+\label{sec:Introduction}%
+\subsection{Resumen:}%
+\label{subsec:Resumen}%
+The paper introduces a novel graph query framework for relational learning, aiming to address the challenges in existing methods. Relational learning, which takes into account relationships between objects during the learning process, has shown prominence in various domains such as social networks and bioinformatics. The two main approaches to relational learning are the latent feature (connectionist) approach and the graph pattern{-}based (symbolic) approach. While the connectionist approach has been successful, the symbolic approach faces issues due to computational complexity from relational queries and lack of robust, general frameworks.\newline%
+\newline%
+The proposed framework seeks to overcome these challenges by providing controlled complexity for graph pattern matching and stepwise pattern expansion using well{-}defined operations. This would enable automatic extraction of characteristic relational patterns from data in relational machine learning techniques.\newline%
+\newline%
+However, the study does not focus on performance analysis or comparison with other methods. Instead, it aims to formalize an efficient graph query system that allows atomic operations for expanding queries in a partitioned manner and evaluating cyclic patterns in polynomial time. To the authors' knowledge, no existing approach meets these requirements.\newline%
+\newline%
+The paper is organized as follows: Section 1 reviews related research; Section 2 introduces the proposed framework with its main definitions, properties, representative examples, and computational complexity analysis; Section 3 discusses the implementation of the framework for relational machine learning; and Section 4 concludes the study and suggests future research directions.
+
+%
+\subsection{Evaluación:}%
+\label{subsec:Evaluacin}%
+Motivation: YES, The motivation is clearly explained in the introduction. The authors highlight the importance of relational learning methods and their applications in various domains, such as social networks, biology, and chemistry (lines 2{-}6). Improvement: While the motivation is strong, it could be further strengthened by providing more specific examples or statistics that demonstrate the significance of these problems.\newline%
+\newline%
+Novelty: YES, The novelty of the proposed approach is clearly described in the introduction. The authors explain how their graph query framework addresses the limitations of existing relational query systems and provides a solution to the fundamental problems of computational complexity and lack of robust frameworks (lines 10{-}25). Improvement: To further emphasize the novelty, the authors could explicitly compare their approach with related work and highlight unique contributions.\newline%
+\newline%
+Clarity: YES, The section is well{-}written and easy to understand. The authors use appropriate terminology and avoid ambiguity (lines 7{-}9, 10{-}25). Improvement: To improve clarity, the authors could consider defining technical terms like "relational learning" and "graph pattern matching" at their first mention.\newline%
+\newline%
+Grammar and Style: YES, The section is free of grammatical errors and uses language appropriate for an academic setting (lines 1{-}25). Improvement: No specific improvements are suggested as the grammar and style are already excellent.\newline%
+\newline%
+Typos and Errors: YES, The section appears to be free of typos and other errors (lines 1{-}25). Improvement: No specific corrections are suggested as there are no apparent errors in the text.
+
+%
+\clearpage%
+\section{Related work}%
+\label{sec:Relatedwork}%
+\subsection{Resumen:}%
+\label{subsec:Resumen}%
+The related work section of this paper discusses the common approach to executing relational queries, which involves developing patterns in an abstract representation of data and searching for their occurrences in actual datasets. This method is part of Graph Pattern Matching, a field that has been extensively researched for over three decades. The authors highlight various distinctions in pattern matching methods, including structural, semantic, exact, inexact, optimal, and approximate. They also mention graph pattern matching based on isomorphisms, graph simulation, and bounded simulation.\newline%
+\newline%
+The paper then distinguishes between two types of relational learning models: the latent feature approach and the graph{-}pattern based approach. The authors focus on the latter, which involves automatically extracting relational patterns from data.\newline%
+\newline%
+Most pattern{-}based relational learning methods are derived from Inductive Logic Programming (ILP). However, ILP does not inherently offer relational classifiers and requires data relationships to be transformed into logical predicates. The authors discuss TILDE (Top{-}down Induction of Logical Decision Trees), an algorithm that can learn decision trees from a given set of examples but does not cater to relational learning, thus lacking certain operations for refining relational queries.\newline%
+\newline%
+The paper also mentions Multi{-}relational decision tree learning (MRDTL) and Selection Graphs, which enable atomic operations to enhance queries. However, these methods cannot distinguish between query elements that constitute the query result and those that relate to objects that should or should not be linked to the query result.\newline%
+\newline%
+Finally, the authors discuss Graph{-}Based Induction of Decision Trees (DT{-}GBI), a decision tree construction algorithm for learning graph classifiers using graph{-}based induction. This method generates attributes during the execution of the algorithm.\newline%
+\newline%
+In conclusion, some pattern{-}based approaches can learn to classify complete graphs and construct node classifiers, while others, like the authors' proposal, support learning from general subgraphs as base cases. The proposed technique can also execute cyclic queries, allowing for the extraction of cyclic patterns from data during the learning process.
+
+%
+\subsection{Evaluación:}%
+\label{subsec:Evaluacin}%
+Motivation: YES, The section clearly explains the significance and relevance of the study. It emphasizes the importance of graph pattern matching in executing relational queries and highlights the limitations of existing methods that prevent the evaluation of non{-}existence of elements.\newline%
+\newline%
+Novelty: YES, The section effectively describes the novelty of the proposed approach by differentiating it from existing work. It explains how the proposal falls within the scope of semantic, exact, and optimal graph pattern matching implemented with an approach similar to simulations, while also addressing the limitations of current methods.\newline%
+\newline%
+Clarity: YES, The section is well{-}written, easy to understand, and uses appropriate terminology. It avoids ambiguity by providing clear definitions and examples of various types of graph pattern matching methods.\newline%
+\newline%
+Grammar and Style: YES, The section is free of grammatical errors and uses language appropriate for an academic setting.\newline%
+\newline%
+Typos and Errors: YES, The section appears to be free of typos and other errors.\newline%
+\newline%
+Improvement Suggestions:\newline%
+\newline%
+Motivation: While the motivation is clear, it could be strengthened by providing more specific examples or data that highlight the problem's importance and its wider impacts.\newline%
+\newline%
+Novelty: The section effectively emphasizes the novelty of the proposed approach. However, it could further enhance this by explicitly comparing with related work and highlighting unique contributions in a more detailed manner.\newline%
+\newline%
+Clarity: The section is clear and easy to understand. To improve clarity further, consider defining some technical terms earlier in the text or providing illustrative examples for complex concepts.\newline%
+\newline%
+Grammar and Style: The language used is appropriate for an academic setting and appears to be free of grammatical errors. No suggestions for improvement are needed.\newline%
+\newline%
+Typos and Errors: No typos or other errors were found in the provided section.
+
+%
+\clearpage%
+\section{Relational machine learning}%
+\label{sec:Relationalmachinelearning}%
+\subsection{Resumen:}%
+\label{subsec:Resumen}%
+The section on 'Relational machine learning' discusses the use of the presented framework to develop relational classifiers for graph data sets. The process begins with a labeled subset of subgraphs within a graph data set, and then employs a pattern search technique based on information gain to identify typical patterns for each subgraph class.\newline%
+\newline%
+The 'Information{-}gain pattern mining' subsection explains that this pattern identification is achieved through top{-}down decision tree induction, which explores the pattern space using graph queries as test tools in the internal nodes of the trees. The best refinement sets are identified during the tree construction process, resulting in queries that define classes within the graph dataset.\newline%
+\newline%
+The 'Relational tree learning examples' subsection provides practical instances to demonstrate this process. It starts with a simple social network where the goal is to classify nodes based on extracted patterns. The process results in a relational decision tree that accurately assigns types (User A, User B, or Item) to all nodes by exploiting relational information from the network. This tree also acquires distinctive patterns for each node type at its leaves, which can be used for future classifications.\newline%
+\newline%
+The section further illustrates this process using a Star Wars character graph, where each character node and corresponding species property are used as a training dataset. The resulting relational decision tree accurately categorizes and explains each character's species in the graph.
+
+%
+\subsection{Evaluación:}%
+\label{subsec:Evaluacin}%
+Motivation: YES, The section clearly explains the study's significance and relevance. It highlights the importance of acquiring relational classifiers on graph data sets and how the proposed framework can leverage this advantage. The problem's importance is justified through the use of real{-}world examples such as social networks and Star Wars toy graphs.\newline%
+\newline%
+Novelty: YES, The section clearly describes the novelty or originality of the proposed approach. It differentiates itself from existing work by emphasizing the use of a pattern search technique founded on information gain to obtain typical patterns for each subgraph class.\newline%
+\newline%
+Clarity: YES, The section is well{-}written and easy to understand. It uses appropriate terminology and avoids ambiguity. For instance, it clearly explains the concept of 'information gain' and how it can be used to identify characteristic patterns in graph data sets.\newline%
+\newline%
+Grammar and Style: YES, The section is free of grammatical and stylistic errors. It uses language that is appropriate for an academic setting. For example, it effectively uses passive voice where necessary to maintain a formal tone ("A top{-}down decision tree induction will be conducted...").\newline%
+\newline%
+Typos and Errors: YES, The section is free of typos and other errors. There are no apparent mistakes in the text or figures provided.\newline%
+\newline%
+Improvement: Not Applicable, as all criteria have been fully met according to the evaluation.
+
+%
+\clearpage%
+\section{Conclusions and future work}%
+\label{sec:Conclusionsandfuturework}%
+\subsection{Resumen:}%
+\label{subsec:Resumen}%
+The paper introduces a new graph query framework that enables polynomial cyclic assessment of queries and refinements through atomic operations. The framework is consistent, supports subgraphs beyond individual nodes, allows controlled and automated query construction, and can be used for top{-}down learning techniques. Unlike graph isomorphism{-}based systems, this framework assesses the existence/non{-}existence of paths and nodes in a graph, making it capable of evaluating cyclic patterns in polynomial time. \newline%
+\newline%
+The initial proof{-}of{-}concept implementation has shown promising results in relational learning procedures, extracting interesting patterns from relational data. The current query definition is limited to binary graph data sets but can be adapted for hypergraphs once their usage becomes more widespread. \newline%
+\newline%
+While the paper provides a basic set of refinement operations, it suggests that more complex refinement families could be developed to prevent plateaus in pattern space and achieve faster learning algorithms. The framework's potential applications include characterizing subgraph categories, justifying decisions in sensitive applications, serving as features in other machine learning methods, and enhancing predictive power when used with ensemble methods like Random Forest. \newline%
+\newline%
+Future work will focus on developing automated methods to generate refinement sets based on specific learning tasks and graph dataset characteristics. The paper concludes that this framework can establish effective techniques for matching graph patterns, learning symbolic relationships, exploring pattern space systematically, expressing queries highly, and keeping computational costs reasonable.
+
+%
+\subsection{Evaluación:}%
+\label{subsec:Evaluacin}%
+Motivation: YES, The section clearly explains the significance of the study and its relevance in terms of relational learning and automatic feature extraction. It emphasizes that the results are significant for both explainable learning and automatic feature extraction tasks.\newline%
+\newline%
+Novelty: YES, The section describes the novelty of the proposed approach by comparing it to graph isomorphism{-}based query systems, highlighting its ability to evaluate cyclic patterns in polynomial time.\newline%
+\newline%
+Clarity: YES, The section is well{-}written, easy to understand, and uses appropriate terminology. It provides clear explanations of complex concepts such as relational learning processes, atomic operations, and top{-}down learning techniques.\newline%
+\newline%
+Grammar and Style: YES, The section is free of grammatical errors and uses language appropriate for an academic setting. It employs precise language and technical terms to describe the framework's capabilities and limitations.\newline%
+\newline%
+Typos and Errors: YES, The section appears to be free of typos and other errors.\newline%
+\newline%
+Improvement Suggestions:\newline%
+\newline%
+Motivation: No specific improvements are needed as the motivation is clearly stated. However, providing more concrete examples or data to illustrate the importance of the problem could further strengthen this section.\newline%
+\newline%
+Novelty: The novelty is well{-}established, but it could be further emphasized by highlighting unique contributions in a bullet{-}point list or table for easy reference.\newline%
+\newline%
+Clarity: While the section is clear overall, some technical terms (e.g., "atomic operations," "top{-}down learning techniques") could benefit from brief definitions or explanations to make them more accessible to non{-}experts.\newline%
+\newline%
+Grammar and Style: The grammar and style are appropriate for an academic setting. However, using shorter sentences in places could improve readability.\newline%
+\newline%
+Typos and Errors: No specific corrections are needed as the section appears to be free of typos and errors.
+
+%
+\newpage%
+\section*{Acknowledgements}
+
+
+\vspace{6pt} 
+
+
+
+
+
+
+
+
+
+\funding{Proyecto PID2019-109152G financiado por MCIN/AEI/10.13039/501100011033}
+
+\acknowledgments{DISARM project - Grant n. PDC2021-121197, and the HORUS project - Grant n. PID2021-126359OB-I00 funded by MCIN/AEI/310.13039/501100011033 and by the “European Union NextGenerationEU/PRTR”}
+
+
+
+
+
+\begin{adjustwidth}{-\extralength}{0cm}
+
+\reftitle{References}
+
+
+
+\begin{thebibliography}{31}
+\expandafter\ifx\csname natexlab\endcsname\relax\def\natexlab#1{#1}\fi
+\providecommand{\url}[1]{\texttt{#1}}
+\providecommand{\href}[2]{#2}
+\providecommand{\path}[1]{#1}
+\providecommand{\DOIprefix}{doi:}
+\providecommand{\ArXivprefix}{arXiv:}
+\providecommand{\URLprefix}{URL: }
+\providecommand{\Pubmedprefix}{pmid:}
+\providecommand{\doi}[1]{\href{http://dx.doi.org/#1}{\path{#1}}}
+\providecommand{\Pubmed}[1]{\href{pmid:#1}{\path{#1}}}
+\providecommand{\bibinfo}[2]{#2}
+\ifx\xfnm\relax \def\xfnm[#1]{\unskip,\space#1}\fi
+\bibitem[{Almagro{-}Blanco \&
+  Sancho{-}Caparrini(2017)}]{DBLP:journals/corr/abs-1708-03734}
+\bibinfo{author}{Almagro{-}Blanco, P.}, \& \bibinfo{author}{Sancho{-}Caparrini,
+  F.} (\bibinfo{year}{2017}).
+\newblock \bibinfo{title}{Generalized graph pattern matching}.
+\newblock {\it \bibinfo{journal}{CoRR}\/},  {\it
+  \bibinfo{volume}{abs/1708.03734}\/}. \URLprefix
+  \url{http://arxiv.org/abs/1708.03734}.
+  \href{http://arxiv.org/abs/1708.03734}{\tt arXiv:1708.03734}.
+\bibitem[{Barcel{\'o} et~al.(2011)Barcel{\'o}, Libkin \& Reutter}]{Barcelo}
+\bibinfo{author}{Barcel{\'o}, P.}, \bibinfo{author}{Libkin, L.}, \&
+  \bibinfo{author}{Reutter, J.~L.} (\bibinfo{year}{2011}).
+\newblock \bibinfo{title}{Querying graph patterns}.
+\newblock In {\it \bibinfo{booktitle}{Proceedings of the Thirtieth ACM
+  SIGMOD-SIGACT-SIGART Symposium on Principles of Database Systems}\/} PODS '11
+  (pp. \bibinfo{pages}{199--210}).
+\newblock \bibinfo{address}{New York, NY, USA}: \bibinfo{publisher}{ACM}.
+\newblock \URLprefix \url{http://doi.acm.org/10.1145/1989284.1989307}.
+  \DOIprefix\doi{10.1145/1989284.1989307}.
+\bibitem[{Blockeel \& Raedt(1998)}]{BLOCKEEL1998285}
+\bibinfo{author}{Blockeel, H.}, \& \bibinfo{author}{Raedt, L.~D.}
+  (\bibinfo{year}{1998}).
+\newblock \bibinfo{title}{Top-down induction of first-order logical decision
+  trees}.
+\newblock {\it \bibinfo{journal}{Artificial Intelligence}\/},  {\it
+  \bibinfo{volume}{101}\/}, \bibinfo{pages}{285--297}. \URLprefix
+  \url{http://www.sciencedirect.com/science/article/pii/S0004370298000344}.
+  \DOIprefix\doi{10.1016/S0004-3702(98)00034-4}.
+
+\bibitem[{Bonifati, Angela and Fletcher, George and Voigt, Hannes and Yakovets, Nikolay and Jagadish, H. V.}]{Bonifati}
+\bibinfo{author}{Bonifati, A.} \bibinfo{author}{Fletcher, G.}\bibinfo{author}{Voigt, H.}\bibinfo{author}{Yakovets, N.}\bibinfo{author}{Jagadish, H. V.} (\bibinfo{year}{2018}
+\newblock \bibinfo{title}{Querying Graphs}
+\newblock \bibinfo{publisher}{Morgan \& Claypool Publishers}
+
+\bibitem[{Bordes et~al.(2013)Bordes, Usunier, Garcia-Duran, Weston \&
+  Yakhnenko}]{transe}
+\bibinfo{author}{Bordes, A.}, \bibinfo{author}{Usunier, N.},
+  \bibinfo{author}{Garcia-Duran, A.}, \bibinfo{author}{Weston, J.}, \&
+  \bibinfo{author}{Yakhnenko, O.} (\bibinfo{year}{2013}).
+\newblock \bibinfo{title}{Translating embeddings for modeling multi-relational
+  data}.
+\newblock In \bibinfo{editor}{C.~J.~C. Burges}, \bibinfo{editor}{L.~Bottou},
+  \bibinfo{editor}{M.~Welling}, \bibinfo{editor}{Z.~Ghahramani}, \&
+  \bibinfo{editor}{K.~Q. Weinberger} (Eds.), {\it \bibinfo{booktitle}{Advances
+  in Neural Information Processing Systems 26}\/} (pp.
+  \bibinfo{pages}{2787--2795}).
+\newblock \bibinfo{publisher}{Curran Associates, Inc.}
+\newblock \URLprefix
+  \url{http://papers.nips.cc/paper/5071-translating-embeddings-for-modeling-multi-relational-data.pdf}.
+
+  
+\bibitem[{Brynjolfsson \& Mitchell(2017)}]{brynjolfsson2017can}
+\bibinfo{author}{Brynjolfsson, E.}, \& \bibinfo{author}{Mitchell, T.}
+  (\bibinfo{year}{2017}).
+\newblock \bibinfo{title}{What can machine learning do? workforce
+  implications}.
+\newblock {\it \bibinfo{journal}{Science}\/},  {\it \bibinfo{volume}{358}\/},
+  \bibinfo{pages}{1530--1534}.
+\bibitem[{Camacho et~al.(2011)Camacho, Pereira, Costa, Fonseca, Adriano,
+  Sim{\~o}es \& Brito}]{camacho2011relational}
+\bibinfo{author}{Camacho, R.}, \bibinfo{author}{Pereira, M.},
+  \bibinfo{author}{Costa, V.~S.}, \bibinfo{author}{Fonseca, N.~A.},
+  \bibinfo{author}{Adriano, C.}, \bibinfo{author}{Sim{\~o}es, C.~J.}, \&
+  \bibinfo{author}{Brito, R.~M.} (\bibinfo{year}{2011}).
+\newblock \bibinfo{title}{A relational learning approach to structure-activity
+  relationships in drug design toxicity studies}.
+\newblock {\it \bibinfo{journal}{Journal of integrative bioinformatics}\/},
+  {\it \bibinfo{volume}{8}\/}, \bibinfo{pages}{176--194}.
+\bibitem[{Chang et~al.(2014)Chang, Yih, Yang \& Meek}]{typed}
+\bibinfo{author}{Chang, K.-W.}, \bibinfo{author}{Yih, S. W.-t.},
+  \bibinfo{author}{Yang, B.}, \& \bibinfo{author}{Meek, C.}
+  (\bibinfo{year}{2014}).
+\newblock \bibinfo{title}{Typed tensor decomposition of knowledge bases for
+  relation extraction}.
+\newblock In {\it \bibinfo{booktitle}{Proceedings of the 2014 Conference on
+  Empirical Methods in Natural Language Processing}\/}.
+\newblock \bibinfo{publisher}{ACL -- Association for Computational
+  Linguistics}.
+\newblock \URLprefix
+  \url{https://www.microsoft.com/en-us/research/publication/typed-tensor-decomposition-of-knowledge-bases-for-relation-extraction/}.
+\bibitem[{Consens \& Mendelzon(1990)}]{graphlog}
+\bibinfo{author}{Consens, M.~P.}, \& \bibinfo{author}{Mendelzon, A.~O.}
+  (\bibinfo{year}{1990}).
+\newblock \bibinfo{title}{Graphlog: A visual formalism for real life
+  recursion}.
+\newblock In {\it \bibinfo{booktitle}{Proceedings of the Ninth ACM
+  SIGACT-SIGMOD-SIGART Symposium on Principles of Database Systems}\/} PODS '90
+  (pp. \bibinfo{pages}{404--416}).
+\newblock \bibinfo{address}{New York, NY, USA}: \bibinfo{publisher}{ACM}.
+\newblock \URLprefix \url{http://doi.acm.org/10.1145/298514.298591}.
+  \DOIprefix\doi{10.1145/298514.298591}.
+\bibitem[{Cook(1971)}]{Cook:1971:CTP:800157.805047}
+\bibinfo{author}{Cook, S.~A.} (\bibinfo{year}{1971}).
+\newblock \bibinfo{title}{The complexity of theorem-proving procedures}.
+\newblock In {\it \bibinfo{booktitle}{Proceedings of the Third Annual ACM
+  Symposium on Theory of Computing}\/} STOC '71 (pp.
+  \bibinfo{pages}{151--158}).
+\newblock \bibinfo{address}{New York, NY, USA}: \bibinfo{publisher}{ACM}.
+\newblock \URLprefix \url{http://doi.acm.org/10.1145/800157.805047}.
+  \DOIprefix\doi{10.1145/800157.805047}.
+\bibitem[{Dong et~al.(2014)Dong, Gabrilovich, Heitz, Horn, Lao, Murphy,
+  Strohmann, Sun \& Zhang}]{webscale}
+\bibinfo{author}{Dong, X.}, \bibinfo{author}{Gabrilovich, E.},
+  \bibinfo{author}{Heitz, G.}, \bibinfo{author}{Horn, W.},
+  \bibinfo{author}{Lao, N.}, \bibinfo{author}{Murphy, K.},
+  \bibinfo{author}{Strohmann, T.}, \bibinfo{author}{Sun, S.}, \&
+  \bibinfo{author}{Zhang, W.} (\bibinfo{year}{2014}).
+\newblock \bibinfo{title}{Knowledge vault: A web-scale approach to
+  probabilistic knowledge fusion}.
+\newblock In {\it \bibinfo{booktitle}{Proceedings of the 20th ACM SIGKDD
+  International Conference on Knowledge Discovery and Data Mining}\/} KDD '14
+  (pp. \bibinfo{pages}{601--610}).
+\newblock \bibinfo{address}{New York, NY, USA}: \bibinfo{publisher}{ACM}.
+\newblock \URLprefix \url{http://doi.acm.org/10.1145/2623330.2623623}.
+  \DOIprefix\doi{10.1145/2623330.2623623}.
+\bibitem[{Fan et~al.(2010)Fan, Li, Ma, Tang, Wu \& Wu}]{Fan}
+\bibinfo{author}{Fan, W.}, \bibinfo{author}{Li, J.}, \bibinfo{author}{Ma, S.},
+  \bibinfo{author}{Tang, N.}, \bibinfo{author}{Wu, Y.}, \& \bibinfo{author}{Wu,
+  Y.} (\bibinfo{year}{2010}).
+\newblock \bibinfo{title}{Graph pattern matching: From intractable to
+  polynomial time}.
+\newblock {\it \bibinfo{journal}{Proc. VLDB Endow.}\/},  {\it
+  \bibinfo{volume}{3}\/}, \bibinfo{pages}{264--275}. \URLprefix
+  \url{http://dx.doi.org/10.14778/1920841.1920878}.
+  \DOIprefix\doi{10.14778/1920841.1920878}.
+ 
+\bibitem[{Gallagher(2006)}]{matching}
+\bibinfo{author}{Gallagher, B.} (\bibinfo{year}{2006}).
+\newblock \bibinfo{title}{Matching structure and semantics: A survey on
+  graph-based pattern matching}.
+\newblock {\it \bibinfo{journal}{AAAI FS}\/},  {\it \bibinfo{volume}{6}\/},
+  \bibinfo{pages}{45--53}.
+\bibitem[{García-Jiménez et~al.(2014)García-Jiménez, Pons, Sanchis \&
+  Valencia}]{6802366}
+\bibinfo{author}{García-Jiménez, B.}, \bibinfo{author}{Pons, T.},
+  \bibinfo{author}{Sanchis, A.}, \& \bibinfo{author}{Valencia, A.}
+  (\bibinfo{year}{2014}).
+\newblock \bibinfo{title}{Predicting protein relationships to human pathways
+  through a relational learning approach based on simple sequence features}.
+\newblock {\it \bibinfo{journal}{IEEE/ACM Transactions on Computational Biology
+  and Bioinformatics}\/},  {\it \bibinfo{volume}{11}\/},
+  \bibinfo{pages}{753--765}. \DOIprefix\doi{10.1109/TCBB.2014.2318730}.
+\bibitem[{Geamsakul et~al.(2003)Geamsakul, Matsuda, Yoshida, Motoda \&
+  Washio}]{Geamsakul2003}
+\bibinfo{author}{Geamsakul, W.}, \bibinfo{author}{Matsuda, T.},
+  \bibinfo{author}{Yoshida, T.}, \bibinfo{author}{Motoda, H.}, \&
+  \bibinfo{author}{Washio, T.} (\bibinfo{year}{2003}).
+\newblock \bibinfo{title}{Classifier construction by graph-based induction for
+  graph-structured data}.
+\newblock In \bibinfo{editor}{K.-Y. Whang}, \bibinfo{editor}{J.~Jeon},
+  \bibinfo{editor}{K.~Shim}, \& \bibinfo{editor}{J.~Srivastava} (Eds.), {\it
+  \bibinfo{booktitle}{Advances in Knowledge Discovery and Data Mining: 7th
+  Pacific-Asia Conference, PAKDD 2003, Seoul, Korea, April 30 -- May 2, 2003
+  Proceedings}\/} (pp. \bibinfo{pages}{52--62}).
+\newblock \bibinfo{address}{Berlin, Heidelberg}: \bibinfo{publisher}{Springer
+  Berlin Heidelberg}.
+\newblock \URLprefix \url{http://dx.doi.org/10.1007/3-540-36175-8_6}.
+  \DOIprefix\doi{10.1007/3-540-36175-8_6}.
+\bibitem[{Gupta(2015)}]{gupta2015neo4j}
+\bibinfo{author}{Gupta, S.} (\bibinfo{year}{2015}).
+\newblock {\it \bibinfo{title}{Neo4j Essentials}\/}.
+\newblock Community experience distilled.
+\newblock \bibinfo{publisher}{Packt Publishing}.
+\newblock \URLprefix \url{https://books.google.es/books?id=WJ7NBgAAQBAJ}.
+\bibitem{de_raedt_2021}
+Luc De Raedt, Sebastijan Duman\v{c}i\'{c}, Robin Manhaeve, Giuseppe Marra.
+\emph{From Statistical Relational to Neural-Symbolic Artificial Intelligence}.
+In \emph{Proceedings of the Twenty-Ninth International Joint Conference on Artificial Intelligence (IJCAI'20)}, 2021.
+ISBN: 9780999241165.
+Article No.: 688.
+Pages: 8.
+Yokohama, Japan.
+\bibitem[{Henzinger et~al.(1995)Henzinger, Henzinger \&
+  Kopke}]{henzinger1995computing}
+\bibinfo{author}{Henzinger, M.~R.}, \bibinfo{author}{Henzinger, T.~A.}, \&
+  \bibinfo{author}{Kopke, P.~W.} (\bibinfo{year}{1995}).
+\newblock \bibinfo{title}{Computing simulations on finite and infinite graphs}.
+\newblock In {\it \bibinfo{booktitle}{Foundations of Computer Science, 1995.
+  Proceedings., 36th Annual Symposium on}\/} (pp. \bibinfo{pages}{453--462}).
+\newblock \bibinfo{organization}{IEEE}.
+\bibitem[{Jacob et~al.(2014)Jacob, Denoyer \&
+  Gallinari}]{Jacob:2014:LLR:2556195.2556225}
+\bibinfo{author}{Jacob, Y.}, \bibinfo{author}{Denoyer, L.}, \&
+  \bibinfo{author}{Gallinari, P.} (\bibinfo{year}{2014}).
+\newblock \bibinfo{title}{Learning latent representations of nodes for
+  classifying in heterogeneous social networks}.
+\newblock In {\it \bibinfo{booktitle}{Proceedings of the 7th ACM International
+  Conference on Web Search and Data Mining}\/} WSDM '14 (pp.
+  \bibinfo{pages}{373--382}).
+\newblock \bibinfo{address}{New York, NY, USA}: \bibinfo{publisher}{ACM}.
+\newblock \URLprefix \url{http://doi.acm.org/10.1145/2556195.2556225}.
+  \DOIprefix\doi{10.1145/2556195.2556225}.
+\bibitem[{Jiang(2011)}]{10.1007/978-3-642-23038-7_12}
+\bibinfo{author}{Jiang, J.~Q.} (\bibinfo{year}{2011}).
+\newblock \bibinfo{title}{Learning protein functions from bi-relational graph
+  of proteins and function annotations}.
+\newblock In \bibinfo{editor}{T.~M. Przytycka}, \& \bibinfo{editor}{M.-F.
+  Sagot} (Eds.), {\it \bibinfo{booktitle}{Algorithms in Bioinformatics}\/} (pp.
+  \bibinfo{pages}{128--138}).
+\newblock \bibinfo{address}{Berlin, Heidelberg}: \bibinfo{publisher}{Springer
+  Berlin Heidelberg}.
+
+\bibitem[{Hunter(2007}]{hunter}
+\bibinfo{author}{Hunter, J.~D.} (\bibinfo{year}{2007}).
+\newblock \bibinfo{title}{Matplotlib: A 2D Graphics Environment}.
+\newblock {\it \bibinfo{journal}{Computing in Science \& Engineering}\/},  {\it \bibinfo{volume}{9}\/},
+  \bibinfo{pages}{3}.
+\bibitem[{Karp(1975)}]{karp1975computational}
+\bibinfo{author}{Karp, R.~M.} (\bibinfo{year}{1975}).
+\newblock \bibinfo{title}{On the computational complexity of combinatorial
+  problems}.
+\newblock {\it \bibinfo{journal}{Networks}\/},  {\it \bibinfo{volume}{5}\/},
+  \bibinfo{pages}{45--68}.
+\bibitem[{Knobbe et~al.(1999)Knobbe, Siebes, Wallen \& {Syllogic
+  B.}}]{Knobbe99multi-relationaldecision}
+\bibinfo{author}{Knobbe, A.~J.}, \bibinfo{author}{Siebes, A.},
+  \bibinfo{author}{Wallen, D. V.~D.}, \& \bibinfo{author}{{Syllogic B.}, V.}
+  (\bibinfo{year}{1999}).
+\newblock \bibinfo{title}{Multi-relational decision tree induction}.
+\newblock In {\it \bibinfo{booktitle}{In Proceedings of PKDD{\rq} 99, Prague,
+  Czech Republic, Septembre}\/} (pp. \bibinfo{pages}{378--383}).
+\newblock \bibinfo{publisher}{Springer}.
+\bibitem[{Latouche \& Rossi(2015)}]{latouche2015graphs}
+\bibinfo{author}{Latouche, P.}, \& \bibinfo{author}{Rossi, F.}
+  (\bibinfo{year}{2015}).
+\newblock \bibinfo{title}{Graphs in machine learning: an introduction}.
+\bibitem[{Leiva et~al.(2002)Leiva, Gadia \& Dobbs}]{Leiva02mrdtl:a}
+\bibinfo{author}{Leiva, H.~A.}, \bibinfo{author}{Gadia, S.}, \&
+  \bibinfo{author}{Dobbs, D.} (\bibinfo{year}{2002}).
+\newblock \bibinfo{title}{Mrdtl: A multi-relational decision tree learning
+  algorithm}.
+\newblock In {\it \bibinfo{booktitle}{Proceedings of the 13th International
+  Conference on Inductive Logic Programming (ILP 2003}\/} (pp.
+  \bibinfo{pages}{38--56}).
+\newblock \bibinfo{publisher}{Springer-Verlag}.
+\bibitem[{Milner(1989)}]{Milner}
+\bibinfo{author}{Milner, R.} (\bibinfo{year}{1989}).
+\newblock {\it \bibinfo{title}{Communication and Concurrency}\/}.
+\newblock \bibinfo{address}{Upper Saddle River, NJ, USA}:
+  \bibinfo{publisher}{Prentice-Hall, Inc.}
+\bibitem[{Nguyen et~al.(2005)Nguyen, Ohara, Motoda \& Washio}]{Nguyen2005}
+\bibinfo{author}{Nguyen, P.~C.}, \bibinfo{author}{Ohara, K.},
+  \bibinfo{author}{Motoda, H.}, \& \bibinfo{author}{Washio, T.}
+  (\bibinfo{year}{2005}).
+\newblock \bibinfo{title}{Cl-gbi: A novel approach for extracting typical
+  patterns from graph-structured data}.
+\newblock In \bibinfo{editor}{T.~B. Ho}, \bibinfo{editor}{D.~Cheung}, \&
+  \bibinfo{editor}{H.~Liu} (Eds.), {\it \bibinfo{booktitle}{Advances in
+  Knowledge Discovery and Data Mining: 9th Pacific-Asia Conference, PAKDD 2005,
+  Hanoi, Vietnam, May 18-20, 2005. Proceedings}\/} (pp.
+  \bibinfo{pages}{639--649}).
+\newblock \bibinfo{address}{Berlin, Heidelberg}: \bibinfo{publisher}{Springer
+  Berlin Heidelberg}.
+\newblock \URLprefix \url{http://dx.doi.org/10.1007/11430919_74}.
+  \DOIprefix\doi{10.1007/11430919_74}.
+  \bibitem{fan_2012}
+Wenfei Fan.
+\emph{Graph Pattern Matching Revised for Social Network Analysis}.
+In \emph{Proceedings of the 15th International Conference on Database Theory (ICDT '12)}, 2012.
+ISBN: 9781450307918.
+Publisher: Association for Computing Machinery.
+Address: New York, NY, USA.
+Pages: 8--21.
+Num. Pages: 14.
+Location: Berlin, Germany.
+DOI: \href{https://doi.org/10.1145/2274576.2274578}{10.1145/2274576.2274578}.
+
+\bibitem{wang2020nodeaug}
+Yiwei Wang, Wei Wang, Yuxuan Liang, Yujun Cai, Juncheng Liu, Bryan Hooi.
+\emph{NodeAug: Semi-Supervised Node Classification with Data Augmentation}.
+En \emph{Proceedings of the 26th ACM SIGKDD International Conference on Knowledge Discovery \& Data Mining (KDD '20)}, 2020, páginas 207–217.
+DOI: \url{https://doi.org/10.1145/3394486.3403063}.
+
+
+\bibitem{kazemi2018relational}
+Seyed Mehran Kazemi and David Poole.
+\emph{RelNN: A Deep Neural Model for Relational Learning}.
+In \emph{Proceedings of the Thirty-Second AAAI Conference on Artificial Intelligence (AAAI-18)}, University of British Columbia, Vancouver, Canada, 2018.
+Email: \texttt{smkazemi@cs.ubc.ca}, \texttt{poole@cs.ubc.ca}.
+
+\bibitem{pacheco2021modeling}
+Maria Leonor Pacheco and Dan Goldwasser.
+\emph{Modeling Content and Context with Deep Relational Learning}.
+\emph{Transactions of the Association for Computational Linguistics}, 2021; 9, 100–119.
+DOI: \url{https://doi.org/10.1162/tacl_a_00357}.
+
+\bibitem{ahmed2023adalnn}
+K. Ahmed, A. Altaf, N.S.M. Jamail, F. Iqbal, R. Latif.
+\emph{ADAL-NN: Anomaly Detection and Localization Using Deep Relational Learning in Distributed Systems}.
+\emph{Applied Sciences}, 2023, 13, 7297.
+DOI: \url{https://doi.org/10.3390/app13127297}.
+
+\bibitem{zhou2020graph}
+Jie Zhou, Ganqu Cui, Zhengyan Zhang, Cheng Yang, Zhiyuan Liu, Maosong Sun.
+\emph{Graph Neural Networks: A Review of Methods and Applications}.
+\emph{AI open}, 2020, 1, 57-81.
+
+\bibitem{wu2022graph}
+Lingfei Wu, Peng Cui, Jian Pei, Liang Zhao, Xiaojie Guo.
+\emph{Graph Neural Networks: Foundation, Frontiers and Applications}.
+En \emph{Proceedings of the 28th ACM SIGKDD Conference on Knowledge Discovery and Data Mining (KDD '22)}, 2022, páginas 4840–4841.
+DOI: \url{https://doi.org/10.1145/3534678.3542609}.
+
+\bibitem[{Nickel et~al.(2016)Nickel, Murphy, Tresp \&
+  Gabrilovich}]{nickel2016review}
+\bibinfo{author}{Nickel, M.}, \bibinfo{author}{Murphy, K.},
+  \bibinfo{author}{Tresp, V.}, \& \bibinfo{author}{Gabrilovich, E.}
+  (\bibinfo{year}{2016}).
+\newblock \bibinfo{title}{A review of relational machine learning for knowledge
+  graphs}.
+\newblock {\it \bibinfo{journal}{Proceedings of the IEEE}\/},  {\it
+  \bibinfo{volume}{104}\/}, \bibinfo{pages}{11--33}.
+\bibitem[{Lee(2023)}]{lee2023conditional}
+\bibinfo{author}{Namkyeong L., Dongmin H., Gyoung S. Na, Sungwon K., Junseok L. and Chanyoung P.} (\bibinfo{year}{2023}).
+\newblock \bibinfo{title}{Conditional Graph Information Bottleneck for Molecular Relational Learning}.
+\bibitem[{Plotkin(1972)}]{plotkin1972automatic}
+\bibinfo{author}{Plotkin, G.} (\bibinfo{year}{1972}).
+\newblock \bibinfo{title}{Automatic methods of inductive inference} .
+\bibitem[{van Rest et~al.(2016)van Rest, Hong, Kim, Meng \&
+  Chafi}]{van2016pgql}
+\bibinfo{author}{van Rest, O.}, \bibinfo{author}{Hong, S.},
+  \bibinfo{author}{Kim, J.}, \bibinfo{author}{Meng, X.}, \&
+  \bibinfo{author}{Chafi, H.} (\bibinfo{year}{2016}).
+\newblock \bibinfo{title}{Pgql: a property graph query language}.
+\newblock In {\it \bibinfo{booktitle}{Proceedings of the Fourth International
+  Workshop on Graph Data Management Experiences and Systems}\/}
+  (p.~\bibinfo{pages}{7}).
+\newblock \bibinfo{organization}{ACM}.
+\bibitem[{Reutter(2013)}]{phdthesis}
+\bibinfo{author}{Reutter, J.~L.} (\bibinfo{year}{2013}).
+\newblock {\it \bibinfo{title}{Graph Patterns: Structure, Query Answering and
+  Applications in Schema Mappings and Formal Language Theory}\/}.
+\newblock Ph.D. thesis
+  \bibinfo{address}{Laboratory for Foundations of Computer Science School of
+  Informatics University of Edinburgh}.
+\bibitem[{Segaran et~al.(2009)Segaran, Evans, Taylor, Toby, Colin \&
+  Jamie}]{Segaran:2009:PSW:1696488}
+\bibinfo{author}{Segaran, T.}, \bibinfo{author}{Evans, C.},
+  \bibinfo{author}{Taylor, J.}, \bibinfo{author}{Toby, S.},
+  \bibinfo{author}{Colin, E.}, \& \bibinfo{author}{Jamie, T.}
+  (\bibinfo{year}{2009}).
+\newblock {\it \bibinfo{title}{Programming the Semantic Web}\/}.
+\newblock (\bibinfo{edition}{1st} ed.).
+\newblock \bibinfo{publisher}{O'Reilly Media, Inc.}
+\bibitem[{Tang \& Liu(2009)}]{tang2009relational}
+\bibinfo{author}{Tang, L.}, \& \bibinfo{author}{Liu, H.}
+  (\bibinfo{year}{2009}).
+\newblock \bibinfo{title}{Relational learning via latent social dimensions}.
+\newblock In {\it \bibinfo{booktitle}{Proceedings of the 15th ACM SIGKDD
+  international conference on Knowledge discovery and data mining}\/} (pp.
+  \bibinfo{pages}{817--826}).
+\newblock \bibinfo{organization}{ACM}.
+\bibitem[{Zou et~al.(2009)Zou, Chen \& {\"O}zsu}]{distance-join}
+\bibinfo{author}{Zou, L.}, \bibinfo{author}{Chen, L.}, \&
+  \bibinfo{author}{{\"O}zsu, M.~T.} (\bibinfo{year}{2009}).
+\newblock \bibinfo{title}{Distance-join: Pattern match query in a large graph
+  database}.
+\newblock {\it \bibinfo{journal}{Proc. VLDB Endow.}\/},  {\it
+  \bibinfo{volume}{2}\/}, \bibinfo{pages}{886--897}. \URLprefix
+  \url{http://dx.doi.org/10.14778/1687627.1687727}.
+  \DOIprefix\doi{10.14778/1687627.1687727}.
+
+\bibitem{ma_2014}
+Shuai Ma, Yang Cao, Wenfei Fan, Jinpeng Huai, Tianyu Wo.
+\emph{Strong Simulation: Capturing Topology in Graph Pattern Matching}.
+\emph{ACM Trans. Database Syst.}, January 2014, Volume 39, Number 1, Article No. 4.
+ISSN: 0362-5915.
+Publisher: Association for Computing Machinery.
+Address: New York, NY, USA.
+DOI: \href{https://doi.org/10.1145/2528937}{10.1145/2528937}.
+Keywords: dual simulation, graph simulation, data locality, Strong simulation, subgraph isomorphism.
+
+
+\end{thebibliography}
+
+
+
+\PublishersNote{}
+\end{adjustwidth}%
+\end{document}

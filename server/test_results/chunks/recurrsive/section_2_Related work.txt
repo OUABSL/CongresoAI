@@ -1,0 +1,33 @@
+
+
+\section{Related work}
+\label{rw}
+---------------------------fin chunk----------------
+
+
+
+
+A common approach to executing relational queries entails developing patterns in an abstract representation of data and searching for their occurrences in actual datasets\nocite{phdthesis,Barcelo,gupta2015neo4j,Segaran:2009:PSW:1696488,graphlog,van2016pgql}. This working method falls under the scope of Graph Pattern Matching, an area of study that has been actively researched for more than three decades. Depending on various aspects to consider, there are customary distinctions in pattern matching methods. (a) Structural, semantic, exact, inexact, optimal, and approximate are distinctions that can be made in matching relations between patterns and subgraphs \citep{matching}. Additionally, graph pattern matching can be based on isomorphisms, graph simulation, and bounded simulation, among other methods \citep{Milner,Fan,distance-join}. While systems for querying based on graph isomorphism present NP complexity, those based on simulations present polynomial complexity \citep{henzinger1995computing,ma_2014}. However, both types are based on relations between the set of elements in the query and the set of elements in the graph data, which prevents the evaluation of the non-existence of elements. Our proposal is within the scope of semantic, exact, and optimal graph pattern matching implemented with an approach similar to simulations.
+---------------------------fin chunk----------------
+
+
+As stated above, there are two fundamentally different types of relational learning models \citep{nickel2016review}. The first type, known as 'the latent feature approach', is founded upon latent feature learning, for example, tensor factorization and neural models, and generally performs well when handling uncertainty via probabilistic approximation \citep{Jacob:2014:LLR:2556195.2556225,typed,transe}. The second approach, known as the graph-pattern based approach, automatically extracts relational patterns, also called observable graph patterns, from data \citep{Leiva02mrdtl:a,Geamsakul2003}. Since this work pertains to the second approach, our focus in the subsequent discussion will be on the review of relational learning techniques that utilise the graph-pattern based approach and the query systems upon which they rely.
+---------------------------fin chunk----------------
+
+
+
+
+Most of the pattern-based relational learning methods are derived from Inductive Logic Programming (ILP) \citep{plotkin1972automatic}. ILP does not inherently offer relational classifiers, though it does permit the automatic creation of logical decision trees capable of managing relational predicates, provided that data relationships have been properly transformed into logical predicates. Binary decision trees are logical decision trees, in which all tests in internal nodes are expressed as conjunctions of literals of a prefixed first-order language. TILDE (Top-down Induction of Logical Decision Trees) is one of the representative algorithms that can learn this type of decision tree from a given set of examples \citep{BLOCKEEL1998285}. TILDE provides a framework for generating logical decision trees that can be further adapted for relational decision trees. Nevertheless, it does not cater to relational learning and therefore fails to offer certain operations for refining relational queries. We shall refer to atomic operations as those that bring about minor structural modifications to the query (typically the addition or deletion of a node or an edge, or some of their characteristics).
+---------------------------fin chunk----------------
+
+
+
+
+Multi-relational decision tree learning (MRDTL \citep{Leiva02mrdtl:a}) is a learning algorithm for relationships and is supported by \textit{Selection Graphs} \citep{Knobbe99multi-relationaldecision}, a graph representation of SQL queries that selects records from a relational database based on certain constraints. Selection graphs enable atomic operations to enhance queries, but they lack the ability to distinguish between query elements that constitute the query result and those that relate to objects that should or should not be linked to the query result. Consequently, queries performed using selection graphs yield records that satisfy the given selection graph conditions, but cannot identify subgraphs. The refinement operations presented on the selection graphs are: \textit{adding positive conditions, adding negative conditions, adding present edges and opening nodes, adding absent edges} and \textit{closing nodes}. This set of operations does not allow for the construction of cyclic patterns.
+---------------------------fin chunk----------------
+
+
+Another noteworthy pattern-based method for relational learning is Graph-Based Induction of Decision Trees (DT-GBI \citep{Nguyen2005}), which is a decision tree construction algorithm for learning graph classifiers using graph-based induction (GBI), a data mining technique for extracting network motifs from labelled graphs by connecting pairs of nodes. In DT-GBI, the attributes (referred to as patterns or substructures) are generated during the execution of the algorithm \citep{Geamsakul2003}.
+
+As we have seen, some pattern-based approaches are able to learn to classify complete graphs, and some others construct node classifiers; our proposal supports learning from general subgraphs as base cases. Moreover, our technique can execute cyclic queries, hence allowing for extraction of cyclic patterns from data during the learning process.
+---------------------------fin chunk----------------
