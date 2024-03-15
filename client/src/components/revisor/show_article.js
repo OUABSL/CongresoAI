@@ -4,6 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useContext } from "react";
 import AuthContext from "../../context/context";
 import { Viewer } from '@react-pdf-viewer/core';
+import RegenerationModal from './regeneratePreEvaluation'
 // Plugins
 
 // Import styles
@@ -128,10 +129,12 @@ const DownloadArticle = ({pdf, zip, title}) =>{
     return (
 
         <>
-        <DropdownButton id="dropdown-button" title="Descargar" align='right'>
+    <div style={{display: 'flex', justifyContent: 'flex-end'}}>
+      <DropdownButton id="dropdown-button" title="Descargar">
         <Dropdown.Item onClick={() => handleDownloadPdf(pdf, title)}>Descargar PDF</Dropdown.Item>
         <Dropdown.Item onClick={() => handleDownloadZip(zip, title)}>Descargar ZIP</Dropdown.Item>
-        </DropdownButton>
+      </DropdownButton>
+    </div>
       </>
         )
   };
@@ -235,13 +238,15 @@ function ShowArticle() {
         <>
         <Row>
         {alert.visible && <Alert variant={alert.variant}>{alert.message}</Alert>}
-
         </Row>
           <Row className="justify-content-between mb-4">
           <Col xs="auto">
             <Button className="btn bg-secondary" onClick={goBack}>Volver Atrás</Button>
           </Col>
+          <Col>
+          <RegenerationModal username={username} articleTitle={article_title}/>
 
+          </Col>
           <Col xs="auto">
           <DownloadArticle
                 pdf={`/file/${article.submitted_pdf_id}`}

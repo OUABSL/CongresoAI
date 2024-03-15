@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Container, Modal, Button, DropdownButton, Dropdown } from 'react-bootstrap';
+import { Table, Container} from 'react-bootstrap';
 import { redirect, useParams, useNavigate } from 'react-router-dom';
 import { useContext } from "react";
 import AuthContext from "../../context/context";
@@ -8,7 +8,6 @@ import '../estilos/show_articles.css'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenClip, faSpinner, faCircleExclamation } from '@fortawesome/free-solid-svg-icons';
-
 
 function ShowArticles() {
   const { username, sessionToken, logout } = useContext(AuthContext); // Access username from context
@@ -65,7 +64,7 @@ function ShowArticles() {
           : article.processing_state ==="Fail" ?
             <div className='center-content'>
               <FontAwesomeIcon icon={faCircleExclamation} />       
-                <p>Faído</p>
+                <p>Fallido</p>
             </div>
             : 
             <div className='center-content'>

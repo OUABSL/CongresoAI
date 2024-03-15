@@ -24,19 +24,28 @@ def create_temp_dir(parent_dir):
     return tempfile.mkdtemp(dir=parent_dir)
 
 
-def process_submit(article, dest_path):
-    # Data processing
-    data_handler = DataHandler(article, dest_path=dest_path)
-    data_handler.run()
-
-    summary_instance = ArticleSummarizer(mongo, prompt_summary,  llamus_key, article)
-    evaluation_instance = PreEvaluation(mongo,  prompt_eval, llamus_key, article)
-    
-    evaluation_instance.chat_model = 'TheBloke.llama-2-70b-chat.Q5_K_M.gguf'
-    summary_instance.run()
-    evaluation_instance.run()
-    if os.path.isdir(dest_path):
-        shutil.rmtree(dest_path)
+def process_submit(article:ScientificArticle, dest_path):
+    try:
+        # Data processing
+        data_handler = DataHandler(article, dest_path=dest_path)
+        data_handler.run()
+        summary_instance = ArticleSummarizer(mongo, prompt_summary,  llamus_key, article)
+        evaluation_instance = PreEvaluation(mongo,  prompt_eval, llamus_key, article)
+        
+        evaluation_instance.chat_model = 'TheBloke.llama-2-70b-chat.Q5_K_M.gguf'
+        summary_instance.run()
+        evaluation_instance.run()
+            
+        article.update_properties(processing_state="Done")
+        article.save()
+        
+    except Exception as e:
+        print(e) # Esto imprimirá el error, puede gestionarlo como desee
+        article.processing_state = "Fail"
+        article.save()
+    finally:
+        if os.path.isdir(dest_path):
+            shutil.rmtree(dest_path)
 
     return None
 

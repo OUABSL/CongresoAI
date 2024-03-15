@@ -39,10 +39,11 @@ SYSTEM_PROMPT_BASE = ("""You are an expert tutor specializing in reviewing and e
 
 class PreEvaluation:
     def __init__(self, db, system_prompt_base, llamus_key, article : ScientificArticle):
-        self.API_URL = "https://llamus.cs.us.es/api/chat"
+        self.API_URL = "https://llamus.cs.us.es/ollama/v1/chat/completions"
         self.LLAMUS_KEY = llamus_key
-        self.chat_model = 'TheBloke.llama-2-13b-chat.Q5_K_M.gguf'
-        self.temperature = 0.5
+        self.temperature = 0.8
+        self.chat_model = 'llama2:13b-chat'
+        self.temperature = 0.8
         self.DB = db.db.scientific_article
         self.SYSTEM_PROMPT_BASE = system_prompt_base
         self.article = article
@@ -52,24 +53,30 @@ class PreEvaluation:
             print('KeyError: Article contents not found')
             self.article_content = {}
 
-
     def llamus_request(self, system_prompt, user_prompt):
         headers = {
             'Content-Type': 'application/json',
             'Authorization': f'Bearer {self.LLAMUS_KEY}'
         }
         data = {
-            'model': self.chat_model,
-            'prompt': system_prompt,
-            'messages': [{'role': 'assistant', 'content': user_prompt + "\n\n Section Evaluation:"}],
-            'temperature': self.temperature,
-            'trimWhitespaceSuffix': False
+            'stream': False,
+            'model':"llama2:7b-chat",
+            'temperature':self.temperature,
+            'messages':[
+                {
+                    "role":"system",
+                    "content":system_prompt
+                },
+                {
+                    "role":"user",
+                    "content":user_prompt + "\n\n Section Evaluation:"
+                }]
         }
 
         response = requests.post(self.API_URL, headers=headers, data=json.dumps(data))
         if response.status_code == 200:  # Checking if the request was successful
             try:
-                print(response.text)
+                #print(response.text)
                 return response.json()
             except json.decoder.JSONDecodeError:  # Catching JSON decode errors
                 print('Failed to decode JSON. Response:', response.content)
@@ -91,19 +98,23 @@ class PreEvaluation:
     def run(self):
         res = self.article["evaluation"]
         content = dict(self.article['content'])
-        for section_name, section_content in content.items():
-            system_prompt = self.SYSTEM_PROMPT_BASE.format(section_name = section_name, title = self.article['title'])
-            section_evaluation = self.llamus_request(system_prompt, section_content)
-            if section_evaluation:
-                tmp = dict(section_evaluation)
-                response = tmp['response']
-                # Está pensado actualizar el resumen de todas las secciones en la bd de una vez
-                res[section_name] = response
-        self.article.update_properties(evaluation=res)
 
-if __name__ == "__main__":
-    myquery = {"_id": ObjectId("65e3a472e3a66193cfe6a601")}
-    article = mongo.db.scientific_article.find_one(myquery)
-    print(type(article))
-    evaluation_instance = PreEvaluation(mongo,  SYSTEM_PROMPT_BASE, LLAMUS_KEY, article)
-    #evaluation_instance.run()
+        for section_name, section_content in content.items():
+            try:  # Add try block 
+                system_prompt = self.SYSTEM_PROMPT_BASE.format(section_name=section_name, title=self.article['title'])
+                section_evaluation = self.llamus_request(system_prompt, section_content)
+                
+                if section_evaluation:
+                    tmp = dict(section_evaluation)
+                    choices = tmp.get('choices', [])
+                    if choices and isinstance(choices, list):
+                        msg = choices[0].get('message', {})
+                        response = msg.get('content', '')
+                    else:
+                        response = ''
+                    res[section_name] = response
+            except Exception:  # Catch all types of exceptions
+                print(f"An error occurred while processing the '{section_name}' section")
+                res[section_name] = ""  # Set the value to an empty string
+                continue  # Continue to the next iteration of the loop
+        return res
