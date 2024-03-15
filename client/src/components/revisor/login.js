@@ -1,14 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Form, Button, Alert, Card, FloatingLabel } from "react-bootstrap";
 import { Link, useNavigate } from 'react-router-dom';
 import "../estilos/login.css";
 import { useAuth } from "../../context/appProvider";
+import { AlertContext } from '../../context/alertProvider'; // Importa tu contexto
 
 const LoginRevisor = () => {
   const [usernameInput, setInputUsername] = useState("");
   const [password, setInputPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [alert, setAlert] = useState({ show: false, message: '', variant: 'danger' });
+  const {alert, setAlert} = useContext(AlertContext);
   const navigate = useNavigate();
   const { setSessionToken, setRole, setUsername } = useAuth();
 
@@ -52,16 +53,7 @@ const LoginRevisor = () => {
     <Card className="form-card mx-auto">
       <Form className="login-form shadow p-4 bg-white rounded" onSubmit={handleSubmit}>
         <div className="h4 mb-2 text-center">Acceso de revisor</div>
-        {alert.show && 
-          <Alert
-            className="mb-2 mx-auto"
-            variant={alert.variant}
-            onClose={() => setAlert({ ...alert, show: false })}
-            dismissible
-          >
-            {alert.message}
-          </Alert>
-        }
+
         <FloatingLabel
           controlId="floatingUsername"
           label="Nombre de usuario"

@@ -1,6 +1,5 @@
-import json
-import os
-import shutil
+import datetime
+import threading
 from bson.objectid import ObjectId
 from flask import Blueprint, request, jsonify
 from flask import send_file, make_response, Response
@@ -11,10 +10,10 @@ from models.user import User, Author
 from models.tabajo import ScientificArticle, get_file
 from app import mongo, API, llamus_key
 from services.PreEvaluation import PreEvaluation
-from services.Summary import ArticleSummarizer
+from services.summary import ArticleSummarizer
 from services.dataPreparation import DataHandler
 from bson import ObjectId 
-from services.Summary import SYSTEM_PROMPT_BASE as prompt_summary
+from services.summary import SYSTEM_PROMPT_BASE as prompt_summary
 from services.PreEvaluation import  SYSTEM_PROMPT_BASE as prompt_eval
 
 
@@ -36,7 +35,9 @@ def show_articles(reviewer):
                         "description": article.get("description"),
                         "pdf": "/file/" + str(submitted_pdf_id),
                         "zip": "/zip/" + str(article.get("latex_project_id")),
-                        "processing_state": article.get('processing_state')
+                        "processing_state": article.get('processing_state'),
+                        "submission_date":article.get("submission_date"),
+                        "last_modified":article.get("last_modified")
                     })
         return make_response(jsonify(result), 200)
     else:
@@ -90,6 +91,7 @@ def add_review(reviewer, article_title):
     
     
 @evaluate_bp.route(API + '/evaluate/<reviewer>/<article_title>', methods = ['PUT'])
+#@jwt_required()
 def update_status(reviewer, article_title):
     article = db.find_one({"reviewer":str(reviewer), "title":article_title, "pending":True})
     status = request.get_json()
@@ -104,6 +106,7 @@ def update_status(reviewer, article_title):
 
 def fetch_article(title:str, reviewer:str):
     article_data = db.find_one({"title": title, "reviewer": reviewer})
+    print(article_data, "\nDat: ", title, reviewer)
     if not article_data:  # If no article was found
         return None
     article_data.pop("_id")  
@@ -111,42 +114,28 @@ def fetch_article(title:str, reviewer:str):
 
     return article_object
 
-@evaluate_bp.route(API + '/reevaluate/<reviewer>/<article_title>', methods=['GET'])
-def regenerate_pre_evaluation(reviewer, article_title):
-    tasks = request.args.getlist('tasks')
-    print(tasks)
-    article = fetch_article(article_title, reviewer)
-    
-    if article is None:
-        return "No article found", 404
-    
-    db.update_one(
-        {"reviewer": article["reviewer"], "title": article_title},
-        {"$set": {"processing_state": "On Process"}}
-    )
-    
+def regenerate_pre_evaluation_flow(article:ScientificArticle, tasks:list):
     try:
         update_data = {}  # Datos para actualizar
 
         if "summary" in tasks:
-            print("B")
+            print('A')
             summary_instance = ArticleSummarizer(mongo, prompt_summary, llamus_key, article)
             summary = summary_instance.run()
             update_data["summary"] = summary  # Actualizar el resumen en los datos de actualización
             print(summary)
 
         if "initialevaluation" in tasks:
-            print("A")
+            print("B")
             evaluation_instance = PreEvaluation(mongo, prompt_eval, llamus_key, article)
             evaluation_instance.chat_model = 'llama2:70b-chat'
             preevaluation = evaluation_instance.run()
             update_data["evaluation"] = preevaluation 
-
-
+        update_data["last_modified"] = datetime.utcnow()
         update_data["processing_state"] = "Done"
         # Actualizar solo las propiedades summary y evaluation del artículo
         db.update_one(
-            {"reviewer": article["reviewer"], "title": article_title},
+            {"reviewer": article["reviewer"], "title": article.title},
             {"$set": update_data}
         )
 
@@ -154,11 +143,30 @@ def regenerate_pre_evaluation(reviewer, article_title):
         print(e)  # Imprimir el error
         # Actualizar el estado de procesamiento en caso de error
         db.update_one(
-            {"reviewer": article["reviewer"], "title": article_title},
+            {"reviewer": article["reviewer"], "title": article.title},
             {"$set": {"processing_state": "Fail"}}
         )
-        
-        return make_response(jsonify({"msg": "Error in reevaluation."}), 500)
+    return None
 
-    return make_response(jsonify({"msg": "Reevaluation completed successfully."}), 200)
+@evaluate_bp.route(API + '/reevaluate/<reviewer>/<article_title>', methods=['PUT'])
+@jwt_required()
+def regenerate_pre_evaluation(reviewer, article_title):
+    data = request.get_json()  # get data from JSON in the request body
+    tasks = list(data)
+
+    article = fetch_article(article_title, reviewer)
+    
+    if article is None:
+        return make_response(jsonify({"msg": "No article found."}), 404)
+    
+    print(" identidad: ", get_jwt_identity())
+    
+    db.update_one(
+        {"reviewer": article["reviewer"], "title": article_title},
+        {"$set": {"processing_state": "On Process"}}
+    )
+
+    threading.Thread(target=regenerate_pre_evaluation_flow, args=(article, tasks)).start()
+
+    return make_response(jsonify({"msg": "Reevaluation started successfully."}), 200)
 

@@ -3,6 +3,7 @@ import { Table, Container} from 'react-bootstrap';
 import { redirect, useParams, useNavigate } from 'react-router-dom';
 import { useContext } from "react";
 import AuthContext from "../../context/context";
+import { AlertContext } from '../../context/alertProvider'; // Importa tu contexto
 
 import '../estilos/show_articles.css'
 
@@ -11,6 +12,8 @@ import { faPenClip, faSpinner, faCircleExclamation } from '@fortawesome/free-sol
 
 function ShowArticles() {
   const { username, sessionToken, logout } = useContext(AuthContext); // Access username from context
+  const {setAlert} = useContext(AlertContext)
+
   const [articles, setArticles] = useState([]);
   const navigate = useNavigate();
 
@@ -46,7 +49,9 @@ function ShowArticles() {
             <th>#</th>
             <th>Título</th>
             <th>Descripción</th>
-            <th></th>
+            <th>Fecha de Entrega</th>
+            <th>Última modificación</th>
+            <th>Acceder al artículo</th>
           </tr>
         </thead>
         <tbody>
@@ -55,6 +60,8 @@ function ShowArticles() {
         <td>{index + 1}</td>
         <td>{article.title}</td>
         <td>{article.description}</td>
+        <td>{article.submission_date}</td>
+        <td>{article.last_modified}</td>
         <td className='open-article'>
           {article.processing_state === "Done" ?
             <div className='center-content' onClick={() => navigate(`/portal-reviewer/articles/${username}/${article.title}`)}>
@@ -62,12 +69,12 @@ function ShowArticles() {
               <p>Evaluar</p>
             </div>
           : article.processing_state ==="Fail" ?
-            <div className='center-content'>
+            <div className='center-content' onClick={() => navigate(`/portal-reviewer/articles/${username}/${article.title}`)}>
               <FontAwesomeIcon icon={faCircleExclamation} />       
                 <p>Fallido</p>
             </div>
             : 
-            <div className='center-content'>
+            <div className='center-content' onClick={() => navigate(`/portal-reviewer/articles/${username}/${article.title}`)}>
               <FontAwesomeIcon icon={faSpinner} />
               <p>Processing</p>
             </div>

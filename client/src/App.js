@@ -1,9 +1,16 @@
-import React, { useState, useEffect} from 'react';
+import React, { useState, useEffect, useContext} from 'react';
+import { BrowserRouter as Router, Routes, Route, BrowserRouter } from "react-router-dom";
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'react-bootstrap';
+import { Alert } from 'react-bootstrap';
+
+
 import MyNavbar from './components/navBar';
 import AppFooter from './components/footer';
-import 'bootstrap/dist/css/bootstrap.min.css';
 import Home from './components/home';
+import ContactUs from './components/contactus';
 import AppProvider from './context/appProvider'
+import { AlertProvider, AlertContext } from './context/alertProvider';
 
 
 
@@ -19,20 +26,34 @@ import RevisorProfile from './components/revisor/profile';
 import ShowArticles from './components/revisor/show_articles'
 import ShowArticle from './components/revisor/show_article'
 
-import 'react-bootstrap';
-import { BrowserRouter as Router, Routes, Route, BrowserRouter } from "react-router-dom";
-import ContactUs from './components/contactus';
+
 
 
 
 function App() {
   const [data, setData] = useState([]);
+
  
   return (
     <BrowserRouter>
       <AppProvider>
+      <AlertProvider>
       <MyNavbar />
       <div className="container p-4">
+      <AlertContext.Consumer>
+              {context => {
+                const {alert, setAlert} = context;
+                return alert.show && 
+                <Alert
+                  className="mb-2 mx-auto"
+                  variant={alert.variant}
+                  onClose={() => setAlert({ ...alert, show: false })}
+                  dismissible
+                >
+                  {alert.message}
+                </Alert>
+              }}
+      </AlertContext.Consumer>
         <Routes>
         <Route path="" element={ <Home/>}/>
         <Route path="/contactus" element={<ContactUs />} />
@@ -57,6 +78,7 @@ function App() {
         </Routes>
       </div>
       <AppFooter/>
+      </AlertProvider>
       </AppProvider>
     </BrowserRouter>
   );
