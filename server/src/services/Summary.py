@@ -13,10 +13,10 @@ SYSTEM_PROMPT_BASE = """Act as a research paper summarizer. I will provide you w
 
 class ArticleSummarizer:
     def __init__(self, db, system_prompt_base, llamus_key, article:ScientificArticle):
-        self.API_URL = "https://llamus.cs.us.es/api/chat"
+        self.API_URL = "https://llamus.cs.us.es/ollama/v1/chat/completions"
         self.LLAMUS_KEY = llamus_key
-        self.chat_model = 'TheBloke.openbuddy-zephyr-7b-v14.1.Q5_K_M.gguf'
-        self.temperature = 0.5
+        self.temperature = 0.8
+        self.chat_model = 'falcon:180b-chat-Q4_K_M'
         self.DB = db.db.scientific_article
         self.SYSTEM_PROMPT_BASE = system_prompt_base
         self.article = article
@@ -35,18 +35,25 @@ class ArticleSummarizer:
             'Authorization': f'Bearer {self.LLAMUS_KEY}'
         }
         data = {
-            'model': self.chat_model,
-            'prompt': system_prompt,
-            'messages': [{'role': 'assistant', 'content': user_prompt + "\n\nSection Summary:"}],
-            'temperature': self.temperature,
-            'trimWhitespaceSuffix': False
+            'stream': False,
+            'model':"llama2:7b-chat",
+            'temperature':self.temperature,
+            'messages':[
+                {
+                    "role":"system",
+                    "content":system_prompt
+                },
+                {
+                    "role":"user",
+                    "content":user_prompt + "\n\n Section Evaluation:"
+                }]
         }
 
         response = requests.post(self.API_URL, headers=headers, data=json.dumps(data))
         if response.status_code == 200:  # Checking if the request was successful
             try:
+                #print(response.text)
                 return response.json()
-                
             except json.decoder.JSONDecodeError:  # Catching JSON decode errors
                 print('Failed to decode JSON. Response:', response.content)
         else:
@@ -64,23 +71,26 @@ class ArticleSummarizer:
         self.article = self.get_article(self.query)
         print(f"\nUpdated the summary of {value[0]} srction in database!")
 
-
     def run(self):
         res = self.article["summary"]
 
         for section_name, section_content in self.article_content.items():
-            system_prompt = self.SYSTEM_PROMPT_BASE.format(section_name = section_name, article_title = self.title)
-            section_summury = self.llamus_request(system_prompt, section_content)
-            if section_summury:
-                print(section_summury)
-                tmp = dict(section_summury)
-                response = tmp['response']
-                # Está pensado actualizar el resumen de todas las secciones en la bd de una vez
-                res[section_name] = response
-        self.article.update_properties(summary=res)
+            try:  # Add try block here
+                system_prompt = self.SYSTEM_PROMPT_BASE.format(section_name=section_name, article_title=self.title)
+                section_summary = self.llamus_request(system_prompt, section_content)
+                if section_summary:
+                    tmp = dict(section_summary)
+                    choices = tmp.get('choices', [])
+                    if choices and isinstance(choices, list):
+                        msg = choices[0].get('message', {})
+                        response = msg.get('content', '')
+                    else:
+                        response = ''
+                    res[section_name] = response
+            except Exception:  # Catch all types of exceptions
+                print(f"An error occurred while processing the '{section_name}' section")
+                res[section_name] = "Error"  # Set the value to an empty string
+                continue  # Continue to the next iteration of the loop
 
-
-if __name__ == "__main__":
-    myquery = {"_id": ObjectId("65d35430bb52400ef325f827")} #65d22d8d9a142a7b8be3d0e7
-    evaluation_instance = ArticleSummarizer(mongo, SYSTEM_PROMPT_BASE, myquery,  LLAMUS_KEY)
-    evaluation_instance.run()
+        return res
+        #self.article.update_properties(summary=res)

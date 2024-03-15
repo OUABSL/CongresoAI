@@ -10,17 +10,16 @@ const SignUpRevisor = () => {
 
 
   const initialState = {
+    ORCID_ID: '',   // 0000-0003-0528-9459
     email: '',
     username: '',
     password: '',
     fullname: '',
-    birthdate: '',
     phonenumber: '',
     interestarea: ''
   }
 
   const [state, setState] = useState(initialState);
-
   const onSubmit = (e) => {
     setLoading(true);
     e.preventDefault();
@@ -58,6 +57,21 @@ const SignUpRevisor = () => {
                 {alert.message}
               </Alert>
             )}
+
+        <Row>
+          <Col>
+            <Form.Group>
+              <Form.Label>ORCID ID</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="0000-0000-0000-0000"
+                name="ORCID_ID"
+                value={state.ORCID_ID}
+                onChange={onChange}
+              />
+            </Form.Group>
+          </Col>            
+        </Row>
           <Row>
             <Col>
               <Form.Group className="mb-3 form-group-class">
