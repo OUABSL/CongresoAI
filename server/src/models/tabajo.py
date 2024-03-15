@@ -1,7 +1,7 @@
 from typing import List
 from bson import ObjectId
 import bson
-from mongoengine import Document, StringField, DateTimeField, ListField, ObjectIdField, DictField
+from mongoengine import Document, StringField, DateTimeField, ListField, ObjectIdField, DictField, ReferenceField
 from mongoengine.base import BaseField
 from mongoengine.errors import ValidationError
 from datetime import datetime
@@ -25,13 +25,14 @@ class ScientificArticle(Document):
     title = StringField(required=True, max_length=200)
     description = StringField(required=True, max_length=500)
     key_words = ListField(StringField(required=True, max_length=50))
-    submission_date = DateTimeField(default=datetime.utcnow)
+    submission_date = DateTimeField(default=datetime.utcnow())
     processing_state = ProcessingState(default='On Process')
     content = DictField()
     summary = DictField()
     evaluation = DictField()
     reviewer = StringField(max_length=200)
     review = DictField()
+    last_modified = DateTimeField(default=None)
     latex_project_id = ObjectIdField()
     submitted_pdf_id = ObjectIdField()
 
@@ -61,8 +62,10 @@ class ScientificArticle(Document):
             self.latex_project_id = latex_project_id
         if submitted_pdf_id:
             self.submitted_pdf_id = submitted_pdf_id
-
+        self.last_modified = datetime.utcnow()
         self.save()
+
+
     def set_latex_project_url(self, file_id):
         self.latex_project_url = file_id
 
@@ -111,6 +114,7 @@ class ScientificArticle(Document):
             'summary': self.summary,
             'evaluation': self.evaluation,
             'reviewer': self.reviewer,
+            'las_modified':self.last_modified,
             'latex_project_url': self.get_file_url(self.latex_project_id),
             'submitted_pdf_url': self.get_file_url(self.submitted_pdf_id),
         }

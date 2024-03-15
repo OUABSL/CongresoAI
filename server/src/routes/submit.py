@@ -3,13 +3,13 @@ from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 from werkzeug.datastructures import CombinedMultiDict
 from werkzeug.utils import secure_filename
-from models.user import User, Author
+from models.user import Author
 from models.tabajo import ScientificArticle  
 from app import mongo, API, llamus_key
 from services.dataPreparation import DataHandler
 from services.PreEvaluation import PreEvaluation
-from services.Summary import ArticleSummarizer
-from services.Summary import SYSTEM_PROMPT_BASE as prompt_summary
+from services.summary import ArticleSummarizer
+from services.summary import SYSTEM_PROMPT_BASE as prompt_summary
 from services.PreEvaluation import  SYSTEM_PROMPT_BASE as prompt_eval
 import tempfile, shutil
 import threading
@@ -90,6 +90,8 @@ def submit_article():
     title = request.form.get("title")
     description = request.form.get("description")
     key_words = request.form.get('key_words').split(',')
+
+    author = Author.objects.filter(username = "ouabou")
 
     # Create ScientificArticle instance and save to MongoDB
     saved_article = ScientificArticle(
