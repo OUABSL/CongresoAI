@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 import threading
 from bson.objectid import ObjectId
 from flask import Blueprint, request, jsonify
@@ -114,31 +114,29 @@ def fetch_article(title:str, reviewer:str):
 
     return article_object
 
-def regenerate_pre_evaluation_flow(article:ScientificArticle, tasks:list):
+def regenerate_pre_evaluation_flow(article:ScientificArticle, tasks:dict):
     try:
         update_data = {}  # Datos para actualizar
 
         if "summary" in tasks:
-            print('A')
             summary_instance = ArticleSummarizer(mongo, prompt_summary, llamus_key, article)
+            summary_instance.chat_model = tasks["summary"]
             summary = summary_instance.run()
-            update_data["summary"] = summary  # Actualizar el resumen en los datos de actualización
-            print(summary)
+            update_data["summary"] = summary  # Actualizar el resumen en los datos de actualización        
 
         if "initialevaluation" in tasks:
-            print("B")
             evaluation_instance = PreEvaluation(mongo, prompt_eval, llamus_key, article)
-            evaluation_instance.chat_model = 'llama2:70b-chat'
+            evaluation_instance.chat_model = tasks["initialevaluation"]
             preevaluation = evaluation_instance.run()
-            update_data["evaluation"] = preevaluation 
-        update_data["last_modified"] = datetime.utcnow()
+            update_data["evaluation"] = preevaluation
+
+        update_data["last_modified"] = datetime.now()
         update_data["processing_state"] = "Done"
-        # Actualizar solo las propiedades summary y evaluation del artículo
+
         db.update_one(
             {"reviewer": article["reviewer"], "title": article.title},
             {"$set": update_data}
         )
-
     except Exception as e:
         print(e)  # Imprimir el error
         # Actualizar el estado de procesamiento en caso de error
@@ -148,25 +146,19 @@ def regenerate_pre_evaluation_flow(article:ScientificArticle, tasks:list):
         )
     return None
 
+
 @evaluate_bp.route(API + '/reevaluate/<reviewer>/<article_title>', methods=['PUT'])
 @jwt_required()
 def regenerate_pre_evaluation(reviewer, article_title):
-    data = request.get_json()  # get data from JSON in the request body
-    tasks = list(data)
-
+    tasks = request.json  # get data from JSON in the request body
     article = fetch_article(article_title, reviewer)
     
     if article is None:
         return make_response(jsonify({"msg": "No article found."}), 404)
-    
-    print(" identidad: ", get_jwt_identity())
-    
+
     db.update_one(
         {"reviewer": article["reviewer"], "title": article_title},
         {"$set": {"processing_state": "On Process"}}
     )
-
     threading.Thread(target=regenerate_pre_evaluation_flow, args=(article, tasks)).start()
-
     return make_response(jsonify({"msg": "Reevaluation started successfully."}), 200)
-

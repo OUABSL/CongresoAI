@@ -13,7 +13,8 @@ load_dotenv()
 mongo_uri = os.environ['MONGO_URI']
 llamus_key = os.environ['LLAMUS_KEY']
 jwt_key = os.environ['JWT_KEY']
-
+hf_email = os.environ['EMAIL_HF']
+hf_pass = os.environ['PASS_HF']
 
 
 
@@ -37,16 +38,18 @@ def register_blueprints():
     from routes.users import users_bp
     from routes.submit import submit_bp
     from routes.evaluate import evaluate_bp
+    from routes.models import models_bp
 
     app.register_blueprint(users_bp)
     app.register_blueprint(submit_bp)
     app.register_blueprint(evaluate_bp)
-
-
+    app.register_blueprint(models_bp)
 
     print(f"Created Blueprint for {users_bp}")
     print(f"Created Blueprint for {submit_bp}")
     print(f"Created Blueprint for {evaluate_bp}")
+    print(f"Created Blueprint for {models_bp}")
+
 
 
 def get_users_from_db(db):

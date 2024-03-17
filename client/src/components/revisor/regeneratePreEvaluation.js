@@ -1,36 +1,59 @@
-import React, { useState } from 'react';
-import { Button, Modal, Form } from 'react-bootstrap';
+import React, { useState, useEffect } from 'react';
+import { Button, Modal, Form, Select, Option } from 'react-bootstrap';
 import { useContext } from "react";
 import AuthContext from "../../context/context";
-import { AlertContext } from '../../context/alertProvider'; // Importa tu contexto
+import { AlertContext } from '../../context/alertProvider'; // Asegúrate de tener el contexto
 
 
 function RegenerationModal({ username, articleTitle }) {
   const [show, setShow] = useState(false);
-  const {sessionToken, logout } = useContext(AuthContext);
-  const {alert, setAlert} = useContext(AlertContext);
-  const [selected, setSelected] = useState({
-    summary: false,
-    initialEvaluation: false,
-    dataPreparation: false,
+  const { sessionToken, logout } = useContext(AuthContext);
+  const {setAlert } = useContext(AlertContext);
+  const [models, setModels] = useState([]);
+  const defaultModel = {
+    'summary': 'lIama2:13b-chat',
+    'initialevaluation': 'Ilama2:70b-chat',
+    'datapreparation': ''}
+  const [selectedTasks, setSelectedTasks] = useState({
+  summary: { checked: false, value: defaultModel.summary },
+  initialevaluation: { checked: false, value: defaultModel.initialevaluation },
+  datapreparation: { checked: false, value: defaultModel.datapreparation }
   });
+
+  useEffect(() => {
+    fetchModels();
+  }, []);
+
+  const fetchModels = async () => {
+    const response = await fetch("/api/v1/models");
+    const data = await response.json();
+    setModels(data);
+  };
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
   const handleCheck = (event) => {
-    setSelected({
-      ...selected,
-      [event.target.name]: event.target.checked
+    setSelectedTasks({
+      ...selectedTasks,
+      [event.target.name]: { ...selectedTasks[event.target.name], checked: event.target.checked }
     });
   };
 
+  const handleSelectChange = (event) => {
+    setSelectedTasks({
+      ...selectedTasks,
+      [event.target.name]: { ...selectedTasks[event.target.name], value: event.target.value }
+    });
+  };
 
-const handleConfirm = async () => {
-  try {
-    const tasks = Object.entries(selected).filter(([key, value]) => value).map(([key, value]) => key);
+  const handleConfirm = async () => {
+    try{
+    const tasks = Object.entries(selectedTasks)
+      .filter(([key, task]) => task.checked)
+      .reduce((acc, [key, task]) => ({ ...acc, [key]: task.value }), {});
 
-    if (tasks.length === 0) {
+    if (Object.keys(tasks).length === 0) {
       setAlert({show: true, message: "Seleccione al menos una tarea para regenerar.", variant: "warning"});
       return;
     }
@@ -45,7 +68,6 @@ const handleConfirm = async () => {
         'Authorization': `Bearer ${sessionToken}`,
       }
     });
-
     if (response.status === 401) {
       logout();
       setAlert({show: true, message: "Por favor, inicie sesión de nuevo.", variant: "info"});
@@ -61,7 +83,6 @@ const handleConfirm = async () => {
     } else {
       setAlert({show: true, message: "Error en la reevaluación. Avise al administrador", variant: "danger"});
     }
-
   } catch (error) {
     setAlert({show: true, message: "Ha sucedido un error en el proceso. Por favor, inténtalo más tarde.", variant: "danger"});
     console.error(error);
@@ -69,49 +90,50 @@ const handleConfirm = async () => {
 
 };
 
-  return (
-    <>
-      <Button variant="primary" onClick={handleShow}>
-        Re-evaluate
-      </Button>
-    
-      <Modal show={show} onHide={handleClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>Selecciona el componente a regenerar</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form>
-            <Form.Check 
-              name="summary"
+return (
+  < >
+    <Button variant="primary" onClick={handleShow}> Re - evaluate </Button>
+    <Modal show={show} onHide={handleClose}> 
+      <Modal.Header closeButton>
+        <Modal.Title>Selecciona el elemento a regenerar</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        {Object.entries(selectedTasks).map(([task, { checked, value }]) => (
+          <Form.Group key={task}>
+            <Form.Check
+              name={task}
               type="checkbox"
-              label="Resumen"
+              label={task}
+              checked={checked}
               onChange={handleCheck}
             />
-            <Form.Check 
-              name="initialevaluation"
-              type="checkbox"
-              label="Evaluación Inicial"
-              onChange={handleCheck}
-            />
-            <Form.Check 
-              name="datapreparation"
-              type="checkbox"
-              label="Preparación De Datos"
-              onChange={handleCheck}
-            />
-          </Form>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
-            Cancelar
-          </Button>
-          <Button variant="primary" onClick={handleConfirm}>
-            Confirmar
-          </Button>
-        </Modal.Footer>
-      </Modal>
-    </>
-  );
+          <Form.Control
+            as="select"
+            name={task}
+            disabled={!checked}
+            value={value}
+            onChange={handleSelectChange}
+          >
+            <option disabled value="">Seleccione un modelo</option>
+            {models.map((model, index) => {
+              let optionLabel = model;
+              if (model === defaultModel[task]) {
+                optionLabel += " [Recomendado]";
+              }
+              return <option key={index} value={model}>{optionLabel}</option>;
+            })}
+          </Form.Control>
+          </Form.Group>
+        ))}
+      </Modal.Body>
+      <Modal.Footer>
+        <Button variant="secondary" onClick={handleClose}>Cancelar</Button>
+        <Button variant="primary" onClick={handleConfirm}>Confirmar</Button>
+      </Modal.Footer>
+    </Modal>
+  </>
+);
 }
+
 
 export default RegenerationModal;
