@@ -11,6 +11,7 @@ from services.PreEvaluation import PreEvaluation
 from services.summary import ArticleSummarizer
 from services.summary import SYSTEM_PROMPT_BASE as prompt_summary
 from services.PreEvaluation import  SYSTEM_PROMPT_BASE as prompt_eval
+from services.reviewerAssignment import ReviewerAssignment
 import tempfile, shutil
 import threading
 import os, sys
@@ -18,7 +19,7 @@ import os, sys
 
 
 submit_bp = Blueprint('submit', __name__)
-UPLOAD_FOLDER = os.path.join(sys.path[0], "data")
+UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data")
 
 def create_temp_dir(parent_dir):
     return tempfile.mkdtemp(dir=parent_dir)
@@ -31,6 +32,9 @@ def process_submit(article:ScientificArticle, dest_path):
         data_handler.run()
         summary_instance = ArticleSummarizer(mongo, prompt_summary,  llamus_key, article)
         evaluation_instance = PreEvaluation(mongo,  prompt_eval, llamus_key, article)
+        assignment_agent = ReviewerAssignment(mongo = mongo, article = article)
+        assignment_agent.run()
+
         
         evaluation_instance.chat_model = 'TheBloke.llama-2-70b-chat.Q5_K_M.gguf'
         summary_instance.run()
@@ -57,6 +61,8 @@ def submit_article():
     if role != "author":
         return jsonify({"msg": "You do not have access to this resource"}), 403
     
+    if not os.path.exists(UPLOAD_FOLDER):
+        os.makedirs(UPLOAD_FOLDER)
     temp_dir = create_temp_dir(UPLOAD_FOLDER)
 
     current_user = mongo.db.authors.find_one({'username':(get_jwt_identity())})
@@ -100,9 +106,8 @@ def submit_article():
         key_words=key_words,
         content={},
         evaluation={}, 
-        summary={},
-        reviewer = 'joaquin'
-    ).save()
+        summary={}
+        ).save()
     saved_article.save_files(latex_project=file)
     threading.Thread(target=process_submit, args=(saved_article, temp_dir)).start()
     return jsonify({'status': 'success', 'msg': 'File uploaded successfully'}), 201

@@ -147,7 +147,7 @@ def regenerate_pre_evaluation_flow(article:ScientificArticle, tasks:dict):
     return None
 
 
-@evaluate_bp.route(API + '/reevaluate/<reviewer>/<article_title>', methods=['PUT'])
+@evaluate_bp.route(API + '/evaluate/reevaluate/<reviewer>/<article_title>', methods=['PUT'])
 @jwt_required()
 def regenerate_pre_evaluation(reviewer, article_title):
     tasks = request.json  # get data from JSON in the request body
@@ -162,3 +162,23 @@ def regenerate_pre_evaluation(reviewer, article_title):
     )
     threading.Thread(target=regenerate_pre_evaluation_flow, args=(article, tasks)).start()
     return make_response(jsonify({"msg": "Reevaluation started successfully."}), 200)
+
+
+@evaluate_bp.route(API + '/evaluate/reassignate/<reviewer>/<article_title>', methods=['PUT'])
+@jwt_required()
+def reassignate_reviewer(reviewer, article_title):
+    article = fetch_article(article_title, reviewer)
+    if article is None:
+        return make_response(jsonify({"msg": "No article found."}), 404)
+    
+    if(len(article.sorted_backup_assignment)>0):
+        new_reviewer = article.sorted_backup_assignment[0][1]
+        db.update_one(
+            {"title": article_title},
+            {"$set": {"reviewer": new_reviewer}}
+        )
+    else:
+        return make_response(jsonify({"msg": "There is no disponible reviewer.Please contact the adminastator!"}), 404)
+
+    return make_response(jsonify({"msg": f"Re-Assignement done successfully. The new assigned reviewer is {new_reviewer}."}), 200)
+
