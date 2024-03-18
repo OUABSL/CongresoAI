@@ -5,6 +5,8 @@ import { useContext } from "react";
 import AuthContext from "../../context/context";
 import { Viewer } from '@react-pdf-viewer/core';
 import RegenerationModal from './regeneratePreEvaluation'
+import ReassignateReviewButton from './reAsignateReviewer';
+
 // Plugins
 
 // Import styles
@@ -165,15 +167,12 @@ function ShowArticle() {
                     'Authorization': `Bearer ${sessionToken}`,
                 }
             });
-
             
             if(response.status === 401) {
               logout();
               return;
             }
-
             const data = await response.json();
-    
             setArticle(data);
             setReview(data.evaluation);
     
@@ -243,9 +242,11 @@ function ShowArticle() {
           <Col xs="auto">
             <Button className="btn bg-secondary" onClick={goBack}>Volver Atrás</Button>
           </Col>
-          <Col>
+          <Col xs="auto">
           <RegenerationModal username={username} articleTitle={article_title}/>
-
+          </Col>
+          <Col xs="auto">
+          <ReassignateReviewButton username={username} articleTitle={article_title} setAlert={setAlert}/>  
           </Col>
           <Col xs="auto">
           <DownloadArticle

@@ -60,7 +60,7 @@ function RegenerationModal({ username, articleTitle }) {
 
     handleClose();
 
-    const response = await fetch(`/api/v1/reevaluate/${username}/${articleTitle}`, {
+    const response = await fetch(`/api/v1/evaluate/reevaluate/${username}/${articleTitle}`, {
       method: 'PUT',
       body: JSON.stringify(tasks),
       headers: {

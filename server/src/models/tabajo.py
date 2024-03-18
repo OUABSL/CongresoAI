@@ -4,13 +4,14 @@ import bson
 from mongoengine import Document, StringField, DateTimeField, ListField, ObjectIdField, DictField, ReferenceField
 from mongoengine.base import BaseField
 from mongoengine.errors import ValidationError
+from typing import Tuple
 from datetime import datetime
 import pymongo
 import gridfs
 import json
-from mongoengine.base.fields import BaseField 
 from app import mongo
 from models.user import User
+
 
 class ProcessingState(BaseField):
     STATES = ('Done', 'On Process', 'Fail')
@@ -31,6 +32,7 @@ class ScientificArticle(Document):
     summary = DictField()
     evaluation = DictField()
     reviewer = StringField(max_length=200)
+    sorted_backup_assignment = ListField()
     review = DictField()
     last_modified = DateTimeField(default=None)
     latex_project_id = ObjectIdField()
@@ -43,7 +45,7 @@ class ScientificArticle(Document):
         if latex_project:
             self.save_files(submitted_pdf=latex_project)
 
-    def update_properties(self,latex_project_id = None, submitted_pdf_id = None,  title: str = None, content: str = None, key_words: List[str] = None, summary: str = None, evaluation: str = None, reviewer: str = None, processing_state: bool = None):
+    def update_properties(self,latex_project_id = None, submitted_pdf_id = None,  title: str = None, content: str = None, key_words: List[str] = None, summary: str = None, evaluation: str = None, reviewer: str = None,sorted_backup_assignment: List[tuple] = None, processing_state: bool = None):
         if title:
             self.title = title
         if content:
@@ -56,6 +58,8 @@ class ScientificArticle(Document):
             self.evaluation = evaluation
         if reviewer:
             self.reviewer = reviewer
+        if sorted_backup_assignment:
+            self.sorted_backup_assignment = sorted_backup_assignment
         if processing_state is not None:
             self.processing_state = processing_state
         if latex_project_id:
@@ -114,6 +118,7 @@ class ScientificArticle(Document):
             'summary': self.summary,
             'evaluation': self.evaluation,
             'reviewer': self.reviewer,
+            'sorted_backup_assignment' : self.sorted_backup_assignment,
             'las_modified':self.last_modified,
             'latex_project_url': self.get_file_url(self.latex_project_id),
             'submitted_pdf_url': self.get_file_url(self.submitted_pdf_id),
