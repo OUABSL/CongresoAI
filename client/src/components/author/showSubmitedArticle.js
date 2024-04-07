@@ -17,13 +17,13 @@ const DisplaySection = ({ section, content }) => {
 };
 
 const ShowSubmittedArticle = () => {
-  const { sessionToken, logout } = useContext(AuthContext);
+  const { sessionToken, logout, username } = useContext(AuthContext);
   const { author, article_title } = useParams();  
   const [article, setArticle] = useState({});    
 
   useEffect(() => {
     async function fetchArticle() {
-      const response = await fetch(`/api/v1/submit/${author}/${encodeURIComponent(article_title)}`, {
+      const response = await fetch(`/api/v1/submit/${username}/${encodeURIComponent(article_title)}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -41,7 +41,7 @@ const ShowSubmittedArticle = () => {
     }
     
     fetchArticle();
-  }, [author, article_title, sessionToken, logout]);
+  }, [username, article_title, sessionToken, logout]);
  
   return (
     <Card style={{ width: '100%' }}>
