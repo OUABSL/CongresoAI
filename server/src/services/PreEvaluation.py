@@ -1,7 +1,7 @@
-import os, json, requests
-from app import mongo, llamus_key
+import json, requests
+from src.app import mongo, llamus_key
 from bson.objectid import ObjectId
-from models.tabajo import ScientificArticle
+from src.models.tabajo import ScientificArticle
 
 
 SYSTEM_PROMPT_BASE = ("""You are an expert tutor specializing in reviewing and evaluating scientific research articles within the technology domain. Your focus lies on the '{section_name}' section of a manuscript titled "{title}"

@@ -51,14 +51,16 @@ const MyNavbar = () => {
             {/* <Nav.Item className={activeLink === '/about' ? 'nav-item active' : 'nav-item'}>
               <Link className="nav-link" to="/about" onClick={() => handleLinkClick('/about')}>Sobre Nosotros</Link>
             </Nav.Item> */}
-            <Nav.Item className={activeLink === '/contactus' ? 'nav-item active' : 'nav-item'}>
-              <Link className="nav-link" to="/contactus" onClick={() => handleLinkClick('/contactus')}>Contáctanos</Link>
-            </Nav.Item>
             {
               loggedIn && role === "author" &&
+              <Nav.Item className={activeLink === `/${portalLink}/articles/${username}` ? 'nav-item active' : 'nav-item'}>
+                <Link className="nav-link" to={`/${portalLink}/articles/${username}`} onClick={() => handleLinkClick(`/${portalLink}/submit`)}>Artículos Presentados</Link>
+              </Nav.Item>
+              &&
               <Nav.Item className={activeLink === `/${portalLink}/submit` ? 'nav-item active' : 'nav-item'}>
                 <Link className="nav-link" to={`/${portalLink}/submit`} onClick={() => handleLinkClick(`/${portalLink}/submit`)}>Subir Artículo</Link>
               </Nav.Item>
+
             }
             {
               loggedIn && role === "reviewer" &&
@@ -66,22 +68,16 @@ const MyNavbar = () => {
                 <Link className="nav-link" to={`/${portalLink}/articles/${username}`} onClick={() => handleLinkClick(`/${portalLink}/submit`)}>Artículos Asignados</Link>
               </Nav.Item>
             }
+            <Nav.Item className={activeLink === '/contactus' ? 'nav-item active' : 'nav-item'}>
+              <Link className="nav-link" to="/contactus" onClick={() => handleLinkClick('/contactus')}>Contáctanos</Link>
+            </Nav.Item>
             </Nav>
 
           <Nav>
           {!loggedIn &&(
-            <NavDropdown title="Portal" id="collapsible-nav-dropdown">
-               <NavDropdown.Item as="div" onClick={() => handleLinkClick('/portal-author')}>
-              <Link className='nav-drop-item' to="/portal-author/login">
-                  Portal de Autor
-                </Link>
-              </NavDropdown.Item>
-              <NavDropdown.Item as="div"  onClick={() => handleLinkClick('/portal-reviewer')}>
-                <Link className='nav-drop-item' to="/portal-reviewer/login">
-                  Portal de Revisor
-                </Link>
-              </NavDropdown.Item>
-            </NavDropdown>
+            <Nav.Item className={activeLink === '/portal' ? 'nav-item active' : 'nav-item'}>
+              <Link className="nav-link" to="/portal" onClick={() => handleLinkClick('/portal')}>Portal</Link>
+            </Nav.Item>
             )}
           </Nav>
 

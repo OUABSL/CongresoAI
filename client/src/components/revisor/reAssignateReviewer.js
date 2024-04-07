@@ -4,7 +4,6 @@ import { useContext } from "react";
 import AuthContext from "../../context/context";
 import { useNavigate } from 'react-router-dom';
 
-// Reassignment button component
 const ReassignateReviewButton = ({ username, articleTitle, setAlert }) =>  {
 
   const {sessionToken, logout} = useContext(AuthContext); // Accede a username y sessionToken desde el contexto

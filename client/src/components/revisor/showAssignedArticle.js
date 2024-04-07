@@ -5,7 +5,7 @@ import { useContext } from "react";
 import AuthContext from "../../context/context";
 import { Viewer } from '@react-pdf-viewer/core';
 import RegenerationModal from './regeneratePreEvaluation'
-import ReassignateReviewButton from './reAsignateReviewer';
+import ReassignateReviewButton from './reAssignateReviewer';
 
 // Plugins
 
@@ -14,6 +14,45 @@ import '@react-pdf-viewer/core/lib/styles/index.css';
 import '@react-pdf-viewer/default-layout/lib/styles/index.css';
 
 
+const criteria = ['Motivation:', 'Novelty:', 'Clarity:', 'Grammar and Style:', 'Typos and Errors:'];
+const scale = ['YES', 'Can be improved', 'Must be Improved', 'Not Applicable'];
+
+function Review({ reviewData, handleReviewChange }) {
+  const [review, setReview] = useState(reviewData || {});
+
+  const handleInputChange = (e, criterion) => {
+    const updatedReview = { ...review, [criterion]: e.target.value };
+    setReview(updatedReview);
+    handleReviewChange(updatedReview);
+  }
+
+  return (
+    <div>
+      {criteria.map(criterion => (
+        <div key={criterion}>
+        <h4>{criterion}</h4>
+          <ul>
+            {scale.map((evalScale) => (
+              <li key={evalScale}>
+                <input
+                  type="radio"
+                  value={evalScale}
+                  checked={review[criterion] === evalScale}
+                  onChange={(e) => handleInputChange(e, criterion)}
+                />
+                {evalScale}
+              </li>
+            ))}
+          </ul>        
+        </div>
+      ))}
+      <textarea
+          value={review.comment || ''}
+          onChange={(e) => handleInputChange(e, 'comment')}
+      />
+    </div>
+  )
+}
 
 const DisplaySection = ({ section, summarySection, preEvalSection, updateReview }) => {
   const [reviewSection, setReviewSection] = useState("");
@@ -43,7 +82,7 @@ const DisplaySection = ({ section, summarySection, preEvalSection, updateReview 
   let preEvalSplit = preEvalSection.split("Evaluation Summary:", 2);
   const formattedPreEvalSection = formatPreEvalSection(preEvalSplit[0], preEvalSplit[1]);
 
-  const handleSave = () => {
+  const handleReviewChange = () => {
       updateReview(section, reviewSection);
       setEditing(!editing);
   };
@@ -61,6 +100,8 @@ const DisplaySection = ({ section, summarySection, preEvalSection, updateReview 
             <h5>PreEvaluación</h5>
             <p dangerouslySetInnerHTML={{ __html: formattedPreEvalSection }} />
             <h5>Revisión</h5>
+            <h5>Revisión</h5>
+            <Review reviewData={reviewSection} handleReviewChange={handleReviewChange}/>
             {editing ? (
                 <Form.Group>
                     <Form.Control 
@@ -70,7 +111,7 @@ const DisplaySection = ({ section, summarySection, preEvalSection, updateReview 
                         onChange={e => setReviewSection(e.target.value)} 
                     />
 
-                    <Button className='btn btn-secondary mt-3' variant="primary" onClick={handleSave}>
+                    <Button className='btn btn-secondary mt-3' variant="primary" onClick={handleReviewChange}>
                         Guardar Revisión de Sección
                     </Button>
                 </Form.Group>
@@ -141,7 +182,9 @@ const DownloadArticle = ({pdf, zip, title}) =>{
         )
   };
 
-function ShowArticle() {
+
+  
+function ShowAssignedArticle() {
     const {sessionToken, logout} = useContext(AuthContext); // Accede a username y sessionToken desde el contexto
     const { username, article_title } = useParams();
     const [article, setArticle] = useState({});
@@ -149,7 +192,8 @@ function ShowArticle() {
     const [selectedPdf, setSelectedPdf] = useState(null);
     const sectionOrder = ["Abstract", "Introduction", "Related Word", "Conclusions and future works"];
     const [alert, setAlert] = useState({visible: false, variant: '', message: ''});
-
+    const criteria = ['Motivation:', 'Novelty:', 'Clarity:', 'Grammar and Style:', 'Typos and Errors:'];
+    const scale = ['YES', 'Can be improved', 'Must be Improved', 'Not Applicable'];
     const navigate = useNavigate();
 
     const goBack = () => {
@@ -177,7 +221,7 @@ function ShowArticle() {
             setReview(data.evaluation);
     
             // Agrega la línea para llamar a la función handleShowPdf
-            await handleShowPdf(`/file/${data.submitted_pdf_id}`);
+            //await handleShowPdf(`/file/${data.submitted_pdf_id}`);
         }
     
         fetchArticle();
@@ -196,19 +240,6 @@ function ShowArticle() {
       return firstSectionIndex - secondSectionIndex;
   }) : [];
 
-  const handleShowPdf = async (pdfUrl) => {
-    try {
-      const response = await fetch(`/api/v1${pdfUrl}`);
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-      const blob = await response.blob();
-      const pdf = window.URL.createObjectURL(blob);
-      setSelectedPdf(pdf);
-    } catch (error) {
-      console.error('Error fetching PDF:', error);
-    }
-  };
 
     const addReview = async () => {
         const response = await fetch(`/api/v1/evaluate/${username}/${article_title}`, {
@@ -282,4 +313,4 @@ function ShowArticle() {
     );
 }
 
-export default ShowArticle;
+export default ShowAssignedArticle;

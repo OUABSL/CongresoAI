@@ -4,21 +4,22 @@ from bson.objectid import ObjectId
 from flask import Blueprint, request, jsonify
 from flask import send_file, make_response, Response
 from io import BytesIO
+from bson import ObjectId 
 from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 from werkzeug.utils import secure_filename
-from models.user import User, Author
-from models.tabajo import ScientificArticle, get_file
-from app import mongo, API, llamus_key
-from services.PreEvaluation import PreEvaluation
-from services.summary import ArticleSummarizer
-from services.dataPreparation import DataHandler
-from bson import ObjectId 
-from services.summary import SYSTEM_PROMPT_BASE as prompt_summary
-from services.PreEvaluation import  SYSTEM_PROMPT_BASE as prompt_eval
+from src.models.user import User, Author
+from src.models.tabajo import ScientificArticle, get_file
+from src.app import mongo, API, llamus_key
+from src.services.PreEvaluation import PreEvaluation
+from src.services.summary import ArticleSummarizer
+from src.services.dataPreparation import DataHandler
+from src.services.summary import SYSTEM_PROMPT_BASE as prompt_summary
+from src.services.PreEvaluation import  SYSTEM_PROMPT_BASE as prompt_eval
 
 
 evaluate_bp = Blueprint('evaluate', __name__)
 db = mongo.db.scientific_article
+
 @evaluate_bp.route(API + '/evaluate/<reviewer>', methods = ['GET'])
 @jwt_required()
 def show_articles(reviewer):

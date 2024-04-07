@@ -1,20 +1,19 @@
 from typing import List
 from bson import ObjectId
-import bson
 from mongoengine import Document, StringField, DateTimeField, ListField, ObjectIdField, DictField, ReferenceField
 from mongoengine.base import BaseField
 from mongoengine.errors import ValidationError
-from typing import Tuple
 from datetime import datetime
-import pymongo
-import gridfs
-import json
-from app import mongo
-from models.user import User
+import pymongo, gridfs, json, bson
+from src.app import mongo
+from src.models.user import User
 
 
 class ProcessingState(BaseField):
     STATES = ('Done', 'On Process', 'Fail')
+
+class ReviewResult(BaseField):
+    STATES = ("Pending Review", "Approved", "Rejected", "Pending Improvement")
 
     def validate(self, value):
         if value not in self.STATES:
@@ -22,7 +21,7 @@ class ProcessingState(BaseField):
 
 class ScientificArticle(Document):
     meta = {'alias': 'default'}
-    user = StringField(max_length=200) 
+    author = StringField(max_length=200) 
     title = StringField(required=True, max_length=200)
     description = StringField(required=True, max_length=500)
     key_words = ListField(StringField(required=True, max_length=50))
@@ -34,6 +33,7 @@ class ScientificArticle(Document):
     reviewer = StringField(max_length=200)
     sorted_backup_assignment = ListField()
     review = DictField()
+    review_result = ReviewResult(default="Pending Review")
     last_modified = DateTimeField(default=None)
     latex_project_id = ObjectIdField()
     submitted_pdf_id = ObjectIdField()
@@ -74,7 +74,7 @@ class ScientificArticle(Document):
         self.latex_project_url = file_id
 
     def save_files(self, latex_project=None, submitted_pdf=None): 
-        print(type(mongo.db))  # Check the type of mongo.db
+        #print(type(mongo.db))  # Check the type of mongo.db
     
         # Ensure mongo.db is an instance of Database
         if not isinstance(mongo.db, pymongo.database.Database):
@@ -110,7 +110,7 @@ class ScientificArticle(Document):
 
     def to_dict(self):
         return {
-            'user': self.user if self.user else None,
+            'author': self.author,
             'title': self.title,
             'content': self.content,
             'submission_date': self.submission_date.strftime('%Y-%m-%d %H:%M:%S'),

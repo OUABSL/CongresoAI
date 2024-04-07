@@ -3,8 +3,8 @@ from pathlib import Path
 from pylatexenc.latex2text import LatexNodes2Text
 import zipfile
 import re, io, os, sys 
-from app import mongo
-from models.tabajo import ScientificArticle
+from src.app import mongo
+from src.models.tabajo import ScientificArticle
 from bson.objectid import ObjectId
 
 class DataHandler:

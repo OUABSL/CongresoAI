@@ -23,13 +23,25 @@ const LoginRevisor = () => {
       "password":password
     };
     
-    const response = await fetch('/api/v1/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(payload)
-    });
+    const response = await Promise.race([
+      fetch('/api/v1/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      }),
+      new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('La solicitud ha tardado demasiado, por favor intentelo de nuevo')), 10000)
+      )
+    ]);
+    
+    if(response instanceof Error) {   
+      setAlert({ show: true, message: response.message, variant: "danger" });  
+      setLoading(false);
+      return;
+    }
+
     const result = await response.json()
 
     if (response.status===200) {
