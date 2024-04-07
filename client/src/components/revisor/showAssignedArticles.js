@@ -10,7 +10,7 @@ import '../estilos/show_articles.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenClip, faSpinner, faCircleExclamation } from '@fortawesome/free-solid-svg-icons';
 
-function ShowArticles() {
+function ShowAssignedArticles() {
   const { username, sessionToken, logout } = useContext(AuthContext); // Access username from context
   const {setAlert} = useContext(AlertContext)
 
@@ -88,4 +88,4 @@ function ShowArticles() {
   );
 }
 
-export default ShowArticles;
+export default ShowAssignedArticles;

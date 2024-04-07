@@ -30,13 +30,13 @@ const SubmitArticle = () => {
     const requestOptions = {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer + ${sessionToken}`,
+        'Authorization': `Bearer ${sessionToken}`,
       },
       body: formData
     };
 
     try {
-      const response = await fetch('http://localhost:5000/api/v1/submit', requestOptions);
+      const response = await fetch('/api/v1/submit', requestOptions);
       const data = await response.json();
       if (!response.ok) {
         if(response.status === 401) {
@@ -51,7 +51,7 @@ const SubmitArticle = () => {
         setAlert({ show: true, message: data.message, variant: 'success' });
       }
     } catch (error) {
-      console.error(error.toString());
+      console.error(error);
       setAlert({ show: true, message: error.toString(), variant: 'danger' });
     }
   };

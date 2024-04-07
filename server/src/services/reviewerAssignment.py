@@ -1,8 +1,8 @@
 from typing import List, Tuple
 from collections import defaultdict
 import spacy
-from models.user import Reviewer
-from models.tabajo import ScientificArticle
+from src.models.user import Reviewer
+from src.models.tabajo import ScientificArticle
 
 class ReviewerAssignment:
     def __init__(self, article: ScientificArticle, mongo):
@@ -16,8 +16,10 @@ class ReviewerAssignment:
         token1 = self.nlp(palabra1)
         token2 = self.nlp(palabra2)
 
-        return token1.similarity(token2)
-
+        if token1.has_vector and token2.has_vector:
+            return token1.similarity(token2)
+        else:
+            return 0
     def calcular_similitud(self, reviewer: dict) -> float:
         key_words_article = self.article["key_words"]
         knowledges_reviewer = reviewer["knowledges"]

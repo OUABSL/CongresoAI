@@ -1,10 +1,12 @@
 from flask import Flask, Response, jsonify
 from flask_pymongo import PyMongo
+from pymongo import MongoClient
 import mongoengine as me
-import os
+import os, sys
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 from dotenv import load_dotenv
+
 
 # Cargar el archivo .env
 load_dotenv()
@@ -17,7 +19,6 @@ hf_email = os.environ['EMAIL_HF']
 hf_pass = os.environ['PASS_HF']
 
 
-
 def create_app():
     app = Flask(__name__)
     CORS(app)
@@ -28,17 +29,16 @@ def create_app():
     return app
 
 def create_mongo(app):
-    print(f"Created Database")
-    mongo = PyMongo(app)
-    mongoengine = me.connect('congresodb', host='localhost', port=27017)
-
+    mongo_uri = app.config['MONGO_URI']
+    mongo = PyMongo(app, uri=mongo_uri)
+    mongoengine = me.connect('congresodb', host='mongodb', port=27017)
     return mongo, mongoengine
 
-def register_blueprints():
-    from routes.users import users_bp
-    from routes.submit import submit_bp
-    from routes.evaluate import evaluate_bp
-    from routes.models import models_bp
+def register_blueprints(app):
+    from src.routes.users import users_bp
+    from src.routes.submit import submit_bp
+    from src.routes.evaluate import evaluate_bp
+    from src.routes.models import models_bp
 
     app.register_blueprint(users_bp)
     app.register_blueprint(submit_bp)
@@ -60,17 +60,28 @@ API = '/api/v1'
 app = create_app()
 mongo, mongo_engine = create_mongo(app)
 jwt = JWTManager(app)
+register_blueprints(app)
+
+@app.route("/", methods=["GET"])
+def index():
+    return "Bienvenido en el servidor de The AI Congress!"
 
 
 @app.route(API + "/", methods=["GET"])
-def index():
-    return app.send_static_file('index.html')
+def api_index():
+    return "Bienvenido en el servidor de The AI Congress!"
+
+@app.route(API + "/users", methods=["GET"])
+def users():
+    ls = mongo.db.authors.find()
+    print("ls:" , ls)
+    return f"The system users are mega:\n {(e.username for e in ls)}"
 
 def main():
     """Run the Flask application"""
-    register_blueprints()
-    app.run(host='localhost', port=5000, debug=True)
+    #app.run(host='localhost', port=5000, debug=True)
+    app.run()
 
     
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#     main()

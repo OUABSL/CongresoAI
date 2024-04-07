@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from app import mongo, API
+from src.app import mongo, API
 
 models_bp = Blueprint('models', __name__)
 

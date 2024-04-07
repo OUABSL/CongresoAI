@@ -3,13 +3,14 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_jwt_extended import create_access_token, unset_jwt_cookies
 from flask_jwt_extended import get_jwt_identity
 from flask_jwt_extended import jwt_required
-from models.user import User, Reviewer, Author
-from app import app, mongo, jwt, API
+from src.models.user import User, Reviewer, Author
+from src.app import app, mongo, jwt, API
 
 
 ACCESS_TOKEN = ''
 reviewers_col = mongo.db.reviewers
 authors_col = mongo.db.authors
+
 
 users_bp = Blueprint('users', __name__)
 
