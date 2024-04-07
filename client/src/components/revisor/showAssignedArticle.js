@@ -1,95 +1,109 @@
-import React, { useState, useEffect } from 'react';
-import {Button, Card, Form, Accordion, Alert, Col, Row, DropdownButton, Dropdown } from 'react-bootstrap';
+import React, { useState, useEffect, useContext } from 'react';
+import {Button, Card, Accordion, Row, Col, DropdownButton, Dropdown, Alert, Form } from 'react-bootstrap';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useContext } from "react";
 import AuthContext from "../../context/context";
-import { Viewer } from '@react-pdf-viewer/core';
 import RegenerationModal from './regeneratePreEvaluation'
 import ReassignateReviewButton from './reAssignateReviewer';
 
-// Plugins
+// Constant criteria and scale
+const CRITERIA = ['Motivation:', 'Novelty:', 'Clarity:', 'Grammar and Style:', 'Typos and Errors:'];
+const SCALE = ['YES', 'Can be improved', 'Must be Improved', 'Not Applicable'];
+const SECTION_ORDER = ["Abstract", "Introduction", "Related Word", "Conclusions and future works"];
 
-// Import styles
-import '@react-pdf-viewer/core/lib/styles/index.css';
-import '@react-pdf-viewer/default-layout/lib/styles/index.css';
+const formatPreEvalSection = (preEvalSection) => {
+    if(!preEvalSection) return '';
 
+    let formattedPreEvalSection = preEvalSection.replace(/\d+\./g, ''); 
+    CRITERIA.forEach(criterion => {
+        formattedPreEvalSection = formattedPreEvalSection.replaceAll(criterion,
+        `<br/><b>${criterion}</b><br/>`);
+    });
 
-const criteria = ['Motivation:', 'Novelty:', 'Clarity:', 'Grammar and Style:', 'Typos and Errors:'];
-const scale = ['YES', 'Can be improved', 'Must be Improved', 'Not Applicable'];
+    return formattedPreEvalSection;
+};
 
-function Review({ reviewData, handleReviewChange }) {
-  const [review, setReview] = useState(reviewData || {});
+const handleDownload = async (fileUrl, filename, filetype) => {
+    try {
+        const response = await fetch(`/api/v1${fileUrl}`);
+        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
 
-  const handleInputChange = (e, criterion) => {
-    const updatedReview = { ...review, [criterion]: e.target.value };
-    setReview(updatedReview);
-    handleReviewChange(updatedReview);
-  }
+        const blob = await response.blob();
+        const fileBlob = new Blob([blob], { type: `application/${filetype}` });
+        const url = window.URL.createObjectURL(fileBlob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', `${filename}.${filetype}`);
+        document.body.appendChild(link);
+        link.click();
+        link.parentNode.removeChild(link);
+    } catch (error) {
+        console.error(`Error fetching ${filetype.toUpperCase()} file:`, error);
+    }
+};
 
-  return (
-    <div>
-      {criteria.map(criterion => (
-        <div key={criterion}>
-        <h4>{criterion}</h4>
-          <ul>
-            {scale.map((evalScale) => (
-              <li key={evalScale}>
-                <input
-                  type="radio"
-                  value={evalScale}
-                  checked={review[criterion] === evalScale}
-                  onChange={(e) => handleInputChange(e, criterion)}
+const Review = ({ reviewData, handleReviewChange }) => {
+    const [review, setReview] = useState(reviewData || {});
+  
+    const handleInputChange = (e, criterion) => {
+        const updatedReview = { ...review, [criterion]: e.target.value };
+        setReview(updatedReview);
+        handleReviewChange(updatedReview);
+    };
+  
+    return (
+      <div>
+        {CRITERIA.map(criterion => (
+          <Row key={criterion} className="align-items-center my-2">
+            <Col xs={12} md={4}>
+              <h6>{criterion}</h6>
+            </Col>
+            <Col xs={12} md={8}>
+              {SCALE.map((evalScale) => (
+                <Form.Check 
+                  inline 
+                  label={evalScale} 
+                  name={criterion} 
+                  type="radio" 
+                  id={`radio-${criterion}-${evalScale}`}
+                  value={evalScale} 
+                  checked={review[criterion] === evalScale} 
+                  onChange={(e) => handleInputChange(e, criterion)} 
                 />
-                {evalScale}
-              </li>
-            ))}
-          </ul>        
-        </div>
-      ))}
-      <textarea
-          value={review.comment || ''}
-          onChange={(e) => handleInputChange(e, 'comment')}
-      />
-    </div>
-  )
-}
+              ))}
+            </Col>
+          </Row>
+        ))}
+        <Form.Group controlId="reviewComment" className="mt-3">
+          <Form.Label>Comentario del Revisor</Form.Label>
+          <Form.Control 
+            as="textarea" 
+            rows={3} 
+            value={review.comment || ''} 
+            onChange={(e) => handleInputChange(e, 'comment')}
+          />
+        </Form.Group>
+        <Button variant="primary" onClick={() => handleReviewChange(review)} className="mt-3">
+          Guardar Revisión de Sección
+        </Button>
+      </div>
+    );
+  };
 
 const DisplaySection = ({ section, summarySection, preEvalSection, updateReview }) => {
   const [reviewSection, setReviewSection] = useState("");
   const [editing, setEditing] = useState(true);
   
-
-  const formatPreEvalSection = (preEvalSection) => {
-    if(!preEvalSection) {
-      return '';
-    }
-  
-    const criteria = ['Motivation:', 'Novelty:', 'Clarity:', 'Grammar and Style:', 'Typos and Errors:'];
-  
-    let formattedPreEvalSection = preEvalSection;
-    formattedPreEvalSection = preEvalSection.replace(/\d+\./g, ''); // Elimina todas las apariciones de "(dígito.)"
-
-    
-    for (let criterion of criteria) {
-      formattedPreEvalSection = formattedPreEvalSection.replaceAll(criterion,
-      `<br/><b>${criterion}</b><br/>`);
-    }
-    
-    return formattedPreEvalSection;
-  };
-
-
-  let preEvalSplit = preEvalSection.split("Evaluation Summary:", 2);
-  const formattedPreEvalSection = formatPreEvalSection(preEvalSplit[0], preEvalSplit[1]);
-
   const handleReviewChange = () => {
       updateReview(section, reviewSection);
       setEditing(!editing);
   };
-
+  
   const handleEdit = () => {
       setEditing(true);
   };
+  
+  let preEvalSplit = preEvalSection.split("Evaluation Summary:", 2);
+  const formattedPreEvalSection = formatPreEvalSection(preEvalSplit[0], preEvalSplit[1]);
 
   return (
     <Accordion.Item eventKey={section}>
@@ -100,29 +114,7 @@ const DisplaySection = ({ section, summarySection, preEvalSection, updateReview 
             <h5>PreEvaluación</h5>
             <p dangerouslySetInnerHTML={{ __html: formattedPreEvalSection }} />
             <h5>Revisión</h5>
-            <h5>Revisión</h5>
             <Review reviewData={reviewSection} handleReviewChange={handleReviewChange}/>
-            {editing ? (
-                <Form.Group>
-                    <Form.Control 
-                        as="textarea"
-                        rows = {3}
-                        value={reviewSection}
-                        onChange={e => setReviewSection(e.target.value)} 
-                    />
-
-                    <Button className='btn btn-secondary mt-3' variant="primary" onClick={handleReviewChange}>
-                        Guardar Revisión de Sección
-                    </Button>
-                </Form.Group>
-            ) : (
-                <div className='p-2' style={{cursor: "pointer"}} onClick={handleEdit}>
-                    <Card.Text style={{color: "red"}}>
-                    {reviewSection}
-                </Card.Text>
-                </div>
-                
-            )}
         </Accordion.Body>
     </Accordion.Item>
 );
@@ -261,7 +253,7 @@ function ShowAssignedArticle() {
     };
 
     const updateReview = (section, reviewSection) => {
-        setReview(prevReview => ({ ...prevReview, [section]: reviewSection }));
+        setReview(previousReview => ({ ...previousReview, [section]: reviewSection }));
     };
 
     return (
