@@ -20,6 +20,7 @@ from src.services.PreEvaluation import  SYSTEM_PROMPT_BASE as prompt_eval
 evaluate_bp = Blueprint('evaluate', __name__)
 db = mongo.db.scientific_article
 
+# Obtener los artículos asignados a un revisor en particular
 @evaluate_bp.route(API + '/evaluate/<reviewer>', methods = ['GET'])
 @jwt_required()
 def show_articles(reviewer):
@@ -44,13 +45,13 @@ def show_articles(reviewer):
     else:
         return make_response(jsonify({"msg": "No articles found for this reviewer."}), 404)
 
-
+# Servir un archivo PDF solicitado por su id
 @evaluate_bp.route(API + '/file/<file_id>', methods=['GET'])
 def serve_pdf(file_id):
     pdf_file = get_file(file_id)
     return send_file(BytesIO(pdf_file), mimetype='application/pdf', as_attachment=False, download_name='pdf_file.pdf')
     
-
+# Servir un archivo ZIP solicitado por su id
 @evaluate_bp.route(API + '/zip/<file_id>', methods=['GET'])
 def serve_zip(file_id):
     zip_file = get_file(file_id)
@@ -58,14 +59,11 @@ def serve_zip(file_id):
 
 
 
-
+# Mostrar un artículo específico asignado a un revisor  
 @evaluate_bp.route(API + '/evaluate/<reviewer>/<article_title>', methods = ['GET'])
 #@jwt_required()
 def show_article(reviewer, article_title):
     article = db.find_one({"reviewer":str(reviewer), "title":article_title})
-    print("Hola")
-    article = db.find_one({"title":article_title})
-    print(article)
     if article:
         article.pop("_id")
         article.pop("content")
@@ -75,10 +73,21 @@ def show_article(reviewer, article_title):
     else:
         return make_response(jsonify({"msg": "No articles found for this reviewer."}), 404)
     
-
+# Agregar una revisión a un artículo
 @evaluate_bp.route(API + '/evaluate/<reviewer>/<article_title>', methods = ['POST'])
 def add_review(reviewer, article_title):
     #article = db.find_one({"reviewer":str(reviewer), "title":title, "pending":True})
+    """
+    review = {section1:review_section1, section2: review_section2}
+    review[section] = {
+        Motivation: 'value',
+        Novelty:'YES', 
+        Clarity:'YES',
+        Grammar and Style: 'Can be improved',
+        Typos and Errors:'YES',
+        Review_Comments = 'TEXT REVIEW'}
+    }
+    """
     review_data = request.get_json()
     print(f"Review data:  ${review_data['review']}")
     article = db.find_one({"title":article_title})
@@ -90,7 +99,7 @@ def add_review(reviewer, article_title):
     else:
         return make_response(jsonify({"msg": "No articles found for this reviewer."}), 404)
     
-    
+# Actualizar el estado de un artículo
 @evaluate_bp.route(API + '/evaluate/<reviewer>/<article_title>', methods = ['PUT'])
 #@jwt_required()
 def update_status(reviewer, article_title):
@@ -147,7 +156,7 @@ def regenerate_pre_evaluation_flow(article:ScientificArticle, tasks:dict):
         )
     return None
 
-
+# Genera nueva pre evaluación o resumen usando llamus para un artículo
 @evaluate_bp.route(API + '/evaluate/reevaluate/<reviewer>/<article_title>', methods=['PUT'])
 @jwt_required()
 def regenerate_pre_evaluation(reviewer, article_title):
@@ -164,7 +173,7 @@ def regenerate_pre_evaluation(reviewer, article_title):
     threading.Thread(target=regenerate_pre_evaluation_flow, args=(article, tasks)).start()
     return make_response(jsonify({"msg": "Reevaluation started successfully."}), 200)
 
-
+# Reasigna un artículo a un nuevo revisor
 @evaluate_bp.route(API + '/evaluate/reassignate/<reviewer>/<article_title>', methods=['PUT'])
 @jwt_required()
 def reassignate_reviewer(reviewer, article_title):
