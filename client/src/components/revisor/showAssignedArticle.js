@@ -7,36 +7,11 @@ import ReassignateReviewButton from './reAssignateReviewer';
 
 // Constant criteria and scale
 const CRITERIA = ['Motivation', 'Novelty', 'Clarity', 'Grammar and Style', 'Typos and Errors'];
+const CRITERIA_API = ['motivation', 'novelty', 'clarity', 'grammar_style', 'typos_errors'];
 const SCALE = ['YES', 'Can be improved', 'Must be Improved', 'Not Applicable'];
 const SECTION_ORDER = ["Abstract", "Introduction", "Related Word", "Conclusions and future works"];
-const defaultReviewSection = {
-  'Motivation': '',
-  'Novelty': '', 
-  'Clarity': '',
-  'Grammar and Style': '',
-  'Typos and Errors': '',
-  'comment': ''
-};
+const defaultReviewSection = {'motivation': '',  'novelty': '',  'clarity': '',  'grammar_style': '',  'typos_errors': '',  'comment': ''};
 
-
-const handleDownload = async (fileUrl, filename, filetype) => {
-  try {
-      const response = await fetch(`/api/v1${fileUrl}`);
-      if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-
-      const blob = await response.blob();
-      const fileBlob = new Blob([blob], { type: `application/${filetype}` });
-      const url = window.URL.createObjectURL(fileBlob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', `${filename}.${filetype}`);
-      document.body.appendChild(link);
-      link.click();
-      link.parentNode.removeChild(link);
-  } catch (error) {
-      console.error(`Error fetching ${filetype.toUpperCase()} file:`, error);
-  }
-};
 
 
 const DownloadArticle = ({pdf, zip, title}) =>{
@@ -99,8 +74,8 @@ const formatPreEvalSection = (preEvalSection) => {
 
     let formattedPreEvalSection = preEvalSection.replace(/\d+\./g, ''); 
     CRITERIA.forEach(criterion => {
-        formattedPreEvalSection = formattedPreEvalSection.replaceAll(criterion,
-        `<br/><b>${criterion}</b><br/>`);
+        formattedPreEvalSection = formattedPreEvalSection.replaceAll(criterion+":",
+        `<br/><b>${criterion}+":"</b><br/>`);
     });
 
     return formattedPreEvalSection;
@@ -121,46 +96,46 @@ const Review = ({ reviewData, handleSectionReviewSave }) => {
   };
 
   return (
-      <div>
-          {CRITERIA.map(criterion => (
-              <Row key={criterion} className="align-items-center my-2">
-                  <Col xs={12} md={4}>
-                      <h6>{criterion}</h6>
-                  </Col>
-                  <Col xs={12} md={8}>
+    <div>
+        {CRITERIA.map((criterion, i) => (
+            <Row key={criterion} className="align-items-center my-2">
+              <Col xs={12} md={4}>
+                <h6>{criterion}</h6>
+              </Col>
+              <Col xs={12} md={8}>
                 {SCALE.map((evalScale, index) => (
-                    <Form.Check 
-                        inline 
-                        label={evalScale} 
-                        name={criterion} 
-                        type="radio" 
-                        id={`radio-${criterion}-${evalScale}`}
-                        value={evalScale} 
-                        checked={review[criterion] === evalScale} 
-                        onChange={(e) => handleInputChange(e, criterion)}
-                        key={`${criterion}-${index}`}
-                    />
-                ))}
-            </Col>
-              </Row>
-          ))}
-          <Form.Group controlId="reviewComment" className="mt-3">
-              <Form.Label>Comentario del Revisor</Form.Label>
-              <Form.Control 
-                as="textarea" 
-                rows={3} 
-                value={review.comment || ''} 
-                onChange={(e) => handleInputChange(e, 'comment')}
-              />
-          </Form.Group>
-          <Button 
-            variant="primary" 
-            onClick={handleClickSaveReview} 
-            className="mt-3"
-          >
-            Guardar Revisión de Sección
-          </Button>
-      </div>
+                  <Form.Check 
+                    inline 
+                    label={evalScale} 
+                    name={CRITERIA_API[i]} 
+                    type="radio" 
+                    id={`radio-${CRITERIA_API[i]}-${evalScale}`}
+                    value={evalScale} 
+                    checked={review[CRITERIA_API[i]] === evalScale} 
+                    onChange={(e) => handleInputChange(e, CRITERIA_API[i])}
+                    key={`${criterion}-${index}`}
+                  />
+                  ))}
+              </Col>
+            </Row>
+        ))}
+        <Form.Group controlId="reviewComment" className="mt-3">
+            <Form.Label>Comentario del Revisor</Form.Label>
+            <Form.Control 
+              as="textarea" 
+              rows={3} 
+              value={review.comment || ''} 
+              onChange={(e) => handleInputChange(e, 'comment')}
+            />
+        </Form.Group>
+        <Button 
+          variant="primary" 
+          onClick={handleClickSaveReview} 
+          className="mt-3"
+        >
+          Guardar Revisión de Sección
+        </Button>
+    </div>
   );
 };
 
@@ -214,6 +189,25 @@ function ShowAssignedArticle() {
     const goBack = () => {
       navigate(-1);
   }
+
+  const updateReviewSection = async () => {
+        const response = await fetch(`/api/v1/evaluate/${username}/${article_title}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ review })
+        });
+        const data = await response.json();
+        window.scrollTo(0, 0); // Scroll to top
+
+        if(response.ok) {
+        setAlert({ visible: true, variant: 'success', message: 'Revisión guardada con éxito.' });
+        } else {
+          setAlert({ visible: true, variant: 'danger', message: 'No se pudo guardar la revisión. Inténtalo de nuevo.' });
+        }
+      setTimeout(()=> setAlert({visible: false, variant: '', message: ''}), 1200)
+
+      console.log(data); 
+      }
 
 
 

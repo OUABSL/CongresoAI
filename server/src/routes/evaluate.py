@@ -94,11 +94,51 @@ def add_review(reviewer, article_title):
 
     if article:
         new_review = { "review": review_data['review'] }
+        print(f"Review: {new_review}")
         db.update_one({"title":article_title}, {"$set": new_review})
         return make_response(jsonify({"msg": "Review successfully added!"}), 201)
     else:
         return make_response(jsonify({"msg": "No articles found for this reviewer."}), 404)
     
+
+# Actualizar una revisión a un artículo
+@evaluate_bp.route(API + '/evaluate/<reviewer>/<article_title>', methods = ['PUT'])
+def update_review(reviewer, article_title):
+    """
+    review = {section1:review_section1, section2: review_section2}
+    review[section] = {
+        Motivation: 'value',
+        Novelty:'YES', 
+        Clarity:'YES',
+        Grammar and Style: 'Can be improved',
+        Typos and Errors:'YES',
+        Review_Comments = 'TEXT REVIEW'}
+    }
+    """
+
+    review_data = request.get_json()
+    article = db.find_one({"reviewer":str(reviewer), "title":article_title})
+    review = article.get("review")
+
+    if article:
+        if review:
+            new_partial_review = review_data
+            for section_name in new_partial_review.keys():
+                review[section_name] = new_partial_review[section_name]
+
+            print(f"Review: {new_partial_review}")
+            db.update_one(
+                {"reviewer": reviewer, "title": article_title}, 
+                {"$set": {"review": review}}
+            )        
+        else:
+            return make_response(jsonify({"msg": "No article review found for this reviewer."}), 404)
+
+        return make_response(jsonify({"msg": "Review successfully updated!"}), 200)
+    else:
+        return make_response(jsonify({"msg": "No article found for this reviewer."}), 404)
+    
+
 # Actualizar el estado de un artículo
 @evaluate_bp.route(API + '/evaluate/<reviewer>/<article_title>', methods = ['PUT'])
 #@jwt_required()
