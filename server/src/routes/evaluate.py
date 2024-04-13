@@ -115,7 +115,7 @@ def update_review(reviewer, article_title):
         Review_Comments = 'TEXT REVIEW'}
     }
     """
-
+    
     review_data = request.get_json()
     article = db.find_one({"reviewer":str(reviewer), "title":article_title})
     review = article.get("review")
