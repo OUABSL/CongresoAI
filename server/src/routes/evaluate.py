@@ -84,18 +84,16 @@ def add_review(reviewer, article_title):
     review_data = request.get_json()
 
     # Ensure that review data is provided
-    if 'review' not in review_data or 'resultReview' not in review_data:
+    if 'review' not in review_data or 'review_result' not in review_data:
         abort(400, description="Missing required review data.")
     print(f"Review data:  ${review_data['review']}")
     updated_review = dict(review_data['review'])
-    for section_data in updated_review.keys():
-        section_name = section_data.get('section_name')
-        section_review = section_data.get('section_review')
-        if section_name and section_review:
-            review[section_name] = section_review
+    for section_name, section_review in updated_review.items():
+        review[section_name] = section_review
 
+    review_result = str(review_data['review_result'])
     # Update the article with the new review
-    new_review = {"review": review_data['review'], "result_review": review['resultReview']}
+    new_review = {"review": review, "review_result": review_result}
     print(f"Review: {new_review}")
     
     db.update_one({"title":article_title}, {"$set": new_review})
