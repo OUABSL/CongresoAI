@@ -5,12 +5,22 @@ import { Viewer } from '@react-pdf-viewer/core';
 import AuthContext from "../../context/context";
 import { useContext } from "react";
 
-const DisplaySection = ({ section, content }) => {
+const DisplaySectionReview = ({ section, review }) => {
   return (
     <Accordion.Item eventKey={section}>
         <Accordion.Header>{section}</Accordion.Header>
         <Accordion.Body>
-            <p>{content}</p>
+        {review && Object.keys(review).length > 0 &&
+            Object.entries(review).map(([criterion, result]) => (
+              <p key={criterion}><strong>{criterion}:</strong> {result}</p>
+            ))
+          }
+          <Card style={{ marginTop: '15px' }}>
+            <Card.Body>
+              <Card.Title>Comment</Card.Title>
+              <Card.Text>{review.comment}</Card.Text>
+            </Card.Body>
+          </Card>
         </Accordion.Body>
     </Accordion.Item>
   );
@@ -49,9 +59,9 @@ const ShowSubmittedArticle = () => {
         <Card.Title>{article.title}</Card.Title>
         <Card.Text>{article.description}</Card.Text>
         <Accordion defaultActiveKey={"Introduction"}>
-          {article && article.summary && Object.keys(article.summary).length > 0 &&
-            Object.entries(article.summary).map(([section, content]) => (
-                <DisplaySection key={section} section={section} content={content} />
+          {article && article.review && Object.keys(article.review).length > 0 &&
+            Object.entries(article.review).map(([section, review]) => (
+                <DisplaySectionReview key={section} section={section} content={review} />
             ))
           }
         </Accordion>

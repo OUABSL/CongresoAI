@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Button, Card, Accordion, Row, Col, DropdownButton, Dropdown, Alert, Form } from 'react-bootstrap';
+import { Button, Card, Accordion, Row, Modal, Col, DropdownButton, Dropdown, Alert, Form } from 'react-bootstrap';
 import { useParams, useNavigate } from 'react-router-dom';
 import AuthContext from "../../context/context";
 import RegenerationModal from './regeneratePreEvaluation'
@@ -11,73 +11,58 @@ const CRITERIA_API = ['motivation', 'novelty', 'clarity', 'grammar_style', 'typo
 const SCALE = ['YES', 'Can be improved', 'Must be Improved', 'Not Applicable'];
 const SECTION_ORDER = ["Abstract", "Introduction", "Related Work", "Conclusions and future works"];
 const defaultReviewSection = { 'motivation': '', 'novelty': '', 'clarity': '', 'grammar_style': '', 'typos_errors': '', 'comment': '' };
+const STATES_REVIEW = ["Pendiente de Revisión", "Aprobado", "Rechazado", "Pendiente de Mejora"];
+const STATES_REVIEW_API = ["Pendiente de Revisión", "Aprobado", "Rechazado", "Pendiente de Mejora"];
+
 
 const DownloadArticle = ({ pdf, zip, title }) => {
 
-    const handleDownloadPdf = async (pdfUrl, filename) => {
+    const handleDownload = async (fileUrl, filename, type) => {
         try {
-            const response = await fetch(`/api/v1${pdfUrl}`);
+            const response = await fetch(`/api/v1${fileUrl}`);
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
             const blob = await response.blob();
-            const pdfBlob = new Blob([blob], { type: 'application/pdf' });
-            const url = window.URL.createObjectURL(pdfBlob);
+            const fileBlob = new Blob([blob], { type: type });
+            const url = window.URL.createObjectURL(fileBlob);
             const link = document.createElement('a');
             link.href = url;
-            link.setAttribute('download', `${filename}.pdf`);
+            link.setAttribute('download', `${filename}.${type==='application/pdf'?'pdf':'zip'}`);
             document.body.appendChild(link);
             link.click();
             link.parentNode.removeChild(link);
         } catch (error) {
-            console.error('Error fetching PDF:', error);
+            console.error(`Error fetching ${type==='application/pdf'?'PDF':'Zip'}: `, error);
         }
     };
-    const handleDownloadZip = async (zipUrl, filename) => {
-        try {
-            const response = await fetch(`/api/v1${zipUrl}`);
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            }
-            const blob = await response.blob();
-            const url = window.URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.setAttribute('download', `${filename}.zip`);
-            document.body.appendChild(link);
-            link.click();
-            link.parentNode.removeChild(link);
-        } catch (error) {
-            console.error('Error fetching Zip:', error);
-        }
-    };
-
+  
     return (
-
-        <>
-            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                <DropdownButton id="dropdown-button" title="Descargar">
-                    <Dropdown.Item onClick={() => handleDownloadPdf(pdf, title)}>Descargar PDF</Dropdown.Item>
-                    <Dropdown.Item onClick={() => handleDownloadZip(zip, title)}>Descargar ZIP</Dropdown.Item>
-                </DropdownButton>
-            </div>
-        </>
+        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+            <DropdownButton id="dropdown-button" title="Descargar">
+                <Dropdown.Item onClick={() => handleDownload(pdf, title, 'application/pdf')}>Descargar PDF</Dropdown.Item>
+                <Dropdown.Item onClick={() => handleDownload(zip, title, 'application/zip')}>Descargar ZIP</Dropdown.Item>
+            </DropdownButton>
+        </div>
     )
 };
 
+
+
 const formatPreEvalSection = (preEvalSection) => {
-    if (!preEvalSection) return '';
+  if (!preEvalSection) return '';
 
-    let formattedPreEvalSection = preEvalSection.replace(/\d+\./g, '');
-    CRITERIA.forEach(criterion => {
-        formattedPreEvalSection = formattedPreEvalSection.replaceAll(criterion + ":", `<br/><b>${criterion}+":"</b><br/>`);
-    });
+  let formattedPreEvalSection = preEvalSection.replace(/\d+\./g, '');
+  CRITERIA.forEach(criterion => {
+      formattedPreEvalSection = formattedPreEvalSection.replaceAll(criterion + ":", `<br/><b>${criterion}+":"</b><br/>`);
+  });
 
-    return formattedPreEvalSection;
+  return formattedPreEvalSection;
 };
 
-const Review = ({ reviewData, handleSectionReviewSave }) => {
-    const [review, setReview] = useState(reviewData);
+
+const SectionReview = ({ reviewData, sectionName, handleSectionReviewSave, handleSectionUpdate }) => {
+    const [sectionReview, setSectionReview] = useState(reviewData);
     const [previousReview, setPreviousReview] = useState(null);
     const [editing, setEditing] = useState(true);
 
@@ -86,39 +71,62 @@ const Review = ({ reviewData, handleSectionReviewSave }) => {
     }, [reviewData]);
 
     const handleInputChange = (e, criterion) => {
-        const updatedReview = { ...review, [criterion]: e.target.value };
-        setReview(updatedReview);
+        const updatedReview = { ...sectionReview, [criterion]: e.target.value };
+        setSectionReview(updatedReview);
+        console.log("listo:\n", sectionReview);
     };
 
     const handleClickSaveReview = () => {
-        handleSectionReviewSave(review);
-    };
+      handleSectionReviewSave(sectionReview);
+      handleSectionUpdate(sectionName, sectionReview);
+      console.log("Review: handleInputChange: ", sectionReview);
+      setEditing(false);
+
+  };
 
     return (
         <div>
             {editing ? (
-                CRITERIA.map((criterion, i) => (
-                    <Row key={criterion} className="align-items-center my-2">
-                        <Col xs={12} md={4}>
-                            <h6>{criterion}</h6>
-                        </Col>
-                        <Col xs={12} md={8}>
-                            {SCALE.map((evalScale, index) => (
-                                <Form.Check
-                                    inline
-                                    label={evalScale}
-                                    name={CRITERIA_API[i]}
-                                    type="radio"
-                                    id={`radio-${CRITERIA_API[i]}-${evalScale}`}
-                                    value={evalScale}
-                                    checked={review[CRITERIA_API[i]] === evalScale}
-                                    onChange={(e) => handleInputChange(e, CRITERIA_API[i])}
-                                    key={`${criterion}-${index}`}
-                                />
-                            ))}
-                        </Col>
-                    </Row>
-                ))
+                <>
+                    {CRITERIA.map((criterion, i) => (
+                        <Row key={criterion} className="align-items-center my-2">
+                            <Col xs={12} md={4}>
+                                <h6>{criterion}</h6>
+                            </Col>
+                            <Col xs={12} md={8}>
+                                {SCALE.map((evalScale, index) => (
+                                    <Form.Check
+                                        inline
+                                        label={evalScale}
+                                        name={CRITERIA_API[i]}
+                                        type="radio"
+                                        id={`radio-${CRITERIA_API[i]}-${evalScale}`}
+                                        value={evalScale}
+                                        checked={sectionReview[CRITERIA_API[i]] === evalScale}
+                                        onChange={(e) => handleInputChange(e, CRITERIA_API[i])}
+                                        key={`${criterion}-${index}`}
+                                    />
+                                ))}
+                            </Col>
+                        </Row>
+                    ))}
+                    <Form.Group controlId="reviewComment" className="mt-3">
+                        <Form.Label>Comentario del Revisor</Form.Label>
+                        <Form.Control
+                            as="textarea"
+                            rows={3}
+                            value={sectionReview.comment || ''}
+                            onChange={(e) => handleInputChange(e, 'comment')}
+                        />
+                    </Form.Group>
+                    <Button
+                        variant="primary"
+                        onClick={handleClickSaveReview}
+                        className="mt-3"
+                    >
+                        Guardar Revisión de Sección
+                    </Button>
+                </>
             ) : (
                 previousReview && (
                     <div className="mt-3">
@@ -136,28 +144,12 @@ const Review = ({ reviewData, handleSectionReviewSave }) => {
                     </div>
                 )
             )}
-            <Form.Group controlId="reviewComment" className="mt-3">
-                <Form.Label>Comentario del Revisor</Form.Label>
-                <Form.Control
-                    as="textarea"
-                    rows={3}
-                    value={review.comment || ''}
-                    onChange={(e) => handleInputChange(e, 'comment')}
-                />
-            </Form.Group>
-            <Button
-                variant="primary"
-                onClick={handleClickSaveReview}
-                className="mt-3"
-            >
-                Guardar Revisión de Sección
-            </Button>
         </div>
     );
 };
 
 
-const DisplaySection = ({ section, summarySection, preEvalSection, actualReviewSection }) => {
+const DisplaySection = ({ sectionName, summarySection, preEvalSection, actualReviewSection, handleSectionUpdate }) => {
     const [reviewSection, setReviewSection] = useState(actualReviewSection || defaultReviewSection);
     const [editing, setEditing] = useState(true);
 
@@ -168,9 +160,12 @@ const DisplaySection = ({ section, summarySection, preEvalSection, actualReviewS
     }, [actualReviewSection]);
 
     const handleSectionReviewSave = (updatedReview) => {
-        setReviewSection(updatedReview);
-        setEditing(!editing);
-    };
+      setReviewSection(updatedReview);
+      setEditing(!editing);
+      handleSectionUpdate(sectionName, updatedReview);
+      console.log("Review: handleInputChange: ", reviewSection , "\n\n");
+
+  };
 
     const handleEdit = () => {
         setEditing(true);
@@ -180,17 +175,19 @@ const DisplaySection = ({ section, summarySection, preEvalSection, actualReviewS
     const formattedPreEvalSection = formatPreEvalSection(preEvalSplit[0], preEvalSplit[1]);
 
     return (
-        <Accordion.Item eventKey={section}>
-            <Accordion.Header>{section}</Accordion.Header>
+        <Accordion.Item eventKey={sectionName}>
+            <Accordion.Header>{sectionName}</Accordion.Header>
             <Accordion.Body>
                 <h5>Resumen</h5>
                 <p>{summarySection}</p>
                 <h5>PreEvaluación</h5>
                 <p dangerouslySetInnerHTML={{ __html: formattedPreEvalSection }} />
                 <h5>Revisión</h5>
-                <Review
+                <SectionReview
                     reviewData={reviewSection}
+                    sectionName={sectionName}
                     handleSectionReviewSave={handleSectionReviewSave}
+                    handleSectionUpdate={handleSectionUpdate}  // Pass the prop down to Section component
                 />
             </Accordion.Body>
         </Accordion.Item>
@@ -200,35 +197,23 @@ const DisplaySection = ({ section, summarySection, preEvalSection, actualReviewS
 
 
 function ShowAssignedArticle() {
+    const STATES_REVIEW = ["Pendiente de Revisión", "Aprobado", "Rechazado", "Pendiente de Mejora"];
     const { sessionToken, logout } = useContext(AuthContext); // Accede a username y sessionToken desde el contexto
     const { username, article_title } = useParams();
     const [article, setArticle] = useState({});
     const [review, setReview] = useState({});
+    const [resultReview, setResultReview] = useState({});
     const [alert, setAlert] = useState({ visible: false, variant: '', message: '' });
+    const [showModal, setShowModal] = useState(false);
     const navigate = useNavigate();
 
     const goBack = () => {
         navigate(-1);
     }
 
-    const updateReviewSection = async () => {
-        const response = await fetch(`/api/v1/evaluate/${username}/${article_title}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ review })
-        });
-        const data = await response.json();
-        window.scrollTo(0, 0); // Scroll to top
-
-        if (response.ok) {
-            setAlert({ visible: true, variant: 'success', message: 'Revisión guardada con éxito.' });
-        } else {
-            setAlert({ visible: true, variant: 'danger', message: 'No se pudo guardar la revisión. Inténtalo de nuevo.' });
-        }
-        setTimeout(() => setAlert({ visible: false, variant: '', message: '' }), 1200)
-
-        console.log(data);
-    }
+    const updateSectionReview = (sectionName, updatedReview) => {
+      setReview({ ...review, [sectionName]: updatedReview });
+  };
 
 
 
@@ -248,8 +233,6 @@ function ShowAssignedArticle() {
             }
             const data = await response.json();
             setArticle(data);
-            setReview(data.evaluation);
-
             // Agrega la línea para llamar a la función handleShowPdf
             //await handleShowPdf(`/file/${data.submitted_pdf_id}`);
         }
@@ -257,6 +240,28 @@ function ShowAssignedArticle() {
         fetchArticle();
     }, [username, article_title, sessionToken, logout]);
 
+
+    const handleStateSelect = (state) => {
+        let enState;
+        switch(state) {
+          case "Pendiente de Revisión":
+            enState = "Pending Review";
+            break;
+          case "Aprobado":
+            enState = "Approved";
+            break;
+          case "Rechazado":
+            enState = "Rejected";
+            break;
+          case "Pendiente de Mejora":
+            enState = "Pending Improvement";
+            break;
+          default:
+            enState = "";
+            break;      
+        }
+        setResultReview(enState);
+      };
 
     const sortSections = article.summary ? Object.entries(article.summary).sort(([firstSection], [secondSection]) => {
         const firstSectionIndex = SECTION_ORDER.indexOf(firstSection);
@@ -275,9 +280,10 @@ function ShowAssignedArticle() {
         const response = await fetch(`/api/v1/evaluate/${username}/${article_title}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ review })
+            body: JSON.stringify({ review, resultReview})
         });
         const data = await response.json();
+        setShowModal(false);
         window.scrollTo(0, 0); // Scroll to top
 
         if (response.ok) {
@@ -285,7 +291,9 @@ function ShowAssignedArticle() {
         } else {
             setAlert({ visible: true, variant: 'danger', message: 'No se pudo guardar la revisión. Inténtalo de nuevo.' });
         }
+
         setTimeout(() => setAlert({ visible: false, variant: '', message: '' }), 1200)
+
 
         console.log("Posteed: ", review, "\n", data);
     };
@@ -319,19 +327,53 @@ function ShowAssignedArticle() {
                         <Card.Title>{article.title}</Card.Title>
                         <Card.Text>{article.description}</Card.Text>
                         <Accordion defaultActiveKey={"Introduction"}>
-                            {article && article.summary && Object.keys(article.summary).length > 0 && sortSections.map(([section, summarySection]) => (
+                            {article && article.summary && Object.keys(article.summary).length > 0 && sortSections.map(([sectionName, summarySection]) => (
                                 <DisplaySection
-                                    key={section}
-                                    section={section}
+                                    key={sectionName}
+                                    sectionName={sectionName}
                                     summarySection={summarySection}
-                                    preEvalSection={article.evaluation[section]}
-                                    actualReviewSection={article.review && article.review[section] ? article.review[section] : null}
+                                    preEvalSection={article.evaluation[sectionName]}
+                                    actualReviewSection={article.review && article.review[sectionName] ? article.review[sectionName] : null}
+                                    handleSectionUpdate={updateSectionReview}
                                 />
                             ))}
                         </Accordion>
-                        <Button className="btn bg-info mt-3" variant="primary" onClick={addReview}>
+                        <Button className="btn bg-info mt-3" variant="primary" onClick={() => setShowModal(true)}>
                             Guardar Revisión
                         </Button>
+
+                        <Modal
+                            show={showModal}
+                            onHide={() => setShowModal(false)}
+                            >
+                            <Modal.Header closeButton>
+                                <Modal.Title>Elige un estado para la revisión</Modal.Title>
+                            </Modal.Header>
+                            <Modal.Body>
+                            {STATES_REVIEW.map((state, index) => (
+                                <Form.Check 
+                                    inline
+                                    type="radio"
+                                    key={`i-${index}`}
+                                    name={state}
+                                    id={`radio-${state}`}
+                                    label={state}
+                                    value={state}
+                                    onChange={(s) => handleStateSelect(s)}
+                                />
+                            ))}
+                            </Modal.Body>
+                            <Modal.Footer>
+                                <Button variant="secondary" onClick={() => setShowModal(false)}>
+                                Close
+                                </Button>
+                                <Button variant="primary" onClick={addReview}>
+                                Confirmar Elección
+                                </Button>
+                            </Modal.Footer>
+                            </Modal>
+
+
                     </Card.Body>
                 </Card>
             </Row>

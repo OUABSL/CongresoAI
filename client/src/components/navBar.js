@@ -1,101 +1,65 @@
-import React, {useState, useEffect} from 'react';
-import Container from 'react-bootstrap/Container';
-import Nav from 'react-bootstrap/Nav';
-import Navbar from 'react-bootstrap/Navbar';
-import NavDropdown from 'react-bootstrap/NavDropdown';
-import {Link, NavLink} from 'react-router-dom';
-import {useContext} from "react";
-import AuthContext from "../context/context";
-import logo from '.././ressources/logo.png';
-import './estilos/navBar.css'
+import React, { useState, useEffect } from 'react';
+import { Container, Nav, Navbar, NavDropdown } from 'react-bootstrap';
+import { Link, NavLink } from 'react-router-dom';
+import { useContext } from 'react';
+import AuthContext from '../context/context';
+import logo from '../ressources/logo.png';
+import './estilos/navBar.css';
+
+const navigationItems = {
+  home: '/',
+  contactUs: '/contactus',
+  portal: '/portal'
+};
 
 const MyNavbar = () => {
-  const [activeLink, setActiveLink] = useState(null);
-  const [loggedIn, setLoggedIn] = useState(false);
-  const [portalLink, setPortalLink] = useState("");
+  const [activeLink, setActiveLink] = useState(navigationItems.home);
   const { username, sessionToken, role, logout } = useContext(AuthContext); 
+  const isLoggedIn = Boolean(sessionToken && username && role);
+  const portalLink = `portal-${role}`;
 
-
-
-
-
-  
   useEffect(() => {
-    if (sessionToken!==null && username!==null && role!==null){
-      setLoggedIn(true);
-    }
-    else{
-      setLoggedIn(false)
-    }
-    if (role === "author") {setPortalLink("portal-author")}
-    else if (role === "reviewer") {setPortalLink("portal-reviewer")}
-  }, [role, sessionToken, username]);
+    setActiveLink(window.location.pathname);
+  }, []);
 
-  const handleLinkClick = (link) => {
-    setActiveLink(link);
-  };
+  const renderNavigationLink = (path, title, exact = false) => (
+    <Nav.Item className={activeLink === path ? 'nav-item active' : 'nav-item'}>
+      <Link className="nav-link" to={path} onClick={() => setActiveLink(path)}>
+        {title}
+      </Link>
+    </Nav.Item>
+  );
 
   return (
     <Navbar collapseOnSelect expand="lg" className="navbar navbar-dark bg-primary">
       <Container>
-      <Link className="navbar-brand d-flex align-items-center" to="/" onClick={() => handleLinkClick('/')}>
-            <img src={logo} width="60" height="60" className="d-inline-block align-top" alt="logo"/> 
-            <span className="mx-2">The AI Congress</span>
+        <Link className="navbar-brand d-flex align-items-center" to={navigationItems.home} onClick={() => setActiveLink(navigationItems.home)}>
+          <img src={logo} width="60" height="60" className="d-inline-block align-top" alt="logo"/> 
+          <span className="mx-2">The AI Congress</span>
         </Link>
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse id="responsive-navbar-nav">
           <Nav className="me-auto">
-          <Nav.Item className={activeLink === '/' ? 'nav-item active' : 'nav-item'}>
-              <Link className="nav-link" to="/" onClick={() => handleLinkClick('/')}>Inicio</Link>
-            </Nav.Item>
-            {/* <Nav.Item className={activeLink === '/about' ? 'nav-item active' : 'nav-item'}>
-              <Link className="nav-link" to="/about" onClick={() => handleLinkClick('/about')}>Sobre Nosotros</Link>
-            </Nav.Item> */}
-            {
-              loggedIn && role === "author" &&
-              <Nav.Item className={activeLink === `/${portalLink}/articles/${username}` ? 'nav-item active' : 'nav-item'}>
-                <Link className="nav-link" to={`/${portalLink}/articles/${username}`} onClick={() => handleLinkClick(`/${portalLink}/submit`)}>Artículos Presentados</Link>
-              </Nav.Item>
-              &&
-              <Nav.Item className={activeLink === `/${portalLink}/submit` ? 'nav-item active' : 'nav-item'}>
-                <Link className="nav-link" to={`/${portalLink}/submit`} onClick={() => handleLinkClick(`/${portalLink}/submit`)}>Subir Artículo</Link>
-              </Nav.Item>
+            {renderNavigationLink(navigationItems.home, 'Inicio')}
+            {isLoggedIn && role === 'author' && renderNavigationLink(`/${portalLink}/articles/${username}`, 'Artículos Presentados')}
+            {isLoggedIn && role === 'author' && renderNavigationLink(`/${portalLink}/submit`, 'Subir Artículo')}
+            {isLoggedIn && role === 'reviewer' && renderNavigationLink(`/${portalLink}/articles/${username}`, 'Artículos Asignados')}
+            {renderNavigationLink(navigationItems.contactus, 'Contáctanos')}
+          </Nav>
 
-            }
-            {
-              loggedIn && role === "reviewer" &&
-              <Nav.Item className={activeLink === `/${portalLink}/articles/${username}` ? 'nav-item active' : 'nav-item'}>
-                <Link className="nav-link" to={`/${portalLink}/articles/${username}`} onClick={() => handleLinkClick(`/${portalLink}/submit`)}>Artículos Asignados</Link>
-              </Nav.Item>
-            }
-            <Nav.Item className={activeLink === '/contactus' ? 'nav-item active' : 'nav-item'}>
-              <Link className="nav-link" to="/contactus" onClick={() => handleLinkClick('/contactus')}>Contáctanos</Link>
-            </Nav.Item>
+          {!isLoggedIn && renderNavigationLink(navigationItems.portal, 'Portal', true)}
+
+          {isLoggedIn && (
+            <Nav>
+              <NavDropdown title={username} id="nav-dropdown">
+                <NavDropdown.Item as="div">
+                  <NavLink to={`/${portalLink}/profile/${username}`}>Profile</NavLink>
+                </NavDropdown.Item>
+                <NavDropdown.Divider />
+                <NavDropdown.Item onClick={logout}>Logout</NavDropdown.Item>
+              </NavDropdown>
             </Nav>
-
-          <Nav>
-          {!loggedIn &&(
-            <Nav.Item className={activeLink === '/portal' ? 'nav-item active' : 'nav-item'}>
-              <Link className="nav-link" to="/portal" onClick={() => handleLinkClick('/portal')}>Portal</Link>
-            </Nav.Item>
-            )}
-          </Nav>
-
-          {loggedIn && (
-          <Nav>
-           <NavDropdown title={username} id="nav-dropdown">
-              <NavDropdown.Item as="div">
-                <NavLink to={`/${portalLink}/profile/${username}`}>
-                  Profile
-                </NavLink>
-              </NavDropdown.Item>
-              <NavDropdown.Divider />
-              <NavDropdown.Item onClick={logout}>
-                Logout
-              </NavDropdown.Item>
-            </NavDropdown>
-          </Nav>
-        )}
+          )}
         </Navbar.Collapse>
       </Container>
     </Navbar>
