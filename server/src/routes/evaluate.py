@@ -1,7 +1,7 @@
 from datetime import datetime
 import threading
 from bson.objectid import ObjectId
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, abort
 from flask import send_file, make_response, Response
 from io import BytesIO
 from bson import ObjectId 
@@ -76,30 +76,31 @@ def show_article(reviewer, article_title):
 # Agregar una revisión a un artículo
 @evaluate_bp.route(API + '/evaluate/<reviewer>/<article_title>', methods = ['POST'])
 def add_review(reviewer, article_title):
-    #article = db.find_one({"reviewer":str(reviewer), "title":title, "pending":True})
-    """
-    review = {section1:review_section1, section2: review_section2}
-    review[section] = {
-        Motivation: 'value',
-        Novelty:'YES', 
-        Clarity:'YES',
-        Grammar and Style: 'Can be improved',
-        Typos and Errors:'YES',
-        Review_Comments = 'TEXT REVIEW'}
-    }
-    """
-    review_data = request.get_json()
-    print(f"Review data:  ${review_data['review']}")
-    article = db.find_one({"title":article_title})
+    article = db.find_one({"reviewer":str(reviewer), "title":article_title})
+    review = article.get('review')
 
-    if article:
-        new_review = { "review": review_data['review'] }
-        print(f"Review: {new_review}")
-        db.update_one({"title":article_title}, {"$set": new_review})
-        return make_response(jsonify({"msg": "Review successfully added!"}), 201)
-    else:
-        return make_response(jsonify({"msg": "No articles found for this reviewer."}), 404)
+    if not article:
+        abort(404, description="No articles found for this reviewer.") 
+    review_data = request.get_json()
+
+    # Ensure that review data is provided
+    if 'review' not in review_data or 'resultReview' not in review_data:
+        abort(400, description="Missing required review data.")
+    print(f"Review data:  ${review_data['review']}")
+    updated_review = dict(review_data['review'])
+    for section_data in updated_review.keys():
+        section_name = section_data.get('section_name')
+        section_review = section_data.get('section_review')
+        if section_name and section_review:
+            review[section_name] = section_review
+
+    # Update the article with the new review
+    new_review = {"review": review_data['review'], "result_review": review['resultReview']}
+    print(f"Review: {new_review}")
     
+    db.update_one({"title":article_title}, {"$set": new_review})
+
+    return make_response(jsonify({"msg": "Review successfully added!"}), 201)
 
 # Actualizar una revisión a un artículo
 @evaluate_bp.route(API + '/evaluate/<reviewer>/<article_title>', methods = ['PUT'])
@@ -143,9 +144,8 @@ def update_review(reviewer, article_title):
 @evaluate_bp.route(API + '/evaluate/<reviewer>/<article_title>', methods = ['PUT'])
 #@jwt_required()
 def update_status(reviewer, article_title):
-    article = db.find_one({"reviewer":str(reviewer), "title":article_title, "pending":True})
+    article = db.find_one({"reviewer":str(reviewer), "title":article_title})
     status = request.get_json()
-    #article = db.find_one({"title":article_title})
     if article:
         update_status = { "pending": status }
         db.update_one({"title":article_title}, {"$set": update_status})

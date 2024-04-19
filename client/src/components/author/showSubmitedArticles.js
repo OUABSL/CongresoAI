@@ -8,7 +8,7 @@ import { AlertContext } from '../../context/alertProvider';
 import '../estilos/show_articles.css'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {faEye} from '@fortawesome/free-solid-svg-icons';
+import {faEye, faEyeSlash} from '@fortawesome/free-solid-svg-icons';
 
 function ShowSubmittedArticles() {
   const { username, sessionToken, logout } = useContext(AuthContext);
@@ -68,11 +68,16 @@ function ShowSubmittedArticles() {
             <td>{article.submission_date}</td>
             <td>{article.last_modified}</td>
             <td className='open-article'>
-            <div className='center-content' onClick={() => navigate(`/portal-author/articles/${username}/${article.title}`)}>
-              <FontAwesomeIcon icon={faEye} />
-              <p>Ver artículo</p>
-            </div>
-            </td>
+                {article.review_result !== "Pending Review" ? (
+                  <div className='center-content' onClick={() => navigate(`/portal-author/articles/${username}/${article.title}`)}>
+                    <FontAwesomeIcon icon={faEye} />
+                  </div>
+                ) : (
+                  <div className='center-content'>
+                    <FontAwesomeIcon icon={faEyeSlash} />
+                  </div>
+                )}
+              </td>
           </tr>
           ))}
         </tbody>
