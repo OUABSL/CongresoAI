@@ -11,7 +11,6 @@ function AuthorProfile() {
   const {sessionToken, logout } = useContext(AuthContext); 
   const [editing, setEditing] = useState(false);
   const [alert, setAlert] = useState({visible: false, variant: '', message: ''});
-  console.log(sessionToken);
 
   useEffect(() => {
     const getProfile = async () => {

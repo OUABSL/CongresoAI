@@ -1,8 +1,44 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Accordion } from 'react-bootstrap';
-import { useParams } from 'react-router-dom';
+import { Card, Accordion, DropdownButton, Dropdown, Row, Col, Button} from 'react-bootstrap';
+import { useParams, useNavigate } from 'react-router-dom';
 import AuthContext from "../../context/context";
 import { useContext } from "react";
+
+
+const DownloadArticle = ({ pdf, zip, title }) => {
+
+  const handleDownload = async (fileUrl, filename, type) => {
+      try {
+          const response = await fetch(`/api/v1${fileUrl}`);
+          if (!response.ok) {
+              throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+          const blob = await response.blob();
+          const fileBlob = new Blob([blob], { type: type });
+          const url = window.URL.createObjectURL(fileBlob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.setAttribute('download', `${filename}.${type==='application/pdf'?'pdf':'zip'}`);
+          document.body.appendChild(link);
+          link.click();
+          link.parentNode.removeChild(link);
+      } catch (error) {
+          console.error(`Error fetching ${type==='application/pdf'?'PDF':'Zip'}: `, error);
+      }
+  };
+
+  return (
+      <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+          <DropdownButton id="dropdown-button" title="Descargar">
+              <Dropdown.Item onClick={() => handleDownload(pdf, title, 'application/pdf')}>Descargar PDF</Dropdown.Item>
+              <Dropdown.Item onClick={() => handleDownload(zip, title, 'application/zip')}>Descargar ZIP</Dropdown.Item>
+          </DropdownButton>
+      </div>
+  )
+};
+
+
+
 
 const DisplaySectionReview = ({ sectionName, review }) => {
   return (
@@ -30,6 +66,13 @@ const ShowSubmittedArticle = () => {
   const { article_title } = useParams();
   const [article, setArticle] = useState({});
   const [review, setReview] = useState ({});
+  const navigate = useNavigate();
+
+
+  
+  const goBack = () => {
+    navigate(-1);
+  }
 
   useEffect(()=> {
     setReview(article.review);
@@ -61,11 +104,36 @@ const ShowSubmittedArticle = () => {
     fetchArticle();
   }, [username, article_title, sessionToken, logout]);
 
+  const reviewStatusColors = {
+    "Pending Review": "blue",
+    "Approved": "green",
+    "Rejected": "red",
+    "Pending Improvement": "orange"
+  };
+
   return (
+    <>
+    <Row className="justify-content-between mb-4">
+      <Col xs="auto">
+          <Button className="btn bg-secondary" onClick={goBack}>Volver Atrás</Button>
+      </Col>
+      <Col xs="auto">
+          <DownloadArticle
+              pdf={`/file/${article.submitted_pdf_id}`}
+              title={article.title}
+              zip={`/zip/${article.latex_project_id}`} />
+      </Col>
+    </Row>
     <Card style={{ width: '100%' }}>
       <Card.Body>
         <Card.Title>{article.title}</Card.Title>
         <Card.Text>{article.description}</Card.Text>
+        {article.result_review && (
+          <Card.Text style={{ color: reviewStatusColors[article.result_review] || 'black' }}>
+            Review Result: {article.result_review}
+          </Card.Text>
+        )}
+
         <Accordion defaultActiveKey={"Introduction"}>
           {article && review && Object.keys(review).length > 0 &&
             Object.entries(review).map(([sectionName, sectionReview]) => (
@@ -75,6 +143,7 @@ const ShowSubmittedArticle = () => {
         </Accordion>
       </Card.Body>
     </Card>
+    </>
   );
 };
 
