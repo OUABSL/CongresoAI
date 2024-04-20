@@ -1,6 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Card, Form, Button, Alert } from 'react-bootstrap';
 import "../estilos/submit.css"
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
+
 import { useContext } from "react";
 import AuthContext from "../../context/context";
 
@@ -11,7 +13,11 @@ const SubmitArticle = () => {
   const [file, setFile] = useState(null);
   const [alert, setAlert] = useState({ show: false, message: '', variant: 'success' });
   const { username, sessionToken, logout } = useContext(AuthContext); // Accede a username y sessionToken desde el contexto
-
+  const { state } = useLocation();
+  const [reviewComments, setReviewComments] = useState([]);
+  const [improvements, setImprovements] = useState("");
+  const [isResubmit, setIsResubmit] = useState(false);
+  const [article, setArticle] = useState({});
 
 
   const submitForm = async (e) => {
@@ -22,21 +28,27 @@ const SubmitArticle = () => {
     formData.append('title', title);
     formData.append('description', description);
     formData.append('key_words', keyWords);
+    if (isResubmit){
+      formData.append('improvements', improvements);
+      formData.append('review_comments', reviewComments);
+      formData.append('resubmit', true);
+    }
 
     if (file) {
       formData.append('latex_project', file);
     }
 
     const requestOptions = {
-      method: 'POST',
+      method: state && isResubmit ? 'PUT' : 'POST',
       headers: {
         'Authorization': `Bearer ${sessionToken}`,
       },
       body: formData
     };
 
+    const api = state && isResubmit ? `/api/v1/submit` : `/api/v1/submit/${username}/${title}`;
     try {
-      const response = await fetch('/api/v1/submit', requestOptions);
+      const response = await fetch(api, requestOptions);
       const data = await response.json();
       if (!response.ok) {
         if(response.status === 401) {
@@ -56,6 +68,21 @@ const SubmitArticle = () => {
     }
   };
 
+  useEffect(() => {
+    if(state && state.isResubmit){
+      setIsResubmit(true);
+      setArticle(state.article)
+      if(state.comments){
+        const commentsList = Object.entries(state.comments).reduce((acc, [sectionName, sectionComments]) => {
+          return acc.concat(`${sectionName}: \n- ${sectionComments}\n`);
+        }, []);
+        setTitle(article.title);
+        setKeyWords(article.keyWords);
+        setDescription(article.description);
+        setReviewComments(commentsList);
+      }
+    }
+  }, [state, article]);
   return (
     <Card className="submit-card mt-4 p-4 mx-auto">
       <Form onSubmit={submitForm} className="form-class">
@@ -75,6 +102,32 @@ const SubmitArticle = () => {
           <Form.Label className="label-class">Palabras clave</Form.Label>
           <Form.Control type="text" value={keyWords} onChange={(e) => setKeyWords(e.target.value)} required className="input-class" />
         </Form.Group>
+
+        {isResubmit && 
+    <>
+      <Form.Group>
+        <Form.Label>Comentarios del Revisor</Form.Label>
+        <Form.Control 
+          as="textarea" 
+          style={{height: "100%"}} 
+          readOnly 
+          value={reviewComments.join('\n')} 
+          rows={reviewComments.length} 
+        />
+      </Form.Group>
+      <Form.Group> 
+        <Form.Label className="label-class">Descripción de realizadas mejoras</Form.Label>
+        <Form.Control 
+          as="textarea" 
+          rows={2} 
+          value={improvements} 
+          onChange={(e) => setImprovements(e.target.value)} 
+          required 
+          className="input-class" 
+        />
+      </Form.Group>
+    </>
+    }
 
         <Form.Group>
           <Form.Label className="label-class">Proyecto Latex</Form.Label>
