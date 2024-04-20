@@ -1,9 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import { Card, Accordion, DropdownButton, Dropdown, Row, Col, Button} from 'react-bootstrap';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import AuthContext from "../../context/context";
 import { useContext } from "react";
 
+
+const NavigateToSubmitButton = ({ review, article }) => {
+  const navigate = useNavigate();
+  const comments = {};
+  Object.entries(review).forEach(([sectionName, sectionReview]) => (
+    comments[sectionName] = sectionReview.comment
+  ));
+  const handleOnClick = () => {
+    navigate('/portal-author/submit?state=resubmit', { 
+      state: { 
+        isResubmit: true, 
+        comments, 
+        article
+      } 
+    });
+  }
+  return <Button onClick={handleOnClick}>Resubmit Article</Button>;
+};
 
 const DownloadArticle = ({ pdf, zip, title }) => {
 
@@ -61,6 +79,32 @@ const DisplaySectionReview = ({ sectionName, review }) => {
   );
 };
 
+
+const getArticle = async (username, articleTitle, sessionToken, onLogout) => {
+  try {
+    const response = await fetch(`/api/v1/submit/${username}/${encodeURIComponent(articleTitle)}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${sessionToken}`,
+      }
+    });
+
+    if (response.status === 401) {
+      onLogout();
+      return;
+    }
+
+    const data = await response.json();
+    return data;
+
+  } catch (error) {
+    console.error('Error fetching article:', error);
+    return null;
+  }
+}
+
+
 const ShowSubmittedArticle = () => {
   const { sessionToken, logout, username } = useContext(AuthContext);
   const { article_title } = useParams();
@@ -78,30 +122,10 @@ const ShowSubmittedArticle = () => {
     setReview(article.review);
   }, [article.review]);
 
+
+
   useEffect(() => {
-    async function fetchArticle() {
-      try {
-        const response = await fetch(`/api/v1/submit/${username}/${encodeURIComponent(article_title)}`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${sessionToken}`,
-          }
-        });
-
-        if (response.status === 401) {
-          logout();
-          return;
-        }
-
-        const data = await response.json();
-        setArticle(data);
-      } catch (error) {
-        console.error('Error fetching article:', error);
-      }
-    }
-
-    fetchArticle();
+    getArticle(username, article_title, sessionToken, logout).then(setArticle);
   }, [username, article_title, sessionToken, logout]);
 
   const reviewStatusColors = {
@@ -118,10 +142,14 @@ const ShowSubmittedArticle = () => {
           <Button className="btn bg-secondary" onClick={goBack}>Volver Atrás</Button>
       </Col>
       <Col xs="auto">
-          <DownloadArticle
-              pdf={`/file/${article.submitted_pdf_id}`}
-              title={article.title}
-              zip={`/zip/${article.latex_project_id}`} />
+        {article.review_result === 'Pending Improvement' && 
+        <NavigateToSubmitButton review={article.review} />}
+      </Col>
+      <Col xs="auto">
+        <DownloadArticle
+            pdf={`/file/${article.submitted_pdf_id}`}
+            title={article.title}
+            zip={`/zip/${article.latex_project_id}`} />
       </Col>
     </Row>
     <Card style={{ width: '100%' }}>
