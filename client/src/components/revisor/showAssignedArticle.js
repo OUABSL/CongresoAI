@@ -54,7 +54,7 @@ const formatPreEvalSection = (preEvalSection) => {
 
   let formattedPreEvalSection = preEvalSection.replace(/\d+\./g, '');
   CRITERIA.forEach(criterion => {
-      formattedPreEvalSection = formattedPreEvalSection.replaceAll(criterion,":", `<br/><b>${criterion}+":"</b><br/>`);
+      formattedPreEvalSection = formattedPreEvalSection.replaceAll(criterion, `<br/><b>${criterion}:</b><br/>`);
   });
 
   return formattedPreEvalSection;
