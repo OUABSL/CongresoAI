@@ -25,7 +25,8 @@ def create_temp_dir(parent_dir):
     return tempfile.mkdtemp(dir=parent_dir)
 
 
-def process_submit(article:ScientificArticle, dest_path):
+def process_submit(article:ScientificArticle, dest_path, resubmit = None):
+    #TODO : Implementar la logica de resubmit, incluyendo peticiones a llamus
     try:
         # Data processing
         data_handler = DataHandler(article, dest_path=dest_path)
@@ -126,3 +127,50 @@ def show_article(author, article_title):
     else:
         return make_response(jsonify({"msg": "No articles found for this author."}), 404)
     
+
+
+"""
+Función para actualizar un articulo cientifico ya revisado
+"""
+#TODO : Realizar mejoras y pruebas sobre la función actualizar articulo revisado
+@submit_bp.route(API + '/submit/<author>/<title>', methods=['PUT'])
+@jwt_required()
+def update_article(author, title):
+    claims = get_jwt()
+    if claims["rol"] != "author":
+        return jsonify({"msg": "You do not have access to this resource"}), 403
+    
+    # Buscar el artículo por autor y título
+    article = mongo.db.articles.find_one({"author": author, "title": title})
+
+    # Si no se encuentra el artículo
+    if not article:
+        return jsonify({"error": "Article not found"}), 404
+    
+    file_obj = request.files.get('latex_project', None)
+    improvements = request.form.get('improvements', None)
+    review_comments = request.form.get('review_comments', None)
+    resubmit = request.form.get('resubmit', None)
+
+    # Verificar si todos los campos requeridos están presentes
+    if not all([file_obj, improvements, review_comments, resubmit]):
+        message = "Missing required fields, {}{}".format(
+            "File is missing; " if not file_obj else "",
+            "Form fields are missing; " if not all([
+                improvements, review_comments, resubmit]) else "")
+        return jsonify({'error': message}), 422
+
+    # Actualizar el artículo
+    article_updated = ScientificArticle(**article)  
+    article_updated.save_files(latex_project=file_obj)
+    article_updated.update_properties(
+        improvements=improvements,
+        review_comments=review_comments,
+        processing_state="Updated" #TODO: Falta mejorar la logica de resubmit
+    )
+    article_updated.save()
+
+    return jsonify({'status': 'success', 'message': 'Article updated and processing'}), 200
+
+
+    #TODO: Solucionar y manejar las llamadas a llamus.

@@ -15,8 +15,8 @@ const NavigateToSubmitButton = ({ review, article }) => {
     navigate('/portal-author/submit?state=resubmit', { 
       state: { 
         isResubmit: true, 
-        comments, 
-        article
+        comments: comments, 
+        article: article
       } 
     });
   }
@@ -127,6 +127,8 @@ const ShowSubmittedArticle = () => {
   useEffect(() => {
     getArticle(username, article_title, sessionToken, logout).then(setArticle);
   }, [username, article_title, sessionToken, logout]);
+
+  console.log(article);
 
   const reviewStatusColors = {
     "Pending Review": "blue",
