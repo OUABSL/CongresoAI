@@ -34,9 +34,11 @@ class ScientificArticle(Document):
     sorted_backup_assignment = ListField()
     review = DictField()
     review_result = ReviewResult(default="Pending Review")
+    review_comments=DictField()
     last_modified = DateTimeField(default=None)
     latex_project_id = ObjectIdField()
     submitted_pdf_id = ObjectIdField()
+    improvements=StringField()
 
     def __init__(self, *args, **kwargs):
         latex_project = kwargs.pop('latex_project', None)
@@ -45,7 +47,7 @@ class ScientificArticle(Document):
         if latex_project:
             self.save_files(submitted_pdf=latex_project)
 
-    def update_properties(self,latex_project_id = None, submitted_pdf_id = None,  title: str = None, content: str = None, key_words: List[str] = None, summary: str = None, evaluation: str = None, reviewer: str = None,sorted_backup_assignment: List[tuple] = None, processing_state: bool = None):
+    def update_properties(self,latex_project_id = None, submitted_pdf_id = None,  title: str = None, content: str = None, key_words: List[str] = None, summary: str = None, evaluation: str = None, reviewer: str = None,sorted_backup_assignment: List[tuple] = None, processing_state: bool = None, improvements:str = None, review_comments:dict=None):
         if title:
             self.title = title
         if content:
@@ -66,7 +68,11 @@ class ScientificArticle(Document):
             self.latex_project_id = latex_project_id
         if submitted_pdf_id:
             self.submitted_pdf_id = submitted_pdf_id
-        self.last_modified = datetime.utcnow()
+        if improvements:
+            self.improvements = improvements
+        if review_comments:
+            self.review_comments = review_comments
+        self.last_modified = datetime.datetime()
         self.save()
 
 

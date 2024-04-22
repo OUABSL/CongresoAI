@@ -5,10 +5,12 @@ import { useContext } from 'react';
 import AuthContext from '../context/context';
 import logo from '../ressources/logo.png';
 import './estilos/navBar.css';
+import { useNavigate } from 'react-router-dom';
+
 
 const navigationItems = {
   home: '/',
-  contactUs: '/contactus',
+  contactus: '/contactus',
   portal: '/portal'
 };
 
@@ -17,16 +19,24 @@ const MyNavbar = () => {
   const { username, sessionToken, role, logout } = useContext(AuthContext); 
   const isLoggedIn = Boolean(sessionToken && username && role);
   const portalLink = `portal-${role}`;
+  const navigate = useNavigate();
+
 
   useEffect(() => {
     setActiveLink(window.location.pathname);
   }, []);
 
   const renderNavigationLink = (path, title, exact = false) => (
-    <Nav.Item className={activeLink === path ? 'nav-item active' : 'nav-item'}>
-      <Link className="nav-link" to={path} onClick={() => setActiveLink(path)}>
-        {title}
-      </Link>
+    <Nav.Item 
+      className={activeLink === path ? 'nav-item active' : 'nav-item'} 
+      onClick={() => {
+        setActiveLink(path);
+        navigate(path);
+      }}>
+
+        <Link className="nav-link">
+          {title}
+        </Link>
     </Nav.Item>
   );
 

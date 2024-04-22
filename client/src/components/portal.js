@@ -2,6 +2,8 @@ import React from 'react'
 import { Card, Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faUserPen, faPenRuler} from '@fortawesome/free-solid-svg-icons';
+
 
 function Portal() {
   const navigate = useNavigate();
@@ -13,7 +15,7 @@ function Portal() {
   return (
     <div className="d-flex justify-content-around">
       <Card style={{ width: '18rem' }}>
-        <FontAwesomeIcon icon="user" size="6x" />
+        <FontAwesomeIcon icon="faUserPen" size="6x" />
         <Card.Body>
           <Card.Title>Portal de Autor</Card.Title>
           <Card.Text>
@@ -24,7 +26,7 @@ function Portal() {
       </Card>
       
       <Card style={{ width: '18rem' }}>
-        <FontAwesomeIcon icon="user-edit" size="6x" />
+        <FontAwesomeIcon icon="faPenRuler" size="6x" />
         <Card.Body>
           <Card.Title>Portal de Revisor</Card.Title>
           <Card.Text>

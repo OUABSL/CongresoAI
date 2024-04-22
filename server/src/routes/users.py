@@ -1,4 +1,4 @@
-from flask import Flask, request, Blueprint, jsonify, make_response
+from flask import request, Blueprint, jsonify, make_response, current_app
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_jwt_extended import create_access_token, unset_jwt_cookies
 from flask_jwt_extended import get_jwt_identity
@@ -77,6 +77,36 @@ def SignUp():
     else:
         return make_response(jsonify({'message':'Unauthorized!'}), 401)
     return make_response(jsonify({'message':'Registration successful!'}), 201)
+
+
+import jwt
+from flask import current_app
+
+# Define this route in your existing code
+@users_bp.route(API + "/check-session", methods=["GET"])
+def check_session():
+    auth_header = request.headers.get('Authorization')
+    if auth_header:
+        try:
+            token = auth_header.split(' ')[1]
+            decoded = jwt.decode(token, current_app.config.get('SECRET_KEY'), algorithms=["HS256"])
+            username = decoded['identity']
+            role = decoded['rol']
+
+            user = None
+            if role == "reviewer":
+                user = reviewers_col.find_one({'username': username})
+            elif role == "author":
+                user = authors_col.find_one({'username': username})
+
+            if user:
+                return jsonify({'valid': True}), 200
+            else:
+                return jsonify({'valid': False, 'message': 'User not found.'}), 404   
+        except Exception as e:  
+            return jsonify({'valid': False, 'message': 'Invalid token.'}), 401 
+    else:
+        return jsonify({'valid': False, 'message': 'Bearer token missing.'}), 400
     
 @users_bp.route(API + '/logout', methods=['POST'])
 def logout():

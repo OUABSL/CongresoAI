@@ -76,10 +76,13 @@ const SubmitArticle = () => {
         const commentsList = Object.entries(state.comments).reduce((acc, [sectionName, sectionComments]) => {
           return acc.concat(`${sectionName}: \n- ${sectionComments}\n`);
         }, []);
-        setTitle(article.title);
-        setKeyWords(article.keyWords);
-        setDescription(article.description);
-        setReviewComments(commentsList);
+        if(article && article.title && article.key_words && setDescription(article.description) && commentsList){
+          setTitle(article.title);
+          setKeyWords(article.key_words);
+          setDescription(article.description);
+          setReviewComments(commentsList);
+        }
+        
       }
     }
   }, [state, article]);
