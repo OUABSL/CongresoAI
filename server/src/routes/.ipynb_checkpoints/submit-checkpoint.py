@@ -112,22 +112,30 @@ def submit_article():
     # Devolver el resumen del artículo junto con el mensaje de éxito
     return jsonify({'status': 'success', 'message': 'File uploaded and processing', 'article_summary': article_summary}), 201
 
-
+def serialize_article(article):
+    if "_id" in article:
+        article.pop("_id")  # Removing MongoDB's _id field which is of type ObjectId
+    if "content" in article:
+        article.pop("content")
+    if "summary" in article:
+        article.pop("summary")
+    if "evaluation" in article:
+        article.pop("evaluation")
+    if "latex_project_id" in article and article["latex_project_id"]:
+        article['latex_project_id'] = str(article['latex_project_id'])
+    if "submitted_pdf_id" in article and article["submitted_pdf_id"]:
+        article['submitted_pdf_id'] = str(article['submitted_pdf_id'])
+    if "review_result" in article and article.get("review_result") == "Pending Review":
+        article.pop("review", None)  # Safe to use pop with default to avoid KeyError
+    if "sorted_backup_assignment" in article:
+        article.pop("sorted_backup_assignment", None)
+    return article
 
 @submit_bp.route(API + '/submit/<author>', methods=['GET'])
 def show_articles(author):
     articles = list(DB.find({"author":str(author)}))
     if articles:
-        for article in articles:
-            if article and 'submitted_pdf_id' in article.keys() and article.get('summary'):
-                article.pop("_id")
-                article.pop("content")
-                article.pop("summary")
-                article.pop("evaluation")
-                article['latex_project_id'] = str(article.get('latex_project_id'))
-                article['submitted_pdf_id'] = str(article.get('submitted_pdf_id'))
-                if article.get('result_review') == "Pending Review":
-                    article.pop("review")
+        serialized_articles = [serialize_article(article) for article in articles]
         return make_response(jsonify(articles), 200)
     else:
         return make_response(jsonify({"msg": "No articles found for this author."}), 404)
@@ -137,17 +145,8 @@ def show_articles(author):
 @jwt_required()
 def show_article(author, article_title):
     article = DB.find_one({"author":str(author), "title":article_title})
-    print(article)
     if article:
-        article.pop("_id")
-        article.pop("content")
-        article.pop("summary")
-        article.pop("evaluation")
-        article.pop("sorted_backup_assignment")
-        if article.get("review_result") == "Pending Review":
-            article.pop("review")
-        article['latex_project_id'] = str(article.get('latex_project_id'))
-        article['submitted_pdf_id'] = str(article.get('submitted_pdf_id'))
+        serialized_article = serialize_article(article)
         return make_response(jsonify(article), 200)
     else:
         return make_response(jsonify({"msg": "No articles found for this author."}), 404)
@@ -164,8 +163,7 @@ def update_article(author, title):
     claims = get_jwt()
     if claims["role"] != "author":
         return jsonify({"msg": "You do not have access to this resource"}), 403
-    
-    # Buscar el artículo por autor y título
+     # Buscar el artículo por autor y título
     #article = DB.find_one({"author": author, "title": title})
     article_updated = ScientificArticle.objects(author=author, title=title).first()
 

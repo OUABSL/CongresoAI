@@ -1,11 +1,11 @@
 import React, { useState, useContext } from "react";
-import { Form, Button, Alert, Card, FloatingLabel } from "react-bootstrap";
+import { Form, Button, Card, FloatingLabel } from "react-bootstrap";
 import { Link, useNavigate } from 'react-router-dom';
-import { AlertContext } from '../../context/alertProvider';
-import { useAuth } from "../../context/appProvider";
 import "../estilos/login.css";
+import { useAuth } from "../../context/appProvider";
+import { AlertContext } from '../../context/alertProvider'; // Importa tu contexto
 
-const LoginAuthor = () => {
+const LoginRevisor = () => {
   const [usernameInput, setInputUsername] = useState("");
   const [password, setInputPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -18,9 +18,9 @@ const LoginAuthor = () => {
     setLoading(true);
 
     const payload = {
-      "rol":"author",
-      "username":usernameInput,
-      "password":password
+      "rol": "reviewer",
+      "username": usernameInput,
+      "password": password
     };
 
     try {
@@ -32,37 +32,38 @@ const LoginAuthor = () => {
           },
           body: JSON.stringify(payload)
         }),
-        new Promise((_, reject) => setTimeout(() => reject(new Error('La solicitud ha tardado demasiado, por favor intentelo de nuevo')), 10000))
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error('La solicitud ha tardado demasiado, por favor intentelo de nuevo')), 10000)
+        )
       ]);
 
-      const result = await response.json()
-
-      if (response.status===200) {
+      if (response.status === 200) {
+        const result = await response.json();
         setSessionToken(result.access_token);
         setUsername(usernameInput);
-        setRole("author");
-        
+        setRole("reviewer");
+
         setAlert({ show: true, message: "Login Exitoso", variant: "success" });
-        navigate(`/portal-author/profile/${usernameInput}`);
+        navigate(`/portal-reviewer/profile/${usernameInput}`, { replace: true });
       } else {
         setAlert({ show: true, message: "Error en el Login", variant: "danger" });
       }
     } catch (error) {
       setAlert({ show: true, message: error.message, variant: "danger" });
     }
-      
+
     setLoading(false);
   };
-  
+
   const handlePassword = () => {
     setAlert({ show: true, message: "Funcionalidad en desarrollo!", variant: "info" });
-
   };
 
   return (
     <Card className="form-card mx-auto">
       <Form className="login-form shadow p-4 bg-white rounded" onSubmit={handleSubmit}>
-        <div className="h4 mb-2 text-center">Acceso de autor</div>
+        <div className="h4 mb-2 text-center">Acceso de revisor</div>
+
         <FloatingLabel
           controlId="floatingUsername"
           label="Nombre de usuario"
@@ -73,6 +74,7 @@ const LoginAuthor = () => {
             value={usernameInput}
             onChange={(e) => setInputUsername(e.target.value)}
             required
+            autoComplete="username"
           />
         </FloatingLabel>
         <FloatingLabel
@@ -82,35 +84,28 @@ const LoginAuthor = () => {
           <Form.Control
             type="password"
             value={password}
-            placeholder="Contraseña"
             onChange={(e) => setInputPassword(e.target.value)}
             required
+            autoComplete="current-password"
           />
         </FloatingLabel>
         <Form.Group className="mt-2" controlId="checkbox">
           <Form.Check type="checkbox" label="Recuérdame" />
         </Form.Group>
-        {!loading ? (
-          <div className="d-grid gap-2">
-            <Button className="mx-auto" variant="primary" type="submit">
-              Iniciar Sesión
-            </Button>
-          </div>
-        ) : (
-          <div className="d-grid gap-2">
-            <Button className="mx-auto" variant="primary" type="submit" disabled>
-              Iniciando Sesión...
-            </Button>
-          </div>
-        )}
+        <div className="d-grid gap-2">
+          <Button className="mx-auto" variant="primary" type="submit" disabled={loading}>
+            {loading ? "Iniciando Sesión..." : "Iniciar Sesión"}
+          </Button>
+        </div>
         <div className="d-grid mt-3">
           <Link onClick={handlePassword} className='text-muted link-above'>¿Olvidaste tu contraseña?</Link>
         </div>
         <div className="d-grid mt-2">
-          <Link to="/portal-author/register" className='text-muted link-above'>¿No tienes una cuenta aún? ¡Regístrate!</Link>
+          <Link to="/portal-reviewer/register" className='text-muted link-above'>¿No tienes una cuenta aún? ¡Regístrate!</Link>
         </div>
       </Form>
     </Card>
   );
 };
-export default LoginAuthor;
+
+export default LoginRevisor;

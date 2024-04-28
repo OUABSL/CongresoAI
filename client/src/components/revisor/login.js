@@ -3,7 +3,7 @@ import { Form, Button, Card, FloatingLabel } from "react-bootstrap";
 import { Link, useNavigate } from 'react-router-dom';
 import "../estilos/login.css";
 import { useAuth } from "../../context/appProvider";
-import { AlertContext } from '../../context/alertProvider'; // Importa tu contexto
+import { AlertContext } from '../../context/alertProvider';
 
 const LoginRevisor = () => {
   const [usernameInput, setInputUsername] = useState("");

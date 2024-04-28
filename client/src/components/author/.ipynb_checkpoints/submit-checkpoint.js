@@ -1,18 +1,18 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { Card, Form, Button, Alert } from 'react-bootstrap';
 import "../estilos/submit.css"
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import SubmitSummary from './submitSummary';
-
-import { useContext } from "react";
 import AuthContext from "../../context/context";
+import { AlertContext } from '../../context/alertProvider';
+
 
 const SubmitArticle = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [keyWords, setKeyWords] = useState("");
   const [file, setFile] = useState(null);
-  const [alert, setAlert] = useState({ show: false, message: '', variant: 'success' });
+  const { alert, setAlert } = useContext(AlertContext);
   const { username, sessionToken, logout } = useContext(AuthContext); // Accede a username y sessionToken desde el contexto
   const { state } = useLocation();
   const [reviewComments, setReviewComments] = useState([]);
@@ -92,8 +92,9 @@ const SubmitArticle = () => {
         setAlert({ show: true, message: data.message, variant: 'success' });  
         const url = URL.createObjectURL(file);
         setSubmitSummary(data.article_summary);
-        //Navigate to ResumenEntrega and clear form fields
-        navigate('/submit-summary', { state: { submitSummary, latex_project_url:url } });
+        // Navega después de establecer el estado
+        navigate('/portal-author/submit-summary', { state: { submitSummary: data.article_summary, latex_project_url: url } });
+          
         setTitle("");
         setDescription("");
         setKeyWords("");
@@ -109,7 +110,6 @@ const SubmitArticle = () => {
     <Card className="submit-card mt-4 p-4 mx-auto">
       <Form onSubmit={submitForm} className="form-class">
         <h2>Rellene el formulario</h2>
-        {alert.show && <Alert variant={alert.variant}>{alert.message}</Alert>}
         <Form.Group>
           <Form.Label className="label-class">Titulo del artículo</Form.Label>
           <Form.Control type="text" value={title} onChange={(e) => setTitle(e.target.value)} required className="input-class" />
