@@ -5,10 +5,10 @@ import AuthContext from "../../context/context";
 import { useContext } from "react";
 
 
-const NavigateToSubmitButton = ({ review, article }) => {
+const NavigateToSubmitButton = ({ article }) => {
   const navigate = useNavigate();
   const comments = {};
-  Object.entries(review).forEach(([sectionName, sectionReview]) => (
+  Object.entries(article.review).forEach(([sectionName, sectionReview]) => (
     comments[sectionName] = sectionReview.comment
   ));
   const handleOnClick = () => {
@@ -128,7 +128,6 @@ const ShowSubmittedArticle = () => {
     getArticle(username, article_title, sessionToken, logout).then(setArticle);
   }, [username, article_title, sessionToken, logout]);
 
-  console.log(article);
 
   const reviewStatusColors = {
     "Pending Review": "blue",
@@ -145,7 +144,7 @@ const ShowSubmittedArticle = () => {
       </Col>
       <Col xs="auto">
         {article.review_result === 'Pending Improvement' && 
-        <NavigateToSubmitButton review={article.review} />}
+        <NavigateToSubmitButton article={article} />}
       </Col>
       <Col xs="auto">
         <DownloadArticle

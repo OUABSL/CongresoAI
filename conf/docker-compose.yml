@@ -28,6 +28,8 @@ services:
     environment:
       - FLASK_APP=src/app.py
       - FLASK_DEBUG=1
+      - TZ=Europe/Madrid
+
     ports:
       - 5000:5000
     networks:

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Card, Form, Button, Alert } from 'react-bootstrap';
 import "../estilos/submit.css"
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import ResumenEntrega from './submitSummary';
 
 import { useContext } from "react";
 import AuthContext from "../../context/context";
@@ -18,7 +19,29 @@ const SubmitArticle = () => {
   const [improvements, setImprovements] = useState("");
   const [isResubmit, setIsResubmit] = useState(false);
   const [article, setArticle] = useState({});
+  const [submitSummary, setSubmitSummary] = useState({});
 
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if(state && state.isResubmit){
+      console.log(`Estado:\n${state.article}\n${state.comments}`);
+      setIsResubmit(true);
+      setArticle(state.article)
+      if(state.comments){
+        const commentsList = Object.entries(state.comments).reduce((acc, [sectionName, sectionComments]) => {
+          return acc.concat(`${sectionName}: \n- ${sectionComments}\n`);
+        }, []);
+        if(article && article.title && article.key_words && article.description && commentsList){
+          setTitle(article.title);
+          setKeyWords(article.key_words);
+          setDescription(article.description);
+          setReviewComments(commentsList);
+        }
+        
+      }
+    }
+  }, [state, article]);
 
   const submitForm = async (e) => {
     e.preventDefault();
@@ -46,21 +69,35 @@ const SubmitArticle = () => {
       body: formData
     };
 
-    const api = state && isResubmit ? `/api/v1/submit` : `/api/v1/submit/${username}/${title}`;
+    const api = state && isResubmit ? `/api/v1/submit/${username}/${title}`: `/api/v1/submit`;
     try {
+      console.log("Making request to:", api);
+      console.log("Request options:", requestOptions);
+  
       const response = await fetch(api, requestOptions);
+      console.log("Response:", response);
+  
       const data = await response.json();
+      console.log("Response data:", data);
+  
       if (!response.ok) {
         if(response.status === 401) {
           logout();
           return;
         }
-
         throw new Error(data.message);
       }
       else if (response.status === 201) {
         console.log(data.message);
-        setAlert({ show: true, message: data.message, variant: 'success' });
+        setAlert({ show: true, message: data.message, variant: 'success' });  
+        const url = URL.createObjectURL(file);
+        setSubmitSummary(data.article_summary);
+        //Navigate to ResumenEntrega and clear form fields
+        navigate('/submitSummary', { state: { submitSummary, latex_project_url:url } });
+        setTitle("");
+        setDescription("");
+        setKeyWords("");
+        setFile(null);
       }
     } catch (error) {
       console.error(error);
@@ -68,24 +105,6 @@ const SubmitArticle = () => {
     }
   };
 
-  useEffect(() => {
-    if(state && state.isResubmit){
-      setIsResubmit(true);
-      setArticle(state.article)
-      if(state.comments){
-        const commentsList = Object.entries(state.comments).reduce((acc, [sectionName, sectionComments]) => {
-          return acc.concat(`${sectionName}: \n- ${sectionComments}\n`);
-        }, []);
-        if(article && article.title && article.key_words && setDescription(article.description) && commentsList){
-          setTitle(article.title);
-          setKeyWords(article.key_words);
-          setDescription(article.description);
-          setReviewComments(commentsList);
-        }
-        
-      }
-    }
-  }, [state, article]);
   return (
     <Card className="submit-card mt-4 p-4 mx-auto">
       <Form onSubmit={submitForm} className="form-class">

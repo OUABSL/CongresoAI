@@ -19,12 +19,17 @@ class DataHandler:
         """Extract files from the provided source ZIP to the destination folder"""
         with zipfile.ZipFile(io.BytesIO(self.article.get_latex_project()), 'r') as file:
             file.extractall(dest_path)
-    
-    @staticmethod
-    def _read_file_data(file_path: Path):
+
+    def _clean_adjustwidth_tag(self, latex_text):
+        latex_text = re.sub(r'\\begin{adjustwidth}(\[.*?\])?{.*?}', '', latex_text)
+        latex_text = re.sub(r'\\end{adjustwidth}', '', latex_text)
+        return latex_text
+
+    def _read_file_data(self, file_path: Path):
         """Read and return the contents of the provided file."""
         with open(file_path, 'r', encoding='utf-8') as file:
-            return file.read()
+            latex_text = file.read()
+            return self._clean_adjustwidth_tag(latex_text)
         
     def _get_tex(self):
         print(os.listdir(self.dest_path))  # DEBUG PRINT STATEMENT

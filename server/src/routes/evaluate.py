@@ -18,13 +18,13 @@ from src.services.PreEvaluation import  SYSTEM_PROMPT_BASE as prompt_eval
 
 
 evaluate_bp = Blueprint('evaluate', __name__)
-db = mongo.db.scientific_article
+DB = mongo.db.scientific_article
 
 # Obtener los artículos asignados a un revisor en particular
 @evaluate_bp.route(API + '/evaluate/<reviewer>', methods = ['GET'])
 @jwt_required()
 def show_articles(reviewer):
-    articles = list(db.find({"reviewer":str(reviewer)}))
+    articles = list(DB.find({"reviewer":str(reviewer)}))
     if articles:
         result = []
         for article in articles:
@@ -63,7 +63,7 @@ def serve_zip(file_id):
 @evaluate_bp.route(API + '/evaluate/<reviewer>/<article_title>', methods = ['GET'])
 #@jwt_required()
 def show_article(reviewer, article_title):
-    article = db.find_one({"reviewer":str(reviewer), "title":article_title})
+    article = DB.find_one({"reviewer":str(reviewer), "title":article_title})
     if article:
         article.pop("_id")
         article.pop("content")
@@ -76,7 +76,7 @@ def show_article(reviewer, article_title):
 # Agregar una revisión a un artículo
 @evaluate_bp.route(API + '/evaluate/<reviewer>/<article_title>', methods = ['POST'])
 def add_review(reviewer, article_title):
-    article = db.find_one({"reviewer":str(reviewer), "title":article_title})
+    article = DB.find_one({"reviewer":str(reviewer), "title":article_title})
     review = article.get('review')
 
     if not article:
@@ -96,7 +96,7 @@ def add_review(reviewer, article_title):
     new_review = {"review": review, "review_result": review_result}
     print(f"Review: {new_review}")
     
-    db.update_one({"title":article_title}, {"$set": new_review})
+    DB.update_one({"title":article_title}, {"$set": new_review})
 
     return make_response(jsonify({"msg": "Review successfully added!"}), 201)
 
@@ -116,7 +116,7 @@ def update_review(reviewer, article_title):
     """
     
     review_data = request.get_json()
-    article = db.find_one({"reviewer":str(reviewer), "title":article_title})
+    article = DB.find_one({"reviewer":str(reviewer), "title":article_title})
     review = article.get("review")
 
     if article:
@@ -126,7 +126,7 @@ def update_review(reviewer, article_title):
                 review[section_name] = new_partial_review[section_name]
 
             print(f"Review: {new_partial_review}")
-            db.update_one(
+            DB.update_one(
                 {"reviewer": reviewer, "title": article_title}, 
                 {"$set": {"review": review}}
             )        
@@ -142,18 +142,18 @@ def update_review(reviewer, article_title):
 @evaluate_bp.route(API + '/evaluate/<reviewer>/<article_title>', methods = ['PUT'])
 #@jwt_required()
 def update_status(reviewer, article_title):
-    article = db.find_one({"reviewer":str(reviewer), "title":article_title})
+    article = DB.find_one({"reviewer":str(reviewer), "title":article_title})
     status = request.get_json()
     if article:
         update_status = { "pending": status }
-        db.update_one({"title":article_title}, {"$set": update_status})
+        DB.update_one({"title":article_title}, {"$set": update_status})
         return make_response(jsonify({"msg": "Status successfully updated!"}), 201)
     else:
         return make_response(jsonify({"msg": "No articles found for this reviewer."}), 404)
 
 
 def fetch_article(title:str, reviewer:str):
-    article_data = db.find_one({"title": title, "reviewer": reviewer})
+    article_data = DB.find_one({"title": title, "reviewer": reviewer})
     print(article_data, "\nDat: ", title, reviewer)
     if not article_data:  # If no article was found
         return None
@@ -181,14 +181,14 @@ def regenerate_pre_evaluation_flow(article:ScientificArticle, tasks:dict):
         update_data["last_modified"] = datetime.now()
         update_data["processing_state"] = "Done"
 
-        db.update_one(
+        DB.update_one(
             {"reviewer": article["reviewer"], "title": article.title},
             {"$set": update_data}
         )
     except Exception as e:
         print(e)  # Imprimir el error
         # Actualizar el estado de procesamiento en caso de error
-        db.update_one(
+        DB.update_one(
             {"reviewer": article["reviewer"], "title": article.title},
             {"$set": {"processing_state": "Fail"}}
         )
@@ -204,7 +204,7 @@ def regenerate_pre_evaluation(reviewer, article_title):
     if article is None:
         return make_response(jsonify({"msg": "No article found."}), 404)
 
-    db.update_one(
+    DB.update_one(
         {"reviewer": article["reviewer"], "title": article_title},
         {"$set": {"processing_state": "On Process"}}
     )
@@ -221,7 +221,7 @@ def reassignate_reviewer(reviewer, article_title):
     
     if(len(article.sorted_backup_assignment)>0):
         new_reviewer = article.sorted_backup_assignment[0][1]
-        db.update_one(
+        DB.update_one(
             {"title": article_title},
             {"$set": {"reviewer": new_reviewer}}
         )
