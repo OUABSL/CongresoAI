@@ -4,3 +4,4 @@ server/src/config.py
 server/src/__pycache__
 test
 server/test_results/
+server/data/input/*
