@@ -103,11 +103,13 @@ const SectionReview = ({ reviewData, sectionName, handleSectionUpdate }) => {
 
     const handleSectionReviewSave = (updatedReview) => {
         setSectionReview(updatedReview);
-        setPreviousReviews(prevState => ({ ...prevState, [sectionName]: updatedReview }));
         handleSectionUpdate(sectionName, updatedReview);
-        handleEdit(false);
+        setPreviousReviews(prevState => {
+            const updatedPreviousReviews = { ...prevState, [sectionName]: updatedReview };
+            handleEdit(false);
+            return updatedPreviousReviews;
+        });
     };
-    
 
 
     const handleInputChange = (criterion, value) => {

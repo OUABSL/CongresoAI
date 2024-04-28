@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Card, ListGroup, Alert, Button , Form} from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
 import { useContext } from "react";
-
+import { AlertContext } from '../../context/alertProvider';
 import AuthContext from "../../context/context";
 
 function RevisorProfile() {
@@ -10,21 +10,7 @@ function RevisorProfile() {
   const {username} = useParams();
   const {sessionToken, logout } = useContext(AuthContext); 
   const [editing, setEditing] = useState(false);
-  const [alert, setAlert] = useState({visible: false, variant: '', message: ''});
-  const formatDate = (date) => {
-    let birthdate = new Date(date);
-    let month = '' + (birthdate.getMonth() + 1),
-        day = '' + birthdate.getDate(),
-        year = birthdate.getFullYear();
-
-    if (month.length < 2) 
-        month = '0' + month;
-    if (day.length < 2) 
-        day = '0' + day;
-
-    const formattedBirthdate = [year, month, day].join('-');
-    return formattedBirthdate;
-  }
+  const { alert, setAlert } = useContext(AlertContext);
   
 
   useEffect(() => {
@@ -58,7 +44,6 @@ function RevisorProfile() {
 
   const handleEditClick = () => {
     let newData = {...profileData};
-    newData.birthdate = formatDate(newData.birthdate);
     setProfileData(newData);
     setEditing(true);
   }
@@ -82,7 +67,6 @@ function RevisorProfile() {
     } else {
       setAlert({ visible: true, variant: 'danger', message: 'No se pudo actualizar el perfil. Intenta en otro momento!' });
     }
-    setTimeout(()=> setAlert({visible: false, variant: '', message: ''}), 1000)
   }
 
   if (!profileData) {
@@ -90,7 +74,6 @@ function RevisorProfile() {
   }
   return (
     <>
-    {alert.visible && <Alert variant={alert.variant}>{alert.message}</Alert>}
     <Card style={{ width: '25rem' }} className="mt-5">
         <Card.Body>
             <Card.Title>
@@ -101,11 +84,10 @@ function RevisorProfile() {
                 }
             </Card.Title>
             <Card.Subtitle className="mb-2 text-muted">
-                Usuario:
-                {editing ?
-                        <Form.Control readOnly style={{backgroundColor:'#f1f1f1', border: '1px solid #888'}} plaintext value={profileData.username} /> : 
-                        `${profileData.username}`
-                  }
+                ORCID ID: {profileData.ORCID_ID}
+                <br />
+                <br />
+                Usuario: {profileData.username}
             </Card.Subtitle>
             <Card.Text>
                 Email:
@@ -116,13 +98,6 @@ function RevisorProfile() {
             </Card.Text>
         </Card.Body>
         <ListGroup variant="flush">
-        <ListGroup.Item>
-          Fecha de nacimiento:
-          {editing ? 
-            <Form.Control readOnly={!editing} type="date" name="birthdate" value={profileData.birthdate || ''} onChange={handleInputChange}/> :
-            ` ${profileData.birthdate}`
-          }
-        </ListGroup.Item>
             <ListGroup.Item>
                 Número de teléfono:
                 {editing ? 

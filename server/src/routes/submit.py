@@ -29,6 +29,15 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 def create_temp_dir(parent_dir):
     return tempfile.mkdtemp(dir=parent_dir)
 
+def delete_temp_dir(dest_path):
+    #Eliminar la carpeta temporal usada en el proceso
+        if os.path.isdir(dest_path):
+            shutil.rmtree(dest_path)
+            if not os.listdir(dest_path): # verifica si la carpeta todavía existe después de usar shutil.rmtree()
+                os.rmdir(dest_path) # se utiliza os.rmdir() para eliminar la carpeta vacía
+                print(f"Eliminada la carpeta {dest_path}")
+
+
 
 def process_submit(article:ScientificArticle, dest_path, resubmit:bool = False):
     #TODO : Implementar la logica de resubmit, incluyendo peticiones a llamus
@@ -70,10 +79,7 @@ def process_submit(article:ScientificArticle, dest_path, resubmit:bool = False):
         article.save()
     finally:
         #Eliminar la carpeta temporal usada en el proceso
-        if os.path.isdir(dest_path):
-            shutil.rmtree(dest_path)
-            print(f"Eliminada la carpeta {dest_path}")
-
+        delete_temp_dir(dest_path)
     return None
 
 @submit_bp.route(API + '/submit', methods=['POST'])
@@ -107,11 +113,12 @@ def submit_article():
     article.save()
     threading.Thread(target=process_submit, args=(article, temp_dir)).start()
     # Obtener el resumen del artículo como un diccionario
-    article_summary = article.get_summary_to_dict()
+    submit_summary = article.get_summary_to_dict()
 
     # Devolver el resumen del artículo junto con el mensaje de éxito
-    return jsonify({'status': 'success', 'message': 'File uploaded and processing', 'article_summary': article_summary}), 201
+    return jsonify({'status': 'success', 'message': 'File uploaded and processing', 'submit_summary': submit_summary}), 201
 
+#Función para preparar un artículo científico para ser enviado en formato json
 def serialize_article(article):
     if "_id" in article:
         article.pop("_id")  # Removing MongoDB's _id field which is of type ObjectId
@@ -131,7 +138,12 @@ def serialize_article(article):
         article.pop("sorted_backup_assignment", None)
     return article
 
+"""
+Función para devolver los artículos científicos entregados por parte de un autor. 
+    - Se devuelven los datos principales del artículo además del estado de su revisión
+"""
 @submit_bp.route(API + '/submit/<author>', methods=['GET'])
+@jwt_required()
 def show_articles(author):
     articles = list(DB.find({"author":str(author)}))
     if articles:
@@ -140,7 +152,10 @@ def show_articles(author):
     else:
         return make_response(jsonify({"msg": "No articles found for this author."}), 404)
 
-
+"""
+Función para devolver la revisión de un artículo científico entregado.
+    - Incluye además de su revisión, los datos necesarios del artículo científico
+"""
 @submit_bp.route(API + '/submit/<author>/<article_title>', methods = ['GET'])
 @jwt_required()
 def show_article(author, article_title):
@@ -154,7 +169,8 @@ def show_article(author, article_title):
 
 
 """
-Función para actualizar un articulo cientifico ya revisado
+Función para realizar una segunda entrega a un articulo cientifico ya revisado por parte del revisor. 
+    - Para permitir la segunda entrega el resultado de revisión debe ser Pendiente de mejora
 """
 #TODO : Realizar mejoras y pruebas sobre la función actualizar articulo revisado
 @submit_bp.route(API + '/submit/<author>/<title>', methods=['PUT'])
@@ -197,9 +213,12 @@ def update_article(author, title):
     print(f"Actualizado el articulo {article_updated.title}, {article_updated.processing_state}")
     article_updated.save()
 
+    # Obtener el resumen del artículo como un diccionario
+    submit_summary = article_updated.get_summary_to_dict()
+
     threading.Thread(target=process_submit, args=(article_updated, temp_dir, True)).start()
 
-    return jsonify({'status': 'success', 'message': 'Article updated and processing'}), 200
+    return jsonify({'status': 'success', 'message': 'Article updated and processing', 'submit_summary': submit_summary}), 200
 
 
     #TODO: Solucionar y manejar las llamadas a llamus.

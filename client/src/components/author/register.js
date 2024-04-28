@@ -15,7 +15,7 @@ const SignUpAuthor = () => {
 
 
   const initialState = {
-    rol: 'author',
+    role: 'author',
     email: '',
     username: '',
     password: '',

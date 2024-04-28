@@ -115,7 +115,7 @@ class DataHandler:
             self.article.save_files(submitted_pdf=pdf_file)
 
 
-            # Process LaTeX file text
+        # Process LaTeX file text
         document_content = self._parse_document_content(latex_file_text)
         document_sections = self._get_section_data(document_content)
 

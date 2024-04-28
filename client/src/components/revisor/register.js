@@ -11,14 +11,30 @@ const SignUpRevisor = () => {
 
 
   const initialState = {
+    role: 'reviewer',
     ORCID_ID: '',   // 0000-0003-0528-9459
     email: '',
     username: '',
     password: '',
     fullname: '',
     phonenumber: '',
-    interestarea: ''
+    knowledges: ''
   }
+
+  const formatORCID = (value) => {
+    // Eliminar todos los caracteres que no sean dígitos
+    const digitsOnly = value.replace(/\D/g, '');
+    // Agrupar los dígitos en bloques de cuatro
+    const grouped = digitsOnly.match(/.{1,4}/g);
+    // Unir los bloques con guiones intermedios
+    return grouped ? grouped.join('-') : '';
+  }
+
+  const handleORCIDChange = (e) => {
+    const formattedORCID = formatORCID(e.target.value);
+    setState({ ...state, ORCID_ID: formattedORCID });
+  }
+
 
   const [state, setState] = useState(initialState);
   const onSubmit = (e) => {
@@ -52,20 +68,20 @@ const SignUpRevisor = () => {
     <Card className="register-card mt-2 p-5 mx-0">
         <Form onSubmit={onSubmit} className="form-class">
             <div className="h4 mb-4 form-heading text-center">Registro de revisor</div>
-        <Row>
-          <Col>
-            <Form.Group>
-              <Form.Label>ORCID ID</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="0000-0000-0000-0000"
-                name="ORCID_ID"
-                value={state.ORCID_ID}
-                onChange={onChange}
-              />
-            </Form.Group>
-          </Col>            
-        </Row>
+            <Row>
+              <Col>
+                <Form.Group>
+                  <Form.Label>ORCID ID</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="0000-0000-0000-0000"
+                    name="ORCID_ID"
+                    value={state.ORCID_ID}
+                    onChange={handleORCIDChange}
+                  />
+                </Form.Group>
+              </Col>            
+          </Row>
           <Row>
             <Col>
               <Form.Group className="mb-3 form-group-class">
@@ -96,18 +112,6 @@ const SignUpRevisor = () => {
           </Row>
 
           <Row>
-            <Col>
-              <Form.Group className="mb-3 form-group-class">
-                <Form.Label className="label-class">Fecha de Nacimiento</Form.Label>
-                <Form.Control
-                  type="date"
-                  name="birthdate"
-                  value={state.birthdate}
-                  onChange={onChange}
-                  className="input-class"
-                  required                />
-              </Form.Group>
-            </Col>
             <Col>
               <Form.Group className="mb-3 form-group-class">
                 <Form.Label className="label-class">Número de teléfono</Form.Label>
@@ -153,12 +157,12 @@ const SignUpRevisor = () => {
           </Row>
         
         <Form.Group className="mb-3 form-group-class">
-          <Form.Label className="label-class">Área de interés</Form.Label>
+          <Form.Label className="label-class">Área de Conocimiento</Form.Label>
           <Form.Control
             type="text"
-            placeholder="Elija sus áreas de interés"
-            name="interestarea"
-            value={state.interestarea}
+            placeholder="Elija sus áreas de conocimiento"
+            name="knowledges"
+            value={state.knowledges}
             onChange={onChange}
             className="input-class"
           />

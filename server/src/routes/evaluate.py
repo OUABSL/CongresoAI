@@ -58,10 +58,9 @@ def serve_zip(file_id):
     return send_file(BytesIO(zip_file), mimetype='application/zip', as_attachment=False, download_name='latex_project.zip')
 
 
-
 # Mostrar un artículo específico asignado a un revisor  
 @evaluate_bp.route(API + '/evaluate/<reviewer>/<article_title>', methods = ['GET'])
-#@jwt_required()
+@jwt_required()
 def show_article(reviewer, article_title):
     article = DB.find_one({"reviewer":str(reviewer), "title":article_title})
     if article:
@@ -75,6 +74,7 @@ def show_article(reviewer, article_title):
     
 # Agregar una revisión a un artículo
 @evaluate_bp.route(API + '/evaluate/<reviewer>/<article_title>', methods = ['POST'])
+@jwt_required()
 def add_review(reviewer, article_title):
     article = DB.find_one({"reviewer":str(reviewer), "title":article_title})
     review = article.get('review')
@@ -102,6 +102,7 @@ def add_review(reviewer, article_title):
 
 # Actualizar una revisión a un artículo
 @evaluate_bp.route(API + '/evaluate/<reviewer>/<article_title>', methods = ['PUT'])
+@jwt_required()
 def update_review(reviewer, article_title):
     """
     review = {section1:review_section1, section2: review_section2}
@@ -140,7 +141,7 @@ def update_review(reviewer, article_title):
 
 # Actualizar el estado de un artículo
 @evaluate_bp.route(API + '/evaluate/<reviewer>/<article_title>', methods = ['PUT'])
-#@jwt_required()
+@jwt_required()
 def update_status(reviewer, article_title):
     article = DB.find_one({"reviewer":str(reviewer), "title":article_title})
     status = request.get_json()

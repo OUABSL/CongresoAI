@@ -3,6 +3,8 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_jwt_extended import create_access_token, get_jwt, unset_jwt_cookies, get_jwt_identity, verify_jwt_in_request, jwt_required
 from src.models.user import User, Reviewer, Author
 from src.app import app, mongo, jwt, API
+from uuid import uuid4
+
 
 
 ACCESS_TOKEN = ''
@@ -12,10 +14,11 @@ authors_col = mongo.db.authors
 
 users_bp = Blueprint('users', __name__)
 
+#Extraer las palabras claves, lista de conocimientos para revisores o lista de intereses para autores
 def to_list(form_element : str):
     return form_element.split(',')
 
-# Route for reviewer or author login
+# Iniciar Sesión para un usuario (Autores y Revisores)
 @users_bp.route(API + "/login", methods=["POST"])
 def login():
     role = request.json.get("rol", None)
@@ -35,41 +38,39 @@ def login():
     else:
         return make_response(jsonify({"message": "Bad username or password"}), 401)
 
-# Route for reviewer or author sign up
+# Registrar los usuarios (Autores y Revisores)
 @users_bp.route(API + '/signup', methods=['POST'])
 def SignUp():
     data = request.get_json()
-    #TODO: Rol se debe cambiar a role en react
-    role = data.get('rol')
+    role = data.get('role')
     username = data.get('username')
-    
-    user = None
+
     if role == 'reviewer':
-        user = reviewers_col.find_one({'username': username})
+        user = Reviewer.objects(username=username).first()
         if user:
             return make_response(jsonify({'message':'Username already exists!'}), 400)
         else:
             email = data.get('email')
             password = generate_password_hash(data.get('password'), method='pbkdf2:sha256')
             fullname = data.get('fullname')
-            birthdate = data.get('birthdate')
             phonenumber = data.get('phonenumber')
-            knowledges = to_list(str(data.get('knowledges'))) #data.get('knowledges')
-            reviewer = Reviewer(email=email, username=username, password=password, fullname=fullname, birthdate=birthdate,
-                                phonenumber=phonenumber,knowledges=knowledges)
+            ORCID_ID = data.get('ORCID_ID')
+            knowledges = to_list(str(data.get('knowledges')))
+            reviewer = Reviewer(email=email, username=username, password=password, fullname=fullname,
+                                phonenumber=phonenumber, ORCID_ID=ORCID_ID, knowledges=knowledges)
             reviewer.save()
     elif role == 'author':
         user = authors_col.find_one({'username': username})
         if user:
             return make_response(jsonify({'message':'Username already exists!'}), 400)
         else:
+            id_author = str(uuid4())
             email = data.get('email')
             password = generate_password_hash(data.get('password'), method='pbkdf2:sha256')
             fullname = data.get('fullname')
-            birthdate = data.get('birthdate')
             phonenumber = data.get('phonenumber')
             interestareas = to_list(str(data.get('interests')))
-            author = Author(email=email, username=username, password=password, fullname=fullname, birthdate=birthdate, 
+            author = Author(ID_Author=id_author, email=email, username=username, password=password, fullname=fullname,
                             phonenumber=phonenumber,interests=interestareas)
             author.save() 
 
@@ -79,7 +80,7 @@ def SignUp():
 
 
 
-# Define this route in your existing code
+#Comprobar si la sesión sigue siendo válida
 @users_bp.route(API + "/check-session/<username>", methods=["GET"])
 @jwt_required()
 def check_session(username):
@@ -101,6 +102,7 @@ def check_session(username):
         return jsonify({'valid': False, 'message': 'Invalid token.'}), 401 
 
 
+#Cerrar Sesión
 @users_bp.route(API + '/logout', methods=['POST'])
 def logout():
     global ACCESS_TOKEN
@@ -109,7 +111,7 @@ def logout():
     unset_jwt_cookies(response) 
     return response
 
-
+#Devolver los datos de perfil del autor logueado  
 @users_bp.route(API + "/authors/profile/<username>", methods=["GET"])
 @jwt_required()
 def profile_author(username):
@@ -122,20 +124,20 @@ def profile_author(username):
         return jsonify({'error': 'User not found'}), 404
     
 
-    
+#Devolver los datos de perfil del revisor logueado  
 @users_bp.route(API + "/reviewers/profile/<username>", methods=["GET"])
 @jwt_required()
 def profile_reviewer(username):
     user = reviewers_col.find_one({'username': username})
-    print(user)
     if user:
-        #user  =Reviewer(user)
         user.pop('password', None)
         user.pop('_id', None)       
         return jsonify(user), 200
     else:
         return jsonify({'error': 'User not found'}), 404
 
+
+#Actualizar los datos del perfil de un autor
 @users_bp.route(API + "/authors/profile/<username>", methods=["PUT"])
 @jwt_required()
 def update_profile_author(username):
@@ -146,6 +148,8 @@ def update_profile_author(username):
     else:
         return jsonify({'error': 'Unauthorized'}), 403
 
+
+#Actualizar los datos del perfil de un revisor
 @users_bp.route(API + "/reviewers/profile/<username>", methods=["PUT"])
 @jwt_required()
 def update_profile_reviewer(username):

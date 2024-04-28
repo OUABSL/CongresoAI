@@ -8,7 +8,7 @@ const AlertProvider = ({ children }) => {
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       setAlert({ show: false, variant: '', message: '' });
-    }, 2500);
+    }, 3000);
 
     // Limpiar el temporizador cuando el componente se desmonte o el estado de alert cambie
     return () => clearTimeout(timeoutId);
@@ -20,4 +20,4 @@ const AlertProvider = ({ children }) => {
   );
 }
 
-export { AlertProvider, AlertContext }
+export { AlertProvider, AlertContext };

@@ -2,6 +2,7 @@ import {useContext, useState, useEffect, useCallback } from "react";
 import AuthContext from "./context";
 import { useNavigate } from "react-router-dom";
 
+
 const INACTIVITY_TIMEOUT = 1000 * 60 * 20; // 20 minutes in milliseconds
 
 
@@ -136,8 +137,7 @@ const AppProvider = ({ children }) => {
     }, INACTIVITY_TIMEOUT);
 
     return () => clearTimeout(timeout);
-  }, [lastActivity, handleLogout]); // Dependency on `lastActivity` to restart timeout on updates
-
+  }, [lastActivity, handleLogout]); 
 
   return (
     <AuthContext.Provider

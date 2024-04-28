@@ -17,7 +17,7 @@ const navigationItems = {
 const MyNavbar = () => {
   const [activeLink, setActiveLink] = useState(navigationItems.home);
   const { username, sessionToken, role, logout } = useContext(AuthContext); 
-  const isLoggedIn = Boolean(sessionToken && username && role);
+  const isLoggedIn = Boolean(sessionToken && username && role && sessionToken!==null && username!==null && role !==null);
   const portalLink = `portal-${role}`;
   const navigate = useNavigate();
 
@@ -59,7 +59,7 @@ const MyNavbar = () => {
 
           {!isLoggedIn && renderNavigationLink(navigationItems.portal, 'Portal', true)}
 
-          {isLoggedIn && (
+          {isLoggedIn && username && (
             <Nav>
               <NavDropdown title={username} id="nav-dropdown">
                 <NavDropdown.Item as="div">

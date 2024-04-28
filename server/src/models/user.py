@@ -9,14 +9,12 @@ class User(Document):
     email = EmailField(required=True, unique=True)
     username = StringField(required=True, max_length=50, unique=True)
     password = StringField(required=True, max_length=200) # Hashed password
-    birthdate = DateField(default=None)
     fullname = StringField(required=True, max_length=100)
-    registration_date = DateTimeField(default=datetime.utcnow())
+    registration_date = DateTimeField(default=datetime.now())
     phonenumber = StringField(max_length=20)
 
     def to_json(self):
         user_dict = self.to_mongo()
-        user_dict['birthdate'] = self.birthdate.strftime('%Y-%m-%d') 
         if user_dict['id']: user_dict['id'] = str(self.pk)
         user_dict.pop('password')
         user_dict.pop('_id', None)       
@@ -30,23 +28,20 @@ class User(Document):
 
 
 class Reviewer(User):
-    ID_Reviewer = IntField()
+    ORCID_ID = StringField(required=True, unique=True, max_length=19)
     knowledges = ListField(StringField(), default=list)
-    pending_works = MapField(DictField(), default=dict)
-    rated_works = MapField(DictField(), default=dict)
+
     @property
     def id_revisor(self):
-        return self.ID_Reviewer
+        return self.ORCID_ID
     
     meta = {
         'collection': 'reviewers' 
     }
 
 class Author(User):
-    ID_Author = IntField()
+    ID_Author = StringField(required=True, unique=True, max_length=36)
     interests = ListField(StringField(), default=list)
-    publications = MapField(field=DateTimeField(), default=dict)
-    pending_publications = MapField(DictField(), default=dict)
 
     @property
     def id_author(self):

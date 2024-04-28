@@ -87,13 +87,17 @@ const SubmitArticle = () => {
         }
         throw new Error(data.message);
       }
-      else if (response.status === 201) {
-        console.log(data.message);
+      else if (response.status === 201 || response.status === 200) {
         setAlert({ show: true, message: data.message, variant: 'success' });  
         const url = URL.createObjectURL(file);
-        setSubmitSummary(data.article_summary);
+        setSubmitSummary(data.submit_summary);
         // Navega después de establecer el estado
-        navigate('/portal-author/submit-summary', { state: { submitSummary: data.article_summary, latex_project_url: url } });
+        navigate('/portal-author/submit-summary', { 
+          state: { 
+            submitSummary: data.submit_summary, 
+            latex_project_url: url
+           } 
+          });
           
         setTitle("");
         setDescription("");
