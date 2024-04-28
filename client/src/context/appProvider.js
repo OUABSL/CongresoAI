@@ -53,18 +53,18 @@ const AppProvider = ({ children }) => {
   useEffect(() => {
     const checkSession = async () => {
       try {
-        const response = await fetch('/api/v1/check-session', {
+        const response = await fetch(`/api/v1/check-session/${username}`, {
           headers: {
             'Authorization': 'Bearer ' + sessionToken,
           },
         });
-  
+    
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
-  
+    
         const data = await response.json();
-  
+    
         if (data.valid) {
           setIsLoggedIn(true);
         } else {
@@ -73,7 +73,7 @@ const AppProvider = ({ children }) => {
             clearSession();
           }
         }
-  
+    
       } catch (error) {
         console.error(error);
         setIsLoggedIn(false);
@@ -82,17 +82,8 @@ const AppProvider = ({ children }) => {
         }
       }
     };
-  
-    if (sessionToken && username && role) {
-      checkSession();
-    } else {
-      setIsLoggedIn(false);
-      if (sessionToken || username || role) {
-        clearSession();
-      }
-    }
-  
   }, [sessionToken, username, role, clearSession]);
+  
   useEffect(() => {
     localStorage.setItem("sessionToken", sessionToken);
     localStorage.setItem("role", role);

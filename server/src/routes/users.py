@@ -1,7 +1,7 @@
 from flask import request, Blueprint, jsonify, make_response, current_app
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_jwt_extended import create_access_token, unset_jwt_cookies
-from flask_jwt_extended import get_jwt_identity
+from flask_jwt_extended import create_access_token, get_jwt, unset_jwt_cookies
+from flask_jwt_extended import get_jwt_identity, verify_jwt_in_request
 from flask_jwt_extended import jwt_required
 from src.models.user import User, Reviewer, Author
 from src.app import app, mongo, jwt, API
@@ -31,7 +31,7 @@ def login():
         user = authors_col.find_one({'username': username})
 
     if user and check_password_hash(user['password'], password):
-        access_token = create_access_token(identity=username, additional_claims={"rol":role})
+        access_token = create_access_token(identity=username, additional_claims={"role":role})
         ACCESS_TOKEN = access_token
         return make_response(jsonify({'access_token': access_token, 'message': 'Login successful!'}), 200)
     else:
@@ -41,6 +41,7 @@ def login():
 @users_bp.route(API + '/signup', methods=['POST'])
 def SignUp():
     data = request.get_json()
+    #TODO: Rol se debe cambiar a role en react
     role = data.get('rol')
     username = data.get('username')
     
@@ -79,35 +80,29 @@ def SignUp():
     return make_response(jsonify({'message':'Registration successful!'}), 201)
 
 
-import jwt
-from flask import current_app
 
 # Define this route in your existing code
-@users_bp.route(API + "/check-session", methods=["GET"])
-def check_session():
-    auth_header = request.headers.get('Authorization')
-    if auth_header:
-        try:
-            token = auth_header.split(' ')[1]
-            decoded = jwt.decode(token, current_app.config.get('SECRET_KEY'), algorithms=["HS256"])
-            username = decoded['identity']
-            role = decoded['rol']
-
+@users_bp.route(API + "/check-session/<username>", methods=["GET"])
+@jwt_required()
+def check_session(username):
+    try:
+        if get_jwt_identity() == username:
             user = None
+            claims = get_jwt()
+            role = claims["role"]
             if role == "reviewer":
                 user = reviewers_col.find_one({'username': username})
             elif role == "author":
                 user = authors_col.find_one({'username': username})
 
-            if user:
-                return jsonify({'valid': True}), 200
-            else:
-                return jsonify({'valid': False, 'message': 'User not found.'}), 404   
-        except Exception as e:  
-            return jsonify({'valid': False, 'message': 'Invalid token.'}), 401 
-    else:
-        return jsonify({'valid': False, 'message': 'Bearer token missing.'}), 400
-    
+        if user:
+            return jsonify({'valid': True}), 200
+        else:
+            return jsonify({'valid': False, 'message': 'User not found.'}), 404   
+    except Exception as e:  
+        return jsonify({'valid': False, 'message': 'Invalid token.'}), 401 
+
+
 @users_bp.route(API + '/logout', methods=['POST'])
 def logout():
     global ACCESS_TOKEN

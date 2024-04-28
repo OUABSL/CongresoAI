@@ -43,7 +43,6 @@ const LoginAuthor = () => {
         
         setAlert({ show: true, message: "Login Exitoso", variant: "success" });
         navigate(`/portal-author/profile/${usernameInput}`);
-        window.location.reload();
       } else {
         setAlert({ show: true, message: "Error en el Login", variant: "danger" });
       }

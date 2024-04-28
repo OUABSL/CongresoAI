@@ -54,7 +54,7 @@ const formatPreEvalSection = (preEvalSection) => {
 
   let formattedPreEvalSection = preEvalSection.replace(/\d+\./g, '');
   CRITERIA.forEach(criterion => {
-      formattedPreEvalSection = formattedPreEvalSection.replaceAll(criterion, `<br/><b>${criterion}:</b><br/>`);
+      formattedPreEvalSection = formattedPreEvalSection.replaceAll(`${criterion}:`, `<br/><b>${criterion}:</b><br/>`);
   });
 
   return formattedPreEvalSection;
@@ -63,7 +63,7 @@ const formatPreEvalSection = (preEvalSection) => {
 
 const SectionReview = ({ reviewData, sectionName, handleSectionUpdate }) => {
     const [sectionReview, setSectionReview] = useState(reviewData || {});
-    const [previousReviews, setPreviousReviews] = useState(null);
+    const [previousReviews, setPreviousReviews] = useState({});
     const [editing, setEditing] = useState(true);
 
 
@@ -74,24 +74,27 @@ const SectionReview = ({ reviewData, sectionName, handleSectionUpdate }) => {
 
 
     useEffect(() => {
-        if (reviewData) {
+        if (reviewData && reviewData && reviewData !== defaultReviewSection && previousReviews[sectionName]!==reviewData ) {
           setPreviousReviews(prevReviews => ({
             ...prevReviews, 
             [sectionName]: reviewData
           }));
+
         }
-      }, [reviewData, sectionName]);
+      }, [reviewData, sectionName, previousReviews]);
       
       useEffect(() => {
-        if (previousReviews && previousReviews[sectionName]) {
+        if (previousReviews && previousReviews[sectionName] && previousReviews[sectionName] !== defaultReviewSection) {
           handleEdit(false);
         }
       }, [previousReviews, sectionName]);
+
+
     useEffect(() => {
         if (reviewData) {
           setSectionReview(reviewData);
         }
-      }, [reviewData, previousReviews, sectionName]);
+      }, [reviewData, sectionName]);
 
 
     useEffect(() => {
@@ -100,10 +103,11 @@ const SectionReview = ({ reviewData, sectionName, handleSectionUpdate }) => {
 
     const handleSectionReviewSave = (updatedReview) => {
         setSectionReview(updatedReview);
+        setPreviousReviews(prevState => ({ ...prevState, [sectionName]: updatedReview }));
         handleSectionUpdate(sectionName, updatedReview);
-        console.log("Review: handleInputChange: ", sectionReview , "\n\n");
-  
+        handleEdit(false);
     };
+    
 
 
     const handleInputChange = (criterion, value) => {
@@ -113,8 +117,6 @@ const SectionReview = ({ reviewData, sectionName, handleSectionUpdate }) => {
 
     const handleClickSaveReview = () => {
         handleSectionReviewSave(sectionReview);
-        handleSectionUpdate(sectionName, sectionReview);
-        setEditing(false);
     };
 
     return (
@@ -166,7 +168,7 @@ const SectionReview = ({ reviewData, sectionName, handleSectionUpdate }) => {
                     <Card.Header>Resumen de la revisión anterior:</Card.Header>
                     <Card.Body>
                         {
-                            previousReviews && (
+                            previousReviews && previousReviews[sectionName] && (
                                 <div className="mt-3">
                                     {CRITERIA.map((criterion, i) => (
                                         <p key={criterion}>
@@ -236,7 +238,6 @@ const DisplaySection = ({ sectionName, summarySection, preEvalSection, actualRev
 
 
 function ShowAssignedArticle() {
-    const STATES_REVIEW = ["Pendiente de Revisión", "Aprobado", "Rechazado", "Pendiente de Mejora"];
     const { sessionToken, logout } = useContext(AuthContext); // Accede a username y sessionToken desde el contexto
     const { username, article_title } = useParams();
     const [article, setArticle] = useState({});

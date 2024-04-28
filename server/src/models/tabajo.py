@@ -1,6 +1,6 @@
 from typing import List
 from bson import ObjectId
-from mongoengine import Document, StringField, DateTimeField, ListField, ObjectIdField, DictField, ReferenceField
+from mongoengine import Document, StringField, DateTimeField, ListField, ObjectIdField, DictField, ReferenceField, BooleanField, IntField
 from mongoengine.base import BaseField
 from mongoengine.errors import ValidationError
 from datetime import datetime
@@ -12,6 +12,7 @@ from src.models.user import User
 class ProcessingState(BaseField):
     STATES = ('Done', 'On Process', 'Fail')
 
+
 class ReviewResult(BaseField):
     STATES = ("Pending Review", "Approved", "Rejected", "Pending Improvement")
 
@@ -20,12 +21,19 @@ class ReviewResult(BaseField):
             raise ValidationError('Invalid Processing State')
 
 class ScientificArticle(Document):
-    meta = {'alias': 'default'}
+    meta = {'alias': 'default',
+            'indexes': [
+                {'fields': ['author', 'title'], 'unique': True},
+                {'fields': ['submission_id'], 'unique': True}
+            ],
+    }
+
     author = StringField(max_length=200) 
+    submission_id = StringField(required=True, unique=True, max_length=36)
     title = StringField(required=True, max_length=200)
     description = StringField(required=True, max_length=500)
     key_words = ListField(StringField(required=True, max_length=50))
-    submission_date = DateTimeField(default=datetime.utcnow())
+    submission_date = DateTimeField(default=datetime.now())
     processing_state = ProcessingState(default='On Process')
     content = DictField()
     summary = DictField()
@@ -34,7 +42,7 @@ class ScientificArticle(Document):
     sorted_backup_assignment = ListField()
     review = DictField()
     review_result = ReviewResult(default="Pending Review")
-    review_comments=DictField()
+    is_resubmited = BooleanField()
     last_modified = DateTimeField(default=None)
     latex_project_id = ObjectIdField()
     submitted_pdf_id = ObjectIdField()
@@ -47,7 +55,7 @@ class ScientificArticle(Document):
         if latex_project:
             self.save_files(submitted_pdf=latex_project)
 
-    def update_properties(self,latex_project_id = None, submitted_pdf_id = None,  title: str = None, content: str = None, key_words: List[str] = None, summary: str = None, evaluation: str = None, reviewer: str = None,sorted_backup_assignment: List[tuple] = None, processing_state: bool = None, improvements:str = None, review_comments:dict=None):
+    def update_properties(self,latex_project_id = None, submitted_pdf_id = None,  title: str = None, content: str = None, key_words: List[str] = None, summary: str = None, evaluation: str = None, reviewer: str = None,sorted_backup_assignment: List[tuple] = None, processing_state: bool = None, improvements:str = None, is_resubmited:bool=None):
         if title:
             self.title = title
         if content:
@@ -70,9 +78,9 @@ class ScientificArticle(Document):
             self.submitted_pdf_id = submitted_pdf_id
         if improvements:
             self.improvements = improvements
-        if review_comments:
-            self.review_comments = review_comments
-        self.last_modified = datetime.datetime()
+        if is_resubmited:
+            self.is_resubmited = is_resubmited
+        self.last_modified = datetime.now()
         self.save()
 
 
@@ -113,6 +121,15 @@ class ScientificArticle(Document):
         else:
             return None
     
+    def get_summary_to_dict(self):
+        return {
+            'author': self.author,
+            'submission_id':self.submission_id,
+            'title': self.title,
+            'submission_date': self.submission_date.strftime('%Y-%m-%d %H:%M:%S'),
+            'keywords': self.key_words,
+            'las_modified':self.last_modified,
+        }
 
     def to_dict(self):
         return {
@@ -129,6 +146,8 @@ class ScientificArticle(Document):
             'latex_project_url': self.get_file_url(self.latex_project_id),
             'submitted_pdf_url': self.get_file_url(self.submitted_pdf_id),
         }
+    
+
 
     def to_json(self):
         return json.dumps(self.to_dict())
