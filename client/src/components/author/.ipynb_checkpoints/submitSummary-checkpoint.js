@@ -2,7 +2,7 @@ import React from 'react';
 import { useLocation } from 'react-router-dom';
 import { Card, Button } from 'react-bootstrap';
 
-const SubmitSummary = () => {
+const ResumenEntrega = () => {
     const location = useLocation();
     const { submitSummary, latex_project_url } = location.state; // Obtén la variable link de location.state
 
@@ -30,4 +30,4 @@ const SubmitSummary = () => {
     );
 };
 
-export default SubmitSummary;
+export default ResumenEntrega;

@@ -18,7 +18,6 @@ import LoginAuthor from './components/author/login';
 import SignUpAuthor from './components/author/register';
 import AuthorProfile from './components/author/authorProfile';
 import SubmitArticle from './components/author/submit';
-import SubmitSummary from './components/author/submitSummary';
 import ShowSubmittedArticles from './components/author/showSubmitedArticles';
 import ShowSubmittedArticle from './components/author/showSubmitedArticle';
 
@@ -70,7 +69,6 @@ function App() {
         <Route path="/portal-author/register" element={<SignUpAuthor />} />
         <Route path="/portal-author/profile/:username" element={<AuthorProfile />} />
         <Route path="/portal-author/submit" element={<SubmitArticle />} />
-        <Route path="/portal-author/submit-summary" element={<SubmitSummary />} />
         <Route path={"/portal-author/articles/:username"} element={<ShowSubmittedArticles />} />
         <Route path={"/portal-author/articles/:username/:article_title"} element={<ShowSubmittedArticle />} />
 
