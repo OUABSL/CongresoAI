@@ -2,6 +2,7 @@
   "name": "client",
   "version": "0.1.0",
   "private": true,
+  "proxy": "http://150.214.140.134:5000",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ouaelbsl/congressai.git"
