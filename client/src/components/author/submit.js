@@ -1,6 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Card, Form, Button, Alert } from 'react-bootstrap';
 import "../estilos/submit.css"
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import ResumenEntrega from './submitSummary';
+
 import { useContext } from "react";
 import AuthContext from "../../context/context";
 
@@ -11,8 +14,34 @@ const SubmitArticle = () => {
   const [file, setFile] = useState(null);
   const [alert, setAlert] = useState({ show: false, message: '', variant: 'success' });
   const { username, sessionToken, logout } = useContext(AuthContext); // Accede a username y sessionToken desde el contexto
+  const { state } = useLocation();
+  const [reviewComments, setReviewComments] = useState([]);
+  const [improvements, setImprovements] = useState("");
+  const [isResubmit, setIsResubmit] = useState(false);
+  const [article, setArticle] = useState({});
+  const [submitSummary, setSubmitSummary] = useState({});
 
+  const navigate = useNavigate();
 
+  useEffect(() => {
+    if(state && state.isResubmit){
+      console.log(`Estado:\n${state.article}\n${state.comments}`);
+      setIsResubmit(true);
+      setArticle(state.article)
+      if(state.comments){
+        const commentsList = Object.entries(state.comments).reduce((acc, [sectionName, sectionComments]) => {
+          return acc.concat(`${sectionName}: \n- ${sectionComments}\n`);
+        }, []);
+        if(article && article.title && article.key_words && article.description && commentsList){
+          setTitle(article.title);
+          setKeyWords(article.key_words);
+          setDescription(article.description);
+          setReviewComments(commentsList);
+        }
+        
+      }
+    }
+  }, [state, article]);
 
   const submitForm = async (e) => {
     e.preventDefault();
@@ -22,36 +51,56 @@ const SubmitArticle = () => {
     formData.append('title', title);
     formData.append('description', description);
     formData.append('key_words', keyWords);
+    if (isResubmit){
+      formData.append('improvements', improvements);
+      formData.append('review_comments', reviewComments);
+      formData.append('resubmit', true);
+    }
 
     if (file) {
       formData.append('latex_project', file);
     }
 
     const requestOptions = {
-      method: 'POST',
+      method: state && isResubmit ? 'PUT' : 'POST',
       headers: {
-        'Authorization': `Bearer + ${sessionToken}`,
+        'Authorization': `Bearer ${sessionToken}`,
       },
       body: formData
     };
 
+    const api = state && isResubmit ? `/api/v1/submit/${username}/${title}`: `/api/v1/submit`;
     try {
-      const response = await fetch('http://localhost:5000/api/v1/submit', requestOptions);
+      console.log("Making request to:", api);
+      console.log("Request options:", requestOptions);
+  
+      const response = await fetch(api, requestOptions);
+      console.log("Response:", response);
+  
       const data = await response.json();
+      console.log("Response data:", data);
+  
       if (!response.ok) {
         if(response.status === 401) {
           logout();
           return;
         }
-
         throw new Error(data.message);
       }
       else if (response.status === 201) {
         console.log(data.message);
-        setAlert({ show: true, message: data.message, variant: 'success' });
+        setAlert({ show: true, message: data.message, variant: 'success' });  
+        const url = URL.createObjectURL(file);
+        setSubmitSummary(data.article_summary);
+        //Navigate to ResumenEntrega and clear form fields
+        navigate('/submitSummary', { state: { submitSummary, latex_project_url:url } });
+        setTitle("");
+        setDescription("");
+        setKeyWords("");
+        setFile(null);
       }
     } catch (error) {
-      console.error(error.toString());
+      console.error(error);
       setAlert({ show: true, message: error.toString(), variant: 'danger' });
     }
   };
@@ -75,6 +124,32 @@ const SubmitArticle = () => {
           <Form.Label className="label-class">Palabras clave</Form.Label>
           <Form.Control type="text" value={keyWords} onChange={(e) => setKeyWords(e.target.value)} required className="input-class" />
         </Form.Group>
+
+        {isResubmit && 
+    <>
+      <Form.Group>
+        <Form.Label>Comentarios del Revisor</Form.Label>
+        <Form.Control 
+          as="textarea" 
+          style={{height: "100%"}} 
+          readOnly 
+          value={reviewComments.join('\n')} 
+          rows={reviewComments.length} 
+        />
+      </Form.Group>
+      <Form.Group> 
+        <Form.Label className="label-class">Descripción de realizadas mejoras</Form.Label>
+        <Form.Control 
+          as="textarea" 
+          rows={2} 
+          value={improvements} 
+          onChange={(e) => setImprovements(e.target.value)} 
+          required 
+          className="input-class" 
+        />
+      </Form.Group>
+    </>
+    }
 
         <Form.Group>
           <Form.Label className="label-class">Proyecto Latex</Form.Label>

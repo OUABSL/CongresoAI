@@ -1,42 +1,78 @@
 from bson.objectid import ObjectId
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, make_response
 from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 from werkzeug.datastructures import CombinedMultiDict
 from werkzeug.utils import secure_filename
-from models.user import User, Author
-from models.tabajo import ScientificArticle  
-from app import mongo, API, llamus_key
-from services.dataPreparation import DataHandler
-from services.PreEvaluation import PreEvaluation
-from services.Summary import ArticleSummarizer
-from services.Summary import SYSTEM_PROMPT_BASE as prompt_summary
-from services.PreEvaluation import  SYSTEM_PROMPT_BASE as prompt_eval
-import tempfile, shutil
-import threading
-import os, sys
+from src.models.user import Author
+from src.models.tabajo import ScientificArticle  
+from src.app import mongo, API, llamus_key
+from src.services.dataPreparation import DataHandler
+from src.services.PreEvaluation import PreEvaluation
+from src.services.summary import ArticleSummarizer
+from src.services.summary import SYSTEM_PROMPT_BASE as prompt_summary
+from src.services.PreEvaluation import  SYSTEM_PROMPT_BASE as prompt_eval
+from src.services.reviewerAssignment import ReviewerAssignment
+import tempfile, shutil, threading, os
+import logging
+from uuid import uuid4
+
+
 
 
 
 submit_bp = Blueprint('submit', __name__)
-UPLOAD_FOLDER = os.path.join(sys.path[0], "data")
+UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../../data")
+DB = mongo.db.scientific_article
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
 
 def create_temp_dir(parent_dir):
     return tempfile.mkdtemp(dir=parent_dir)
 
 
-def process_submit(article, dest_path):
-    # Data processing
-    data_handler = DataHandler(article, dest_path=dest_path)
-    data_handler.run()
+def process_submit(article:ScientificArticle, dest_path, resubmit:bool = False):
+    #TODO : Implementar la logica de resubmit, incluyendo peticiones a llamus
+    try:
+        # Data processing
+        data_handler = DataHandler(article, dest_path=dest_path)
+        data_handler.run()
+        if not(resubmit):    
+            summary_instance = ArticleSummarizer(mongo, prompt_summary,  llamus_key, article)
+            pre_evaluation_instance = PreEvaluation(mongo,  prompt_eval, llamus_key, article)
+            assignment_agent = ReviewerAssignment(mongo = mongo, article = article)
+            assignment_agent.run()
+        else:
+            summary_instance = ArticleSummarizer(mongo, prompt_summary,  llamus_key, article)
+            pre_evaluation_instance = PreEvaluation(mongo,  prompt_eval, llamus_key, article, resubmit)
 
-    summary_instance = ArticleSummarizer(mongo, prompt_summary,  llamus_key, article)
-    evaluation_instance = PreEvaluation(mongo,  prompt_eval, llamus_key, article)
-    
-    evaluation_instance.chat_model = 'TheBloke.llama-2-70b-chat.Q5_K_M.gguf'
-    summary_instance.run()
-    evaluation_instance.run()
-    if os.path.isdir(dest_path):
-        shutil.rmtree(dest_path)
+
+        summary =summary_instance.run()
+        pre_evaluation = pre_evaluation_instance.run()
+        error = summary.get('error', False) or pre_evaluation.get('error', False)
+        if summary and not summary.get('error', False):
+            article.update_properties(summary=summary)
+
+        if pre_evaluation and not pre_evaluation.get('error', False):
+            article.update_properties(evaluation=pre_evaluation)
+
+
+        if(error):
+            logging.error("Error en el procesamiento del artículo")
+            article.update_properties(processing_state="Fail")
+        else:
+            article.update_properties(processing_state="Done")
+
+        article.save()
+        
+    except Exception as e:
+        logging.error(f"Error exepción {e}")
+        article.update_properties(processing_state="Fail")
+        article.save()
+    finally:
+        #Eliminar la carpeta temporal usada en el proceso
+        if os.path.isdir(dest_path):
+            shutil.rmtree(dest_path)
+            print(f"Eliminada la carpeta {dest_path}")
 
     return None
 
@@ -44,54 +80,128 @@ def process_submit(article, dest_path):
 @jwt_required()
 def submit_article():
     claims = get_jwt()
-    role = claims["rol"]
-    if role != "author":
+    if claims["role"] != "author":
         return jsonify({"msg": "You do not have access to this resource"}), 403
-    
+
+    if not os.path.exists(UPLOAD_FOLDER):
+        os.makedirs(UPLOAD_FOLDER)
     temp_dir = create_temp_dir(UPLOAD_FOLDER)
 
-    current_user = mongo.db.authors.find_one({'username':(get_jwt_identity())})
-    print("username:   ",get_jwt_identity())
+    loged_in_author = mongo.db.authors.find_one({'username':get_jwt_identity()})
+
+    file_obj = request.files.get('latex_project', None)
+    title = request.form.get("title", None)
+    description = request.form.get("description", None)
+    key_words = request.form.get('key_words', None)
+    username = get_jwt_identity()
+
+    # Check if all required fields are present
+    if not all([file_obj, title, description, key_words, loged_in_author]):
+        message = "Missing required fields, {}{}".format("File is missing; " if not file_obj else "",
+                                                         "Form fields are missing; " if not all([title, description, key_words, loged_in_author]) else "")
+        return jsonify({'error': message}), 422
+    key_words = key_words.split(',')
+    submission_id = str(uuid4())
+    article = ScientificArticle(author = username, submission_id=submission_id ,title=title, description=description, key_words=key_words)
+    article.save_files(latex_project=file_obj)
+    article.save()
+    threading.Thread(target=process_submit, args=(article, temp_dir)).start()
+    # Obtener el resumen del artículo como un diccionario
+    article_summary = article.get_summary_to_dict()
+
+    # Devolver el resumen del artículo junto con el mensaje de éxito
+    return jsonify({'status': 'success', 'message': 'File uploaded and processing', 'article_summary': article_summary}), 201
+
+
+
+@submit_bp.route(API + '/submit/<author>', methods=['GET'])
+def show_articles(author):
+    articles = list(DB.find({"author":str(author)}))
+    if articles:
+        for article in articles:
+            if article and 'submitted_pdf_id' in article.keys() and article.get('summary'):
+                article.pop("_id")
+                article.pop("content")
+                article.pop("summary")
+                article.pop("evaluation")
+                article['latex_project_id'] = str(article.get('latex_project_id'))
+                article['submitted_pdf_id'] = str(article.get('submitted_pdf_id'))
+                if article.get('result_review') == "Pending Review":
+                    article.pop("review")
+        return make_response(jsonify(articles), 200)
+    else:
+        return make_response(jsonify({"msg": "No articles found for this author."}), 404)
+
+
+@submit_bp.route(API + '/submit/<author>/<article_title>', methods = ['GET'])
+@jwt_required()
+def show_article(author, article_title):
+    article = DB.find_one({"author":str(author), "title":article_title})
+    print(article)
+    if article:
+        article.pop("_id")
+        article.pop("content")
+        article.pop("summary")
+        article.pop("evaluation")
+        article.pop("sorted_backup_assignment")
+        if article.get("review_result") == "Pending Review":
+            article.pop("review")
+        article['latex_project_id'] = str(article.get('latex_project_id'))
+        article['submitted_pdf_id'] = str(article.get('submitted_pdf_id'))
+        return make_response(jsonify(article), 200)
+    else:
+        return make_response(jsonify({"msg": "No articles found for this author."}), 404)
     
-    data_file = request.files
-    data_form = request.form
-    #print("data form:  ",data_form)
-    print(f"current: \n {current_user}")
 
+
+"""
+Función para actualizar un articulo cientifico ya revisado
+"""
+#TODO : Realizar mejoras y pruebas sobre la función actualizar articulo revisado
+@submit_bp.route(API + '/submit/<author>/<title>', methods=['PUT'])
+@jwt_required()
+def update_article(author, title):
+    claims = get_jwt()
+    if claims["role"] != "author":
+        return jsonify({"msg": "You do not have access to this resource"}), 403
     
-    required_fields = ['title', 'description', 'key_words']
+    # Buscar el artículo por autor y título
+    #article = DB.find_one({"author": author, "title": title})
+    article_updated = ScientificArticle.objects(author=author, title=title).first()
 
-    if not all(field in data_form for field in required_fields) or not data_file:
-        return jsonify({'error': 'Missing required fields'}), 400
 
-    if not current_user:
-        return jsonify({'error': 'User not found'}), 404
-    #print(current_user)
-    file=''
-    filename = ''
-    for file in data_file.values():
-        file = file
-        filename = secure_filename(file.filename) # obtener el nombre seguro del archivo
-        print(filename) # este es el nombre de tu archivo zip
-
-        # if file.filename != '':
-        #     file.save(os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(file.filename)) + ".zip")
+    # Si no se encuentra el artículo
+    if not article_updated:
+        return jsonify({"error": "Article not found"}), 404
     
-   
-    title = request.form.get("title")
-    description = request.form.get("description")
-    key_words = request.form.get('key_words').split(',')
+    file_obj = request.files.get('latex_project', None)
+    improvements = request.form.get('improvements', None)
+    review_comments = request.form.get('review_comments', None)
+    resubmit = request.form.get('resubmit', None)
 
-    # Create ScientificArticle instance and save to MongoDB
-    saved_article = ScientificArticle(
-        title=title, 
-        description=description,
-        key_words=key_words,
-        content={},
-        evaluation={}, 
-        summary={},
-        reviewer = 'joaquin'
-    ).save()
-    saved_article.save_files(latex_project=file)
-    threading.Thread(target=process_submit, args=(saved_article, temp_dir)).start()
-    return jsonify({'status': 'success', 'msg': 'File uploaded successfully'}), 201
+    temp_dir = create_temp_dir(UPLOAD_FOLDER)
+
+    # Verificar si todos los campos requeridos están presentes
+    if not all([file_obj, improvements, review_comments, resubmit]):
+        message = "Missing required fields, {}{}".format(
+            "File is missing; " if not file_obj else "",
+            "Form fields are missing; " if not all([
+                improvements, review_comments, resubmit]) else "")
+        return jsonify({'error': message}), 422
+
+    # Actualizar el artículo
+    #article_updated = ScientificArticle(**article)  
+    article_updated.save_files(latex_project=file_obj)
+    article_updated.update_properties(
+        improvements=improvements,
+        processing_state="On Process" #TODO: Falta mejorar la logica de resubmit
+    )
+    print(f"Actualizado el articulo {article_updated.title}, {article_updated.processing_state}")
+    article_updated.save()
+
+    threading.Thread(target=process_submit, args=(article_updated, temp_dir, True)).start()
+
+    return jsonify({'status': 'success', 'message': 'Article updated and processing'}), 200
+
+
+    #TODO: Solucionar y manejar las llamadas a llamus.

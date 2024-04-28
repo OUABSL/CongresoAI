@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import "../estilos/login.css";
 import { useAuth } from "../../context/appProvider";
 
-const Login = () => {
+const LoginAuthor = () => {
   const [usernameInput, setInputUsername] = useState("");
   const [password, setInputPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -21,27 +21,35 @@ const Login = () => {
       "username":usernameInput,
       "password":password
     };
-    
-    const response = await fetch('/api/v1/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(payload)
-    });
-    const result = await response.json()
 
-    if (response.status===200) {
-      setSessionToken(result.access_token);
-      setUsername(usernameInput);
-      setRole("author");
-      
-      setAlert({ show: true, message: "Login Exitoso", variant: "success" });
-      navigate(`/portal-author/profile/${usernameInput}`, { replace: true });
-      window.location.reload(); 
-    } else {
-      setAlert({ show: true, message: "Error en el Login", variant: "danger" });
+    try {
+      const response = await Promise.race([
+        fetch('/api/v1/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(payload)
+        }),
+        new Promise((_, reject) => setTimeout(() => reject(new Error('La solicitud ha tardado demasiado, por favor intentelo de nuevo')), 10000))
+      ]);
+
+      const result = await response.json()
+
+      if (response.status===200) {
+        setSessionToken(result.access_token);
+        setUsername(usernameInput);
+        setRole("author");
+        
+        setAlert({ show: true, message: "Login Exitoso", variant: "success" });
+        navigate(`/portal-author/profile/${usernameInput}`);
+      } else {
+        setAlert({ show: true, message: "Error en el Login", variant: "danger" });
+      }
+    } catch (error) {
+      setAlert({ show: true, message: error.message, variant: "danger" });
     }
+      
     setLoading(false);
   };
   
@@ -114,4 +122,4 @@ const Login = () => {
     </Card>
   );
 };
-export default Login;
+export default LoginAuthor;

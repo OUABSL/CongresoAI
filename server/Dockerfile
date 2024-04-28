@@ -1,17 +1,14 @@
 FROM python:3.10.7-slim
 
-ENV CONTAINER_HOME=/var/www/server  
+ENV CONTAINER_HOME=/server
 
 WORKDIR $CONTAINER_HOME
 
 
-RUN pip install --upgrade pip
-ADD requirements.txt .
+COPY ./requirements.txt .
 
-RUN pip install --no-cache-dir -r requirements.txt
+ENV FLASK_ENV production
 
-COPY ./ .  
+RUN pip install -r ./requirements.txt
+RUN python -m spacy download en_core_web_lg
 
-EXPOSE 5000
-
-CMD ["python", "src/app.py"] 

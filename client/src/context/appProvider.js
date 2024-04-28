@@ -17,6 +17,8 @@ const AppProvider = ({ children }) => {
     localStorage.getItem("sessionToken") || null
   );
   const [role, setRole] = useState(localStorage.getItem("role") || null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
   const [username, setUsername] = useState(
     localStorage.getItem("username") || null
   );
@@ -25,6 +27,63 @@ const AppProvider = ({ children }) => {
   const navigate = useNavigate();
 
 
+  const clearSession = useCallback(() => {
+    navigate('/');
+    setSessionToken(null);
+    setRole(null);
+    setUsername(null);
+    localStorage.removeItem("sessionToken");
+    localStorage.removeItem("role");
+    localStorage.removeItem("username");
+}, [navigate]);
+
+  const handleLogout = useCallback(async () => {
+    try {
+      const response = await fetch("/api/v1/logout", { method: 'POST' });
+      // Manejo del error de red.
+      if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+      }
+    } catch (error) {
+      console.error("Error during logout:", error);
+    }
+    clearSession();
+  }, [clearSession]);
+
+  useEffect(() => {
+    const checkSession = async () => {
+      try {
+        const response = await fetch(`/api/v1/check-session/${username}`, {
+          headers: {
+            'Authorization': 'Bearer ' + sessionToken,
+          },
+        });
+    
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+    
+        const data = await response.json();
+    
+        if (data.valid) {
+          setIsLoggedIn(true);
+        } else {
+          setIsLoggedIn(false);
+          if (sessionToken && username && role) {
+            clearSession();
+          }
+        }
+    
+      } catch (error) {
+        console.error(error);
+        setIsLoggedIn(false);
+        if (sessionToken && username && role) {
+          clearSession();
+        }
+      }
+    };
+  }, [sessionToken, username, role, clearSession]);
+  
   useEffect(() => {
     localStorage.setItem("sessionToken", sessionToken);
     localStorage.setItem("role", role);
@@ -43,28 +102,6 @@ const AppProvider = ({ children }) => {
     setUsername(newUsername);
   };
 
-  const handleLogout = useCallback(
-    async () => {
-      try {
-        await fetch("/api/v1/logout", {
-          method: 'POST',
-        });
-      } catch (error) {
-        console.error("Error during ºt:", error);
-      }
-
-      // Clear context and localStorage
-      navigate(`/`);
-      setSessionToken(null);
-      setRole(null);
-      setUsername(null);
-
-      localStorage.removeItem("sessionToken");
-      localStorage.removeItem("role");
-      localStorage.removeItem("username");
-    },
-    [navigate, role] // Only dependency
-  );
 
   useEffect(() => {
     const handleWindowFocus = () => {
@@ -106,6 +143,7 @@ const AppProvider = ({ children }) => {
         sessionToken,
         role,
         username,
+        isLoggedIn,
         setSessionToken: handleSetSessionToken,
         setRole: handleSetRole,
         setUsername: handleSetUsername,

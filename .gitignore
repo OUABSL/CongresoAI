@@ -1,7 +1,7 @@
-.env
 .venv
-#backend/src/test
-backend/src/config.py
-backend/src/__pycache__
+server/src/test
+server/src/config.py
+server/src/__pycache__
 test
-backend/test_results
+server/test_results/
+server/data/input/*

@@ -28,8 +28,8 @@ function AuthorProfile() {
       if(response.status === 401) {
         logout();
       }
-
       const data = await response.json();
+
       setProfileData(data);
     };
     if (!editing) {
