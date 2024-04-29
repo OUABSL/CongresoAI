@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react'
 import { Card, Form, Row, Col, Button, Alert } from "react-bootstrap";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate} from 'react-router-dom';
 import { AlertContext } from '../../context/alertProvider';
 import "../estilos/register.css"
 
@@ -8,6 +8,7 @@ import "../estilos/register.css"
 const SignUpRevisor = () => {
   const { alert, setAlert } = useContext(AlertContext);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
 
   const initialState = {
@@ -16,6 +17,7 @@ const SignUpRevisor = () => {
     email: '',
     username: '',
     password: '',
+    confirmPassword: '',
     fullname: '',
     phonenumber: '',
     knowledges: ''
@@ -41,6 +43,17 @@ const SignUpRevisor = () => {
     setLoading(true);
     e.preventDefault();
 
+    if (state.password !== state.confirmPassword) { 
+      setLoading(false);
+      return setAlert({
+          show: true,
+          message: "Las contraseñas no coinciden!",
+          variant: "danger"
+      });
+    }
+    else{
+      delete state.confirmPassword;
+    }
     fetch('/api/v1/signup', {
       method: 'POST',
       headers: {
@@ -50,22 +63,25 @@ const SignUpRevisor = () => {
     })
     .then(response => response.json())
     .then(data => {
-        console.log(data.message);
-
+      console.log(data.message);
+      if (data.success) {
+        navigate('/portal-reviewer/login');
+      } else {
+        setLoading(false);
         setAlert({
-          show: true, 
-          message: data.message, 
-          variant: data.success ? "success": "danger"
+          show: true,
+          message: data.message,
+          variant: "danger"
         });
+      }
     });
     setLoading(false);
-    setState(initialState)
   }
 
   const onChange = (e) => setState({...state, [e.target.name]: e.target.value});
 
   return (
-    <Card className="register-card mt-2 p-5 mx-0">
+    <Card className="register-card mt-2 p-5 mx-auto">
         <Form onSubmit={onSubmit} className="form-class">
             <div className="h4 mb-4 form-heading text-center">Registro de revisor</div>
             <Row>
@@ -112,6 +128,19 @@ const SignUpRevisor = () => {
           </Row>
 
           <Row>
+          <Col>
+            <Form.Group className="mb-3 form-group-class">
+              <Form.Label className="label-class">Dirección de correo electrónico</Form.Label>
+              <Form.Control
+                type="email"
+                placeholder="Introduzca su correo electrónico"
+                name="email"
+                value={state.email}
+                onChange={onChange}
+                className="input-class"
+              />
+            </Form.Group>
+          </Col>
             <Col>
               <Form.Group className="mb-3 form-group-class">
                 <Form.Label className="label-class">Número de teléfono</Form.Label>
@@ -130,25 +159,25 @@ const SignUpRevisor = () => {
           <Row>
           <Col>
             <Form.Group className="mb-3 form-group-class">
-              <Form.Label className="label-class">Dirección de correo electrónico</Form.Label>
-              <Form.Control
-                type="email"
-                placeholder="Introduzca su correo electrónico"
-                name="email"
-                value={state.email}
-                onChange={onChange}
-                className="input-class"
-              />
-            </Form.Group>
-          </Col>
-          <Col>
-            <Form.Group className="mb-3 form-group-class">
               <Form.Label className="label-class">Contraseña</Form.Label>
               <Form.Control
                 type="password"
                 placeholder="Introduzca la contraseña"
                 name="password"
                 value={state.password}
+                onChange={onChange}
+                className="input-class"
+              />
+            </Form.Group>
+            </Col>
+            <Col>
+            <Form.Group className="mb-3 form-group-class">
+              <Form.Label className="label-class">Repita su Contraseña</Form.Label>
+              <Form.Control
+                type="password"
+                placeholder="Repita la contraseña"
+                name="confirmPassword" 
+                value={state.confirmPassword}
                 onChange={onChange}
                 className="input-class"
               />
@@ -182,7 +211,7 @@ const SignUpRevisor = () => {
           </div>
         )}
       <p className="forgot-password text-right">
-        ¿Ya está registrado? <Link to="/portal-revisor/login">iniciar sesión!</Link>
+        ¿Ya está registrado? <Link to="/portal-reviewer/login">iniciar sesión!</Link>
       </p>
     </Form>
     </Card>

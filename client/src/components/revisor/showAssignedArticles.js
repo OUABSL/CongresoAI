@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Container} from 'react-bootstrap';
+import { Table, Container, Alert} from 'react-bootstrap';
 import { redirect, useParams, useNavigate } from 'react-router-dom';
 import { useContext } from "react";
 import AuthContext from "../../context/context";
@@ -39,6 +39,16 @@ function ShowAssignedArticles() {
     }
     fetchArticles()
   }, [username, sessionToken, logout])
+
+  if (!articles.length) {
+    return (
+    <>
+        <div className="d-flex justify-content-center align-items-center vh-100">
+        <Alert variant="warning">No existe ningún artículo asignado</Alert>
+      </div>
+    </>
+    );
+  }
 
 
   return (

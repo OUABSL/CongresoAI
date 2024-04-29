@@ -74,6 +74,10 @@ const SectionReview = ({ reviewData, sectionName, handleSectionUpdate }) => {
 
 
     useEffect(() => {
+        setSectionReview(reviewData);
+    }, [reviewData]);
+
+    useEffect(() => {
         if (reviewData && reviewData && reviewData !== defaultReviewSection && previousReviews[sectionName]!==reviewData ) {
           setPreviousReviews(prevReviews => ({
             ...prevReviews, 
@@ -90,27 +94,17 @@ const SectionReview = ({ reviewData, sectionName, handleSectionUpdate }) => {
       }, [previousReviews, sectionName]);
 
 
-    useEffect(() => {
-        if (reviewData) {
-          setSectionReview(reviewData);
-        }
-      }, [reviewData, sectionName]);
 
 
-    useEffect(() => {
-        setSectionReview(reviewData);
-    }, [reviewData]);
-
-    const handleSectionReviewSave = (updatedReview) => {
+      const handleSectionReviewSave = (updatedReview) => {
         setSectionReview(updatedReview);
         handleSectionUpdate(sectionName, updatedReview);
         setPreviousReviews(prevState => {
-            const updatedPreviousReviews = { ...prevState, [sectionName]: updatedReview };
-            handleEdit(false);
-            return updatedPreviousReviews;
+          const updatedPreviousReviews = { ...prevState, [sectionName]: updatedReview };
+          return updatedPreviousReviews;
         });
-    };
-
+        setEditing(true); // Keep editing mode on after saving
+      };
 
     const handleInputChange = (criterion, value) => {
         const updatedReview = { ...sectionReview, [criterion]: value };

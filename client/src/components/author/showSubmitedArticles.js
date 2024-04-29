@@ -43,7 +43,13 @@ function ShowSubmittedArticles() {
   }, [username, sessionToken, logout])
 
   if (!articles.length) {
-    return <Alert variant="warning">No hay ningún artículo presentado</Alert>;
+    return (
+    <>
+        <div className="d-flex justify-content-center align-items-center vh-100">
+        <Alert variant="warning">No existe ningún artículo presentado</Alert>
+      </div>
+    </>
+    );
   }
 
   return (

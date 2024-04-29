@@ -106,24 +106,36 @@ return (
               label={task}
               checked={checked}
               onChange={handleCheck}
-            />
-          <Form.Control
-            as="select"
-            name={task}
-            disabled={!checked}
-            value={value}
-            onChange={handleSelectChange}
-          >
-            <option disabled value="">Seleccione un modelo</option>
-            {models.map((model, index) => {
-              let optionLabel = model;
-              if (model === defaultModel[task]) {
-                optionLabel += " [Recomendado]";
-              }
-              return <option key={index} value={model}>{optionLabel}</option>;
-            })}
+              />
+        
+            {models.length > 0 ? (
+              <Form.Control
+                as="select"
+                name={task}
+                disabled={!checked}
+                value={value}
+                onChange={handleSelectChange}
+              >
+                <option disabled value="">Seleccione un modelo</option>
+                {models.map((model, index) => {
+                  let optionLabel = model;
+                  if (model === defaultModel[task]) {
+                    optionLabel += " [Recomendado]";
+                  }
+                  return <option key={index} value={model}>{optionLabel}</option>;
+                })}
           </Form.Control>
-          </Form.Group>
+        
+              ) : (
+              
+                task !== 'datapreparation' && 
+                  <Form.Control 
+                    plaintext 
+                    readOnly
+                    defaultValue={`Listado indisponible. Por defecto ${defaultModel[task]}`}
+                  />
+              )}
+            </Form.Group>
         ))}
       </Modal.Body>
       <Modal.Footer>
