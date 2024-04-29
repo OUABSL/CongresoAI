@@ -123,12 +123,12 @@ class ScientificArticle(Document):
     
     def get_summary_to_dict(self):
         return {
-            'author': self.author,
-            'submission_id':self.submission_id,
             'title': self.title,
+            'author': self.author,
+            'description': self.description,
+            'submission_id':self.submission_id,
             'submission_date': self.submission_date.strftime('%Y-%m-%d %H:%M:%S'),
             'keywords': self.key_words,
-            'las_modified':self.last_modified,
         }
 
     def to_dict(self):

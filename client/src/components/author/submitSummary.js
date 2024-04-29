@@ -4,30 +4,40 @@ import { Card, Button } from 'react-bootstrap';
 
 const SubmitSummary = () => {
     const location = useLocation();
-    const { submitSummary, latex_project_url } = location.state; // Obtén la variable link de location.state
+    const { submitSummary, latex_project_url } = location.state || {}; 
+    
+    const { title, author, description, keywords = [],submission_date, submission_id } = submitSummary;
 
     return (
-        <Card className="mt-4 p-4 mx-auto">
-            <Card.Header as="h5">{submitSummary.title}</Card.Header>
+        <Card className="mt-4 p-4 mx-auto" style={{ maxWidth: '600px' }}>
+            <Card.Header as="h3">Confirmación de Entrega</Card.Header>
             <Card.Body>
-                <Card.Title>Author: {submitSummary.author}</Card.Title>
+                <Card.Title>Título: {title || 'No disponible'}</Card.Title>
                 <Card.Text>
-                    Description: {submitSummary.description}
+                    Autor: {author || 'No disponible'}
                 </Card.Text>
                 <Card.Text>
-                    Keywords: {submitSummary.key_words.join(', ')}
+                    ID de entrega: {submission_id || 'No disponible'}
                 </Card.Text>
                 <Card.Text>
-                    Submitted at: {submitSummary.submission_date}
+                    Descripción del artículo: {description || 'No disponible'}
                 </Card.Text>
-                {latex_project_url && 
-                    <Button variant="primary" href={latex_project_url} className="mt-2"> {/* Utiliza link como href */}
-                        Descargar Proyecto Latex
-                    </Button>
+                <Card.Text>
+                    Palabras clave: {keywords.length > 0 ? keywords.join(', ') : 'No disponible'}
+                </Card.Text>
+                <Card.Text>
+                    Fecha de Entrega: {submission_date || 'No disponible'}
+                </Card.Text>
+                {latex_project_url ? 
+                    <Button variant="primary" href={latex_project_url} className="mt-2">
+                        Descargar Proyecto LaTeX
+                    </Button> : 
+                    <Card.Text>No hay URL para el proyecto LaTeX disponible.</Card.Text>
                 }
             </Card.Body>
         </Card>
     );
 };
-
-export default SubmitSummary;
+    
+    export default SubmitSummary;
+    
