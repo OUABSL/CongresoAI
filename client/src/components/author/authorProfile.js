@@ -4,6 +4,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useContext } from "react";
 import { AlertContext } from '../../context/alertProvider';
 import AuthContext from "../../context/context";
+import { useAuth } from "../../context/appProvider";
+
 
 function AuthorProfile() {
   const [profileData, setProfileData] = useState(null);
@@ -12,6 +14,8 @@ function AuthorProfile() {
   const [editing, setEditing] = useState(false);
   const { alert, setAlert } = useContext(AlertContext);
   const navigate = useNavigate();
+  const { setSessionToken, setRole, setUsername } = useAuth();
+
 
   useEffect(() => {
     const getProfile = async () => {
