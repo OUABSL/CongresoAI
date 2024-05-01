@@ -1,6 +1,6 @@
 from datetime import datetime
 """ MongoEngine's syntax for querying objects, similar to Django's ORM (Object-Relational Mapper)."""
-from mongoengine import Document, StringField, DateTimeField, EmailField, ListField, MapField, ReferenceField, IntField, DictField, DateField
+from mongoengine import Document, StringField, DateTimeField, EmailField, ListField, MapField, ReferenceField, IntField, DictField, DateField, BooleanField
 import json
 from src.app import mongo #db = PyMongo(app).users
 
@@ -12,6 +12,7 @@ class User(Document):
     fullname = StringField(required=True, max_length=100)
     registration_date = DateTimeField(default=datetime.now())
     phonenumber = StringField(max_length=20)
+    is_bi = BooleanField()
 
     def to_json(self):
         user_dict = self.to_mongo()

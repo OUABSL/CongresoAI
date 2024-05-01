@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react'
 import { Card, Form, Row, Col, Button, Alert } from "react-bootstrap";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { AlertContext } from '../../context/alertProvider';
 import "../estilos/register.css"
 
@@ -11,6 +11,7 @@ import "../estilos/register.css"
 const SignUpAuthor = () => {
   const { alert, setAlert } = useContext(AlertContext);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
 
 
@@ -61,6 +62,7 @@ const SignUpAuthor = () => {
           message: data.message, 
           variant: data.success ? "success" : "danger"
         });
+        if(data.success) return navigate("/portal-author/login")
     })
     .catch((error) => console.log(error))
     .finally(() => {

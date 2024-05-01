@@ -25,18 +25,18 @@ UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../../
 DB = mongo.db.scientific_article
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-
+#Función para crear carpeta temporal para la extracción de datos desde el proyecto latex.
 def create_temp_dir(parent_dir):
     return tempfile.mkdtemp(dir=parent_dir)
 
+#Función para eliminar la carpeta temporal creada, se ejecuta al terminar la extracción de datos desde el proyecto latex. 
 def delete_temp_dir(dest_path):
-    #Eliminar la carpeta temporal usada en el proceso
-        if os.path.isdir(dest_path):
-            shutil.rmtree(dest_path)
-            if not os.listdir(dest_path): # verifica si la carpeta todavía existe después de usar shutil.rmtree()
-                os.rmdir(dest_path) # se utiliza os.rmdir() para eliminar la carpeta vacía
-                print(f"Eliminada la carpeta {dest_path}")
-
+    # Eliminar la carpeta temporal usada en el proceso
+    if os.path.isdir(dest_path):
+        shutil.rmtree(dest_path)
+        if os.path.isdir(dest_path): # verifica si la carpeta todavía existe después de usar shutil.rmtree()
+            os.rmdir(dest_path) # se utiliza os.rmdir() para eliminar la carpeta vacía
+            print(f"Eliminada la carpeta temporal {dest_path}")
 
 
 def process_submit(article:ScientificArticle, dest_path, resubmit:bool = False):
@@ -82,6 +82,11 @@ def process_submit(article:ScientificArticle, dest_path, resubmit:bool = False):
         delete_temp_dir(dest_path)
     return None
 
+"""
+Función para recibir el POST de una entrega inicial de un artículo por parte del autor.
+- Args: rol, zip del proyecto latex, título, descripción, palabras claves 
+- Devuelve: mensaje de resultado, codigo de estado, resumen de entrega 
+"""
 @submit_bp.route(API + '/submit', methods=['POST'])
 @jwt_required()
 def submit_article():
@@ -101,7 +106,7 @@ def submit_article():
     key_words = request.form.get('key_words', None)
     username = get_jwt_identity()
 
-    # Check if all required fields are present
+    # Comprobar la existencia de todos los campos requiridos
     if not all([file_obj, title, description, key_words, loged_in_author]):
         message = "Missing required fields, {}{}".format("File is missing; " if not file_obj else "",
                                                          "Form fields are missing; " if not all([title, description, key_words, loged_in_author]) else "")
@@ -112,7 +117,7 @@ def submit_article():
     article.save_files(latex_project=file_obj)
     article.save()
     threading.Thread(target=process_submit, args=(article, temp_dir)).start()
-    # Obtener el resumen del artículo como un diccionario
+    # Obtener el resumen de la entrega como un diccionario
     submit_summary = article.get_summary_to_dict()
 
     # Devolver el resumen del artículo junto con el mensaje de éxito
@@ -220,5 +225,3 @@ def update_article(author, title):
 
     return jsonify({'status': 'success', 'message': 'Article updated and processing', 'submit_summary': submit_summary}), 200
 
-
-    #TODO: Solucionar y manejar las llamadas a llamus.

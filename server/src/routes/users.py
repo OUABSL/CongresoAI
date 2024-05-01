@@ -18,6 +18,10 @@ users_bp = Blueprint('users', __name__)
 def to_list(form_element : str):
     return form_element.split(',')
 
+
+"""
+Funciones comúnes para autores y revisores
+"""
 # Iniciar Sesión para un usuario (Autores y Revisores)
 @users_bp.route(API + "/login", methods=["POST"])
 def login():
@@ -44,6 +48,7 @@ def SignUp():
     data = request.get_json()
     role = data.get('role')
     username = data.get('username')
+    is_bi = data.get('is_bi', None)
 
     if role == 'reviewer':
         user = Reviewer.objects(username=username).first()
@@ -58,8 +63,10 @@ def SignUp():
             knowledges = to_list(str(data.get('knowledges')))
             reviewer = Reviewer(email=email, username=username, password=password, fullname=fullname,
                                 phonenumber=phonenumber, ORCID_ID=ORCID_ID, knowledges=knowledges)
+            if is_bi:
+                reviewer.is_bi = is_bi
             reviewer.save()
-    elif role == 'author':
+    if role == 'author'or is_bi:
         user = authors_col.find_one({'username': username})
         if user:
             return make_response(jsonify({'message':'Username already exists!'}), 400)
@@ -72,13 +79,35 @@ def SignUp():
             interestareas = to_list(str(data.get('interests')))
             author = Author(ID_Author=id_author, email=email, username=username, password=password, fullname=fullname,
                             phonenumber=phonenumber,interests=interestareas)
+            if is_bi:
+                author.is_bi = is_bi
             author.save() 
 
     else:
         return make_response(jsonify({'message':'Unauthorized!'}), 401)
     return make_response(jsonify({'message':'Registration successful!'}), 201)
 
+# Cambiar rol del usuario (Autores y Revisores)
+@users_bp.route('/api/v1/change-role', methods=['POST'])
+@jwt_required()
+def change_role():
+    current_user = get_jwt_identity()
+    new_role = request.json.get("new_role", None)
 
+    user = None
+    if new_role.lower() == "author":
+        user = reviewers_col.find_one({'username': current_user})
+    elif new_role.lower() == "author":
+        user = authors_col.find_one({'username': current_user})
+    else:
+        return make_response(jsonify({"message": "New role is invalid"}), 400)
+    
+    if user is None:
+        return make_response(jsonify({"message": "User not found"}), 404)
+    
+    # Devueve una token de acceso actualizada para nuevo rol del usuario
+    access_token = create_access_token(identity=current_user, additional_claims={"role": new_role})
+    return make_response(jsonify({'access_token': access_token, 'message': f'Role changed to {new_role}!'}), 200)
 
 #Comprobar si la sesión sigue siendo válida
 @users_bp.route(API + "/check-session/<username>", methods=["GET"])
@@ -111,6 +140,10 @@ def logout():
     unset_jwt_cookies(response) 
     return response
 
+
+"""
+Portal de autor
+"""
 #Devolver los datos de perfil del autor logueado  
 @users_bp.route(API + "/authors/profile/<username>", methods=["GET"])
 @jwt_required()
@@ -124,6 +157,23 @@ def profile_author(username):
         return jsonify({'error': 'User not found'}), 404
     
 
+#Actualizar los datos del perfil de un autor
+@users_bp.route(API + "/authors/profile/<username>", methods=["PUT"])
+@jwt_required()
+def update_profile_author(username):
+    if get_jwt_identity() == username:
+        data = request.get_json()
+        authors_col.update_one({'username': username}, {'$set': data})
+        return jsonify({'message': 'Profile updated successfully'}), 200
+    else:
+        return jsonify({'error': 'Unauthorized'}), 403
+
+
+
+
+"""
+Portal de revisor
+"""
 #Devolver los datos de perfil del revisor logueado  
 @users_bp.route(API + "/reviewers/profile/<username>", methods=["GET"])
 @jwt_required()
@@ -136,17 +186,6 @@ def profile_reviewer(username):
     else:
         return jsonify({'error': 'User not found'}), 404
 
-
-#Actualizar los datos del perfil de un autor
-@users_bp.route(API + "/authors/profile/<username>", methods=["PUT"])
-@jwt_required()
-def update_profile_author(username):
-    if get_jwt_identity() == username:
-        data = request.get_json()
-        authors_col.update_one({'username': username}, {'$set': data})
-        return jsonify({'message': 'Profile updated successfully'}), 200
-    else:
-        return jsonify({'error': 'Unauthorized'}), 403
 
 
 #Actualizar los datos del perfil de un revisor

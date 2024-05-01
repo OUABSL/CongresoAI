@@ -1,5 +1,5 @@
 from datetime import datetime
-import threading
+import threading, os
 from bson.objectid import ObjectId
 from flask import Blueprint, request, jsonify, abort
 from flask import send_file, make_response, Response
@@ -7,7 +7,6 @@ from io import BytesIO
 from bson import ObjectId 
 from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 from werkzeug.utils import secure_filename
-from src.models.user import User, Author
 from src.models.tabajo import ScientificArticle, get_file
 from src.app import mongo, API, llamus_key
 from src.services.preEvaluation import PreEvaluation
@@ -19,6 +18,7 @@ from src.services.preEvaluation import  SYSTEM_PROMPT_BASE as prompt_eval
 
 evaluate_bp = Blueprint('evaluate', __name__)
 DB = mongo.db.scientific_article
+
 
 # Obtener los artículos asignados a un revisor en particular
 @evaluate_bp.route(API + '/evaluate/<reviewer>', methods = ['GET'])
@@ -163,9 +163,19 @@ def fetch_article(title:str, reviewer:str):
 
     return article_object
 
+"""
+Función para gestionar la tarea de regeneración de alguno de los servicios de la aplicación:
+ #-Extractción y preparación del contenido del proyecto latex.
+ - Resumen generado por la IA generativa
+ - Evaluación inicial generada por la IA generativa
+ 
+ Args: Artículo scientifico, los servicios a regenerar (Tarea: chat_model)
+
+"""
 def regenerate_pre_evaluation_flow(article:ScientificArticle, tasks:dict):
     try:
         update_data = {}  # Datos para actualizar
+
 
         if "summary" in tasks:
             summary_instance = ArticleSummarizer(mongo, prompt_summary, llamus_key, article)

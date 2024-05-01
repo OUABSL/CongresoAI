@@ -20,7 +20,8 @@ const SignUpRevisor = () => {
     confirmPassword: '',
     fullname: '',
     phonenumber: '',
-    knowledges: ''
+    knowledges: '',
+    is_bi:false
   }
 
   const formatORCID = (value) => {
@@ -65,6 +66,11 @@ const SignUpRevisor = () => {
     .then(data => {
       console.log(data.message);
       if (data.success) {
+        setAlert({
+          show: true,
+          message: "Registro correcto",
+          variant: "success"
+        });
         navigate('/portal-reviewer/login');
       } else {
         setLoading(false);
@@ -78,8 +84,12 @@ const SignUpRevisor = () => {
     setLoading(false);
   }
 
-  const onChange = (e) => setState({...state, [e.target.name]: e.target.value});
-
+  const onChange = (e) => {
+    if(e.target.name === "is_bi") 
+      setState({...state, [e.target.name]: e.target.checked});
+    else 
+      setState({...state, [e.target.name]: e.target.value});
+  }
   return (
     <Card className="register-card mt-2 p-5 mx-auto">
         <Form onSubmit={onSubmit} className="form-class">
@@ -195,6 +205,10 @@ const SignUpRevisor = () => {
             onChange={onChange}
             className="input-class"
           />
+        </Form.Group>
+
+        <Form.Group controlId="formBasicCheckbox">
+          <Form.Check type="checkbox" name="is_bi" label="Crear portal de autor?" onChange={onChange} />
         </Form.Group>
 
         {!loading ? (
