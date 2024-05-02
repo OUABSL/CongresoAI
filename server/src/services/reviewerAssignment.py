@@ -29,18 +29,18 @@ class ReviewerAssignment:
                 total_similitud += self.coseno_similitud(palabra_articulo, palabra_reviewer)
         return total_similitud
 
-def asignar_revisor(self) -> List[Tuple[str, float]]:
-    reviewers = Reviewer.objects
-    reviewer_scores = defaultdict(float)
-    for reviewer in reviewers:
-        pending_works = self.DB.count_documents({"reviewer": reviewer.username})
-        if pending_works >= 4:
-            continue
-        similitud = self.calcular_similitud(reviewer)
-        penalizacion = 0.9 ** pending_works
-        reviewer_scores[reviewer.username] += similitud * penalizacion
-    scores_ordendos = sorted(((score, user) for user, score in reviewer_scores.items()), reverse=True)
-    return scores_ordendos
+    def asignar_revisor(self) -> List[Tuple[str, float]]:
+        reviewers = Reviewer.objects
+        reviewer_scores = defaultdict(float)
+        for reviewer in reviewers:
+            pending_works = self.DB.count_documents({"reviewer": reviewer.username})
+            if pending_works >= 4:
+                continue
+            similitud = self.calcular_similitud(reviewer)
+            penalizacion = 0.9 ** pending_works
+            reviewer_scores[reviewer.username] += similitud * penalizacion
+        scores_ordendos = sorted(((score, user) for user, score in reviewer_scores.items()), reverse=True)
+        return scores_ordendos
     
     def run(self):
         sorted_assignment = self.asignar_revisor()
