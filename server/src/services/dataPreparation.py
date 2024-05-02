@@ -64,24 +64,14 @@ class DataHandler:
         positions = [m.start() for m in section_matcher.finditer(document_content)]
         positions.append(len(document_content))  # end position of the last section
         section_contents = {}
+        sections_orden = [None] * len(sections)
         for idx, section_name in enumerate(sections):
+            sections_orden[idx] = section_name
             section_content = document_content[positions[idx]:positions[idx + 1]].strip()
             #section_content = section_content[section_content.find('}') + 1:]
             section_contents[section_name] = section_content
-        return section_contents
+        return section_contents, sections_orden
     
-    """def _get_section_data(self, file_text: str):
-        #Split the text into sections and return a dictionary of the section contents.
-        section_dict = {}
-        sections = [m.start() for m in re.finditer('\\\\section', file_text)]
-        for i in range(len(sections)):
-            if i == len(sections) - 1:  # this is the last section
-                section_text = file_text[sections[i]:]
-            else:
-                section_text = file_text[sections[i]:sections[i+1]]
-            section_title = section_text[9:].split('\n')[0].strip()  # the section title follows '\\section'
-            section_dict[section_title] = section_text
-        return section_dict"""
     
     def _extract_just_text(self, section_content):
         try:
@@ -117,7 +107,7 @@ class DataHandler:
 
         # Process LaTeX file text
         document_content = self._parse_document_content(latex_file_text)
-        document_sections = self._get_section_data(document_content)
+        document_sections, sections_orden = self._get_section_data(document_content)
 
         # Process LaTeX sections into plain text
         document_sections_processed = {section: self._extract_just_text(text) for section, text in document_sections.items() if section!= "Acknowledgements"}
@@ -125,6 +115,6 @@ class DataHandler:
         evaluation_init = {key : "" for key in document_sections_processed.keys()}
         summary_init = {key : "" for key in document_sections_processed.keys()}
 
-        self.article.update_properties(content=document_sections_processed, evaluation=evaluation_init, summary=summary_init)
+        self.article.update_properties(content=document_sections_processed, sections_orden=sections_orden, evaluation=evaluation_init, summary=summary_init)
 
         return document_sections_processed, id

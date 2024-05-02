@@ -36,6 +36,7 @@ class ScientificArticle(Document):
     submission_date = DateTimeField(default=datetime.now())
     processing_state = ProcessingState(default='On Process')
     content = DictField()
+    sections_orden = ListField()
     summary = DictField()
     evaluation = DictField()
     reviewer = StringField(max_length=200)
@@ -55,11 +56,13 @@ class ScientificArticle(Document):
         if latex_project:
             self.save_files(submitted_pdf=latex_project)
 
-    def update_properties(self,latex_project_id = None, submitted_pdf_id = None,  title: str = None, content: str = None, key_words: List[str] = None, summary: str = None, evaluation: str = None, reviewer: str = None,sorted_backup_assignment: List[tuple] = None, processing_state: bool = None, improvements:str = None, is_resubmited:bool=None):
+    def update_properties(self,latex_project_id = None, submitted_pdf_id = None,  title: str = None, content: str = None, sections_orden:list = None, key_words: List[str] = None, summary: str = None, evaluation: str = None, reviewer: str = None,sorted_backup_assignment: List[tuple] = None, processing_state: bool = None, improvements:str = None, is_resubmited:bool=None):
         if title:
             self.title = title
         if content:
             self.content = content
+        if sections_orden:
+            self.sections_orden = sections_orden
         if key_words:
             self.key_words = key_words
         if summary:

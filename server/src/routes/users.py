@@ -38,9 +38,9 @@ def login():
     if user and check_password_hash(user['password'], password):
         access_token = create_access_token(identity=username, additional_claims={"role":role})
         ACCESS_TOKEN = access_token
-        return make_response(jsonify({'access_token': access_token, 'message': 'Login successful!'}), 200)
+        return make_response(jsonify({'success':True, 'access_token': access_token, 'message': 'Login successful!'}), 200)
     else:
-        return make_response(jsonify({"message": "Bad username or password"}), 401)
+        return make_response(jsonify({"success":False, "message": "Bad username or password"}), 401)
 
 # Registrar los usuarios (Autores y Revisores)
 @users_bp.route(API + '/signup', methods=['POST'])
@@ -53,7 +53,7 @@ def SignUp():
     if role == 'reviewer':
         user = Reviewer.objects(username=username).first()
         if user:
-            return make_response(jsonify({'message':'Username already exists!'}), 400)
+            return make_response(jsonify({'success':False,'message':'Username already exists!'}), 400)
         else:
             email = data.get('email')
             password = generate_password_hash(data.get('password'), method='pbkdf2:sha256')
@@ -69,7 +69,7 @@ def SignUp():
     if role == 'author'or is_bi:
         user = authors_col.find_one({'username': username})
         if user:
-            return make_response(jsonify({'message':'Username already exists!'}), 400)
+            return make_response(jsonify({'success':False,'message':'Username already exists!'}), 400)
         else:
             id_author = str(uuid4())
             email = data.get('email')
@@ -84,8 +84,8 @@ def SignUp():
             author.save() 
 
     else:
-        return make_response(jsonify({'message':'Unauthorized!'}), 401)
-    return make_response(jsonify({'message':'Registration successful!'}), 201)
+        return make_response(jsonify({'success':False,'message':'Unauthorized!'}), 401)
+    return make_response(jsonify({'success':True,'message':'Registration successful!'}), 201)
 
 # Cambiar rol del usuario (Autores y Revisores)
 @users_bp.route('/api/v1/change-role', methods=['POST'])
@@ -95,19 +95,19 @@ def change_role():
     new_role = request.json.get("new_role", None)
 
     user = None
-    if new_role.lower() == "author":
+    if new_role.lower() == "reviewer":
         user = reviewers_col.find_one({'username': current_user})
     elif new_role.lower() == "author":
         user = authors_col.find_one({'username': current_user})
     else:
-        return make_response(jsonify({"message": "New role is invalid"}), 400)
+        return make_response(jsonify({'success':False,"message": "New role is invalid"}), 400)
     
     if user is None:
-        return make_response(jsonify({"message": "User not found"}), 404)
+        return make_response(jsonify({'success':False,"message": "User not found"}), 404)
     
     # Devueve una token de acceso actualizada para nuevo rol del usuario
     access_token = create_access_token(identity=current_user, additional_claims={"role": new_role})
-    return make_response(jsonify({'access_token': access_token, 'message': f'Role changed to {new_role}!'}), 200)
+    return make_response(jsonify({'success':True,'access_token': access_token, 'message': f'Role changed to {new_role}!'}), 200)
 
 #Comprobar si la sesión sigue siendo válida
 @users_bp.route(API + "/check-session/<username>", methods=["GET"])
@@ -136,7 +136,7 @@ def check_session(username):
 def logout():
     global ACCESS_TOKEN
     ACCESS_TOKEN = ''
-    response = make_response(jsonify({'message': 'Logged out successfully!'}), 200)
+    response = make_response(jsonify({'success':True,'message': 'Logged out successfully!'}), 200)
     unset_jwt_cookies(response) 
     return response
 
@@ -154,7 +154,7 @@ def profile_author(username):
         user.pop('_id', None)       
         return jsonify(user), 200
     else:
-        return jsonify({'error': 'User not found'}), 404
+        return jsonify({'success':False, 'message': 'User not found'}), 404
     
 
 #Actualizar los datos del perfil de un autor
@@ -164,9 +164,9 @@ def update_profile_author(username):
     if get_jwt_identity() == username:
         data = request.get_json()
         authors_col.update_one({'username': username}, {'$set': data})
-        return jsonify({'message': 'Profile updated successfully'}), 200
+        return jsonify({'success':True , 'message': 'Profile updated successfully'}), 200
     else:
-        return jsonify({'error': 'Unauthorized'}), 403
+        return jsonify({'success':False, 'message': 'Unauthorized'}), 403
 
 
 
@@ -184,7 +184,7 @@ def profile_reviewer(username):
         user.pop('_id', None)       
         return jsonify(user), 200
     else:
-        return jsonify({'error': 'User not found'}), 404
+        return jsonify({'success':False, 'message': 'User not found'}), 404
 
 
 
@@ -195,6 +195,6 @@ def update_profile_reviewer(username):
     if get_jwt_identity() == username:
         data = request.get_json()
         reviewers_col.update_one({'username': username}, {'$set': data})
-        return jsonify({'message': 'Profile updated successfully'}), 200
+        return jsonify({'success':True, 'message': 'Profile updated successfully'}), 200
     else:
-        return jsonify({'error': 'Unauthorized'}), 403
+        return jsonify({'success':False, 'message': 'Unauthorized'}), 403

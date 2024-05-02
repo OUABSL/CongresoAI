@@ -3,6 +3,7 @@ import requests, json, os, sys
 from bson.objectid import ObjectId
 from src.app import mongo, llamus_key
 from src.models.tabajo import ScientificArticle
+import logging
 
 SYSTEM_PROMPT_BASE = """Act as a research paper summarizer. I will provide you with a research paper section by section, and you will create a summary of the main points and findings of the paper section. 
                         Your focus lies on the '{section_name}' section of a manuscript titled {article_title}, Process the provided {section_name} section, summarize it according to the following instructions:
@@ -23,7 +24,7 @@ class ArticleSummarizer:
         try:
             self.article_content = dict(self.article["content"])
         except KeyError:
-            print('KeyError: Article contents not found')
+            logging.error('KeyError: Article contents not found')
             self.article_content = {} 
         self.title = self.article['title']
 
@@ -52,13 +53,13 @@ class ArticleSummarizer:
         response = requests.post(self.API_URL, headers=headers, data=json.dumps(data))
         if response.status_code == 200:  # Checking if the request was successful
             try:
-                #print(response.text)
+                #logging.error(response.text)
                 return response.json()
             except json.decoder.JSONDecodeError:  # Catching JSON decode errors
-                print('Failed to decode JSON. Response:', response.content)
+                logging.error('Failed to decode JSON. Response:', response.content)
         else:
-            print('Request failed. Status Code:', response.status_code)
-            print('Response:', response.content)
+            logging.error('Request failed. Status Code:', response.status_code)
+            logging.error('Response:', response.content)
 
 
     def get_article(self, query)->ScientificArticle:
@@ -69,7 +70,7 @@ class ArticleSummarizer:
         summary_state[value[0]] = value[1]
         self.DB.update_one(self.query, {"$set": {"summary": summary_state}})
         self.article = self.get_article(self.query)
-        print(f"\nUpdated the summary of {value[0]} srction in database!")
+        logging.error(f"\nUpdated the summary of {value[0]} srction in database!")
 
     def run(self):
         res = self.article["summary"]
@@ -88,7 +89,7 @@ class ArticleSummarizer:
                         response = ''
                     res[section_name] = response
             except Exception:  # Catch all types of exceptions
-                print(f"An error occurred while processing the '{section_name}' section")
+                logging.error(f"An error occurred while processing the '{section_name}' section")
                 res[section_name] = "Error"  # Set the value to an empty string
                 continue  # Continue to the next iteration of the loop
 

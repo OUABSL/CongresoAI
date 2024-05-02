@@ -1,5 +1,5 @@
 from datetime import datetime
-import threading, os
+import threading, os, tempfile, shutil, logging
 from bson.objectid import ObjectId
 from flask import Blueprint, request, jsonify, abort
 from flask import send_file, make_response, Response
@@ -18,7 +18,25 @@ from src.services.preEvaluation import  SYSTEM_PROMPT_BASE as prompt_eval
 
 evaluate_bp = Blueprint('evaluate', __name__)
 DB = mongo.db.scientific_article
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
+
+
+
+UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../../data")
+
+#Función para crear carpeta temporal para la extracción de datos desde el proyecto latex.
+def create_temp_dir(parent_dir):
+    return tempfile.mkdtemp(dir=parent_dir)
+
+#Función para eliminar la carpeta temporal creada, se ejecuta al terminar la extracción de datos desde el proyecto latex. 
+def delete_temp_dir(dest_path):
+    # Eliminar la carpeta temporal usada en el proceso
+    if os.path.isdir(dest_path):
+        shutil.rmtree(dest_path)
+        if os.path.isdir(dest_path): # verifica si la carpeta ºavía existe después de usar shutil.rmtree()
+            os.rmdir(dest_path) # se utiliza os.rmdir() para eliminar la carpeta vacía
+    logging.info("Carpeta temporal %s eliminada exitosamente", dest_path)
 
 # Obtener los artículos asignados a un revisor en particular
 @evaluate_bp.route(API + '/evaluate/<reviewer>', methods = ['GET'])
@@ -43,7 +61,7 @@ def show_articles(reviewer):
                     })
         return make_response(jsonify(result), 200)
     else:
-        return make_response(jsonify({"msg": "No articles found for this reviewer."}), 404)
+        return make_response(jsonify({"success":False,  "message": "No articles found for this reviewer."}), 404)
 
 # Servir un archivo PDF solicitado por su id
 @evaluate_bp.route(API + '/file/<file_id>', methods=['GET'])
@@ -64,13 +82,13 @@ def serve_zip(file_id):
 def show_article(reviewer, article_title):
     article = DB.find_one({"reviewer":str(reviewer), "title":article_title})
     if article:
-        article.pop("_id")
-        article.pop("content")
+        article.pop("_id", None)
+        article.pop("content", None)
         article['latex_project_id'] = str(article.get('latex_project_id'))
         article['submitted_pdf_id'] = str(article.get('submitted_pdf_id'))
         return make_response(jsonify(article), 200)
     else:
-        return make_response(jsonify({"msg": "No articles found for this reviewer."}), 404)
+        return make_response(jsonify({"success":False,  "message": "No articles found for this reviewer."}), 404)
     
 # Agregar una revisión a un artículo
 @evaluate_bp.route(API + '/evaluate/<reviewer>/<article_title>', methods = ['POST'])
@@ -97,8 +115,8 @@ def add_review(reviewer, article_title):
     print(f"Review: {new_review}")
     
     DB.update_one({"title":article_title}, {"$set": new_review})
-
-    return make_response(jsonify({"msg": "Review successfully added!"}), 201)
+    logging.info("Revisión añadida exitosamente para el artículo con título: %s", article_title)
+    return make_response(jsonify({"success":True,  "message": "Review successfully added!"}), 201)
 
 # Actualizar una revisión a un artículo
 @evaluate_bp.route(API + '/evaluate/<reviewer>/<article_title>', methods = ['PUT'])
@@ -132,11 +150,11 @@ def update_review(reviewer, article_title):
                 {"$set": {"review": review}}
             )        
         else:
-            return make_response(jsonify({"msg": "No article review found for this reviewer."}), 404)
-
-        return make_response(jsonify({"msg": "Review successfully updated!"}), 200)
+            return make_response(jsonify({"success":False,  "message": "No article review found for this reviewer."}), 404)
+        logging.info("Revisión actualizada exitosamente para el artículo con título: %s y revisor: %s", article_title, reviewer)
+        return make_response(jsonify({"success":True,  "message": "Review successfully updated!"}), 200)
     else:
-        return make_response(jsonify({"msg": "No article found for this reviewer."}), 404)
+        return make_response(jsonify({"success":False,  "message": "No article found for this reviewer."}), 404)
     
 
 # Actualizar el estado de un artículo
@@ -148,18 +166,15 @@ def update_status(reviewer, article_title):
     if article:
         update_status = { "pending": status }
         DB.update_one({"title":article_title}, {"$set": update_status})
-        return make_response(jsonify({"msg": "Status successfully updated!"}), 201)
+        return make_response(jsonify({"success": False,  "message": "Status successfully updated!"}), 201)
     else:
-        return make_response(jsonify({"msg": "No articles found for this reviewer."}), 404)
+        return make_response(jsonify({"success":False,  "message": "No articles found for this reviewer."}), 404)
 
 
 def fetch_article(title:str, reviewer:str):
-    article_data = DB.find_one({"title": title, "reviewer": reviewer})
-    print(article_data, "\nDat: ", title, reviewer)
-    if not article_data:  # If no article was found
+    article_object = ScientificArticle.objects(reviewer=reviewer, title=title).first()
+    if not article_object:  # If no article was found
         return None
-    article_data.pop("_id")  
-    article_object = ScientificArticle(**article_data)
 
     return article_object
 
@@ -174,36 +189,53 @@ Función para gestionar la tarea de regeneración de alguno de los servicios de 
 """
 def regenerate_pre_evaluation_flow(article:ScientificArticle, tasks:dict):
     try:
-        update_data = {}  # Datos para actualizar
 
+        if "datapreparation" in tasks:
+            if not os.path.exists(UPLOAD_FOLDER):
+                os.makedirs(UPLOAD_FOLDER)
+            dest_path = create_temp_dir(UPLOAD_FOLDER)
+            data_handler = DataHandler(article, dest_path=dest_path)
+            try:
+                data_handler.run()
+            finally:
+                delete_temp_dir(dest_path)
 
         if "summary" in tasks:
             summary_instance = ArticleSummarizer(mongo, prompt_summary, llamus_key, article)
             summary_instance.chat_model = tasks["summary"]
             summary = summary_instance.run()
-            update_data["summary"] = summary  # Actualizar el resumen en los datos de actualización        
 
         if "initialevaluation" in tasks:
             evaluation_instance = PreEvaluation(mongo, prompt_eval, llamus_key, article)
             evaluation_instance.chat_model = tasks["initialevaluation"]
-            preevaluation = evaluation_instance.run()
-            update_data["evaluation"] = preevaluation
+            pre_evaluation = evaluation_instance.run()
 
-        update_data["last_modified"] = datetime.now()
-        update_data["processing_state"] = "Done"
+        error = summary.get('error', False) or pre_evaluation.get('error', False)
 
-        DB.update_one(
-            {"reviewer": article["reviewer"], "title": article.title},
-            {"$set": update_data}
-        )
+        if summary and not summary.get('error', False):
+            article.update_properties(summary=summary)
+
+        if pre_evaluation and not pre_evaluation.get('error', False):
+            article.update_properties(evaluation=pre_evaluation)
+
+
+        if(error):
+            logging.error("Error en el procesamiento del artículo")
+            article.update_properties(processing_state="Fail")
+        else:
+            article.update_properties(processing_state="Done")
+            logging.info("La regeneración de la pre-evaluación se realizó con éxito para el artículo: %s", article.title)
+
+
+        article.save()
+
+
     except Exception as e:
-        print(e)  # Imprimir el error
+        logging.error(f"Error during regeneration of pre-evaluation flow: {e}")
         # Actualizar el estado de procesamiento en caso de error
-        DB.update_one(
-            {"reviewer": article["reviewer"], "title": article.title},
-            {"$set": {"processing_state": "Fail"}}
-        )
-    return None
+        article.update_properties(processing_state="Fail")
+
+
 
 # Genera nueva pre evaluación o resumen usando llamus para un artículo
 @evaluate_bp.route(API + '/evaluate/reevaluate/<reviewer>/<article_title>', methods=['PUT'])
@@ -213,14 +245,12 @@ def regenerate_pre_evaluation(reviewer, article_title):
     article = fetch_article(article_title, reviewer)
     
     if article is None:
-        return make_response(jsonify({"msg": "No article found."}), 404)
+        return make_response(jsonify({"success":False,  "message": "No article found."}), 404)
 
-    DB.update_one(
-        {"reviewer": article["reviewer"], "title": article_title},
-        {"$set": {"processing_state": "On Process"}}
-    )
+    article.update_properties(processing_state="On Process")
+    
     threading.Thread(target=regenerate_pre_evaluation_flow, args=(article, tasks)).start()
-    return make_response(jsonify({"msg": "Reevaluation started successfully."}), 200)
+    return make_response(jsonify({"success":True,  "message": "Reevaluation started successfully."}), 200)
 
 # Reasigna un artículo a un nuevo revisor
 @evaluate_bp.route(API + '/evaluate/reassignate/<reviewer>/<article_title>', methods=['PUT'])
@@ -228,7 +258,7 @@ def regenerate_pre_evaluation(reviewer, article_title):
 def reassignate_reviewer(reviewer, article_title):
     article = fetch_article(article_title, reviewer)
     if article is None:
-        return make_response(jsonify({"msg": "No article found."}), 404)
+        return make_response(jsonify({"success":False,  "message": "No article found."}), 404)
     
     if(len(article.sorted_backup_assignment)>0):
         new_reviewer = article.sorted_backup_assignment[0][1]
@@ -237,7 +267,7 @@ def reassignate_reviewer(reviewer, article_title):
             {"$set": {"reviewer": new_reviewer}}
         )
     else:
-        return make_response(jsonify({"msg": "There is no disponible reviewer.Please contact the adminastator!"}), 404)
+        return make_response(jsonify({"success":False,  "message": "There is no disponible reviewer.Please contact the adminastator!"}), 404)
 
-    return make_response(jsonify({"msg": f"Re-Assignement done successfully. The new assigned reviewer is {new_reviewer}."}), 200)
+    return make_response(jsonify({"success":True,  "message": f"Re-Assignement done successfully. The new assigned reviewer is {new_reviewer}."}), 200)
 

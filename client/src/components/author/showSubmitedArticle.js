@@ -1,10 +1,19 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Card, Accordion, DropdownButton, Dropdown, Row, Col, Button} from 'react-bootstrap';
-import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import AuthContext from "../../context/context";
 import { AlertContext } from '../../context/alertProvider';
 
 
+const STATES_REVIEW_API = ["Pending Review", "Approved", "Rejected", "Pending Improvement"];
+const STATES_REVIEW_SPANISH = ["Pendiente de Revisión", "Aprobado", "Rechazado", "Pendiente de Mejora"];
+
+const reviewStatusColors = {
+  "Pendiente de Revisión": "blue",
+  "Aprobado": "green",
+  "Rechazado": "red",
+  "Pendiente de Mejora": "orange"
+};
 
 const NavigateToSubmitButton = ({ article }) => {
   const navigate = useNavigate();
@@ -65,20 +74,25 @@ const DisplaySectionReview = ({ sectionName, review }) => {
       <Accordion.Header>{sectionName}</Accordion.Header>
       <Accordion.Body>
         {review && Object.keys(review).length > 0 &&
-          Object.entries(review).map(([criterion, result]) => (
-            <p key={criterion}><strong>{criterion}:</strong> {result}</p>
-          ))
+          Object.entries(review)
+            .filter(([criterion, _]) => criterion !== "comment")
+            .map(([criterion, result]) => (
+              <p key={criterion}><strong>{criterion}:</strong> {result}</p>
+            ))
         }
-        <Card style={{ marginTop: '15px' }}>
-          <Card.Body>
-            <Card.Title>Comment</Card.Title>
-            <Card.Text>{review && review.comment}</Card.Text>
-          </Card.Body>
-        </Card>
+        {review && review.comment && (
+          <Card style={{ marginTop: '15px' }}>
+            <Card.Body>
+              <Card.Title>Commentario</Card.Title>
+              <Card.Text>{review.comment}</Card.Text>
+            </Card.Body>
+          </Card>
+        )}
       </Accordion.Body>
     </Accordion.Item>
   );
 };
+
 
 
 const getArticle = async (username, articleTitle, sessionToken, onLogout) => {
@@ -131,12 +145,14 @@ const ShowSubmittedArticle = () => {
   }, [username, article_title, sessionToken, logout]);
 
 
-  const reviewStatusColors = {
-    "Pending Review": "blue",
-    "Approved": "green",
-    "Rejected": "red",
-    "Pending Improvement": "orange"
-  };
+
+
+
+const translateReviewStatus = (status) => {
+  const index = STATES_REVIEW_API.findIndex(s => s === status);
+  return STATES_REVIEW_SPANISH[index] || status; // Fallback to the original status if not found
+};
+
 
   return (
     <>
@@ -161,17 +177,15 @@ const ShowSubmittedArticle = () => {
         <Card.Text>{article.description}</Card.Text>
         {article.result_review && (
           <Card.Text style={{ color: reviewStatusColors[article.result_review] || 'black' }}>
-            Review Result: {article.result_review}
+              Resultado de revisión: {translateReviewStatus(article.result_review)}
           </Card.Text>
         )}
 
-        <Accordion defaultActiveKey={"Introduction"}>
-          {article && review && Object.keys(review).length > 0 &&
-            Object.entries(review).map(([sectionName, sectionReview]) => (
-              <DisplaySectionReview key={sectionName} sectionName={sectionName} review={sectionReview} />
-            ))
-          }
-        </Accordion>
+          <Accordion defaultActiveKey={article.sections_order && article.sections_order[0]}>
+            {article.sections_order && article.sections_order.map(sectionName => (
+              <DisplaySectionReview key={sectionName} sectionName={sectionName} review={review[sectionName]} />
+            ))}
+          </Accordion>
       </Card.Body>
     </Card>
     </>

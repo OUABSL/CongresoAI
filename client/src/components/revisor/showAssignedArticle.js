@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Button, Card, Accordion, Row, Modal, Col, DropdownButton, Dropdown, Alert, Form } from 'react-bootstrap';
+import { Button, Card, Accordion, Row, Modal, Col, DropdownButton, Dropdown, Form } from 'react-bootstrap';
 import { useParams, useNavigate } from 'react-router-dom';
 import AuthContext from "../../context/context";
+import { AlertContext } from '../../context/alertProvider';
 import RegenerationModal from './regeneratePreEvaluation'
 import ReassignateReviewButton from './reAssignateReviewer';
 
@@ -9,7 +10,6 @@ import ReassignateReviewButton from './reAssignateReviewer';
 const CRITERIA = ['Motivation', 'Novelty', 'Clarity', 'Grammar and Style', 'Typos and Errors'];
 const CRITERIA_API = ['motivation', 'novelty', 'clarity', 'grammar_style', 'typos_errors'];
 const SCALE = ['YES', 'Can be improved', 'Must be Improved', 'Not Applicable'];
-const SECTION_ORDER = ["Abstract", "Introduction", "Related Work", "Conclusions and future works"];
 const defaultReviewSection = { 'motivation': '', 'novelty': '', 'clarity': '', 'grammar_style': '', 'typos_errors': '', 'comment': '' };
 const STATES_REVIEW = ["Pendiente de Revisión", "Aprobado", "Rechazado", "Pendiente de Mejora"];
 const STATES_REVIEW_API =  ["Pending Review", "Approved", "Rejected", "Pending Improvement"]
@@ -103,7 +103,7 @@ const SectionReview = ({ reviewData, sectionName, handleSectionUpdate }) => {
           const updatedPreviousReviews = { ...prevState, [sectionName]: updatedReview };
           return updatedPreviousReviews;
         });
-        setEditing(true); // Keep editing mode on after saving
+        setEditing(true); 
       };
 
     const handleInputChange = (criterion, value) => {
@@ -196,9 +196,10 @@ const SectionReview = ({ reviewData, sectionName, handleSectionUpdate }) => {
 };
 
 
-const DisplaySection = ({ sectionName, summarySection, preEvalSection, actualReviewSection, handleSectionUpdate }) => {
+const DisplaySection = ({ sectionName, summarySection=null, preEvalSection=null, actualReviewSection=null, handleSectionUpdate=null }) => {
     const [reviewSection, setReviewSection] = useState(actualReviewSection || defaultReviewSection);
     const [editing, setEditing] = useState(true);
+    const [formattedPreEvalSection, setFormattedPreEvalSection] = useState("");
 
     useEffect(() => {
         if (actualReviewSection) {
@@ -208,9 +209,15 @@ const DisplaySection = ({ sectionName, summarySection, preEvalSection, actualRev
 
 
 
+    useEffect(()=> {
+        if(preEvalSection){
+            let preEvalSplit = preEvalSection.split("Evaluation Summary:", 2);
+            setFormattedPreEvalSection(formatPreEvalSection(preEvalSplit[0], preEvalSplit[1]));
+            console.log("llega: ", formatPreEvalSection, " s: ", summarySection );
 
-    let preEvalSplit = preEvalSection.split("Evaluation Summary:", 2);
-    const formattedPreEvalSection = formatPreEvalSection(preEvalSplit[0], preEvalSplit[1]);
+        }
+    }, [preEvalSection])
+
 
     return (
         <Accordion.Item eventKey={sectionName}>
@@ -239,7 +246,7 @@ function ShowAssignedArticle() {
     const [article, setArticle] = useState({});
     const [review, setReview] = useState({});
     const [resultReview, setResultReview] = useState({});
-    const [alert, setAlert] = useState({ visible: false, variant: '', message: '' });
+    const {alert, setAlert} = useContext(AlertContext);
     const [showModal, setShowModal] = useState(false);
     const navigate = useNavigate();
 
@@ -253,8 +260,9 @@ function ShowAssignedArticle() {
 
 
 
-    useEffect(() => {
-        async function fetchArticle() {
+  useEffect(() => {
+    async function fetchArticle() {
+        try {
             const response = await fetch(`/api/v1/evaluate/${username}/${encodeURIComponent(article_title)}`, {
                 method: 'GET',
                 headers: {
@@ -263,18 +271,33 @@ function ShowAssignedArticle() {
                 }
             });
 
-            if (response.status === 401) {
-                logout();
-                return;
+            if (!response.ok) {
+                // Puedes emitir un error para manejarlo en el catch posterior
+                throw new Error(`HTTP error! status: ${response.status}`);
             }
-            const data = await response.json();
-            setArticle(data);
-            // Agrega la línea para llamar a la función handleShowPdf
-            //await handleShowPdf(`/file/${data.submitted_pdf_id}`);
-        }
 
-        fetchArticle();
-    }, [username, article_title, sessionToken, logout]);
+            const data = await response.json();
+
+            // Asegúrate de que data contenga las propiedades esperadas antes de hacer 
+            // llamadas de función o asignaciones que dependan de estas propiedades.
+            if (data && data.submitted_pdf_id && data.title && data.description) {
+                await setArticle(data);
+                console.log("articulo: ",article);
+                // llamar a la función handleShowPdf
+                //await handleShowPdf(`/file/${data.submitted_pdf_id}`); 
+            } else {
+                throw new Error('Data received is not as expected');
+            }
+            
+        } catch (error) {
+            // Manejar errores de red y respuestas no esperadas
+            // Deberías establecer un estado para mostrar el mensaje de error
+            console.log("There was an error!", error);
+        }
+    }
+
+    fetchArticle();
+}, [username, article_title, sessionToken, logout]);
 
 
     const handleStateSelect = (state) => {
@@ -282,18 +305,6 @@ function ShowAssignedArticle() {
         const enState = STATES_REVIEW_API[index] || 'Error: Pending Review';
         setResultReview(enState);
     };
-
-    const sortSections = article.summary ? Object.entries(article.summary).sort(([firstSection], [secondSection]) => {
-        const firstSectionIndex = SECTION_ORDER.indexOf(firstSection);
-        const secondSectionIndex = SECTION_ORDER.indexOf(secondSection);
-
-        // If the section is not in the sectionOrder array, find it after the specified sections
-        if (secondSectionIndex === -1) return -1;
-        if (firstSectionIndex === -1) return 1;
-
-        // Else compare based on the sectionOrder array
-        return firstSectionIndex - secondSectionIndex;
-    }) : [];
 
 
     const addReview = async () => {
@@ -324,11 +335,10 @@ function ShowAssignedArticle() {
     };
 
 
+
+
     return (
         <>
-            <Row>
-                {alert.visible && <Alert variant={alert.variant}>{alert.message}</Alert>}
-            </Row>
             <Row className="justify-content-between mb-4">
                 <Col xs="auto">
                     <Button className="btn bg-secondary" onClick={goBack}>Volver Atrás</Button>
@@ -349,24 +359,25 @@ function ShowAssignedArticle() {
             <Row className='mb-5 px-3'>
                 <Card style={{ width: '100%' }}>
                     <Card.Body>
-                        <Card.Title>{article.title}</Card.Title>
-                        <Card.Text>{article.description}</Card.Text>
-                        <Accordion defaultActiveKey={"Introduction"}>
-                            {article && article.summary && Object.keys(article.summary).length > 0 && sortSections.map(([sectionName, summarySection]) => (
-                                <DisplaySection
-                                    key={sectionName}
-                                    sectionName={sectionName}
-                                    summarySection={summarySection}
-                                    preEvalSection={article.evaluation[sectionName]}
-                                    actualReviewSection={article.review && article.review[sectionName] ? article.review[sectionName] : null}
-                                    handleSectionUpdate={updateSectionReview}
-                                />
-                            ))}
-                        </Accordion>
+                        {article && article.title && <Card.Title>{article.title}</Card.Title>}
+                        {article && article.description && <Card.Text>{article.description}</Card.Text>}
+                        {article && article.sections_orden && (
+                            <Accordion defaultActiveKey={article.sections_orden[0]}>
+                                {article.sections_orden.map((sectionName) => (
+                                    <DisplaySection
+                                        key={sectionName}
+                                        sectionName={sectionName}
+                                        summarySection={article.summary && article.summary[sectionName]}
+                                        preEvalSection={article.evaluation && article.evaluation[sectionName]}
+                                        actualReviewSection={article.review && article.review[sectionName]}
+                                        handleSectionUpdate={updateSectionReview}
+                                    />
+                                ))}
+                            </Accordion>
+                        )}
                         <Button className="btn bg-info mt-3" variant="primary" onClick={() => setShowModal(true)}>
                             Guardar Revisión
                         </Button>
-
                         <Modal
                             show={showModal}
                             onHide={() => setShowModal(false)}
@@ -396,8 +407,6 @@ function ShowAssignedArticle() {
                                 </Button>
                             </Modal.Footer>
                         </Modal>
-
-
                     </Card.Body>
                 </Card>
             </Row>

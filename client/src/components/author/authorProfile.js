@@ -131,13 +131,6 @@ function AuthorProfile() {
           </Card.Body>
           <ListGroup variant="flush">
               <ListGroup.Item>
-                  Fecha de nacimiento:
-                  {editing ? 
-                      <Form.Control readOnly={!editing} type="date" name="birthdate" value={profileData.birthdate || ''} onChange={handleInputChange}/> :
-                      ` ${profileData.birthdate}`
-                  }
-              </ListGroup.Item>
-              <ListGroup.Item>
                   Número de teléfono:
                   {editing ? 
                       <Form.Control readOnly={!editing} type="tel" name="phonenumber" value={profileData.phonenumber || ''} onChange={handleInputChange}/> :

@@ -5,6 +5,7 @@ from bson.objectid import ObjectId
 from src.models.tabajo import ScientificArticle
 
 
+
 SYSTEM_PROMPT_BASE = ("""You are an expert tutor specializing in reviewing and evaluating scientific research articles within the technology domain. Your focus lies on the '{section_name}' section of a manuscript titled "{title}"
                       Process the provided {section_name} section, evaluate it according to the following criteria and respecting the defined evaluation format:
 
@@ -94,7 +95,7 @@ class PreEvaluation:
         try:
             self.article_content = dict(self.article["content"])
         except KeyError:
-            print('KeyError: Article contents not found')
+            logging.error('KeyError: Article contents not found')
             self.article_content = {}
 
     def llamus_request(self, system_prompt, user_prompt):
@@ -120,13 +121,13 @@ class PreEvaluation:
         response = requests.post(self.API_URL, headers=headers, data=json.dumps(data))
         if response.status_code == 200:  # Checking if the request was successful
             try:
-                #print(response.text)
+                #logging.error(response.text)
                 return response.json()
             except json.decoder.JSONDecodeError:  # Catching JSON decode errors
-                print('Failed to decode JSON. Response:', response.content)
+                logging.error('Failed to decode JSON. Response:', response.content)
         else:
-            print('Request failed. Status Code:', response.status_code)
-            print('Response:', response.content)
+            logging.error('Request failed. Status Code:', response.status_code)
+            logging.error('Response:', response.content)
 
     def get_article(self, query)->ScientificArticle:
         return self.DB.find_one(query)
@@ -137,7 +138,7 @@ class PreEvaluation:
         newvalues = { "$set": { "evaluation": evaluationState } }
         self.DB.update_one(self.query,newvalues)
         self.article = self.get_article(self.query)
-        print(f"\nUpdated the evaluation of {value[0]} in memory!\n")
+        logging.info(f"\nUpdated the evaluation of {value[0]} in memory!\n")
 
     def run(self):
         res = self.article["evaluation"]
@@ -167,7 +168,7 @@ class PreEvaluation:
                     res[section_name] = response
             except Exception as e:
                 logging.error(f"error evaluacion {section_name}:\n {e}")
-                print(f"An error occurred while processing the '{section_name}' section \n{e}")
+                logging.error(f"An error occurred while processing the '{section_name}' section \n{e}")
                 res[section_name] = ""  # Set the value to an empty string
                 res['error'] = True
                 continue  # Continue to the next iteration of the loop
