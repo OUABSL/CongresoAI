@@ -7,3 +7,7 @@ test
 server/test_results/
 server/data/input/*
 client/package.json
+/server/src/services/__pycache__
+/server/src/services/__pycache__
+/server/src/services/__pycache__
+*.pyc
