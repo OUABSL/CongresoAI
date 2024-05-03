@@ -30,6 +30,7 @@
     "react-phone-number-input": "^3.4.1",
     "react-router-dom": "^6.23.0",
     "react-scripts": "^5.0.1",
+    "react-tag-input": "^6.9.0",
     "react-textarea-autosize": "^8.5.3",
     "web-vitals": "^3.5.2"
   },

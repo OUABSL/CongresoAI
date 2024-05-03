@@ -1,8 +1,11 @@
-import React, { useState, useContext } from 'react'
+import React, { useState, useContext, useEffect } from 'react'
 import { Card, Form, Row, Col, Button} from "react-bootstrap";
 import { Link, useNavigate } from 'react-router-dom';
 import { AlertContext } from '../../context/alertProvider';
 import PhoneInput from "react-phone-input-2";
+import { validateForm } from '../validators/register';
+import TagsInput from '../tagsInput';
+
 import "react-phone-input-2/lib/style.css";
 import "../estilos/register.css"
 
@@ -10,10 +13,13 @@ import "../estilos/register.css"
 
 
 
+
 const SignUpAuthor = () => {
-  const { alert, setAlert } = useContext(AlertContext);
+  const { setAlert } = useContext(AlertContext);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const [interestarea, setTags] = useState([]);
+
 
 
 
@@ -24,7 +30,6 @@ const SignUpAuthor = () => {
     password: '',
     confirmPassword: '',
     fullname: '',
-    birthdate: '',
     phonenumber: '',
     interestarea: ''
   }
@@ -37,20 +42,22 @@ const SignUpAuthor = () => {
       if (state[key] === '') {
         setAlert({
           show: true,
-          message: 'Todos los campos son obligatorios',
+          message: `Todos los campos son obligatorios! Completa el campo ${key}.`,
           variant: 'danger'
         });
         return;
       }
     }
 
-    if (state.password !== state.confirmPassword) { 
+    let errors = validateForm({ email: state.email, phone: state.phonenumber, password: state.password, confirmPassword: state.confirmPassword });
+
+    if (errors.length > 0) {
       setLoading(false);
-      return setAlert({
+        setAlert({
           show: true,
-          message: "Las contraseñas no coinciden!",
+          message: errors.map(x=> "-" + x + "\n"),
           variant: "danger"
-      });
+        });
     } else{
       delete state.confirmPassword;
     }
@@ -70,7 +77,7 @@ const SignUpAuthor = () => {
       return response.json();
     })
     .then(data => {
-        console.log(data.message);
+        console.log(JSON.stringify(data.message));
 
         setAlert({
           show: true, 
@@ -79,15 +86,16 @@ const SignUpAuthor = () => {
         });
         if(data.success) return navigate("/portal-author/login")
     })
-    .catch((error) => console.log(error))
+    .catch((error) => console.log(JSON.stringify(error)))
     .finally(() => {
       setLoading(false);
-      setState(initialState);
     });
-
-    setLoading(false);
-    setState(initialState)
   }
+
+
+  useEffect(() => {
+    setState(currentState => ({ ...currentState, interestarea: interestarea }))
+  }, [interestarea]);
 
   const onChange = (e) => setState({...state, [e.target.name]: e.target.value});
 
@@ -96,7 +104,7 @@ const SignUpAuthor = () => {
       <Form onSubmit={onSubmit} className="form-class">
         <div className="h4 mb-4 form-heading text-center">Registro de autor</div>         
           <Row>
-            <Col>
+            <Col  xs={12} md={6}>
               <Form.Group className="mb-3 form-group-class">
                 <Form.Label className="label-class">Nombre completo</Form.Label>
                 <Form.Control
@@ -110,7 +118,7 @@ const SignUpAuthor = () => {
                 />
               </Form.Group>
             </Col>
-            <Col>
+            <Col  xs={12} md={6}>
               <Form.Group className="mb-3 form-group-class">
                 <Form.Label className="label-class">Nombre de usuario</Form.Label>
                 <Form.Control
@@ -127,7 +135,7 @@ const SignUpAuthor = () => {
           </Row>
 
           <Row>
-          <Col>
+          <Col  xs={12} md={6}>
             <Form.Group className="mb-3 form-group-class">
               <Form.Label className="label-class">Correo electrónico</Form.Label>
               <Form.Control
@@ -141,7 +149,7 @@ const SignUpAuthor = () => {
               />
             </Form.Group>
           </Col>
-            <Col>
+            <Col  xs={12} md={6}>
               <Form.Group className="mb-3 form-group-class">
                   <Form.Label className="label-class">Número de teléfono</Form.Label>
                   <PhoneInput
@@ -154,7 +162,7 @@ const SignUpAuthor = () => {
             </Col>
           </Row>
           <Row>
-          <Col>
+          <Col  xs={12} md={6}>
             <Form.Group className="mb-3 form-group-class">
               <Form.Label className="label-class">Contraseña</Form.Label>
               <Form.Control
@@ -168,7 +176,7 @@ const SignUpAuthor = () => {
               />
             </Form.Group>
             </Col>
-            <Col>
+            <Col  xs={12} md={6}>
             <Form.Group className="mb-3 form-group-class">
               <Form.Label className="label-class">Repita su Contraseña</Form.Label>
               <Form.Control
@@ -184,16 +192,8 @@ const SignUpAuthor = () => {
           </Row>
         
         <Form.Group className="mb-3 form-group-class">
-          <Form.Label className="label-class">Área de interés</Form.Label>
-          <Form.Control
-            type="text"
-            placeholder="Elija sus áreas de interés"
-            name="interestarea"
-            value={state.interestarea}
-            onChange={onChange}
-            className="input-class"
-            required
-          />
+          <Form.Label className="label-class">Áreas de Intereses</Form.Label>
+          <TagsInput tags={interestarea} setTags={setTags} persPlaceholder="áreas de intereses" />
         </Form.Group>
         {!loading ? (
           <div className="d-grid gap-2">

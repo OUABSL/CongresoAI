@@ -1,17 +1,20 @@
-import React, { useState, useContext } from 'react'
+import React, { useState, useContext, useEffect } from 'react'
 import { Card, Form, Row, Col, Button} from "react-bootstrap";
 import { Link, useNavigate} from 'react-router-dom';
 import { AlertContext } from '../../context/alertProvider';
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import "../estilos/register.css"
+import TagsInput from '../tagsInput';
+import { validateForm } from '../validators/register';
 
 
 
 const SignUpRevisor = () => {
-  const { alert, setAlert } = useContext(AlertContext);
+  const {setAlert } = useContext(AlertContext);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const [knowledges, setTags] = useState([]);
 
 
   const initialState = {
@@ -47,14 +50,26 @@ const SignUpRevisor = () => {
     setLoading(true);
     e.preventDefault();
 
-    if (state.password !== state.confirmPassword) { 
-      setLoading(false);
-      return setAlert({
+    for (let key in state) {
+      if (state[key] === '') {
+        setAlert({
           show: true,
-          message: "Las contraseñas no coinciden!",
-          variant: "danger"
-      });
+          message: `Todos los campos son obligatorios! Completa el campo ${key}.`,
+          variant: 'danger'
+        });
+        return;
+      }
     }
+    let errors = validateForm(state.email, state.ORCID_ID, state.phonenumber, state.password, state.confirmPassword);
+
+    if (errors.length > 0) {
+      setLoading(false);
+        setAlert({
+          show: true,
+          message: errors.map(x=> "-" + x + "\n"),
+          variant: "danger"
+        });
+      }
     else{
       delete state.confirmPassword;
     }
@@ -67,7 +82,7 @@ const SignUpRevisor = () => {
     })
     .then(response => response.json())
     .then(data => {
-      console.log(data.message);
+      console.log(JSON.stringify(data.message));
       if (data.success) {
         setAlert({
           show: true,
@@ -83,8 +98,11 @@ const SignUpRevisor = () => {
           variant: "danger"
         });
       }
+    })
+    .catch((error) => console.log(JSON.stringify(error)))
+    .finally(() => {
+      setLoading(false);
     });
-    setLoading(false);
   }
 
   const onChange = (e) => {
@@ -93,12 +111,16 @@ const SignUpRevisor = () => {
     else 
       setState({...state, [e.target.name]: e.target.value});
   }
+
+  useEffect(() => {
+    setState(currentState => ({ ...currentState, knowledges: knowledges }))
+  }, [knowledges]);
   return (
     <Card className="register-card mt-2 p-5 mx-auto">
         <Form onSubmit={onSubmit} className="form-class">
             <div className="h4 mb-4 form-heading text-center">Registro de revisor</div>
             <Row>
-              <Col>
+              <Col  xs={12} md={6}>
                 <Form.Group>
                   <Form.Label>ORCID ID</Form.Label>
                   <Form.Control
@@ -112,7 +134,7 @@ const SignUpRevisor = () => {
               </Col>            
           </Row>
           <Row>
-            <Col>
+            <Col  xs={12} md={6}>
               <Form.Group className="mb-3 form-group-class">
                 <Form.Label className="label-class">Nombre completo</Form.Label>
                 <Form.Control
@@ -125,7 +147,7 @@ const SignUpRevisor = () => {
                   required                />
               </Form.Group>
             </Col>
-            <Col>
+            <Col  xs={12} md={6}>
               <Form.Group className="mb-3 form-group-class">
                 <Form.Label className="label-class">Nombre de usuario</Form.Label>
                 <Form.Control
@@ -141,7 +163,7 @@ const SignUpRevisor = () => {
           </Row>
 
           <Row>
-            <Col>
+            <Col  xs={12} md={6}>
               <Form.Group className="mb-3 form-group-class">
                 <Form.Label className="label-class">Correo electrónico</Form.Label>
                 <Form.Control
@@ -154,7 +176,7 @@ const SignUpRevisor = () => {
                 />
               </Form.Group>
             </Col>
-            <Col>
+            <Col  xs={12} md={6}>
               <Form.Group className="mb-3 form-group-class">
                   <Form.Label className="label-class">Número de teléfono</Form.Label>
                   <PhoneInput
@@ -169,7 +191,7 @@ const SignUpRevisor = () => {
             </Col>
           </Row>
           <Row>
-          <Col>
+          <Col  xs={12} md={6}>
             <Form.Group className="mb-3 form-group-class">
               <Form.Label className="label-class">Contraseña</Form.Label>
               <Form.Control
@@ -182,7 +204,7 @@ const SignUpRevisor = () => {
               />
             </Form.Group>
             </Col>
-            <Col>
+            <Col  xs={12} md={6}>
             <Form.Group className="mb-3 form-group-class">
               <Form.Label className="label-class">Repita su Contraseña</Form.Label>
               <Form.Control
@@ -199,17 +221,10 @@ const SignUpRevisor = () => {
         
         <Form.Group className="mb-3 form-group-class">
           <Form.Label className="label-class">Área de Conocimiento</Form.Label>
-          <Form.Control
-            type="text"
-            placeholder="Elija sus áreas de conocimiento"
-            name="knowledges"
-            value={state.knowledges}
-            onChange={onChange}
-            className="input-area"
-          />
+          <TagsInput tags={knowledges} setTags={setTags} persPlaceholder="áreas de conocimientos" />
         </Form.Group>
 
-        <Form.Group controlId="formBasicCheckbox">
+        <Form.Group controlId="formBasicCheckbox" className='p-2 mb-2'>
           <Form.Check type="checkbox" name="is_bi" label="Crear portal de autor?" onChange={onChange} />
         </Form.Group>
 

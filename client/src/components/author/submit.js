@@ -1,10 +1,10 @@
 import React, { useEffect, useState, useContext } from "react";
-import { Card, Form, Button, Alert } from 'react-bootstrap';
+import { Card, Form, Button } from 'react-bootstrap';
 import "../estilos/submit.css"
-import { useParams, useNavigate, useLocation } from 'react-router-dom';
-import SubmitSummary from './submitSummary';
+import { useNavigate, useLocation } from 'react-router-dom';
 import AuthContext from "../../context/context";
 import { AlertContext } from '../../context/alertProvider';
+//import SubmitSummary from './submitSummary';
 
 
 const SubmitArticle = () => {
@@ -12,14 +12,14 @@ const SubmitArticle = () => {
   const [description, setDescription] = useState("");
   const [keyWords, setKeyWords] = useState("");
   const [file, setFile] = useState(null);
-  const { alert, setAlert } = useContext(AlertContext);
+  const { setAlert } = useContext(AlertContext);
   const { username, sessionToken, logout } = useContext(AuthContext); // Accede a username y sessionToken desde el contexto
   const { state } = useLocation();
   const [reviewComments, setReviewComments] = useState([]);
   const [improvements, setImprovements] = useState("");
   const [isResubmit, setIsResubmit] = useState(false);
   const [article, setArticle] = useState({});
-  const [submitSummary, setSubmitSummary] = useState({});
+  const [ setSubmitSummary] = useState({});
 
   const navigate = useNavigate();
 

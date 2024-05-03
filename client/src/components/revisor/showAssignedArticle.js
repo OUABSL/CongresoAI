@@ -82,6 +82,7 @@ const SectionReview = ({ reviewData, sectionName, handleSectionUpdate, handleEdi
       useEffect(() => {
         if (previousReviews && previousReviews[sectionName] && previousReviews[sectionName] !== defaultReviewSection) {
           handleEdit(false);
+          console.log("estoy olo");
         }
       }, [previousReviews, sectionName, handleEdit]);
 
@@ -95,7 +96,8 @@ const SectionReview = ({ reviewData, sectionName, handleSectionUpdate, handleEdi
           const updatedPreviousReviews = { ...prevState, [sectionName]: updatedReview };
           return updatedPreviousReviews;
         });
-        handleEdit(true); 
+        console.log("estoy aqui");
+        handleEdit(false); 
       };
 
     const handleInputChange = (criterion, value) => {
@@ -241,7 +243,7 @@ function ShowAssignedArticle() {
     const [article, setArticle] = useState({});
     const [review, setReview] = useState({});
     const [resultReview, setResultReview] = useState({});
-    const {alert, setAlert} = useContext(AlertContext);
+    const {setAlert} = useContext(AlertContext);
     const [showModal, setShowModal] = useState(false);
     const navigate = useNavigate();
 

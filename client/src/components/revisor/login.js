@@ -9,7 +9,7 @@ const LoginRevisor = () => {
   const [usernameInput, setInputUsername] = useState("");
   const [password, setInputPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const { alert, setAlert } = useContext(AlertContext);
+  const { setAlert } = useContext(AlertContext);
   const navigate = useNavigate();
   const { setSessionToken, setRole, setUsername } = useAuth();
 
@@ -101,7 +101,7 @@ const LoginRevisor = () => {
           <Link onClick={handlePassword} className='text-muted link-above'>¿Olvidaste tu contraseña?</Link>
         </div>
         <div className="d-grid mt-2">
-          <Link to="/portal-reviewer/register" className='text-muted link-above'>¿No tienes una cuenta aún? ¡Regístrate!</Link>
+          <Link to="ouabou@alum.us.es" className='text-muted link-above'>¿No tienes una cuenta? ¡Contacte con el administrador!</Link>
         </div>
       </Form>
     </Card>

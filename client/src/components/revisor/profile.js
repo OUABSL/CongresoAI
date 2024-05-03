@@ -12,7 +12,7 @@ function RevisorProfile() {
   const {username} = useParams();
   const {sessionToken, logout } = useContext(AuthContext); 
   const [editing, setEditing] = useState(false);
-  const { alert, setAlert } = useContext(AlertContext);
+  const { setAlert } = useContext(AlertContext);
   const { setSessionToken, setRole} = useAuth();
   const navigate = useNavigate();
 
@@ -100,36 +100,6 @@ function RevisorProfile() {
         });
     }
 }
-  const handleSwitchRoleClick = async () => {
-    // Logout as a reviewer
-    logout();
-
-    // Re-login as an author
-    const payload = {
-      "rol":"author",
-      "username":username,
-      "password": profileData.password
-    };
-
-    try {
-        const response = await fetch('/api/v1/login', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-        });
-
-        const result = await response.json();
-
-        if (response.status===200) {
-          setAlert({ show: true, message: "Cambiado a Autor Exitosamente", variant: "success" });
-          navigate(`/portal-author/profile/${username}`);
-        } else {
-          setAlert({ show: true, message: "Error en el cambio de rol.", variant: "danger" });
-        }
-    } catch (error) {
-      setAlert({ show: true, message: error.message, variant: "danger" });
-    }
-  }
 
   if (!profileData) {
     return <div>El perfil está Cargando...</div>;
