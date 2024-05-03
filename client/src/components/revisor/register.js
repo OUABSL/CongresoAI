@@ -1,8 +1,11 @@
 import React, { useState, useContext } from 'react'
-import { Card, Form, Row, Col, Button, Alert } from "react-bootstrap";
+import { Card, Form, Row, Col, Button} from "react-bootstrap";
 import { Link, useNavigate} from 'react-router-dom';
 import { AlertContext } from '../../context/alertProvider';
+import PhoneInput from "react-phone-input-2";
+import "react-phone-input-2/lib/style.css";
 import "../estilos/register.css"
+
 
 
 const SignUpRevisor = () => {
@@ -138,34 +141,33 @@ const SignUpRevisor = () => {
           </Row>
 
           <Row>
-          <Col>
-            <Form.Group className="mb-3 form-group-class">
-              <Form.Label className="label-class">Dirección de correo electrónico</Form.Label>
-              <Form.Control
-                type="email"
-                placeholder="Introduzca su correo electrónico"
-                name="email"
-                value={state.email}
-                onChange={onChange}
-                className="input-class"
-              />
-            </Form.Group>
-          </Col>
             <Col>
               <Form.Group className="mb-3 form-group-class">
-                <Form.Label className="label-class">Número de teléfono</Form.Label>
+                <Form.Label className="label-class">Correo electrónico</Form.Label>
                 <Form.Control
-                  type="number"
-                  placeholder="Introduzca su número de teléfono"
-                  name="phonenumber"
-                  value={state.phonenumber}
+                  type="email"
+                  placeholder="Introduzca su correo electrónico"
+                  name="email"
+                  value={state.email}
                   onChange={onChange}
                   className="input-class"
-                  required                />
+                />
+              </Form.Group>
+            </Col>
+            <Col>
+              <Form.Group className="mb-3 form-group-class">
+                  <Form.Label className="label-class">Número de teléfono</Form.Label>
+                  <PhoneInput
+                      inputClass="input-class"
+                      className="number"
+                      country={"es"}
+                      value={state.phonenumber}
+                      placeholder='+34 611 111 111'
+                      onChange={phone => setState({ ...state, phonenumber: phone })}
+                  />
               </Form.Group>
             </Col>
           </Row>
-
           <Row>
           <Col>
             <Form.Group className="mb-3 form-group-class">
@@ -203,7 +205,7 @@ const SignUpRevisor = () => {
             name="knowledges"
             value={state.knowledges}
             onChange={onChange}
-            className="input-class"
+            className="input-area"
           />
         </Form.Group>
 

@@ -61,17 +61,9 @@ const formatPreEvalSection = (preEvalSection) => {
 };
 
 
-const SectionReview = ({ reviewData, sectionName, handleSectionUpdate }) => {
+const SectionReview = ({ reviewData, sectionName, handleSectionUpdate, handleEdit, editing}) => {
     const [sectionReview, setSectionReview] = useState(reviewData || {});
     const [previousReviews, setPreviousReviews] = useState({});
-    const [editing, setEditing] = useState(true);
-
-
-    
-    const handleEdit = (value) => {
-        setEditing(value);
-    };
-
 
     useEffect(() => {
         setSectionReview(reviewData);
@@ -91,7 +83,7 @@ const SectionReview = ({ reviewData, sectionName, handleSectionUpdate }) => {
         if (previousReviews && previousReviews[sectionName] && previousReviews[sectionName] !== defaultReviewSection) {
           handleEdit(false);
         }
-      }, [previousReviews, sectionName]);
+      }, [previousReviews, sectionName, handleEdit]);
 
 
 
@@ -103,7 +95,7 @@ const SectionReview = ({ reviewData, sectionName, handleSectionUpdate }) => {
           const updatedPreviousReviews = { ...prevState, [sectionName]: updatedReview };
           return updatedPreviousReviews;
         });
-        setEditing(true); 
+        handleEdit(true); 
       };
 
     const handleInputChange = (criterion, value) => {
@@ -201,6 +193,10 @@ const DisplaySection = ({ sectionName, summarySection=null, preEvalSection=null,
     const [editing, setEditing] = useState(true);
     const [formattedPreEvalSection, setFormattedPreEvalSection] = useState("");
 
+    const handleEdit = (value) => {
+        setEditing(value);
+    };
+
     useEffect(() => {
         if (actualReviewSection) {
           setReviewSection(actualReviewSection);
@@ -208,13 +204,10 @@ const DisplaySection = ({ sectionName, summarySection=null, preEvalSection=null,
       }, [actualReviewSection, sectionName]);
 
 
-
     useEffect(()=> {
         if(preEvalSection){
             let preEvalSplit = preEvalSection.split("Evaluation Summary:", 2);
             setFormattedPreEvalSection(formatPreEvalSection(preEvalSplit[0], preEvalSplit[1]));
-            console.log("llega: ", formatPreEvalSection, " s: ", summarySection );
-
         }
     }, [preEvalSection])
 
@@ -232,6 +225,8 @@ const DisplaySection = ({ sectionName, summarySection=null, preEvalSection=null,
                     reviewData={reviewSection}
                     sectionName={sectionName}
                     handleSectionUpdate={handleSectionUpdate} 
+                    handleEdit={handleEdit}
+                    editing = {editing}
                 />
             </Accordion.Body>
         </Accordion.Item>
@@ -272,17 +267,14 @@ function ShowAssignedArticle() {
             });
 
             if (!response.ok) {
-                // Puedes emitir un error para manejarlo en el catch posterior
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
 
             const data = await response.json();
 
-            // Asegúrate de que data contenga las propiedades esperadas antes de hacer 
             // llamadas de función o asignaciones que dependan de estas propiedades.
             if (data && data.submitted_pdf_id && data.title && data.description) {
                 await setArticle(data);
-                console.log("articulo: ",article);
                 // llamar a la función handleShowPdf
                 //await handleShowPdf(`/file/${data.submitted_pdf_id}`); 
             } else {
@@ -323,7 +315,7 @@ function ShowAssignedArticle() {
         setShowModal(false);
         window.scrollTo(0, 0); // Scroll to top
 
-        if (response.ok) {
+        if (data.success) {
             setAlert({ visible: true, variant: 'success', message: 'Revisión guardada con éxito.' });
         } else {
             setAlert({ visible: true, variant: 'danger', message: 'No se pudo guardar la revisión. Inténtalo de nuevo.' });

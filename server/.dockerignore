@@ -1,3 +1,7 @@
 ./test_result/
 ./src/test
-.data/input
+.data/input/*
+test
+*.pyc
+*/__pycache__
+*/.ipynb_checkpoints

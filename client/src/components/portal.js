@@ -14,7 +14,7 @@ function Portal() {
 
   return (
     <div className="d-flex justify-content-around">
-      <Card style={{ width: '18rem' }}>
+      <Card className="p-3" style={{ width: '20rem' }}>
         <FontAwesomeIcon icon={faUserPen} size="6x" />
         <Card.Body>
           <Card.Title>Portal de Autor</Card.Title>
@@ -25,7 +25,7 @@ function Portal() {
         </Card.Body>
       </Card>
       
-      <Card style={{ width: '18rem' }}>
+      <Card className="p-3" style={{ width: '20rem' }}>
         <FontAwesomeIcon icon={faPenRuler} size="6x" />
         <Card.Body>
           <Card.Title>Portal de Revisor</Card.Title>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Card, ListGroup, Alert, Button , Form, Container, Col, Row} from 'react-bootstrap';
+import { Card, ListGroup, Button , Form, Container, Col, Row} from 'react-bootstrap';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useContext } from "react";
 import { AlertContext } from '../../context/alertProvider';
@@ -14,7 +14,7 @@ function AuthorProfile() {
   const [editing, setEditing] = useState(false);
   const { alert, setAlert } = useContext(AlertContext);
   const navigate = useNavigate();
-  const { setSessionToken, setRole, setUsername } = useAuth();
+  const { setSessionToken, setRole } = useAuth();
 
 
   useEffect(() => {
@@ -105,7 +105,7 @@ function AuthorProfile() {
   return (
     <>
     <Container className="d-flex justify-content-center align-items-center h-100">
-      <Card style={{ width: '25rem' }} className="mt-5">
+      <Card style={{ width: '25rem' }} className="p-3 mt-5">
           <Card.Body>
               <Card.Title>
                   Nombre completo:
@@ -144,7 +144,7 @@ function AuthorProfile() {
                   ` ${profileData.registration_date}`}
                   </ListGroup.Item>
           </ListGroup>
-          <Form.Group as={Row} className="justify-content-around mt-3">
+          <Form.Group as={Row} className="justify-content-around my-3">
             <Col sm="auto">
                 <Button variant="primary" onClick={editing ? handleSaveClick : handleEditClick}>
                     {editing ? 'Guardar' : 'Editar perfil'}

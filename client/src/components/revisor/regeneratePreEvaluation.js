@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Modal, Form, Select, Option } from 'react-bootstrap';
+import { Button, Modal, Form} from 'react-bootstrap';
 import { useContext } from "react";
 import AuthContext from "../../context/context";
-import { AlertContext } from '../../context/alertProvider'; // Asegúrate de tener el contexto
+import { AlertContext } from '../../context/alertProvider';
 
 
 function RegenerationModal({ username, articleTitle }) {

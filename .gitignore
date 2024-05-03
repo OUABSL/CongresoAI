@@ -1,15 +1,10 @@
 .venv
 .env
-server/src/test
+server/data/input/*
 server/src/config.py
-server/src/__pycache__
+server/src/test
 test
 server/test_results/
-server/data/input/*
-client/package.json
-/server/src/services/__pycache__
-/server/src/services/__pycache__
-/server/src/services/__pycache__
 *.pyc
 */__pycache__
 */.ipynb_checkpoints

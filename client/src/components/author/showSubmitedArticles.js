@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Table, Container, Alert} from 'react-bootstrap';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useContext } from "react";
 import AuthContext from "../../context/context";
 import { AlertContext } from '../../context/alertProvider';
-
 import '../estilos/show_articles.css'
-
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {faEye, faEyeSlash} from '@fortawesome/free-solid-svg-icons';
 
