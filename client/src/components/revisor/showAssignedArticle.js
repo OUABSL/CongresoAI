@@ -244,6 +244,7 @@ function ShowAssignedArticle() {
     const [resultReview, setResultReview] = useState({});
     const {setAlert} = useContext(AlertContext);
     const [showModal, setShowModal] = useState(false);
+    const [activeKey, setActiveKey] = useState("");
     const navigate = useNavigate();
 
     const goBack = () => {
@@ -297,6 +298,12 @@ function ShowAssignedArticle() {
 }, [username, article_title, sessionToken, logout]);
 
 
+    useEffect(()=> {
+        if (article && !activeKey) {
+        setActiveKey(article.sections_orden[0]);
+        }
+    }, [article, activeKey]);
+
     const handleStateSelect = (state) => {
         const index = STATES_REVIEW.indexOf(state);
         const enState = STATES_REVIEW_API[index] || 'Error: Pending Review';
@@ -306,19 +313,22 @@ function ShowAssignedArticle() {
 
     const addReview = async () => {
         const reviewData = {
-            review: review, // review is an object where the key is the section name and the value is the review of that section
-            review_result: resultReview // resultReview is a string that represents the status: "Pending Review", "Approved", "Rejected", "Pending Improvement"
+            review: review, 
+            review_result: resultReview
         };
-        console.log("Posteed: ", resultReview, review);
 
         const response = await fetch(`/api/v1/evaluate/${username}/${article_title}`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${sessionToken}`,
+            },
             body: JSON.stringify(reviewData)
         });
         const data = await response.json();
+        setActiveKey('');
         setShowModal(false);
-        window.scrollTo(0, 0); // Scroll to top
+        window.scrollTo(0, 0);
 
         if (data.success) {
             setAlert({ visible: true, variant: 'success', message: 'Revisión guardada con éxito.' });
@@ -330,9 +340,6 @@ function ShowAssignedArticle() {
 
 
     };
-
-
-
 
     return (
         <>
@@ -359,7 +366,7 @@ function ShowAssignedArticle() {
                         {article && article.title && <Card.Title>{article.title}</Card.Title>}
                         {article && article.description && <Card.Text>{article.description}</Card.Text>}
                         {article && article.sections_orden && (
-                            <Accordion defaultActiveKey={article.sections_orden[0]}>
+                            <Accordion activeKey={activeKey} onSelect={setActiveKey}>
                                 {article.sections_orden.map((sectionName) => (
                                     <DisplaySection
                                         key={sectionName}
@@ -371,7 +378,8 @@ function ShowAssignedArticle() {
                                     />
                                 ))}
                             </Accordion>
-                        )}
+                        )
+                    }
                         <Button className="btn bg-info mt-3" variant="primary" onClick={() => setShowModal(true)}>
                             Guardar Revisión
                         </Button>

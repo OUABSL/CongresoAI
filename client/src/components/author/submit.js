@@ -96,10 +96,12 @@ const SubmitArticle = () => {
         const url = URL.createObjectURL(file);
         setSubmitSummary(data.submit_summary);
         // Navega después de establecer el estado
+        const fileName = file? file.name:"";
         navigate('/portal-author/submit-summary', { 
           state: { 
             submitSummary: data.submit_summary, 
-            latex_project_url: url
+            latex_project_url: url,
+            fileName : fileName
            } 
           });
           

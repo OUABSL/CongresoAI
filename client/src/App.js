@@ -1,4 +1,4 @@
-import React, { useState} from 'react';
+import React from 'react';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'react-bootstrap';
@@ -35,7 +35,6 @@ import Portal from './components/portal';
 
 
 function App() {
-  const [data, setData] = useState([]);
 
  
   return (
@@ -75,7 +74,6 @@ function App() {
         <Route path={"/portal-author/articles/:username/:article_title"} element={<ShowSubmittedArticle />} />
 
         
-
 
         <Route path={"/portal-reviewer/login"}element={<LoginRevisor />} />
         <Route path={"/portal-reviewer/register"} element={<SignUpRevisor />} />

@@ -106,7 +106,7 @@ const LoginRevisor = () => {
           <Link onClick={handlePassword} className='text-muted link-above'>¿Olvidaste tu contraseña?</Link>
         </div>
         <div className="d-grid mt-2">
-          <Link to="ouabou@alum.us.es" className='text-muted link-above'>¿No tienes una cuenta? ¡Contacte con el administrador!</Link>
+          <a href="mailto:ouabou@alum.us.es" className='text-muted link-above'>¿No tienes una cuenta? ¡Contacte con el administrador!</a>
         </div>
       </Form>
     </Card>

@@ -1,6 +1,7 @@
 .navbar {
   margin: 20px;
-  border-radius: 50px;
+  padding: 20px;
+  border-radius: 20px;
   font-size: 1.5em;
 }
 
