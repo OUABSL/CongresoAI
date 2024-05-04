@@ -1,16 +1,17 @@
 import React, { useEffect, useState, useContext } from "react";
 import { Card, Form, Button } from 'react-bootstrap';
-import "../estilos/submit.css"
+import "../estilos/submit.css";
+import "../estilos/input-tags.css";
 import { useNavigate, useLocation } from 'react-router-dom';
 import AuthContext from "../../context/context";
 import { AlertContext } from '../../context/alertProvider';
-//import SubmitSummary from './submitSummary';
+import TagsInput from "../tagsInput";
 
 
 const SubmitArticle = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [keyWords, setKeyWords] = useState("");
+  const [keyWords, setTags] = useState([]);
   const [file, setFile] = useState(null);
   const { setAlert } = useContext(AlertContext);
   const { username, sessionToken, logout } = useContext(AuthContext); // Accede a username y sessionToken desde el contexto
@@ -19,7 +20,7 @@ const SubmitArticle = () => {
   const [improvements, setImprovements] = useState("");
   const [isResubmit, setIsResubmit] = useState(false);
   const [article, setArticle] = useState({});
-  const [ setSubmitSummary] = useState({});
+  const [ submitSummary, setSubmitSummary] = useState({});
 
   const navigate = useNavigate();
 
@@ -34,7 +35,7 @@ const SubmitArticle = () => {
         }, []);
         if(article && article.title && article.key_words && article.description && commentsList){
           setTitle(article.title);
-          setKeyWords(article.key_words);
+          setTags(article.key_words);
           setDescription(article.description);
           setReviewComments(commentsList);
         }
@@ -70,12 +71,8 @@ const SubmitArticle = () => {
     };
 
     const api = state && isResubmit ? `/api/v1/submit/${username}/${title}`: `/api/v1/submit`;
-    try {
-      console.log("Making request to:", api);
-      console.log("Request options:", requestOptions);
-  
+    try {  
       const response = await fetch(api, requestOptions);
-      console.log("Response:", response);
   
       const data = await response.json();
       console.log("Response data:", data);
@@ -101,7 +98,7 @@ const SubmitArticle = () => {
           
         setTitle("");
         setDescription("");
-        setKeyWords("");
+        setTags([]);
         setFile(null);
       }
     } catch (error) {
@@ -116,17 +113,17 @@ const SubmitArticle = () => {
         <h2>Rellene el formulario</h2>
         <Form.Group>
           <Form.Label className="label-class">Titulo del artículo</Form.Label>
-          <Form.Control type="text" value={title} onChange={(e) => setTitle(e.target.value)} required className="input-class" />
+          <Form.Control type="text" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Ingresa el título del manuscrito" required className="input-submit" />
         </Form.Group>
 
         <Form.Group>
           <Form.Label className="label-class">Descripción breve de su contenido</Form.Label>
-          <Form.Control as="textarea" rows={2} value={description} onChange={(e) => setDescription(e.target.value)} required className="input-class" />
+          <Form.Control as="textarea" rows={2} value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Introduzca una descripción resumida para el manuscripto" required className="input-submit"/>
         </Form.Group>
 
         <Form.Group>
           <Form.Label className="label-class">Palabras clave</Form.Label>
-          <Form.Control type="text" value={keyWords} onChange={(e) => setKeyWords(e.target.value)} required className="input-class" />
+          <TagsInput tags={keyWords} setTags={setTags} persPlaceholder="Palabras claves del manuscrito" />
         </Form.Group>
 
         {isResubmit && 
@@ -149,7 +146,7 @@ const SubmitArticle = () => {
           value={improvements} 
           onChange={(e) => setImprovements(e.target.value)} 
           required 
-          className="input-class" 
+          className="input-submit" 
         />
       </Form.Group>
     </>
@@ -157,7 +154,7 @@ const SubmitArticle = () => {
 
         <Form.Group>
           <Form.Label className="label-class">Proyecto Latex</Form.Label>
-          <Form.Control type="file" onChange={(e) => setFile(e.target.files[0])} required className="input-class" />
+          <Form.Control type="file" onChange={(e) => setFile(e.target.files[0])} required className="input-submit" />
         </Form.Group>
 
         <Button variant="primary" type="submit" className="button-class">

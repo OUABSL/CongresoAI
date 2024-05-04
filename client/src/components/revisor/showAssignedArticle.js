@@ -80,11 +80,10 @@ const SectionReview = ({ reviewData, sectionName, handleSectionUpdate, handleEdi
       }, [reviewData, sectionName, previousReviews]);
       
       useEffect(() => {
-        if (previousReviews && previousReviews[sectionName] && previousReviews[sectionName] !== defaultReviewSection) {
+        if (previousReviews && previousReviews[sectionName] === reviewData && previousReviews[sectionName] !== defaultReviewSection) {
           handleEdit(false);
-          console.log("estoy olo");
         }
-      }, [previousReviews, sectionName, handleEdit]);
+      }, [previousReviews, handleEdit, sectionName, reviewData]);
 
 
 

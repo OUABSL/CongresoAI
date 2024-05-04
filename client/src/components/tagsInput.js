@@ -1,6 +1,9 @@
 import { WithContext as ReactTags } from 'react-tag-input';
 import suggestions from '../suggestionsTags';
-import './estilos/register.css'
+import "./estilos/input-tags.css";
+import "react-phone-input-2/lib/style.css";
+
+
 
 const KeyCodes = {
   comma: 188,
@@ -10,16 +13,16 @@ const KeyCodes = {
 const delimiters = [KeyCodes.comma, KeyCodes.enter];
 
 
-const classNames = {
-  tags: 'tags',
-  tagInput: 'tagInput',
-  tagInputField: 'form-control',
-  selected: 'selected',
-  tag: 'badge badge-info tag',
-  remove: 'remove',
-  suggestions: 'suggestions',
-  activeSuggestion: 'activeSuggestion',
-};
+ const classNames = {
+//   tags: 'tags',
+//   tagInput: 'tagInput',
+     tagInputField: 'form-control',
+//   selected: 'selected',
+     tag: 'badge badge-info tag me-2 mb-2',
+//   remove: 'remove',
+//   suggestions: 'suggestions',
+//   activeSuggestion: 'activeSuggestion',
+ };
 
 const TagsInput = ({ tags, setTags, persPlaceholder }) => {
   const handleDelete = (i) => {
@@ -39,6 +42,7 @@ const TagsInput = ({ tags, setTags, persPlaceholder }) => {
 
   return (
     <ReactTags
+      inline={false}
       tags={tags.map((tag) => ({ id: tag, text: tag }))}
       suggestions={suggestions}
       handleDelete={handleDelete}
@@ -48,7 +52,7 @@ const TagsInput = ({ tags, setTags, persPlaceholder }) => {
       classNames={classNames}
       //style={styles}
       inputFieldPosition="top"
-      placeholder= {`Inserta tus ${persPlaceholder}.`}
+      placeholder= {`Inserta ${persPlaceholder}.`}
       autocomplete
     />
   );

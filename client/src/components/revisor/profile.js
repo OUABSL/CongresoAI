@@ -108,84 +108,70 @@ function RevisorProfile() {
     <Container className="d-flex justify-content-center align-items-center h-100">
       <Card style={{ width: '25rem' }} className="p-3 mt-5">
           <Card.Body>
-              <Card.Title>
-                  Nombre completo:
-                  {editing ? 
-                      <Form.Control 
-                          readOnly={!editing} 
-                          type="text" 
-                          name="fullname" 
-                          value={profileData.fullname || ''} 
-                          onChange={handleInputChange}
-                      />
-                      :  `${profileData.fullname}`
-                  }
-              </Card.Title>
-              <Card.Subtitle className="mb-2 text-muted">
-                  ORCID ID: {profileData.ORCID_ID}
-                  <br />
-                  <br />
-                  Usuario: {profileData.username}
-              </Card.Subtitle>
-              <Card.Text>
-                  Email:
-                  {editing ? 
-                      <Form.Control 
-                          readOnly={!editing} 
-                          type="email" 
-                          name="email" 
-                          value={profileData.email || ''} 
-                          onChange={handleInputChange}
-                      />
-                      : `${profileData.email}`
-                  }
-              </Card.Text>
-          </Card.Body>
-          <ListGroup variant="flush">
-              <ListGroup.Item>
-                  Número de teléfono:
-                  {editing ? 
-                      <Form.Control 
-                          readOnly={!editing} 
-                          type="tel" 
-                          name="phonenumber" 
-                          value={profileData.phonenumber || ''} 
-                          onChange={handleInputChange}
-                      />
-                      : ` ${profileData.phonenumber}`
-                  }
+            <Card.Title>
+                Nombre completo:
+                {editing ? 
+                        <Form.Control readOnly={!editing} type="text" name="fullname" value={profileData.fullname || ''} onChange={handleInputChange}/> :
+                        `${profileData.fullname}`
+                }
+            </Card.Title>
+            <Card.Subtitle className="mb-2 p-2 text-muted">
+                Usuario: 
+                {editing ? 
+                    <Form.Control readOnly style={{backgroundColor:'#f1f1f1', border: '1px solid #888'}} plaintext value={profileData.username} /> :
+                    `${profileData.username}`
+                }
+            </Card.Subtitle>
+            <Card.Subtitle className="mb-2 p-2 text-muted">
+                ORCID ID:
+                { "\u{64}" + profileData.ORCID_ID }
+            </Card.Subtitle>
+
+            <ListGroup variant="flush">
+              <ListGroup.Item className="p-2">
+                Email:
+                {editing ? 
+                    <Form.Control readOnly={!editing} type="email" name="email" value={profileData.email || ''} onChange={handleInputChange}/> :
+                    ` ${profileData.email}`
+                }
               </ListGroup.Item>
-              <ListGroup.Item>
-                  Fecha de registro:
-                  {editing ? 
-                      <Form.Control 
-                          readOnly 
-                          style={{backgroundColor:'#f1f1f1', border: '1px solid #888'}} 
-                          plaintext 
-                          value={profileData.registration_date} 
-                      />
-                      : ` ${profileData.registration_date}`
-                  }
+              <ListGroup.Item className="p-2">
+                Número de teléfono:
+                {editing ? 
+                    <Form.Control readOnly={!editing} type="tel" name="phonenumber" value={profileData.phonenumber || ''} onChange={handleInputChange}/> :
+                    ` ${profileData.phonenumber}`
+                }
               </ListGroup.Item>
-              <ListGroup.Item>
-                  Conocimientos: {profileData.knowledges}
+              <ListGroup.Item className="p-2">
+                Conocimientos:
+                {editing ? 
+                    <Form.Control readOnly={!editing} type="text" name="knowledges" value={profileData.knowledges || ''} onChange={handleInputChange}/> :
+                    ` ${profileData.knowledges}`
+                }
+              </ListGroup.Item>
+              <ListGroup.Item className="p-2">
+                Fecha de registro:
+                    {editing ? 
+                    <Form.Control readOnly style={{backgroundColor:'#f1f1f1', border: '1px solid #888'}} plaintext value={profileData.registration_date} /> :
+                    ` ${profileData.registration_date}`
+                  }
               </ListGroup.Item>
           </ListGroup>
-          <Form.Group as={Row} className="justify-content-around my-3">
-              <Col sm="auto">
-                  <Button variant="primary" onClick={editing ? handleSaveClick : handleEditClick}>
-                      {editing ? 'Guardar' : 'Editar perfil'}
-                  </Button>
-              </Col>
-              {profileData.is_bi && (
-                  <Col sm="auto">
-                      <Button variant="secondary" onClick={handleChangeRole}>Pasar a autor</Button>
-                  </Col>
-              )}
+          <Form.Group as={Row} className="justify-content-around my-3 p-2">
+            <Col sm="auto">
+                <Button variant="primary" onClick={editing ? handleSaveClick : handleEditClick}>
+                    {editing ? 'Guardar' : 'Editar perfil'}
+                </Button>
+            </Col>
+            {profileData.is_bi && (
+                <Col sm="auto">
+                    <Button variant="secondary" onClick={handleChangeRole}>Pasar a autor</Button>
+                </Col>
+            )}
           </Form.Group>
+        </Card.Body>
       </Card>
     </Container>
-  );
+);
 }
-
 export default RevisorProfile;

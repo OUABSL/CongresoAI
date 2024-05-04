@@ -1,10 +1,10 @@
-import React, { useState, useContext, useEffect } from 'react'
+import React, { useState, useContext, useEffect } from 'react';
 import { Card, Form, Row, Col, Button} from "react-bootstrap";
 import { Link, useNavigate} from 'react-router-dom';
 import { AlertContext } from '../../context/alertProvider';
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
-import "../estilos/register.css"
+import "../estilos/register.css";
 import TagsInput from '../tagsInput';
 import { validateForm } from '../validators/register';
 
@@ -69,6 +69,7 @@ const SignUpRevisor = () => {
           message: errors.map(x=> "-" + x + "\n"),
           variant: "danger"
         });
+        return;
       }
     else{
       delete state.confirmPassword;

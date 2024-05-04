@@ -121,30 +121,36 @@ function AuthorProfile() {
                           `${profileData.username}`
                     }
               </Card.Subtitle>
-              <Card.Text>
-                  Email:
-                  {editing ? 
-                      <Form.Control readOnly={!editing} type="email" name="email" value={profileData.email || ''} onChange={handleInputChange}/> :
-                      ` ${profileData.email}`
-                  }
-              </Card.Text>
-          </Card.Body>
+
+            <ListGroup.Item className="p-2">                  Email:
+                {editing ? 
+                  <Form.Control readOnly={!editing} type="email" name="email" value={profileData.email || ''} onChange={handleInputChange}/> :
+                  ` ${profileData.email}`
+                }
+              </ListGroup.Item>
           <ListGroup variant="flush">
-              <ListGroup.Item>
+              <ListGroup.Item className="p-2">
                   Número de teléfono:
                   {editing ? 
                       <Form.Control readOnly={!editing} type="tel" name="phonenumber" value={profileData.phonenumber || ''} onChange={handleInputChange}/> :
                       ` ${profileData.phonenumber}`
                   }
               </ListGroup.Item>
-              <ListGroup.Item>
+              <ListGroup.Item className="p-2">
+                  Áreas de intereses:
+                  {editing ? 
+                      <Form.Control readOnly={!editing} type="text" name="interestarea" value={profileData.interestarea || ''} onChange={handleInputChange}/> :
+                      ` ${profileData.phonenumber}`
+                  }
+              </ListGroup.Item>
+              <ListGroup.Item className="p-2">
               Fecha de registro:
                   {editing ?
                   <Form.Control readOnly style={{backgroundColor:'#f1f1f1', border: '1px solid #888'}} plaintext value={profileData.registration_date} /> : 
                   ` ${profileData.registration_date}`}
                   </ListGroup.Item>
           </ListGroup>
-          <Form.Group as={Row} className="justify-content-around my-3">
+          <Form.Group as={Row} className="justify-content-around p-2 my-3">
             <Col sm="auto">
                 <Button variant="primary" onClick={editing ? handleSaveClick : handleEditClick}>
                     {editing ? 'Guardar' : 'Editar perfil'}
@@ -156,6 +162,7 @@ function AuthorProfile() {
                 </Col>
             )}
         </Form.Group>
+        </Card.Body>
       </Card>
     </Container>
     </>

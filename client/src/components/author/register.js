@@ -1,13 +1,12 @@
-import React, { useState, useContext, useEffect } from 'react'
+import React, { useState, useContext, useEffect } from 'react';
 import { Card, Form, Row, Col, Button} from "react-bootstrap";
 import { Link, useNavigate } from 'react-router-dom';
 import { AlertContext } from '../../context/alertProvider';
 import PhoneInput from "react-phone-input-2";
 import { validateForm } from '../validators/register';
 import TagsInput from '../tagsInput';
-
 import "react-phone-input-2/lib/style.css";
-import "../estilos/register.css"
+import "../estilos/register.css";
 
 
 
@@ -39,6 +38,7 @@ const SignUpAuthor = () => {
   const onSubmit = (e) => {
     e.preventDefault();
     for (let key in state) {
+      console.log(`clave: ${key} --> ${state[key]}`)
       if (state[key] === '') {
         setAlert({
           show: true,
@@ -58,6 +58,7 @@ const SignUpAuthor = () => {
           message: errors.map(x=> "-" + x + "\n"),
           variant: "danger"
         });
+        return;
     } else{
       delete state.confirmPassword;
     }

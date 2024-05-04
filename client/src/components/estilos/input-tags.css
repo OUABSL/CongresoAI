@@ -1,0 +1,71 @@
+/* input-tags.css */
+
+/* Etiquetas seleccionadas */
+.ReactTags__selected {
+  display:flex; 
+  flex-wrap:wrap;
+  margin-top: 5px;
+}
+
+.ReactTags__selected span.ReactTags__tag {
+  display:flex;
+  align-items:center;
+  height: 24px; 
+  margin-right: 2px;
+  margin-top: 2px; 
+  padding-right: 2px;
+  background: #eee; 
+  border: 1px solid #ddd;
+  border-radius: 2px;
+  font-size: 12px;
+  color: #000;
+}
+
+/* Botón de eliminación de las etiquetas seleccionadas */
+.ReactTags__selected span.ReactTags__tag .ReactTags__remove {
+  display:inline-block; 
+  width:20px;
+  height:20px;
+  margin-left:4px;
+  cursor:pointer;
+}
+
+.ReactTags__remove{
+  background: none;
+  border: none;
+  color: #eee;
+}
+
+/* Sugerencias de etiquetas */
+.ReactTags__suggestions {
+  position:relative; 
+  width:clamp(190px, 90%, 250px);
+}
+
+.ReactTags__suggestions ul {
+  margin:0; 
+  padding:0;
+}
+
+.ReactTags__suggestions ul li {
+  border-bottom:1px solid #ddd;
+  padding:5px 10px;
+  list-style:none;
+}
+
+.ReactTags__suggestions ul li mark {
+  text-decoration:none; 
+  background-color:#b7d7e8; 
+  color:#000;
+}
+
+/* Sugerencia de etiqueta activa */
+.ReactTags__suggestions ul li.ReactTags__activeSuggestion {
+  background:#b7d7e8;
+}
+
+/* Menaje de error */
+.ReactTags__error{
+  color: #f00;
+  margin-top:5px;
+}
