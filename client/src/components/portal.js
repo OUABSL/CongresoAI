@@ -18,9 +18,6 @@ function Portal() {
         <FontAwesomeIcon icon={faUserPen} size="6x" />
         <Card.Body>
           <Card.Title>Portal de Autor</Card.Title>
-          <Card.Text>
-            Descripción del portal de Autor
-          </Card.Text>
           <Button variant="primary" onClick={() => handleLinkClick('/portal-author/login')}>Ir al portal</Button>
         </Card.Body>
       </Card>
@@ -29,9 +26,6 @@ function Portal() {
         <FontAwesomeIcon icon={faPenRuler} size="6x" />
         <Card.Body>
           <Card.Title>Portal de Revisor</Card.Title>
-          <Card.Text>
-            Descripción del portal de Revisor
-          </Card.Text>
           <Button variant="primary" onClick={() => handleLinkClick('/portal-reviewer/login')}>Ir al portal</Button>
         </Card.Body>
       </Card>

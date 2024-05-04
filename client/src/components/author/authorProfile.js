@@ -12,11 +12,15 @@ function AuthorProfile() {
   const {username} = useParams();
   const {sessionToken, logout } = useContext(AuthContext); 
   const [editing, setEditing] = useState(false);
-  const { alert, setAlert } = useContext(AlertContext);
+  const { setAlert } = useContext(AlertContext);
   const navigate = useNavigate();
   const { setSessionToken, setRole } = useAuth();
 
 
+  useEffect(() => {
+    document.title = `Profil de autor - ${username}`;
+  }, [username]);
+  
   useEffect(() => {
     const getProfile = async () => {
       const response = await fetch(

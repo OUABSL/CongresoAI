@@ -11,9 +11,13 @@ import {faEye, faEyeSlash} from '@fortawesome/free-solid-svg-icons';
 function ShowSubmittedArticles() {
   const { username, sessionToken, logout } = useContext(AuthContext);
   const {setAlert} = useContext(AlertContext)
-
   const [articles, setArticles] = useState([]);
   const navigate = useNavigate();
+
+
+  useEffect(() => {
+    document.title = `Resultado de Revisión`;
+  }, []);
 
   useEffect(() => {
     const fetchArticles = async () => {

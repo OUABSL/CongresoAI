@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { Form, Button, Card, FloatingLabel } from "react-bootstrap";
 import { Link, useNavigate } from 'react-router-dom';
 import "../estilos/login.css";
@@ -12,6 +12,11 @@ const LoginRevisor = () => {
   const { setAlert } = useContext(AlertContext);
   const navigate = useNavigate();
   const { setSessionToken, setRole, setUsername } = useAuth();
+
+  useEffect(() => {
+    document.title = "Inicio de sesión - Revisor";
+  }, []);
+
 
   const handleSubmit = async (event) => {
     event.preventDefault();

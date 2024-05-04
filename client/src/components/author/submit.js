@@ -24,6 +24,9 @@ const SubmitArticle = () => {
 
   const navigate = useNavigate();
 
+
+
+
   useEffect(() => {
     if(state && state.isResubmit){
       console.log(`Estado:\n${state.article}\n${state.comments}`);
@@ -43,6 +46,10 @@ const SubmitArticle = () => {
       }
     }
   }, [state, article]);
+
+  useEffect(() => {
+    document.title = isResubmit ? `Mejorar Entrega`:`Subir artículo`;
+  }, [isResubmit]);
 
   const submitForm = async (e) => {
     e.preventDefault();

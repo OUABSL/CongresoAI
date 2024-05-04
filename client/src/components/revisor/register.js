@@ -15,8 +15,6 @@ const SignUpRevisor = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const [knowledges, setTags] = useState([]);
-
-
   const initialState = {
     role: 'reviewer',
     ORCID_ID: '',   // 0000-0003-0528-9459
@@ -29,6 +27,12 @@ const SignUpRevisor = () => {
     knowledges: '',
     is_bi:false
   }
+
+
+  
+  useEffect(() => {
+    document.title = `Registro de revisor `;
+  }, []);
 
   const formatORCID = (value) => {
     // Eliminar todos los caracteres que no sean dígitos

@@ -17,6 +17,9 @@ function RevisorProfile() {
   const navigate = useNavigate();
 
   
+  useEffect(() => {
+    document.title = `Profil de revisor - ${username}`;
+  }, [username]);
 
   useEffect(() => {
     const getProfile = async () => {

@@ -122,7 +122,7 @@ const getArticle = async (username, articleTitle, sessionToken, onLogout) => {
 
 const ShowSubmittedArticle = () => {
   const { sessionToken, logout, username } = useContext(AuthContext);
-  const { alert, setAlert } = useContext(AlertContext);
+  const { setAlert } = useContext(AlertContext);
   const { article_title } = useParams();
   const [article, setArticle] = useState({});
   const [review, setReview] = useState ({});
@@ -133,6 +133,12 @@ const ShowSubmittedArticle = () => {
   const goBack = () => {
     navigate(-1);
   }
+
+  
+  useEffect(() => {
+    document.title = `Artículos presentados ${username}`;
+  }, [username]);
+  
 
   useEffect(()=> {
     setReview(article.review);

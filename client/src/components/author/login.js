@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { Form, Button, Card, FloatingLabel } from "react-bootstrap";
 import { Link, useNavigate } from 'react-router-dom';
 import { AlertContext } from '../../context/alertProvider';
@@ -9,9 +9,13 @@ const LoginAuthor = () => {
   const [usernameInput, setInputUsername] = useState("");
   const [password, setInputPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const { alert, setAlert } = useContext(AlertContext);
+  const { setAlert } = useContext(AlertContext);
   const navigate = useNavigate();
   const { setSessionToken, setRole, setUsername } = useAuth();
+
+  useEffect(() => {
+    document.title = "Inicio de sesión - Autor";
+  }, []);
 
   const handleSubmit = async (event) => {
     event.preventDefault();

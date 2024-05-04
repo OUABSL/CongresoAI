@@ -255,6 +255,10 @@ function ShowAssignedArticle() {
   };
 
 
+  useEffect(() => {
+    document.title = `Revisión - ${article_title}`;
+  }, [article_title]);
+
 
   useEffect(() => {
     async function fetchArticle() {

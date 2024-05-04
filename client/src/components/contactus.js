@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
-import { Form, Button, Alert, Container, Row, Col, Card } from "react-bootstrap";
+import React, { useState, useEffect, useContext } from "react";
+import { Form, Button, Alert, Container, Row, Card } from "react-bootstrap";
 import { BsMap, BsEnvelope, BsTelephone } from "react-icons/bs";
 import TextareaAutosize from 'react-textarea-autosize';
+import { AlertContext } from '../context/alertProvider';
 
 import './estilos/contactus.css'
 
@@ -53,16 +54,19 @@ const ContactInfo = () => (
 );
 
 const ContactUs = () => {
+  const {setAlert } = useContext(AlertContext);
   const [formState, setFormState] = useState({
     nombre: "",
     email: "",
     asunto: "",
     mensaje: "",
   });
-  const [alert, setAlert] = useState({ show: false, message: '', variant: 'success' });
-
   const [enviado, setEnviado] = useState(false);
 
+  
+  useEffect(() => {
+    document.title = `Contactános`;
+  }, []);
   useEffect(() => {
     if (enviado) {
       const formResetTimeout = setTimeout(() => {

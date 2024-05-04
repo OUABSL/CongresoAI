@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Table, Container, Alert} from 'react-bootstrap';
-import { redirect, useParams, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useContext } from "react";
 import AuthContext from "../../context/context";
 import { AlertContext } from '../../context/alertProvider'; // Importa tu contexto
@@ -16,6 +16,10 @@ function ShowAssignedArticles() {
 
   const [articles, setArticles] = useState([]);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    document.title = `Articulos asignados - ${username}`;
+  }, [username]);
 
   useEffect(() => {
     const fetchArticles = async () => {

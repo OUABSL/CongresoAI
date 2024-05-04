@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import { useLocation } from 'react-router-dom';
 import { Card, Button } from 'react-bootstrap';
 
@@ -7,6 +7,10 @@ const SubmitSummary = () => {
     const { submitSummary, latex_project_url } = location.state || {}; 
     
     const { title, author, description, keywords = [],submission_date, submission_id } = submitSummary;
+
+    useEffect(() => {
+        document.title = `Resumen de enrega`;
+      }, []);
 
     return (
         <Card className="mt-4 p-4 mx-auto" style={{ maxWidth: '600px' }}>

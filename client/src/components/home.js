@@ -1,14 +1,18 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import { Container, Row, Col, Card, ListGroup, Button } from 'react-bootstrap';
-import { Link, useNavigate } from 'react-router-dom';
 import { useContext } from 'react';
 import AuthContext from '../context/context';
 import './estilos/Home.css'; 
 
 const Home = () => {
-  const { username, sessionToken, role, logout } = useContext(AuthContext); 
+  const { username, sessionToken, role } = useContext(AuthContext); 
   const isLoggedIn = Boolean(sessionToken && username && role && sessionToken!==null && username!==null && role !==null);
   
+  useEffect(() => {
+    document.title = `The CongressAI - Inicio`;
+  }, []);
+
+
   const loggedOutView = (
     <div className="home">
         <Card className="text-center home__title">

@@ -18,10 +18,6 @@ const SignUpAuthor = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const [interestarea, setTags] = useState([]);
-
-
-
-
   const initialState = {
     role: 'author',
     email: '',
@@ -32,8 +28,12 @@ const SignUpAuthor = () => {
     phonenumber: '',
     interestarea: ''
   }
-
   const [state, setState] = useState(initialState);
+
+  useEffect(() => {
+    document.title = `Registro de autor `;
+  }, []);
+  
 
   const onSubmit = (e) => {
     e.preventDefault();
