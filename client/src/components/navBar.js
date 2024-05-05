@@ -48,10 +48,10 @@ const MyNavbar = () => {
 
           <Nav className='ml-auto'>
   {isLoggedIn ? 
-    <Dropdown alignRight>
-      <Dropdown.Toggle as={Nav.Item} id="nav-dropdown">
-        <span>Bienvenido {username}</span>
-        <FontAwesomeIcon className="text-primary" icon={faUserAlt}/>
+    <Dropdown>
+      <Dropdown.Toggle as={Nav.Item} id="nav-dropdown" className='dropdown-toggle'>
+        <span className="navlink-title text-primary">Bienvenido {username} </span>
+        <FontAwesomeIcon className="text-primary" icon={faUserAlt} />
       </Dropdown.Toggle>
       <Dropdown.Menu>
         <Dropdown.Item as={Link} 

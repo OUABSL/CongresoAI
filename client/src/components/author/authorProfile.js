@@ -5,6 +5,9 @@ import { useContext } from "react";
 import { AlertContext } from '../../context/alertProvider';
 import AuthContext from "../../context/context";
 import { useAuth } from "../../context/appProvider";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSpinner } from '@fortawesome/free-solid-svg-icons';
+
 
 
 function AuthorProfile() {
@@ -104,7 +107,7 @@ function AuthorProfile() {
   }
 
  if (!profileData) {
-    return <div>El perfil está Cargando...</div>;
+    return <div className="d-flex justify-content-center align-items-center"><FontAwesomeIcon icon={faSpinner}></FontAwesomeIcon></div>;
   }
   return (
     <>

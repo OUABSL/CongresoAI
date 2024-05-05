@@ -105,7 +105,7 @@ function RevisorProfile() {
 }
 
   if (!profileData) {
-    return <div>El perfil está Cargando...</div>;
+    return <div className="d-flex justify-content-center align-items-center"><FontAwesomeIcon icon={faSpinner}></FontAwesomeIcon></div>;
   }
   return (
     <Container className="d-flex justify-content-center align-items-center h-100">

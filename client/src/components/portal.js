@@ -13,8 +13,8 @@ function Portal() {
   }
 
   return (
-    <div className="d-flex justify-content-between">
-      <Card className="p-3" style={{ width: '20rem' }}>
+    <div className="d-flex justify-content-center">
+      <Card className="d-flex justify-content-center p-3 m-4" style={{ width: '30rem' }}>
         <FontAwesomeIcon icon={faUserPen} size="6x" />
         <Card.Body>
           <Card.Title>Portal de Autor</Card.Title>
@@ -22,7 +22,7 @@ function Portal() {
         </Card.Body>
       </Card>
       
-      <Card className="p-3" style={{ width: '20rem' }}>
+      <Card className="d-flex justify-content-center p-3 m-4" style={{ width: '30rem' }}>
         <FontAwesomeIcon icon={faPenRuler} size="6x" />
         <Card.Body>
           <Card.Title>Portal de Revisor</Card.Title>

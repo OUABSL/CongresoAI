@@ -30,7 +30,7 @@ const AppFooter = () => (
                     <h5 className="text-uppercase text-dark">Versión Beta</h5>
                     <p>La presente página es una versión inicial del frontend de la aplicación The Congress AI.</p>
         </div>
-        <div className="footer-copyright text-center text-dark">© 2024 Copyright:
+        <div className="footer-copyright text-center text-dark my-2" >© 2024 Copyright:
             <a href="https://www.cs.us.es/" className="text-secondary"> Departamento de Ciencias de la Computación e Inteligencia Artificial</a> | 
             <a href="https://www.us.es/" className="text-secondary"> Universidad de Sevilla</a>
         </div>

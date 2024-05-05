@@ -70,3 +70,11 @@
 .navlink-title {
   margin-left: 8px;
 }
+
+.navbar .navbar-nav .nav-link.active {
+  color: #193755 !important;
+}
+
+.dropdown-toggle{
+  cursor: pointer !important;
+}

@@ -244,7 +244,7 @@ function ShowAssignedArticle() {
     const [resultReview, setResultReview] = useState({});
     const {setAlert} = useContext(AlertContext);
     const [showModal, setShowModal] = useState(false);
-    const [activeKey, setActiveKey] = useState("");
+    const [activeKey, setActiveKey] = useState("start");
     const navigate = useNavigate();
 
     const goBack = () => {
@@ -299,7 +299,7 @@ function ShowAssignedArticle() {
 
 
     useEffect(()=> {
-        if (article && !activeKey) {
+        if (article && article.sections_orden && article.sections_orden.length > 0 && activeKey === "start") {
         setActiveKey(article.sections_orden[0]);
         }
     }, [article, activeKey]);
