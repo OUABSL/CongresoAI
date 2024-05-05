@@ -13,7 +13,7 @@ function Portal() {
   }
 
   return (
-    <div className="d-flex justify-content-around">
+    <div className="d-flex justify-content-between">
       <Card className="p-3" style={{ width: '20rem' }}>
         <FontAwesomeIcon icon={faUserPen} size="6x" />
         <Card.Body>

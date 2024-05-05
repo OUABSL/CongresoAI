@@ -1,7 +1,6 @@
 import React, {useEffect, useContext} from 'react';
 import { useLocation } from 'react-router-dom';
 import { Card, Button } from 'react-bootstrap';
-import fileDownload from 'js-file-download';
 import { AlertContext } from '../../context/alertProvider';
 
 
@@ -11,16 +10,17 @@ const SubmitSummary = () => {
     const { title, author, description, keywords = [],submission_date, submission_id } = submitSummary;
     const { setAlert } = useContext(AlertContext);
 
-    const handleDownload = async () => {
-        try {
-            const response = await fetch(latex_project_url);
-            const data = await response.blob();
-            fileDownload(data, fileName);
-        } catch (error) {
-          console.error("Error during download: ", error);
-          setAlert({ show: true, message: "Error en la descarga.", variant: 'danger' });  
-        }
-    };
+    const handleDownload = () => {
+        const a = document.createElement('a');
+        a.href = latex_project_url;
+        const alternFileName = title ? `${title.replace(" ", "_")}.zip` : 'entrega.zip';
+        a.download = fileName || alternFileName;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      };
+      
+     
 
     useEffect(() => {
         document.title = `Resumen de enrega`;

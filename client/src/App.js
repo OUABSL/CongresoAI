@@ -41,51 +41,52 @@ function App() {
     <BrowserRouter>
       <AppProvider>
       <AlertProvider>
-      <MyNavbar />
-      <div className="container p-4">
-      <AlertContext.Consumer>
-              {context => {
-                const {alert, setAlert} = context;
-                return alert.show && 
-                <Alert
-                  className="mb-2 mx-auto"
-                  variant={alert.variant}
-                  onClose={() => setAlert({ ...alert, show: false })}
-                  dismissible
-                >
-                  {alert.message}
-                </Alert>
-              }}
-      </AlertContext.Consumer>
+      <div className='d-flex flex-column min-vh-100 justify-content-between'>
+          <MyNavbar />
+          <div className="container p-4">
+            <AlertContext.Consumer>
+                    {context => {
+                      const {alert, setAlert} = context;
+                      return alert.show && 
+                      <Alert
+                        className="mb-2 mx-auto"
+                        variant={alert.variant}
+                        onClose={() => setAlert({ ...alert, show: false })}
+                        dismissible
+                      >
+                        {alert.message}
+                      </Alert>
+                    }}
+            </AlertContext.Consumer>
 
-      <Routes>
-      <Route path="" element={ <Home/>}/>
-      <Route path={"/contactus"} element={<ContactUs />} />
-      <Route path={"/portal"} element={<Portal />} />
-
-
-        <Route path={"/portal-author/login"}element={<LoginAuthor />} />
-        <Route path="/portal-author/profile/:username" element={<AuthorProfile />} />
-        <Route path="/portal-author/register" element={<SignUpAuthor />} />
-        <Route path="/portal-author/profile/:username" element={<AuthorProfile />} />
-        <Route path="/portal-author/submit" element={<SubmitArticle />} />
-        <Route path="/portal-author/submit-summary" element={<SubmitSummary />} />
-        <Route path={"/portal-author/articles/:username"} element={<ShowSubmittedArticles />} />
-        <Route path={"/portal-author/articles/:username/:article_title"} element={<ShowSubmittedArticle />} />
-
-        
-
-        <Route path={"/portal-reviewer/login"}element={<LoginRevisor />} />
-        <Route path={"/portal-reviewer/register"} element={<SignUpRevisor />} />
-        <Route path={`/portal-reviewer/profile/:username`} element={<RevisorProfile />} />
-        <Route path={"/portal-reviewer/articles/:username"} element={<ShowAssignedArticles />} />
-        <Route path={"/portal-reviewer/articles/:username/:article_title"} element={<ShowArticle />} />
+            <Routes>
+              <Route path="" element={ <Home/>}/>
+              <Route path={"/contactus"} element={<ContactUs />} />
+              <Route path={"/portal"} element={<Portal />} />
 
 
-      </Routes>
-       
-      </div>
-      <AppFooter/>
+              <Route path={"/portal-author/login"}element={<LoginAuthor />} />
+              <Route path="/portal-author/profile/:username" element={<AuthorProfile />} />
+              <Route path="/portal-author/register" element={<SignUpAuthor />} />
+              <Route path="/portal-author/profile/:username" element={<AuthorProfile />} />
+              <Route path="/portal-author/submit" element={<SubmitArticle />} />
+              <Route path="/portal-author/submit-summary" element={<SubmitSummary />} />
+              <Route path={"/portal-author/articles/:username"} element={<ShowSubmittedArticles />} />
+              <Route path={"/portal-author/articles/:username/:article_title"} element={<ShowSubmittedArticle />} />
+
+              
+
+              <Route path={"/portal-reviewer/login"}element={<LoginRevisor />} />
+              <Route path={"/portal-reviewer/register"} element={<SignUpRevisor />} />
+              <Route path={`/portal-reviewer/profile/:username`} element={<RevisorProfile />} />
+              <Route path={"/portal-reviewer/articles/:username"} element={<ShowAssignedArticles />} />
+              <Route path={"/portal-reviewer/articles/:username/:article_title"} element={<ShowArticle />} />
+
+
+            </Routes>
+          </div>
+          <AppFooter/>
+        </div>
       </AlertProvider>
       </AppProvider>
     </BrowserRouter>
