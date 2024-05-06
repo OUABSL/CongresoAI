@@ -50,7 +50,7 @@ const MyNavbar = () => {
   {isLoggedIn ? 
     <Dropdown>
       <Dropdown.Toggle as={Nav.Item} id="nav-dropdown" className='dropdown-toggle'>
-        <span className="navlink-title text-primary">Bienvenido <span className="fst-italic text-decoration-underline">{username}</span> </span>
+        <span className="navlink-title text-primary">Bienvenido {username} </span>
         <FontAwesomeIcon className="text-primary" icon={faUserAlt} />
       </Dropdown.Toggle>
       <Dropdown.Menu>

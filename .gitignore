@@ -1,6 +1,6 @@
 .venv
 .env
-server/data/input/*
+server/data/*
 server/src/config.py
 server/src/test
 test
