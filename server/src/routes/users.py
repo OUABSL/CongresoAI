@@ -1,8 +1,9 @@
 from flask import request, Blueprint, jsonify, make_response, current_app
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_jwt_extended import create_access_token, get_jwt, unset_jwt_cookies, get_jwt_identity, verify_jwt_in_request, jwt_required
+from flask_jwt_extended import create_access_token, get_jwt, unset_jwt_cookies, get_jwt_identity, verify_jwt_in_request, jwt_required, decode_token
 from src.models.user import User, Reviewer, Author
-from src.app import app, mongo, jwt, API
+from src.utils.func import  check_token
+from src.app import  mongo, API
 from uuid import uuid4
 
 
@@ -16,7 +17,10 @@ users_bp = Blueprint('users', __name__)
 
 #Extraer las palabras claves, lista de conocimientos para revisores o lista de intereses para autores
 def to_list(form_element : str):
-    return form_element.split(',')
+    if list.isinstance(form_element):
+        return form_element
+    else:
+        return form_element.split(',')
 
 
 """
@@ -42,6 +46,8 @@ def login():
     else:
         return make_response(jsonify({"success":False, "message": "Bad username or password"}), 401)
 
+
+
 # Registrar los usuarios (Autores y Revisores)
 @users_bp.route(API + '/signup', methods=['POST'])
 def SignUp():
@@ -49,23 +55,28 @@ def SignUp():
     role = data.get('role')
     username = data.get('username')
     is_bi = data.get('is_bi', None)
-
-    if role == 'reviewer':
-        user = Reviewer.objects(username=username).first()
-        if user:
-            return make_response(jsonify({'success':False,'message':'Username already exists!'}), 400)
+    orcid = data.get('ORCID', None)
+    token = data.get('token', None) 
+    if role == 'reviewer' and token and orcid:
+        if check_token(token, orcid=orcid):
+            user = Reviewer.objects(username=username).first()
+            if user:
+                return make_response(jsonify({'success':False,'message':'Username already exists!'}), 400)
+            else:
+                email = data.get('email')
+                password = generate_password_hash(data.get('password'), method='pbkdf2:sha256')
+                fullname = data.get('fullname')
+                phonenumber = data.get('phonenumber')
+                ORCID = data.get('ORCID')
+                knowledges = to_list(str(data.get('knowledges')))
+                reviewer = Reviewer(email=email, username=username, password=password, fullname=fullname,
+                                    phonenumber=phonenumber, ORCID=ORCID, knowledges=knowledges)
+                if is_bi:
+                    reviewer.is_bi = is_bi
+                reviewer.save()
         else:
-            email = data.get('email')
-            password = generate_password_hash(data.get('password'), method='pbkdf2:sha256')
-            fullname = data.get('fullname')
-            phonenumber = data.get('phonenumber')
-            ORCID_ID = data.get('ORCID_ID')
-            knowledges = to_list(str(data.get('knowledges')))
-            reviewer = Reviewer(email=email, username=username, password=password, fullname=fullname,
-                                phonenumber=phonenumber, ORCID_ID=ORCID_ID, knowledges=knowledges)
-            if is_bi:
-                reviewer.is_bi = is_bi
-            reviewer.save()
+            return make_response(jsonify({'success':False,'message':'Register Not authorized!'}), 400)
+ 
     if role == 'author'or is_bi:
         user = authors_col.find_one({'username': username})
         if user:

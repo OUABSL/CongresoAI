@@ -39,12 +39,17 @@ def register_blueprints(app):
     from src.routes.submit import submit_bp
     from src.routes.evaluate import evaluate_bp
     from src.routes.models import models_bp
+    from src.routes.admin import admin_bp
+    from src.utils.tags import tags_bp
 
+    app.register_blueprint(admin_bp)
     app.register_blueprint(users_bp)
     app.register_blueprint(submit_bp)
     app.register_blueprint(evaluate_bp)
     app.register_blueprint(models_bp)
+    app.register_blueprint(tags_bp)
 
+    print(f"Created Blueprint for {admin_bp}")
     print(f"Created Blueprint for {users_bp}")
     print(f"Created Blueprint for {submit_bp}")
     print(f"Created Blueprint for {evaluate_bp}")

@@ -241,7 +241,7 @@ function ShowAssignedArticle() {
     const { username, article_title } = useParams();
     const [article, setArticle] = useState({});
     const [review, setReview] = useState({});
-    const [resultReview, setResultReview] = useState({});
+    const [resultReview, setResultReview] = useState("");
     const {setAlert} = useContext(AlertContext);
     const [showModal, setShowModal] = useState(false);
     const [activeKey, setActiveKey] = useState("start");
@@ -293,14 +293,14 @@ function ShowAssignedArticle() {
             console.log("There was an error!", error);
         }
     }
-
     fetchArticle();
 }, [username, article_title, sessionToken, logout]);
 
 
     useEffect(()=> {
-        if (article && article.sections_orden && article.sections_orden.length > 0 && activeKey === "start") {
-        setActiveKey(article.sections_orden[0]);
+        if (article && article.sections_orden) {
+            setResultReview(article.review_result);
+            if(article.sections_orden.length > 0 && activeKey === "start") setActiveKey(article.sections_orden[0]);       
         }
     }, [article, activeKey]);
 
@@ -365,6 +365,7 @@ function ShowAssignedArticle() {
                     <Card.Body>
                         {article && article.title && <Card.Title>{article.title}</Card.Title>}
                         {article && article.description && <Card.Text>{article.description}</Card.Text>}
+                        {article && resultReview !== "" && <Card.Text>{resultReview}</Card.Text>}
                         {article && article.sections_orden && (
                             <Accordion activeKey={activeKey} onSelect={setActiveKey}>
                                 {article.sections_orden.map((sectionName) => (

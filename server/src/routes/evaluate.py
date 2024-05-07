@@ -57,7 +57,8 @@ def show_articles(reviewer):
                         "zip": "/zip/" + str(article.get("latex_project_id")),
                         "processing_state": article.get('processing_state'),
                         "submission_date":article.get("submission_date"),
-                        "last_modified":article.get("last_modified")
+                        "last_modified":article.get("last_modified"),
+                        "review_result":article.get("review_result", "Pending Review")
                     })
         return make_response(jsonify(result), 200)
     else:

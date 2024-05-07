@@ -65,6 +65,7 @@ function ShowAssignedArticles() {
             <th>Descripción</th>
             <th>Fecha de Entrega</th>
             <th>Última modificación</th>
+            <th>Estado de revisión</th>
             <th>Acceder al artículo</th>
           </tr>
         </thead>
@@ -76,6 +77,7 @@ function ShowAssignedArticles() {
         <td>{article.description}</td>
         <td>{article.submission_date}</td>
         <td>{article.last_modified}</td>
+        <td>{article.review_result}</td>
         <td className='open-article'>
           {article.processing_state === "Done" ?
             <div className='center-content' onClick={() => navigate(`/portal-reviewer/articles/${username}/${article.title}`)}>

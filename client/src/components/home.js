@@ -26,10 +26,28 @@ const Home = () => {
       </Card>
     </div>
   );
+
+  const ManualView = (
+    <div className="home">
+        <Card className="text-center home__title">
+        <Card.Body>
+          <Card.Title><h1>The AI Congress</h1></Card.Title>
+          <Card.Text>
+            Un sistema revolucionario de revisión de artículos científicos con inteligencia artificial generativa. 
+          </Card.Text>
+          {role === "author" ?
+            <Button href="/portal-author/register" variant="success">Descargar el manual de autor</Button>
+            :
+            <Button href="/portal-author/register" variant="success">Descargar el manual de revisor</Button>
+          }
+        </Card.Body>
+      </Card>
+    </div>
+  );
   
   return (
     <div className="body">
-    {!isLoggedIn && loggedOutView} 
+    {isLoggedIn ? loggedOutView : loggedOutView} 
       <Container className="home__content">
          <Row className="home__description mb-4">
           <Col md={12}>

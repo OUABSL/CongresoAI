@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Nav, Navbar, Dropdown } from 'react-bootstrap';
-import { Link, NavLink } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useContext } from 'react';
 import AuthContext from '../context/context';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -26,8 +26,8 @@ const MyNavbar = () => {
 
   const renderNavigationLink = (path, title, icon) => (
     <Nav.Link as={Link} to={path} onClick={() => setActiveLink(path)} className={(activeLink === path ? 'active ' : '') + 'text-primary'}>
-          <FontAwesomeIcon className="text-primary" icon={icon} />
-          <span className="navlink-title">{title}</span>
+          <FontAwesomeIcon className={activeLink === path ? "text-primary" : ""} icon={icon} color={activeLink === path ? '' : '#000'} />
+          <span className={activeLink === path ? "navlink-title text-primary" : "navlink-title"} style={{color: activeLink === path ? '' : '#000'}}>{title}</span>
     </Nav.Link>
   );
 
@@ -49,9 +49,9 @@ const MyNavbar = () => {
           <Nav className='ml-auto'>
   {isLoggedIn ? 
     <Dropdown>
-      <Dropdown.Toggle as={Nav.Item} id="nav-dropdown" className='dropdown-toggle'>
-        <span className="navlink-title text-primary">Bienvenido <span className="fst-italic text-decoration-underline">{username}</span> </span>
-        <FontAwesomeIcon className="text-primary" icon={faUserAlt} />
+      <Dropdown.Toggle as={Nav.Item} id=".nav-link nav-dropdown" className='dropdown-toggle'>
+        <span className={activeLink === `/${portalLink}/profile/${username}` ? "navlink-title text-primary" : "navlink-title"} style={{color: activeLink ===  `/${portalLink}/profile/${username}` ? '' : '#01003D'}}>Bienvenido <span className="fst-italic text-decoration-underline">{username}</span> </span>
+        <FontAwesomeIcon className={activeLink === `/${portalLink}/profile/${username}` ? "text-primary" : ""} color={activeLink === `/${portalLink}/profile/${username}` ? '' : '#01004B'} icon={faUserAlt} />
       </Dropdown.Toggle>
       <Dropdown.Menu>
         <Dropdown.Item as={Link} 
@@ -61,8 +61,8 @@ const MyNavbar = () => {
           <FontAwesomeIcon className="text-primary" icon={faAddressCard}/> Profile
         </Dropdown.Item>
         <Dropdown.Divider />
-        <Dropdown.Item className="text-primary" onClick={logout}>
-          <FontAwesomeIcon className="text-primary" icon={faSignOutAlt} /> Logout
+        <Dropdown.Item className="text-dark" onClick={logout}>
+          <FontAwesomeIcon className="text-dark" icon={faSignOutAlt} /> Logout
         </Dropdown.Item>
       </Dropdown.Menu>
     </Dropdown> :

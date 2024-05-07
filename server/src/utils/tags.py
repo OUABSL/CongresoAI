@@ -1,7 +1,6 @@
 import os,sys
 from flask import Blueprint, jsonify, request
-sys.path[0] = os.getcwd()
-from src.tags_bp import mongo, API
+from src.app import mongo, API
 
 
 tags_bp = Blueprint('tags', __name__)

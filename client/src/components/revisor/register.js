@@ -1,12 +1,14 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { Card, Form, Row, Col, Button} from "react-bootstrap";
-import { Link, useNavigate} from 'react-router-dom';
+import { Link, useNavigate, useParams} from 'react-router-dom';
 import { AlertContext } from '../../context/alertProvider';
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import "../estilos/register.css";
 import TagsInput from '../tagsInput';
 import { validateForm } from '../validators/register';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCircleExclamation } from '@fortawesome/free-solid-svg-icons';
 
 
 
@@ -15,9 +17,11 @@ const SignUpRevisor = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const [knowledges, setTags] = useState([]);
+  const { token } = useParams();
+  const [valid, setValid] = useState(false);
   const initialState = {
     role: 'reviewer',
-    ORCID_ID: '',   // 0000-0003-0528-9459
+    ORCID: '',   // 0000-0003-0528-9459
     email: '',
     username: '',
     password: '',
@@ -25,8 +29,10 @@ const SignUpRevisor = () => {
     fullname: '',
     phonenumber: '',
     knowledges: '',
-    is_bi:false
+    is_bi:false,
+    token:token
   }
+
 
 
   
@@ -34,18 +40,35 @@ const SignUpRevisor = () => {
     document.title = `Registro de revisor `;
   }, []);
 
+  useEffect(() => {
+    async function verifyToken() {
+      try {
+        const response = await fetch(`/api/v1/verify-token/${token}`);
+        const data = await response.json();
+        if (data.success){
+          setValid(true);
+        } else {
+          setValid(false);
+        }
+      } catch(error) {
+        console.log(error);
+      }
+    }
+    verifyToken();
+  }, [token]);
+
   const formatORCID = (value) => {
     // Eliminar todos los caracteres que no sean dígitos
-    const digitsOnly = value.replace(/\D/g, '');
+    //const digitsOnly = value.replace(/\D/g, '');
     // Agrupar los dígitos en bloques de cuatro
-    const grouped = digitsOnly.match(/.{1,4}/g);
+    const grouped = value.match(/.{1,4}/g);
     // Unir los bloques con guiones intermedios
     return grouped ? grouped.join('-') : '';
   }
 
   const handleORCIDChange = (e) => {
     const formattedORCID = formatORCID(e.target.value);
-    setState({ ...state, ORCID_ID: formattedORCID });
+    setState({ ...state, ORCID: formattedORCID });
   }
 
 
@@ -64,7 +87,7 @@ const SignUpRevisor = () => {
         return;
       }
     }
-    let errors = validateForm(state.email, state.ORCID_ID, state.phonenumber, state.password, state.confirmPassword);
+    let errors = validateForm(state.email, state.ORCID, state.phonenumber, state.password, state.confirmPassword);
 
     if (errors.length > 0) {
       setLoading(false);
@@ -78,12 +101,15 @@ const SignUpRevisor = () => {
     else{
       delete state.confirmPassword;
     }
+
+    const body = { ...state, token: token };
+
     fetch('/api/v1/signup', {
       method: 'POST',
       headers: {
           'Content-Type': 'application/json'
       },
-      body: JSON.stringify(state)
+      body: JSON.stringify(body)
     })
     .then(response => response.json())
     .then(data => {
@@ -99,7 +125,7 @@ const SignUpRevisor = () => {
         setLoading(false);
         setAlert({
           show: true,
-          message: data.message,
+          message: `Registro Incorrecto: ${data.message}`,
           variant: "danger"
         });
       }
@@ -120,8 +146,10 @@ const SignUpRevisor = () => {
   useEffect(() => {
     setState(currentState => ({ ...currentState, knowledges: knowledges }))
   }, [knowledges]);
+
   return (
     <Card className="register-card mt-2 p-5 mx-auto">
+      {valid ? (
         <Form onSubmit={onSubmit} className="form-class">
             <div className="h4 mb-4 form-heading text-center">Registro de revisor</div>
             <Row>
@@ -131,8 +159,8 @@ const SignUpRevisor = () => {
                   <Form.Control
                     type="text"
                     placeholder="0000-0000-0000-0000"
-                    name="ORCID_ID"
-                    value={state.ORCID_ID}
+                    name="ORCID"
+                    value={state.ORCID}
                     onChange={handleORCIDChange}
                   />
                 </Form.Group>
@@ -250,8 +278,13 @@ const SignUpRevisor = () => {
         ¿Ya está registrado? <Link to="/portal-reviewer/login">iniciar sesión!</Link>
       </p>
     </Form>
+    ) : (
+      <div className='d-flex flex-column justify-content-center align-self-center text-center text-danger'>
+        <h2><FontAwesomeIcon icon={faCircleExclamation} />¡Registro no autorizado!</h2>
+        <h4>Por favor, contacte con el administrador.</h4>
+      </div>
+    )}
     </Card>
-    )
+    );
   }
-
   export default SignUpRevisor;

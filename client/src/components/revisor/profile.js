@@ -7,6 +7,7 @@ import AuthContext from "../../context/context";
 import { useAuth } from "../../context/appProvider";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
+import TagsInput from '../tagsInput';
 
 
 function RevisorProfile() {
@@ -17,6 +18,8 @@ function RevisorProfile() {
   const { setAlert } = useContext(AlertContext);
   const { setSessionToken, setRole} = useAuth();
   const navigate = useNavigate();
+  const [knowledges, setKnowledges] = useState([]); 
+
 
   
   useEffect(() => {
@@ -42,6 +45,8 @@ function RevisorProfile() {
       const data = await response.json();
 
       setProfileData(data);
+      setKnowledges(Array.isArray(data.knowledges) ? data.knowledges : []);
+
     };
     if (!editing) {
       getProfile();
@@ -49,9 +54,14 @@ function RevisorProfile() {
   }, [username, sessionToken, logout, editing]);
 
   const handleInputChange = (event) => {
-    setProfileData({...profileData, [event.target.name]: event.target.value});
-  }
+    if (event.target.name === 'knowledges') {
 
+      const tags = event.target.value.split(',').map(str => str.trim());
+      setKnowledges(tags);
+    } else {
+      setProfileData({...profileData, [event.target.name]: event.target.value});
+    }
+  }
   const handleEditClick = () => {
     let newData = {...profileData};
     setProfileData(newData);
@@ -120,16 +130,16 @@ function RevisorProfile() {
                         `${profileData.fullname}`
                 }
             </Card.Title>
-            <Card.Subtitle className="mb-2 p-2 text-muted">
+            <Card.Subtitle className="mb-1 p-1 text-muted">
                 Usuario: 
                 {editing ? 
                     <Form.Control readOnly style={{backgroundColor:'#f1f1f1', border: '1px solid #888'}} plaintext value={profileData.username} /> :
                     `${profileData.username}`
                 }
             </Card.Subtitle>
-            <Card.Subtitle className="mb-2 p-2 text-muted">
-                ORCID ID:
-                { "\u{64}" + profileData.ORCID_ID }
+            <Card.Subtitle className="mb-2 p-1 text-muted">
+                ORCID:
+                { "\u{64}" + profileData.ORCID }
             </Card.Subtitle>
 
             <ListGroup variant="flush">
@@ -150,8 +160,11 @@ function RevisorProfile() {
               <ListGroup.Item className="p-2">
                 Conocimientos:
                 {editing ? 
-                    <Form.Control readOnly={!editing} type="text" name="knowledges" value={profileData.knowledges || ''} onChange={handleInputChange}/> :
-                    ` ${profileData.knowledges}`
+                  <TagsInput
+                    tags={knowledges}
+                    setTags={setKnowledges}
+                  /> :
+                  ` ${knowledges.join(', ')}`
                 }
               </ListGroup.Item>
               <ListGroup.Item className="p-2">

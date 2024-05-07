@@ -29,12 +29,12 @@ class User(Document):
 
 
 class Reviewer(User):
-    ORCID_ID = StringField(required=True, unique=True, max_length=19)
+    ORCID = StringField(required=True, unique=True, max_length=19)
     knowledges = ListField(StringField(), default=list)
 
     @property
     def id_revisor(self):
-        return self.ORCID_ID
+        return self.ORCID
     
     meta = {
         'collection': 'reviewers' 

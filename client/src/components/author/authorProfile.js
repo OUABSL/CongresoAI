@@ -7,6 +7,7 @@ import AuthContext from "../../context/context";
 import { useAuth } from "../../context/appProvider";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
+import TagsInput from '../tagsInput';
 
 
 
@@ -18,6 +19,8 @@ function AuthorProfile() {
   const { setAlert } = useContext(AlertContext);
   const navigate = useNavigate();
   const { setSessionToken, setRole } = useAuth();
+  const [intereses, setIntereses] = useState([]);
+
 
 
   useEffect(() => {
@@ -43,6 +46,8 @@ function AuthorProfile() {
       const data = await response.json();
 
       setProfileData(data);
+      setIntereses(Array.isArray(data.interestarea) ? data.interestarea : []);
+
     };
     if (!editing) {
       getProfile();
@@ -144,11 +149,14 @@ function AuthorProfile() {
                   }
               </ListGroup.Item>
               <ListGroup.Item className="p-2">
-                  Áreas de intereses:
-                  {editing ? 
-                      <Form.Control readOnly={!editing} type="text" name="interestarea" value={profileData.interestarea || ''} onChange={handleInputChange}/> :
-                      ` ${profileData.phonenumber}`
-                  }
+                Conocimientos:
+                {editing ? 
+                  <TagsInput
+                    tags={intereses}
+                    setTags={setIntereses}
+                  /> :
+                  ` ${intereses.join(', ')}`
+                }
               </ListGroup.Item>
               <ListGroup.Item className="p-2">
               Fecha de registro:
