@@ -12,6 +12,30 @@ const Home = () => {
     document.title = `The CongressAI - Inicio`;
   }, []);
 
+  const handleDownload = async () => {
+    try {
+      const res = await fetch('http://localhost:5000/api/v1/manuales', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/pdf',
+        },
+      });
+  
+      if (res.ok) {
+        const blob = await res.blob();
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', 'manual-revisor-theaicongress.pdf');
+        document.body.appendChild(link);
+        link.click();
+        link.parentNode.removeChild(link);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
 
   const loggedOutView = (
     <div className="home">
@@ -36,9 +60,9 @@ const Home = () => {
             Un sistema revolucionario de revisión de artículos científicos con inteligencia artificial generativa. 
           </Card.Text>
           {role === "author" ?
-            <Button href="/portal-author/register" variant="success">Descargar el manual de autor</Button>
+            <Button onClick="handleDownload" variant="success">Descargar el manual de autor</Button>
             :
-            <Button href="/portal-author/register" variant="success">Descargar el manual de revisor</Button>
+            <Button onClick="handleDownload" variant="success">Descargar el manual de revisor</Button>
           }
         </Card.Body>
       </Card>

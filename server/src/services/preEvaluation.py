@@ -121,7 +121,7 @@ class PreEvaluation:
         response = requests.post(self.API_URL, headers=headers, data=json.dumps(data))
         if response.status_code == 200:  # Checking if the request was successful
             try:
-                #logging.error(response.text)
+                logging.info(response.text)
                 return response.json()
             except json.decoder.JSONDecodeError:  # Catching JSON decode errors
                 logging.error('Failed to decode JSON. Response:', response.content)

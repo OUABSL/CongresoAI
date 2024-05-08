@@ -1,4 +1,4 @@
-from flask import Flask, Response, jsonify
+from flask import Flask, Response, abort, jsonify, send_from_directory
 from flask_pymongo import PyMongo
 from pymongo import MongoClient
 import mongoengine as me
@@ -26,6 +26,7 @@ def create_app():
     app.config['LLAMUS_KEY'] = llamus_key
     app.config['MONGO_URI'] = mongo_uri
     app.config["JWT_SECRET_KEY"] = jwt_key
+    
     return app
 
 def create_mongo(app):
@@ -66,6 +67,7 @@ app = create_app()
 mongo, mongo_engine = create_mongo(app)
 jwt = JWTManager(app)
 register_blueprints(app)
+app.static_folder = 'data'
 
 @app.route("/", methods=["GET"])
 def index():
@@ -81,6 +83,14 @@ def users():
     ls = mongo.db.authors.find()
     print("ls:" , ls)
     return f"The system users are mega:\n {(e.username for e in ls)}"
+
+@app.route('/manuales', methods=['GET'])
+def send_pdf():
+    try:
+        return send_from_directory(app.static_folder, "manual-revisor-theaicongress.pdf", as_attachment=True)
+    except FileNotFoundError:
+        abort(404)
+
 
 def main():
     """Run the Flask application"""

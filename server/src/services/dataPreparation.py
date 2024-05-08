@@ -66,10 +66,11 @@ class DataHandler:
         section_contents = {}
         sections_orden = [None] * len(sections)
         for idx, section_name in enumerate(sections):
-            sections_orden[idx] = section_name
-            section_content = document_content[positions[idx]:positions[idx + 1]].strip()
-            #section_content = section_content[section_content.find('}') + 1:]
-            section_contents[section_name] = section_content
+            if  section_name !="Acknowledgements":
+                sections_orden[idx] = section_name
+                section_content = document_content[positions[idx]:positions[idx + 1]].strip()
+                #section_content = section_content[section_content.find('}') + 1:]
+                section_contents[section_name] = section_content
         return section_contents, sections_orden
     
     
@@ -113,7 +114,7 @@ class DataHandler:
         document_sections_processed = {section: self._extract_just_text(text) for section, text in document_sections.items() if section!= "Acknowledgements"}
 
         evaluation_init = {key : "" for key in document_sections_processed.keys()}
-        summary_init = {key : "" for key in document_sections_processed.keys()}
+        summary_init = {key : "" for key in document_sections_processed.keys() }
 
         self.article.update_properties(content=document_sections_processed, sections_orden=sections_orden, evaluation=evaluation_init, summary=summary_init)
 

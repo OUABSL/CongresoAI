@@ -38,6 +38,8 @@ def delete_temp_dir(dest_path):
             os.rmdir(dest_path) # se utiliza os.rmdir() para eliminar la carpeta vacía
     logging.info("Carpeta temporal %s eliminada exitosamente", dest_path)
 
+
+
 # Obtener los artículos asignados a un revisor en particular
 @evaluate_bp.route(API + '/evaluate/<reviewer>', methods = ['GET'])
 @jwt_required()
@@ -191,6 +193,7 @@ Función para gestionar la tarea de regeneración de alguno de los servicios de 
 def regenerate_pre_evaluation_flow(article:ScientificArticle, tasks:dict):
     try:
 
+        summary = pre_evaluation = {}
         if "datapreparation" in tasks:
             if not os.path.exists(UPLOAD_FOLDER):
                 os.makedirs(UPLOAD_FOLDER)
@@ -213,12 +216,11 @@ def regenerate_pre_evaluation_flow(article:ScientificArticle, tasks:dict):
 
         error = summary.get('error', False) or pre_evaluation.get('error', False)
 
-        if summary and not summary.get('error', False):
+        if summary!={} and not summary.get('error', False):
             article.update_properties(summary=summary)
 
-        if pre_evaluation and not pre_evaluation.get('error', False):
+        if pre_evaluation!={} and not pre_evaluation.get('error', False):
             article.update_properties(evaluation=pre_evaluation)
-
 
         if(error):
             logging.error("Error en el procesamiento del artículo")
@@ -226,7 +228,6 @@ def regenerate_pre_evaluation_flow(article:ScientificArticle, tasks:dict):
         else:
             article.update_properties(processing_state="Done")
             logging.info("La regeneración de la pre-evaluación se realizó con éxito para el artículo: %s", article.title)
-
 
         article.save()
 
