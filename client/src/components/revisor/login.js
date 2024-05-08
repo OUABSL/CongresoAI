@@ -4,6 +4,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import "../estilos/login.css";
 import { useAuth } from "../../context/appProvider";
 import { AlertContext } from '../../context/alertProvider';
+import copy from 'copy-to-clipboard';
+
 
 const LoginRevisor = () => {
   const [usernameInput, setInputUsername] = useState("");
@@ -74,12 +76,12 @@ const LoginRevisor = () => {
   };
 
   const handleCopyEmail = () => {
-      navigator.clipboard.writeText('ouabou@alum.us.es');
+      copy('ouabou@alum.us.es');
       setAlert({ show: true, message: "Correo copiado al portapapeles", variant: "info" });
   };
 
   const handleOpenEmailApp = () => {
-      window.location.href = `mailto:ouabou@alum.us.es?subject=Asunto del correo&body=Cuerpo del correo`;
+      window.location.href = `mailto:ouabou@alum.us.es?subject=THE AI CONGRESS - Solicitud de enlace de registro de revisor&body=ORCID:`;
   };
 
   return (
@@ -124,7 +126,7 @@ const LoginRevisor = () => {
           <Link onClick={handlePassword} className='text-muted link-above'>¿Olvidaste tu contraseña?</Link>
         </div>
         <div className="d-grid mt-2">
-        <Button variant="link" className='text-muted link-above' onClick={handleContactAdmin}>¿No tienes una cuenta? ¡Contacte con el administrador!</Button>
+          <Link className='text-muted link-above' onClick={handleContactAdmin}>¿No tienes una cuenta? ¡Contacte con el administrador!</Link>
         </div>
       </Form>
 
@@ -134,7 +136,8 @@ const LoginRevisor = () => {
                     <Modal.Title>Contactar al Administrador</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <p>Puede contactar al administrador de la siguiente manera:</p>
+                    <p>Se necesita indicar el ORCID del investigador para recibir el enlace personalizado.<br />
+                      Puede contactar al administrador de la siguiente manera:</p>
                     <Button className="me-2" onClick={handleCopyEmail}>Copiar Correo</Button>
                     <Button onClick={handleOpenEmailApp}>Enviar Correo</Button>
                 </Modal.Body>
