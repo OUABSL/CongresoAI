@@ -1,10 +1,10 @@
-export const validateForm = (data) => {
-  const { email = null, orcid = null, phone = null, password = null, confirmPassword = null } = data; // Destructuring for cleaner access
+export const validateForm = (email, orcid , phone, password, confirmPassword) => {
   let errors = [];
 
-  if (!email) {
-    errors.push("El correo electrónico es obligatorio");
-  } else if (!validateEmail(email)) {
+  console.log("Validar: ", email, orcid, phone, password, confirmPassword);
+
+
+  if (email && !validateEmail(email)) {
     errors.push("El correo electrónico no es válido");
   }
 
@@ -16,12 +16,9 @@ export const validateForm = (data) => {
     errors.push("El número de teléfono no es válido");
   }
 
-  if (password) {
-    if (!password.length) {
-      errors.push("La contraseña es obligatoria");
-    } else if (password.length < 8) {
-      errors.push("La contraseña debe tener al menos 8 caracteres");
-    }
+
+  if (password && password.length < 8) {
+    errors.push("La contraseña debe tener al menos 8 caracteres");
   }
 
   if (confirmPassword && password !== confirmPassword) {
@@ -32,14 +29,15 @@ export const validateForm = (data) => {
 };
 
 const validateEmail = (email) => {
-  var re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   return re.test(email);
 };
 
 const validateORCID = (orcid) => {
-  const orcidPattern = /\b\d{4}-\d{4}-\d{4}-\d{4}\b/;
+  const orcidPattern = /^.{4}-.{4}-.{4}-.{4}$/;
   return orcidPattern.test(orcid);
 };
+
 
 const validatePhone = (phone) => {
   const phonePattern = /^[0-9]{9,}$/;

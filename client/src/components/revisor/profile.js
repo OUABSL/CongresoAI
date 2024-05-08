@@ -117,7 +117,7 @@ function RevisorProfile() {
 }
 
   if (!profileData) {
-    return <div className="d-flex justify-content-center align-items-center"><FontAwesomeIcon icon={faSpinner}></FontAwesomeIcon></div>;
+    return <div className="d-flex justify-content-center align-items-center"><FontAwesomeIcon icon={faSpinner} size='2x'></FontAwesomeIcon></div>;
   }
   return (
     <Container className="d-flex justify-content-center align-items-center h-100">
@@ -182,7 +182,7 @@ function RevisorProfile() {
                     {editing ? 'Guardar' : 'Editar perfil'}
                 </Button>
             </Col>
-            {profileData.is_bi && (
+            {profileData.is_bi && !editing && (
                 <Col sm="auto">
                     <Button variant="secondary" onClick={handleChangeRole}>Pasar a autor</Button>
                 </Col>

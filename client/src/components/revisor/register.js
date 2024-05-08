@@ -19,8 +19,6 @@ const SignUpRevisor = () => {
   const { token } = useParams();
   const [first, setFirst] = useState(false);
   const [valid, setValid] = useState(false);
-  const [showModal, setShowModal] = useState(false);
-  const [emailAddress, setEmailAddress] = useState('');
 
   const initialState = {
     role: 'reviewer',
@@ -61,16 +59,6 @@ const SignUpRevisor = () => {
     verifyToken();
   }, [token]);
 
-  /*
-  const formatORCID = (value) => {
-    // Eliminar todos los caracteres que no sean dígitos
-    const digitsOnly = value.replace(/\D/g, '');
-    // Agrupar los dígitos en bloques de cuatro
-    const grouped = digitsOnly.match(/.{1,4}/g);
-    // Unir los bloques con guiones intermedios
-    return grouped ? grouped.join('-') : '';
-  }
-  */
 
   const formatORCID = (value) => {
     // Eliminar cualquier guión existente para evitar duplicados
@@ -96,16 +84,18 @@ const handleORCIDChange = (e) => {
     e.preventDefault();
 
     for (let key in state) {
+      console.log(state[key]);
       if (state[key] === '') {
         setAlert({
           show: true,
           message: `Todos los campos son obligatorios! Completa el campo ${key}.`,
           variant: 'danger'
         });
+        setLoading(false);
         return;
       }
     }
-    let errors = validateForm(state.email, state.ORCID, state.phonenumber, state.password, state.confirmPassword);
+    let errors = validateForm(state["email"], state["ORCID"], state["phonenumber"], state["password"], state["confirmPassword"]);
 
     if (errors.length > 0) {
       setLoading(false);
@@ -155,8 +145,8 @@ const handleORCIDChange = (e) => {
   }
 
   const onChange = (e) => {
-    if(e.target.name === "is_bi") 
-      setState({...state, [e.target.name]: e.target.checked});
+    if (e.target.name === "is_bi") 
+      setState({...state, [e.target.name]: e.target.value === "yes"});
     else 
       setState({...state, [e.target.name]: e.target.value});
   }
@@ -170,8 +160,8 @@ const handleORCIDChange = (e) => {
       {valid ? (
         <Form onSubmit={onSubmit} className="form-class">
             <div className="h4 mb-4 form-heading text-center">Registro de revisor</div>
-            <Row className='d-flex justify-content-center'>
-                <Form.Group>
+            <Row>
+                <Form.Group className="mb-3">
                   <Form.Label>ORCID ID</Form.Label>
                   <Form.Control
                     type="text"
@@ -181,6 +171,31 @@ const handleORCIDChange = (e) => {
                     onChange={handleORCIDChange}
                   />
                 </Form.Group>
+              <Col xs={12} md={6}>
+                <Form.Group className="mb-3">
+                  <Form.Label>¿Crear portal de autor?</Form.Label>
+                  <div>
+                    <Form.Check
+                      inline
+                      type="radio"
+                      label="Sí"
+                      name="is_bi"
+                      value="yes"
+                      checked={state.is_bi === true}
+                      onChange={onChange}
+                    />
+                    <Form.Check
+                      inline
+                      type="radio"
+                      label="No"
+                      name="is_bi"
+                      value="no"
+                      checked={state.is_bi === false}
+                      onChange={onChange}
+                    />
+                  </div>
+                </Form.Group>
+              </Col>
           </Row>
           <Row>
             <Col  xs={12} md={6}>
@@ -271,10 +286,6 @@ const handleORCIDChange = (e) => {
         <Form.Group className="mb-3 form-group-class">
           <Form.Label className="label-class">Área de Conocimiento</Form.Label>
           <TagsInput tags={knowledges} setTags={setTags} persPlaceholder="áreas de conocimientos" />
-        </Form.Group>
-
-        <Form.Group controlId="formBasicCheckbox" className='p-2 mb-2'>
-          <Form.Check type="checkbox" name="is_bi" label="Crear portal de autor?" onChange={onChange} />
         </Form.Group>
 
         {!loading ? (

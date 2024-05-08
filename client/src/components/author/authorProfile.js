@@ -112,7 +112,7 @@ function AuthorProfile() {
   }
 
  if (!profileData) {
-    return <div className="d-flex justify-content-center align-items-center"><FontAwesomeIcon icon={faSpinner}></FontAwesomeIcon></div>;
+    return <div className="d-flex justify-content-center align-items-center"><FontAwesomeIcon icon={faSpinner} scale="2x"></FontAwesomeIcon></div>;
   }
   return (
     <>
@@ -171,7 +171,7 @@ function AuthorProfile() {
                     {editing ? 'Guardar' : 'Editar perfil'}
                 </Button>
             </Col>
-            {profileData.is_bi && (
+            {profileData.is_bi && !editing && (
                 <Col sm="auto">
                     <Button variant="secondary" onClick={handleChangeRole}>Pasar a revisor</Button>
                 </Col>

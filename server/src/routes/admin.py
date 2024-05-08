@@ -15,8 +15,13 @@ db_admin = mongo.db.admin
 @admin_bp.route(API + '/generate-register-token/<orcid>')
 def create_register_token(orcid):
     token = generate_token(orcid)
+    url_root_with_port = request.url_root
+    url_parts = url_root_with_port.split(':')
+    base_url = url_parts[0] + '://' + url_parts[1].lstrip('/')
+    url = f"{base_url}:3000/portal-reviewer/register/"
+
     if token:
-        return jsonify({'success':True, 'token': token}), 200
+        return jsonify({'success':True, 'url': url + token}), 200
     else:
         return jsonify({'success':False, 'message': "Invalid ORCID"}), 400
 
