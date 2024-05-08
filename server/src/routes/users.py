@@ -17,7 +17,7 @@ users_bp = Blueprint('users', __name__)
 
 #Extraer las palabras claves, lista de conocimientos para revisores o lista de intereses para autores
 def to_list(form_element : str):
-    if list.isinstance(form_element):
+    if isinstance(form_element, list):
         return form_element
     else:
         return form_element.split(',')

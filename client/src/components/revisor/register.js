@@ -161,19 +161,22 @@ const handleORCIDChange = (e) => {
         <Form onSubmit={onSubmit} className="form-class">
             <div className="h4 mb-4 form-heading text-center">Registro de revisor</div>
             <Row>
-                <Form.Group className="mb-3">
-                  <Form.Label>ORCID ID</Form.Label>
+              <Col xs={12} md={6}>
+                <Form.Group className="mb-3 form-group-class">
+                  <Form.Label className="label-class">ORCID ID</Form.Label>
                   <Form.Control
                     type="text"
                     placeholder="0000-0000-0000-0000"
                     name="ORCID"
                     value={state.ORCID}
+                    className="input-class"
                     onChange={handleORCIDChange}
                   />
                 </Form.Group>
+              </Col>
               <Col xs={12} md={6}>
-                <Form.Group className="mb-3">
-                  <Form.Label>¿Crear portal de autor?</Form.Label>
+                <Form.Group className="mb-3 form-group-class">
+                  <Form.Label className="label-class">¿Crear portal de autor?</Form.Label>
                   <div>
                     <Form.Check
                       inline

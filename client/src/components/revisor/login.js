@@ -94,25 +94,25 @@ const LoginRevisor = () => {
           label="Nombre de usuario"
           className="mb-3"
         >
-          <Form.Control
-            type="text"
-            value={usernameInput}
-            onChange={(e) => setInputUsername(e.target.value)}
-            required
-            autoComplete="username"
-          />
+        <Form.Control
+          type="text"
+          value={usernameInput}
+          onChange={(e) => setInputUsername(e.target.value)}
+          required
+          autoComplete="username"
+        />
         </FloatingLabel>
         <FloatingLabel
           controlId="floatingPassword"
           label="Contraseña"
         >
-          <Form.Control
-            type="password"
-            value={password}
-            onChange={(e) => setInputPassword(e.target.value)}
-            required
-            autoComplete="current-password"
-          />
+        <Form.Control
+          type="password"
+          value={password}
+          onChange={(e) => setInputPassword(e.target.value)}
+          required
+          autoComplete="current-password"
+        />
         </FloatingLabel>
         <Form.Group className="mt-2" controlId="checkbox">
           <Form.Check type="checkbox" label="Recuérdame" />
@@ -132,16 +132,18 @@ const LoginRevisor = () => {
 
       {/* Modal para contactar al administrador */}
       <Modal show={showModal} onHide={closeModal}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Contactar al Administrador</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <p>Se necesita indicar el ORCID del investigador para recibir el enlace personalizado.<br />
-                      Puede contactar al administrador de la siguiente manera:</p>
-                    <Button className="me-2" onClick={handleCopyEmail}>Copiar Correo</Button>
-                    <Button onClick={handleOpenEmailApp}>Enviar Correo</Button>
-                </Modal.Body>
-            </Modal>
+        <Modal.Header closeButton>
+            <Modal.Title>Contactar al Administrador</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+            <p className="text-center">Se ruega indicar el ORCID del investigador para recibir el enlace personalizado.<br />
+              Puede contactar al administrador de la siguiente manera:</p>
+              <div className="d-flex justify-content-around">
+                <Button onClick={handleCopyEmail}>Copiar Correo</Button>
+                <Button onClick={handleOpenEmailApp}>Enviar Correo</Button>
+              </div>
+        </Modal.Body>
+      </Modal>
     </Card>
   );
 };
