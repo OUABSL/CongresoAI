@@ -46,7 +46,7 @@ function AuthorProfile() {
       const data = await response.json();
 
       setProfileData(data);
-      setIntereses(Array.isArray(data.interestarea) ? data.interestarea : []);
+      setIntereses(Array.isArray(data.interests) ? data.interests : []);
 
     };
     if (!editing) {
@@ -149,7 +149,7 @@ function AuthorProfile() {
                   }
               </ListGroup.Item>
               <ListGroup.Item className="p-2">
-                Conocimientos:
+                Lista de intereses:
                 {editing ? 
                   <TagsInput
                     tags={intereses}

@@ -19,10 +19,10 @@ const ReassignateReviewButton = ({ username, articleTitle, setAlert }) =>  {
       });
 
       if(response.status === 200) {
-        setAlert({ visible: true, variant: 'success', message: 'Reassignment done successfully.' });
+        setAlert({ visible: true, variant: 'success', message: 'Nuevo revisor asignado correctamente.' });
         navigate(-1);
       } else {
-        setAlert({ visible: true, variant: 'danger', message: 'Failed to reassign. Please contact the administrator.' });
+        setAlert({ visible: true, variant: 'danger', message: 'No se encontró un revisor compatibale ¡Por favor contácte con el administrador!' });
       }
                   
       if(response.status === 401) {
@@ -34,7 +34,7 @@ const ReassignateReviewButton = ({ username, articleTitle, setAlert }) =>  {
   };
 
   return (
-      <Button variant="primary" onClick={reassignReviewClickHandler}>Reassign Review</Button>
+      <Button variant="primary" onClick={reassignReviewClickHandler}>Asignar nuevo revisor</Button>
   );
 };
 

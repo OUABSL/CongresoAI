@@ -1,8 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Modal, Form} from 'react-bootstrap';
+import { Button, Modal, Form, Card} from 'react-bootstrap';
 import { useContext } from "react";
 import AuthContext from "../../context/context";
 import { AlertContext } from '../../context/alertProvider';
+
+
+//Dicionario de traducción
+const taskTranslations = {
+  datapreparation: 'Extracción de contenido',
+  summary: 'Resumen automático',
+  initialevaluation: 'Evaluación inicial automática',
+};
+
+  //Funcion que traduce las tareas al español
+const translateTask = task => taskTranslations[task] || task;
+
 
 
 function RegenerationModal({ username, articleTitle }) {
@@ -20,15 +32,15 @@ function RegenerationModal({ username, articleTitle }) {
   datapreparation: { checked: false, value: defaultModel.datapreparation }
   });
 
-  useEffect(() => {
-    fetchModels();
-  }, []);
 
-  const fetchModels = async () => {
-    const response = await fetch("/api/v1/models");
-    const data = await response.json();
-    setModels(data);
-  };
+  useEffect(() => {
+    const fetchModels = async () => {
+        const response = await fetch("/api/v1/models");
+        const data = await response.json();
+        setModels(data);
+    };
+    fetchModels();
+}, []);
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -39,6 +51,7 @@ function RegenerationModal({ username, articleTitle }) {
       [event.target.name]: { ...selectedTasks[event.target.name], checked: event.target.checked }
     });
   };
+
 
   const handleSelectChange = (event) => {
     setSelectedTasks({
@@ -91,61 +104,60 @@ function RegenerationModal({ username, articleTitle }) {
 };
 
 return (
-  < >
-    <Button variant="primary" onClick={handleShow}> Re - evaluate </Button>
-    <Modal show={show} onHide={handleClose}> 
+  <>
+  <Button variant="primary" onClick={handleShow}>Generar nuevo procesamiento</Button>
+  <Modal show={show} onHide={handleClose}> 
       <Modal.Header closeButton>
-        <Modal.Title>Selecciona el elemento a regenerar</Modal.Title>
+          <Modal.Title>Selecciona el elemento a regenerar</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        {Object.entries(selectedTasks).map(([task, { checked, value }]) => (
-          <Form.Group key={task}>
-            <Form.Check
-              name={task}
-              type="checkbox"
-              label={task}
-              checked={checked}
-              onChange={handleCheck}
-              />
-        
-            {models.length > 0 ? (
-              <Form.Control
-                as="select"
-                name={task}
-                disabled={!checked}
-                value={value}
-                onChange={handleSelectChange}
-              >
-                <option disabled value="">Seleccione un modelo</option>
-                {models.map((model, index) => {
-                  let optionLabel = model;
-                  if (model === defaultModel[task]) {
-                    optionLabel += " [Recomendado]";
-                  }
-                  return <option key={index} value={model}>{optionLabel}</option>;
-                })}
-          </Form.Control>
-        
-              ) : (
-              
-                task !== 'datapreparation' && 
-                  <Form.Control 
-                    plaintext 
-                    readOnly
-                    defaultValue={`Listado indisponible. Por defecto ${defaultModel[task]}`}
+        {Object.keys(taskTranslations).map((task) => {
+          const { checked, value } = selectedTasks[task];
+          return (
+            <Card key={task}>
+              <Card.Body>
+                <Form.Group controlId={task}>
+                  <Form.Check
+                    name={task}
+                    type="checkbox"
+                    label={translateTask(task)}
+                    checked={checked}
+                    onChange={handleCheck}
                   />
-              )}
-            </Form.Group>
-        ))}
-      </Modal.Body>
+
+                  {models.length > 0 ? (
+                    <Form.Control
+                      as="select"
+                      name={task}
+                      disabled={!checked}
+                      value={value}
+                      onChange={handleSelectChange}
+                    >
+                      <option disabled value="">Seleccione un modelo</option>
+                      {models.map((model, index) => <option key={index} value={model}>{model}</option>)}
+                    </Form.Control>
+                  ) : (
+                    task !== 'datapreparation' && (
+                      <Form.Control
+                        plaintext
+                        readOnly
+                        defaultValue={`No hay modelo para ${task}`}
+                      />
+                    )
+                  )}
+                </Form.Group>
+              </Card.Body>
+            </Card>
+          );
+        })}
+        </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={handleClose}>Cancelar</Button>
-        <Button variant="primary" onClick={handleConfirm}>Confirmar</Button>
+          <Button variant="secondary" onClick={handleClose}>Cancelar</Button>
+          <Button variant="primary" onClick={handleConfirm}>Confirmar</Button>
       </Modal.Footer>
-    </Modal>
-  </>
+  </Modal>
+</>
 );
 }
-
 
 export default RegenerationModal;

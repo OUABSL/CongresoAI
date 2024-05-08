@@ -138,10 +138,11 @@ function RevisorProfile() {
                 }
             </Card.Subtitle>
             <Card.Subtitle className="mb-2 p-1 text-muted">
-                ORCID:
-                { "\u{64}" + profileData.ORCID }
+              { editing ?
+            <Form.Control readOnly style={{backgroundColor:'#f1f1f1', border: '1px solid #888'}} plaintext value={profileData.ORCID} /> :
+                `${profileData.ORCID}`
+              }
             </Card.Subtitle>
-
             <ListGroup variant="flush">
               <ListGroup.Item className="p-2">
                 Email:

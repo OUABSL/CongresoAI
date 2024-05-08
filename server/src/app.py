@@ -67,7 +67,13 @@ app = create_app()
 mongo, mongo_engine = create_mongo(app)
 jwt = JWTManager(app)
 register_blueprints(app)
+
+# Define la carpeta de archivos estáticos
 app.static_folder = 'data'
+
+# Si necesitas acceder a los archivos dentro de la carpeta 'manuales', entonces la ruta base sería '/manuales'
+#app.static_url_path = '/manuales'
+#print(f"La ruta est es {app.static_folder} y {os.getcwd()}")
 
 @app.route("/", methods=["GET"])
 def index():
@@ -84,13 +90,30 @@ def users():
     print("ls:" , ls)
     return f"The system users are mega:\n {(e.username for e in ls)}"
 
-@app.route('/manuales', methods=['GET'])
-def send_pdf():
-    try:
-        return send_from_directory(app.static_folder, "manual-revisor-theaicongress.pdf", as_attachment=True)
-    except FileNotFoundError:
-        abort(404)
 
+MANUALS_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../data/manuales")
+print(MANUALS_FOLDER)
+# Ruta para servir el manual del revisor
+@app.route("/api/v1/manuales/manual-reviewer", methods=["GET"])
+def send_manual_reviewer():
+    try:
+        # Ruta absoluta del archivo manual-revisor-theaicongress.pdf
+        return send_from_directory(MANUALS_FOLDER, "manual-revisor-theaicongress.pdf", as_attachment=True)
+    except FileNotFoundError:
+        return jsonify({"error": "File not found"}), 404
+    except IsADirectoryError:
+        return jsonify({"error": "Not a file"}), 400
+
+# Ruta para servir el manual del autor
+@app.route("/api/v1/manuales/manual-author", methods=["GET"])
+def send_manual_author():
+    try:
+        # Ruta absoluta del archivo manual-autor-theaicongress.pdf
+        return send_from_directory(MANUALS_FOLDER, "manual-autor-theaicongress.pdf", as_attachment=True)
+    except FileNotFoundError:
+        return jsonify({"error": "File not found"}), 404
+    except IsADirectoryError:
+        return jsonify({"error": "Not a file"}), 400
 
 def main():
     """Run the Flask application"""

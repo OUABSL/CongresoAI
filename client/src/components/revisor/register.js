@@ -8,8 +8,7 @@ import "../estilos/register.css";
 import TagsInput from '../tagsInput';
 import { validateForm } from '../validators/register';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCircleExclamation } from '@fortawesome/free-solid-svg-icons';
-
+import { faCircleExclamation, faSpinner } from '@fortawesome/free-solid-svg-icons';
 
 
 const SignUpRevisor = () => {
@@ -18,7 +17,11 @@ const SignUpRevisor = () => {
   const navigate = useNavigate();
   const [knowledges, setTags] = useState([]);
   const { token } = useParams();
+  const [first, setFirst] = useState(false);
   const [valid, setValid] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [emailAddress, setEmailAddress] = useState('');
+
   const initialState = {
     role: 'reviewer',
     ORCID: '',   // 0000-0003-0528-9459
@@ -45,6 +48,7 @@ const SignUpRevisor = () => {
       try {
         const response = await fetch(`/api/v1/verify-token/${token}`);
         const data = await response.json();
+        setFirst(true);
         if (data.success){
           setValid(true);
         } else {
@@ -57,19 +61,33 @@ const SignUpRevisor = () => {
     verifyToken();
   }, [token]);
 
+  /*
   const formatORCID = (value) => {
     // Eliminar todos los caracteres que no sean dígitos
-    //const digitsOnly = value.replace(/\D/g, '');
+    const digitsOnly = value.replace(/\D/g, '');
     // Agrupar los dígitos en bloques de cuatro
-    const grouped = value.match(/.{1,4}/g);
+    const grouped = digitsOnly.match(/.{1,4}/g);
     // Unir los bloques con guiones intermedios
     return grouped ? grouped.join('-') : '';
   }
+  */
 
-  const handleORCIDChange = (e) => {
-    const formattedORCID = formatORCID(e.target.value);
-    setState({ ...state, ORCID: formattedORCID });
-  }
+  const formatORCID = (value) => {
+    // Eliminar cualquier guión existente para evitar duplicados
+    const cleanedValue = value.replace(/-/g, '');
+    // Dividir los caracteres en bloques de cuatro
+    const grouped = cleanedValue.match(/.{1,4}/g);
+    // Unir los bloques con guiones intermedios
+    return grouped ? grouped.join('-') : '';
+}
+
+
+const handleORCIDChange = (e) => {
+  let value = e.target.value.replace(/-/g, '');
+  value = value.substring(0, 16); 
+  const formattedORCID = formatORCID(value);
+  setState({ ...state, ORCID: formattedORCID });
+}
 
 
   const [state, setState] = useState(initialState);
@@ -152,8 +170,7 @@ const SignUpRevisor = () => {
       {valid ? (
         <Form onSubmit={onSubmit} className="form-class">
             <div className="h4 mb-4 form-heading text-center">Registro de revisor</div>
-            <Row>
-              <Col  xs={12} md={6}>
+            <Row className='d-flex justify-content-center'>
                 <Form.Group>
                   <Form.Label>ORCID ID</Form.Label>
                   <Form.Control
@@ -164,7 +181,6 @@ const SignUpRevisor = () => {
                     onChange={handleORCIDChange}
                   />
                 </Form.Group>
-              </Col>            
           </Row>
           <Row>
             <Col  xs={12} md={6}>
@@ -278,12 +294,16 @@ const SignUpRevisor = () => {
         ¿Ya está registrado? <Link to="/portal-reviewer/login">iniciar sesión!</Link>
       </p>
     </Form>
-    ) : (
+    ) : (first ? (
       <div className='d-flex flex-column justify-content-center align-self-center text-center text-danger'>
         <h2><FontAwesomeIcon icon={faCircleExclamation} />¡Registro no autorizado!</h2>
         <h4>Por favor, contacte con el administrador.</h4>
       </div>
-    )}
+    ) :( 
+    <div className='d-flex justify-content-center align-items-center'>
+      <FontAwesomeIcon icon={faSpinner} size='2x' />
+    </div>
+    ))}
     </Card>
     );
   }

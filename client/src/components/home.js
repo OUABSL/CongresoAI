@@ -14,29 +14,24 @@ const Home = () => {
 
   const handleDownload = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/v1/manuales', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/pdf',
-        },
-      });
-  
-      if (res.ok) {
-        const blob = await res.blob();
-        const url = window.URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.setAttribute('download', 'manual-revisor-theaicongress.pdf');
-        document.body.appendChild(link);
-        link.click();
-        link.parentNode.removeChild(link);
-      }
+        const res = await fetch(`/api/v1/manuales/manual-${role}`, {method: 'GET'});
+        if(res.ok) {
+            const blob = await res.blob();
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', `manual-${role}-theaicongress.pdf`);
+            document.body.appendChild(link);
+            link.click();
+            link.parentNode.removeChild(link);
+        } else {
+            const errorMessage = await res.text();
+            throw new Error(errorMessage);
+        }
     } catch (err) {
-      console.error(err);
+        console.error(err);
     }
-  };
-
-
+}
   const loggedOutView = (
     <div className="home">
         <Card className="text-center home__title">
@@ -45,7 +40,7 @@ const Home = () => {
           <Card.Text>
             Un sistema revolucionario de revisión de artículos científicos con inteligencia artificial generativa. 
           </Card.Text>
-          <Button href="/portal-author/register" variant="success">¡Regístrate y Pruebalo ahora!</Button>
+          <Button href="/portal-author/register" variant="success">¡Solicita su demo!</Button>
         </Card.Body>
       </Card>
     </div>
@@ -60,9 +55,9 @@ const Home = () => {
             Un sistema revolucionario de revisión de artículos científicos con inteligencia artificial generativa. 
           </Card.Text>
           {role === "author" ?
-            <Button onClick="handleDownload" variant="success">Descargar el manual de autor</Button>
+            <Button onClick={handleDownload} variant="success">Descargar el manual de autor</Button>
             :
-            <Button onClick="handleDownload" variant="success">Descargar el manual de revisor</Button>
+            <Button onClick={handleDownload} variant="success">Descargar el manual de revisor</Button>
           }
         </Card.Body>
       </Card>
@@ -71,14 +66,14 @@ const Home = () => {
   
   return (
     <div className="body">
-    {isLoggedIn ? loggedOutView : ManualView} 
+    {!isLoggedIn ? loggedOutView : ManualView} 
       <Container className="home__content">
          <Row className="home__description mb-4">
           <Col md={12}>
             <h2>¿Cómo puede ayudarte The AI Congress?</h2>
             <Card className="home__benefits">
               <Card.Body>
-            <p>
+            <p className=''>
               Nuestro sistema utiliza la inteligencia artificial generativa para facilitar la tarea de revisión de artículos científicos minimizando el esfuerzo y el tiempo necesario para hacerlo:
             </p>
             <ListGroup>

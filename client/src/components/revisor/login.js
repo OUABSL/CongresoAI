@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from "react";
-import { Form, Button, Card, FloatingLabel } from "react-bootstrap";
+import { Form, Button, Card, FloatingLabel, Modal } from "react-bootstrap";
 import { Link, useNavigate } from 'react-router-dom';
 import "../estilos/login.css";
 import { useAuth } from "../../context/appProvider";
@@ -12,6 +12,7 @@ const LoginRevisor = () => {
   const { setAlert } = useContext(AlertContext);
   const navigate = useNavigate();
   const { setSessionToken, setRole, setUsername } = useAuth();
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     document.title = "Inicio de sesión - Revisor";
@@ -64,6 +65,23 @@ const LoginRevisor = () => {
     setAlert({ show: true, message: "Funcionalidad en desarrollo!", variant: "info" });
   };
 
+  const handleContactAdmin = () => {
+    setShowModal(true);
+  };
+
+  const closeModal = () => {
+      setShowModal(false);
+  };
+
+  const handleCopyEmail = () => {
+      navigator.clipboard.writeText('ouabou@alum.us.es');
+      setAlert({ show: true, message: "Correo copiado al portapapeles", variant: "info" });
+  };
+
+  const handleOpenEmailApp = () => {
+      window.location.href = `mailto:ouabou@alum.us.es?subject=Asunto del correo&body=Cuerpo del correo`;
+  };
+
   return (
     <Card className="form-card mx-auto">
       <Form className="login-form shadow p-4 bg-white rounded" onSubmit={handleSubmit}>
@@ -106,9 +124,21 @@ const LoginRevisor = () => {
           <Link onClick={handlePassword} className='text-muted link-above'>¿Olvidaste tu contraseña?</Link>
         </div>
         <div className="d-grid mt-2">
-          <a href="mailto:ouabou@alum.us.es" className='text-muted link-above'>¿No tienes una cuenta? ¡Contacte con el administrador!</a>
+        <Button variant="link" className='text-muted link-above' onClick={handleContactAdmin}>¿No tienes una cuenta? ¡Contacte con el administrador!</Button>
         </div>
       </Form>
+
+      {/* Modal para contactar al administrador */}
+      <Modal show={showModal} onHide={closeModal}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Contactar al Administrador</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <p>Puede contactar al administrador de la siguiente manera:</p>
+                    <Button className="me-2" onClick={handleCopyEmail}>Copiar Correo</Button>
+                    <Button onClick={handleOpenEmailApp}>Enviar Correo</Button>
+                </Modal.Body>
+            </Modal>
     </Card>
   );
 };

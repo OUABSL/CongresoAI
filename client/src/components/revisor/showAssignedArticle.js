@@ -61,43 +61,43 @@ const formatPreEvalSection = (preEvalSection) => {
 };
 
 
-const SectionReview = ({ reviewData, sectionName, handleSectionUpdate, handleEdit, editing}) => {
+const SectionReview = ({ reviewData, sectionName, handleSectionUpdate, handleEdit, editing, isEdited}) => {
     const [sectionReview, setSectionReview] = useState(reviewData || {});
     const [previousReviews, setPreviousReviews] = useState({});
+    const [first, setFirst] = useState(true);
+
 
     useEffect(() => {
         setSectionReview(reviewData);
     }, [reviewData]);
 
     useEffect(() => {
-        if (reviewData && reviewData && reviewData !== defaultReviewSection && previousReviews[sectionName]!==reviewData ) {
-          setPreviousReviews(prevReviews => ({
-            ...prevReviews, 
-            [sectionName]: reviewData
-          }));
-
+        if (reviewData && !isEdited && reviewData !== defaultReviewSection && previousReviews[sectionName] !== reviewData) {
+            setPreviousReviews(prevReviews => ({
+                ...prevReviews,
+                [sectionName]: reviewData
+            }));
         }
-      }, [reviewData, sectionName, previousReviews]);
-      
-      useEffect(() => {
-        if (previousReviews && previousReviews[sectionName] === reviewData && previousReviews[sectionName] !== defaultReviewSection) {
-          handleEdit(false);
+    }, [reviewData, sectionName, previousReviews, isEdited]);
+
+    useEffect(() => {
+        if (first && previousReviews[sectionName] && previousReviews[sectionName] !== defaultReviewSection) {
+            handleEdit(false);
+            setFirst(false);
         }
-      }, [previousReviews, handleEdit, sectionName, reviewData]);
+    }, [previousReviews, handleEdit, sectionName, first]);
 
 
 
 
-      const handleSectionReviewSave = (updatedReview) => {
-        setSectionReview(updatedReview);
+    const handleSectionReviewSave = (updatedReview) => {
         handleSectionUpdate(sectionName, updatedReview);
-        setPreviousReviews(prevState => {
-          const updatedPreviousReviews = { ...prevState, [sectionName]: updatedReview };
-          return updatedPreviousReviews;
-        });
-        console.log("estoy aqui");
-        handleEdit(false); 
-      };
+        setPreviousReviews(prevState => ({
+            ...prevState,
+            [sectionName]: updatedReview
+        }));
+        handleEdit(false);
+    };
 
     const handleInputChange = (criterion, value) => {
         const updatedReview = { ...sectionReview, [criterion]: value };
@@ -153,37 +153,37 @@ const SectionReview = ({ reviewData, sectionName, handleSectionUpdate, handleEdi
                 </>
             ) : (
                 <>
-                <Card className="mt-3">
-                    <Card.Header>Resumen de la revisión anterior:</Card.Header>
-                    <Card.Body>
-                        {
-                            previousReviews && previousReviews[sectionName] && (
+                    <Card className="mt-3">
+                        <Card.Header>Resumen de la revisión anterior:</Card.Header>
+                        <Card.Body>
+                            {/* Mostrar la última revisión */}
+                            {previousReviews && previousReviews[sectionName] && (
                                 <div className="mt-3">
+                                    {/* Iterar y mostrar los criterios */}
                                     {CRITERIA.map((criterion, i) => (
                                         <p key={criterion}>
                                             <b>{criterion}: </b>
                                             {previousReviews[sectionName][CRITERIA_API[i]]}
                                         </p>
                                     ))}
+                                    {/* Mostrar comentario del revisor */}
                                     <p>
                                         <b>Comentario del Revisor: </b>
                                         {previousReviews[sectionName].comment}
                                     </p>
                                 </div>
-                            )
-                        }
-                    </Card.Body>
-                </Card>
-                <Button
-            variant="primary"
-            onClick={() => handleEdit(true)}
-            className="mt-3"
-            >
-                Editar Revisión
-            </Button>
-            </>
+                            )}
+                        </Card.Body>
+                    </Card>
+                    <Button
+                        variant="primary"
+                        onClick={() => handleEdit(true)}
+                        className="mt-3"
+                    >
+                        Editar Revisión
+                    </Button>
+                </>
             )}
-
         </div>
     );
 };
@@ -193,8 +193,10 @@ const DisplaySection = ({ sectionName, summarySection=null, preEvalSection=null,
     const [reviewSection, setReviewSection] = useState(actualReviewSection || defaultReviewSection);
     const [editing, setEditing] = useState(true);
     const [formattedPreEvalSection, setFormattedPreEvalSection] = useState("");
+    const [isEdited, setIsEdited] = useState(false);
 
     const handleEdit = (value) => {
+        if(!value) setIsEdited(true);
         setEditing(value);
     };
 
@@ -228,6 +230,7 @@ const DisplaySection = ({ sectionName, summarySection=null, preEvalSection=null,
                     handleSectionUpdate={handleSectionUpdate} 
                     handleEdit={handleEdit}
                     editing = {editing}
+                    isEdited = {isEdited}
                 />
             </Accordion.Body>
         </Accordion.Item>
@@ -237,7 +240,7 @@ const DisplaySection = ({ sectionName, summarySection=null, preEvalSection=null,
 
 
 function ShowAssignedArticle() {
-    const { sessionToken, logout } = useContext(AuthContext); // Accede a username y sessionToken desde el contexto
+    const { sessionToken, logout } = useContext(AuthContext); 
     const { username, article_title } = useParams();
     const [article, setArticle] = useState({});
     const [review, setReview] = useState({});

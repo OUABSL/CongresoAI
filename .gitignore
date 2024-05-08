@@ -8,3 +8,5 @@ server/test_results/
 *.pyc
 */__pycache__
 */.ipynb_checkpoints
+*.save
+*/package.json
