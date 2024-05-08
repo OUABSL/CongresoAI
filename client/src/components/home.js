@@ -47,7 +47,7 @@ const Home = () => {
   
   return (
     <div className="body">
-    {isLoggedIn ? loggedOutView : loggedOutView} 
+    {isLoggedIn ? loggedOutView : ManualView} 
       <Container className="home__content">
          <Row className="home__description mb-4">
           <Col md={12}>

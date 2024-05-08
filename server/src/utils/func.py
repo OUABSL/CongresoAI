@@ -8,8 +8,10 @@ def generate_token(orcid):
     if bool(re.match(r"\d{4}-\d{4}-\d{4}-\d{4}", orcid)):
         secret_key = urlsafe_b64encode(bytes(jwt_key.ljust(32), encoding='utf-8'))
         cipher_suite = Fernet(secret_key)
-        token = cipher_suite.encrypt(bytes(orcid, encoding='utf-8'))
-        return token
+        token_bytes = cipher_suite.encrypt(bytes(orcid, encoding='utf-8'))
+        # Convertir el token a una cadena de texto antes de devolverlo
+        token_str = token_bytes.decode('utf-8')
+        return token_str
     else:
         return False
 

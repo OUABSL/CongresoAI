@@ -126,6 +126,8 @@ const ShowSubmittedArticle = () => {
   const { article_title } = useParams();
   const [article, setArticle] = useState({});
   const [review, setReview] = useState ({});
+  const [activeKey, setActiveKey] = useState("start");
+  const [resultReview, setResultReview] = useState("");
   const navigate = useNavigate();
 
 
@@ -141,17 +143,24 @@ const ShowSubmittedArticle = () => {
   
 
   useEffect(()=> {
-    setReview(article.review);
-  }, [article.review]);
-
-
+    if(article.review){
+        setReview(article.review);
+    }
+  }, [article]);
 
   useEffect(() => {
+    if(username && article_title && sessionToken){
     getArticle(username, article_title, sessionToken, logout).then(setArticle);
+    }
   }, [username, article_title, sessionToken, logout]);
 
 
-
+  useEffect(()=> {
+    if (article && article.sections_orden) {
+        setResultReview(article.review_result);
+        if(article.sections_orden.length > 0 && activeKey === "start") setActiveKey(article.sections_orden[0]);       
+    }
+}, [article, activeKey]);
 
 
 const translateReviewStatus = (status) => {
@@ -181,17 +190,23 @@ const translateReviewStatus = (status) => {
       <Card.Body>
         <Card.Title>{article.title}</Card.Title>
         <Card.Text>{article.description}</Card.Text>
-        {article.result_review && (
-          <Card.Text style={{ color: reviewStatusColors[article.result_review] || 'black' }}>
-              Resultado de revisión: {translateReviewStatus(article.result_review)}
+        {article.review_result && (
+          <Card.Text style={{ color: reviewStatusColors[article.review_result] || 'black' }}>
+              Resultado de revisión: {translateReviewStatus(article.review_result)}
           </Card.Text>
         )}
 
-          <Accordion defaultActiveKey={article.sections_order && article.sections_order[0]}>
-            {article.sections_order && article.sections_order.map(sectionName => (
-              <DisplaySectionReview key={sectionName} sectionName={sectionName} review={review[sectionName]} />
-            ))}
-          </Accordion>
+        {article && article.sections_orden && (
+              <Accordion activeKey={activeKey} onSelect={setActiveKey}>
+                  {article.sections_orden.map((sectionName) => (
+                      <DisplaySectionReview
+                          key={sectionName}
+                          sectionName={sectionName}
+                          review={review.hasOwnProperty(sectionName)? review[sectionName] : {}}
+                      />
+                  ))}
+              </Accordion>
+          )}
       </Card.Body>
     </Card>
     </>
