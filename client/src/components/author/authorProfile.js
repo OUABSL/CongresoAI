@@ -117,7 +117,7 @@ function AuthorProfile() {
   return (
     <>
     <Container className="d-flex justify-content-center align-items-center h-100">
-      <Card style={{ width: '25rem' }} className="p-3 mt-5">
+      <Card style={{ width: '30rem' }} className="p-3 mt-5">
           <Card.Body>
               <Card.Title>
                   Nombre completo:

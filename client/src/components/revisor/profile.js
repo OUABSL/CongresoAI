@@ -121,7 +121,7 @@ function RevisorProfile() {
   }
   return (
     <Container className="d-flex justify-content-center align-items-center h-100">
-      <Card style={{ width: '25rem' }} className="p-3 mt-5">
+      <Card style={{ width: '30rem' }} className="p-3 mt-5">
           <Card.Body>
             <Card.Title>
                 Nombre completo:
@@ -131,16 +131,17 @@ function RevisorProfile() {
                 }
             </Card.Title>
             <Card.Subtitle className="mb-1 p-1 text-muted">
-                Usuario: 
-                {editing ? 
-                    <Form.Control readOnly style={{backgroundColor:'#f1f1f1', border: '1px solid #888'}} plaintext value={profileData.username} /> :
-                    `${profileData.username}`
-                }
+              Usuario: 
+              {editing ? 
+                  <Form.Control readOnly style={{backgroundColor:'#f1f1f1', border: '1px solid #888'}} plaintext value={profileData.username} /> :
+                  `${profileData.username}`
+              }
             </Card.Subtitle>
             <Card.Subtitle className="mb-2 p-1 text-muted">
+              ORCID:
               { editing ?
-            <Form.Control readOnly style={{backgroundColor:'#f1f1f1', border: '1px solid #888'}} plaintext value={profileData.ORCID} /> :
-                `${profileData.ORCID}`
+                <Form.Control readOnly style={{backgroundColor:'#f1f1f1', border: '1px solid #888'}} plaintext value={profileData.ORCID} /> :
+                  `${profileData.ORCID}`
               }
             </Card.Subtitle>
             <ListGroup variant="flush">
@@ -165,7 +166,7 @@ function RevisorProfile() {
                     tags={knowledges}
                     setTags={setKnowledges}
                   /> :
-                  ` ${knowledges.join(', ')}`
+                  `${knowledges.join(', ')}`
                 }
               </ListGroup.Item>
               <ListGroup.Item className="p-2">

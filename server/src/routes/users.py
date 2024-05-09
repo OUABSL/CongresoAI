@@ -87,11 +87,14 @@ def SignUp():
             password = generate_password_hash(data.get('password'), method='pbkdf2:sha256')
             fullname = data.get('fullname')
             phonenumber = data.get('phonenumber')
-            interestareas = to_list(str(data.get('interests')))
+            if is_bi:
+                interestareas = to_list(str(data.get('knowledges')))
+            else:
+                interestareas = to_list(str(data.get('interests')))
             author = Author(ID_Author=id_author, email=email, username=username, password=password, fullname=fullname,
                             phonenumber=phonenumber,interests=interestareas)
             if is_bi:
-                author.is_bi = is_bi
+                author.is_bi = True
             author.save() 
 
     else:

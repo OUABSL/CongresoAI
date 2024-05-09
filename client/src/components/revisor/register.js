@@ -211,7 +211,8 @@ const handleORCIDChange = (e) => {
                   value={state.fullname}
                   onChange={onChange}
                   className="input-class"
-                  required                />
+                  required
+                  />
               </Form.Group>
             </Col>
             <Col  xs={12} md={6}>

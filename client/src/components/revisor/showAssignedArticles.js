@@ -13,7 +13,7 @@ import { faPenClip, faSpinner, faCircleExclamation } from '@fortawesome/free-sol
 function ShowAssignedArticles() {
   const { username, sessionToken, logout } = useContext(AuthContext); // Access username from context
   const {setAlert} = useContext(AlertContext)
-
+  const [first, setFirst] = useState(false);
   const [articles, setArticles] = useState([]);
   const navigate = useNavigate();
 
@@ -36,15 +36,26 @@ function ShowAssignedArticles() {
         logout();
         return;
       }
-
-
       const data = await response.json();
       setArticles(data);
+      setFirst(true);
+
     }
     fetchArticles()
   }, [username, sessionToken, logout])
 
-  if (!articles.length) {
+
+  if (!first) {
+    return (
+    <>
+      <div className='d-flex justify-content-center align-items-center'>
+        <FontAwesomeIcon icon={faSpinner} size='2x' />
+      </div>
+    </>
+    );
+  }
+
+  else if (!articles.length) {
     return (
     <>
         <div className="d-flex justify-content-center align-items-center vh-100">
@@ -71,32 +82,32 @@ function ShowAssignedArticles() {
         </thead>
         <tbody>
         {articles.filter(article => article.description).map((article, index) => (
-      <tr key={index}>
-        <td>{index + 1}</td>
-        <td>{article.title}</td>
-        <td>{article.description}</td>
-        <td>{article.submission_date}</td>
-        <td>{article.last_modified}</td>
-        <td>{article.review_result}</td>
-        <td className='open-article'>
-          {article.processing_state === "Done" ?
-            <div className='center-content' onClick={() => navigate(`/portal-reviewer/articles/${username}/${article.title}`)}>
-              <FontAwesomeIcon icon={faPenClip} />
-              <p>Evaluar</p>
-            </div>
-          : article.processing_state ==="Fail" ?
-            <div className='center-content' onClick={() => navigate(`/portal-reviewer/articles/${username}/${article.title}`)}>
-              <FontAwesomeIcon icon={faCircleExclamation} />       
-                <p>Fallido</p>
-            </div>
-            : 
-            <div className='center-content' onClick={() => navigate(`/portal-reviewer/articles/${username}/${article.title}`)}>
-              <FontAwesomeIcon icon={faSpinner} />
-              <p>Processing</p>
-            </div>
-          }
-        </td>
-      </tr>
+          <tr key={index}>
+            <td>{index + 1}</td>
+            <td>{article.title}</td>
+            <td>{article.description}</td>
+            <td>{article.submission_date}</td>
+            <td>{article.last_modified}</td>
+            <td>{article.review_result}</td>
+            <td className='open-article'>
+              {article.processing_state === "Done" ?
+                <div className='center-content' onClick={() => navigate(`/portal-reviewer/articles/${username}/${article.title}`)}>
+                  <FontAwesomeIcon icon={faPenClip} />
+                  <p>Evaluar</p>
+                </div>
+              : article.processing_state ==="Fail" ?
+                <div className='center-content' onClick={() => navigate(`/portal-reviewer/articles/${username}/${article.title}`)}>
+                  <FontAwesomeIcon icon={faCircleExclamation} />       
+                    <p>Fallido</p>
+                </div>
+                : 
+                <div className='center-content' onClick={() => navigate(`/portal-reviewer/articles/${username}/${article.title}`)}>
+                  <FontAwesomeIcon icon={faSpinner} />
+                  <p>Processing</p>
+                </div>
+              }
+            </td>
+          </tr>
           ))}
         </tbody>
       </Table>
