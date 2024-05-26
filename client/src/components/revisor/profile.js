@@ -148,7 +148,7 @@ function RevisorProfile() {
                 </Form.Group>
               </Col>
               <Col sm={6}>
-                <Form.Group as={Row} className={`field-box ${editing ? '' : 'onlyread-field'}`}>
+                <Form.Group as={Row} className={`field-box ${editing ? 'onlyread-field':''}`}>
                   <Form.Label column sm={4}>ORCID:</Form.Label>
                   <Col sm={8} className='p-0'>
                     {editing ?
@@ -203,7 +203,7 @@ function RevisorProfile() {
             </Row>
             <Row className="mb-3">
               <Col>
-                <Form.Group as={Row} className={`field-box ${editing ? '' : 'onlyread-field'}`}>
+                <Form.Group as={Row} className={`field-box ${editing ? 'onlyread-field':''}`}>
                   <Form.Label column sm={4}>Fecha de registro:</Form.Label>
                   <Col sm={8} className='p-0'>
                     {editing ?
