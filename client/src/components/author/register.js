@@ -9,10 +9,6 @@ import "react-phone-input-2/lib/style.css";
 import "../estilos/register.css";
 
 
-
-
-
-
 const SignUpAuthor = () => {
   const { setAlert } = useContext(AlertContext);
   const [loading, setLoading] = useState(false);
@@ -38,7 +34,6 @@ const SignUpAuthor = () => {
   const onSubmit = (e) => {
     e.preventDefault();
     for (let key in state) {
-      console.log(`clave: ${key} --> ${state[key]}`)
       if (state[key] === '') {
         setAlert({
           show: true,
@@ -49,8 +44,13 @@ const SignUpAuthor = () => {
       }
     }
 
-    let errors = validateForm({ email: state.email, phone: state.phonenumber, password: state.password, confirmPassword: state.confirmPassword });
-
+    let errors = validateForm({ 
+      email: state.email, 
+      phone: state.phonenumber, 
+      password: state.password, 
+      confirmPassword: state.confirmPassword 
+    });
+    
     if (errors.length > 0) {
       setLoading(false);
         setAlert({
@@ -74,20 +74,42 @@ const SignUpAuthor = () => {
       body: JSON.stringify(state)
     })
     .then(response => {
-      if (!response.ok) { throw Error(response.statusText); }
-      return response.json();
+      // guarda el status en, por ejemplo, status
+      // convierte el cuerpo de la respuesta a objeto JavaScript
+      const status = response.status;
+      return response.json().then(data => ({ status, data }));
+  })
+  .then(({ status, data }) => {
+      console.log(JSON.stringify(data.message));
+      if (status  === 400) {
+          setAlert({
+              show: true,
+              message: "Nombre de usuario ya existe!",
+              variant: "danger"
+          });
+      } else if(status === 401){
+          setAlert({
+              show: true,
+              message: "Registro no autorizado!",
+              variant: "danger"
+          });
+      } else if(data.success){
+          setAlert({
+              show: true,
+              message: "Registro correcto! Inicia sesión.",
+              variant: "success"
+          });
+          return navigate("/portal-author/login");
+      }
+  })
+    .catch((error) => {
+      console.log(JSON.stringify(error));
+      setAlert({
+        show: true, 
+        message: "Ha sucecido error en el registro! Intentálo de nuevo más tarde.", 
+        variant: "danger"
+      });
     })
-    .then(data => {
-        console.log(JSON.stringify(data.message));
-
-        setAlert({
-          show: true, 
-          message: data.message, 
-          variant: data.success ? "success" : "danger"
-        });
-        if(data.success) return navigate("/portal-author/login")
-    })
-    .catch((error) => console.log(JSON.stringify(error)))
     .finally(() => {
       setLoading(false);
     });

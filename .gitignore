@@ -1,6 +1,6 @@
 .venv
 .env
-server/data/*
+server/data/input/*
 server/src/config.py
 server/src/test
 test
@@ -9,4 +9,4 @@ server/test_results/
 */__pycache__
 */.ipynb_checkpoints
 *.save
-#*/package.json
+*/package.json

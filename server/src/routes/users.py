@@ -15,14 +15,6 @@ authors_col = mongo.db.authors
 
 users_bp = Blueprint('users', __name__)
 
-#Extraer las palabras claves, lista de conocimientos para revisores o lista de intereses para autores
-def to_list(form_element : str):
-    if isinstance(form_element, list):
-        return form_element
-    else:
-        return form_element.split(',')
-
-
 """
 Funciones comúnes para autores y revisores
 """
@@ -38,6 +30,9 @@ def login():
         user = reviewers_col.find_one({'username': username})
     elif role == "author":
         user = authors_col.find_one({'username': username})
+
+    if not(user):
+        return make_response(jsonify({"success":False, "message": "User does not exist"}), 404)
 
     if user and check_password_hash(user['password'], password):
         access_token = create_access_token(identity=username, additional_claims={"role":role})
@@ -60,22 +55,24 @@ def SignUp():
     if role == 'reviewer' and token and orcid:
         if check_token(token, orcid=orcid):
             user = Reviewer.objects(username=username).first()
-            if user:
-                return make_response(jsonify({'success':False,'message':'Username already exists!'}), 400)
+            user_ = Reviewer.objects(ORCID=orcid).first()
+
+            if user or user_:
+                return make_response(jsonify({'success':False,'message':'User already exists!'}), 400)
             else:
                 email = data.get('email')
                 password = generate_password_hash(data.get('password'), method='pbkdf2:sha256')
                 fullname = data.get('fullname')
                 phonenumber = data.get('phonenumber')
                 ORCID = data.get('ORCID')
-                knowledges = to_list(str(data.get('knowledges')))
+                knowledges = data.get('knowledges')
                 reviewer = Reviewer(email=email, username=username, password=password, fullname=fullname,
                                     phonenumber=phonenumber, ORCID=ORCID, knowledges=knowledges)
                 if is_bi:
                     reviewer.is_bi = is_bi
                 reviewer.save()
         else:
-            return make_response(jsonify({'success':False,'message':'Register Not authorized!'}), 400)
+            return make_response(jsonify({'success':False,'message':'Register Not authorized!'}), 401)
  
     if role == 'author'or is_bi:
         user = authors_col.find_one({'username': username})
@@ -88,9 +85,9 @@ def SignUp():
             fullname = data.get('fullname')
             phonenumber = data.get('phonenumber')
             if is_bi:
-                interestareas = to_list(str(data.get('knowledges')))
+                interestareas = data.get('knowledges')
             else:
-                interestareas = to_list(str(data.get('interests')))
+                interestareas = data.get('interests')
             author = Author(ID_Author=id_author, email=email, username=username, password=password, fullname=fullname,
                             phonenumber=phonenumber,interests=interestareas)
             if is_bi:

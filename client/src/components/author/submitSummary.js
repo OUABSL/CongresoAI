@@ -7,7 +7,7 @@ import { AlertContext } from '../../context/alertProvider';
 const SubmitSummary = () => {
     const location = useLocation();
     const { submitSummary, latex_project_url, fileName } = location.state || {}; 
-    const { title, author, description, keywords = [],submission_date, submission_id } = submitSummary;
+    const { title, author, description, keywords = [],submission_date, submission_id, submit_number } = submitSummary;
     const { setAlert } = useContext(AlertContext);
 
     const handleDownload = () => {
@@ -36,6 +36,9 @@ const SubmitSummary = () => {
                 </Card.Text>
                 <Card.Text>
                     ID de entrega: {submission_id || 'No disponible'}
+                </Card.Text>
+                <Card.Text>
+                    Número de entrega: {submit_number || 'No disponible'}
                 </Card.Text>
                 <Card.Text>
                     Descripción del artículo: {description || 'No disponible'}

@@ -17,7 +17,7 @@ class ArticleSummarizer:
         self.API_URL = "https://llamus.cs.us.es/ollama/v1/chat/completions"
         self.LLAMUS_KEY = llamus_key
         self.temperature = 0.8
-        self.chat_model = 'falcon:180b-chat-Q4_K_M'
+        self.chat_model = "llama2:7b-chat" #'falcon:180b-chat-Q4_K_M'
         self.DB = db.db.scientific_article
         self.SYSTEM_PROMPT_BASE = system_prompt_base
         self.article = article
@@ -37,7 +37,7 @@ class ArticleSummarizer:
         }
         data = {
             'stream': False,
-            'model':"llama2:7b-chat",
+            'model':self.chat_model,
             'temperature':self.temperature,
             'messages':[
                 {
@@ -56,10 +56,10 @@ class ArticleSummarizer:
                 logging.info(response.text)
                 return response.json()
             except json.decoder.JSONDecodeError:  # Catching JSON decode errors
-                logging.error('Failed to decode JSON. Response:', response.content)
+                logging.error(f'Failed to decode JSON. Response: {response.content}')
         else:
-            logging.error('Request failed. Status Code:', response.status_code)
-            logging.error('Response:', response.content)
+            logging.error(f'Request failed. Status Code:  {response.status_code}')
+            logging.error(f'Response: {response.content}')
 
 
     def get_article(self, query)->ScientificArticle:
@@ -88,10 +88,12 @@ class ArticleSummarizer:
                     else:
                         response = ''
                     res[section_name] = response
-            except Exception:  # Catch all types of exceptions
+            #Manejar los errores que se pueden generar durante la ejecución del proceso
+            except Exception: 
                 logging.error(f"An error occurred while processing the '{section_name}' section")
-                res[section_name] = "Error"  # Set the value to an empty string
-                continue  # Continue to the next iteration of the loop
+                # El valor Erroe será posteriormente comprobado en funciones de routes 
+                res[section_name] = "Error" 
+                break 
 
         return res
         #self.article.update_properties(summary=res)

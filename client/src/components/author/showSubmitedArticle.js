@@ -3,7 +3,7 @@ import { Card, Accordion, DropdownButton, Dropdown, Row, Col, Button} from 'reac
 import { useParams, useNavigate } from 'react-router-dom';
 import AuthContext from "../../context/context";
 import { AlertContext } from '../../context/alertProvider';
-
+import "../estilos/showArticle.css";
 
 const STATES_REVIEW_API = ["Pending Review", "Approved", "Rejected", "Pending Improvement"];
 const STATES_REVIEW_SPANISH = ["Pendiente de Revisión", "Aprobado", "Rechazado", "Pendiente de Mejora"];
@@ -38,8 +38,10 @@ const DownloadArticle = ({ pdf, zip, title }) => {
   const handleDownload = async (fileUrl, filename, type) => {
       try {
           const response = await fetch(`/api/v1${fileUrl}`);
+          const result = await response.json();
+
           if (!response.ok) {
-              throw new Error(`HTTP error! Status: ${response.status}`);
+              throw new Error(`HTTP error! Status: ${result.status}`);
           }
           const blob = await response.blob();
           const fileBlob = new Blob([blob], { type: type });
@@ -105,12 +107,14 @@ const getArticle = async (username, articleTitle, sessionToken, onLogout) => {
       }
     });
 
-    if (response.status === 401) {
+    const data = await response.json();
+
+
+    if (data.status === 401) {
       onLogout();
       return;
     }
 
-    const data = await response.json();
     return data;
 
   } catch (error) {
@@ -172,30 +176,29 @@ const translateReviewStatus = (status) => {
   return (
     <>
     <Row className="justify-content-between mb-4">
-      <Col xs="auto">
+      <Col xs="auto" className='mt-1'>
           <Button className="btn bg-secondary" onClick={goBack}>Volver Atrás</Button>
       </Col>
-      <Col xs="auto">
+      <Col xs="auto" className='mt-1'>
         {article.review_result === 'Pending Improvement' && 
         <NavigateToSubmitButton article={article} />}
       </Col>
-      <Col xs="auto">
+      <Col xs="auto" className='mt-1'>
         <DownloadArticle
             pdf={`/file/${article.submitted_pdf_id}`}
             title={article.title}
             zip={`/zip/${article.latex_project_id}`} />
       </Col>
     </Row>
-    <Card style={{ width: '100%' }}>
+    <Card className='tarjeta'>
       <Card.Body>
-        <Card.Title>{article.title}</Card.Title>
-        <Card.Text>{article.description}</Card.Text>
+        <Card.Title className='h2 text-center'>{article.title}</Card.Title>
+        <Card.Subtitle><b>Revisor: </b>{article.reviewer}</Card.Subtitle>
         {article.review_result && (
-          <Card.Text style={{ color: reviewStatusColors[article.review_result] || 'black' }}>
-              Resultado de revisión: {translateReviewStatus(article.review_result)}
-          </Card.Text>
+          <Card.Subtitle className=" d-flex flex-row mt-1"><b>Resultado de revisión: </b> <div style={{marginLeft:"5px", color: reviewStatusColors[translateReviewStatus(article.review_result)] || 'black' }}>{translateReviewStatus(article.review_result)}</div></Card.Subtitle>
         )}
-
+        {article && article.is_resubmited === true && <Card.Text><b>Número de entrega: </b>{article.submit_number}</Card.Text>}
+        <Card.Text><b>Descripción: </b>{article.description}</Card.Text>
         {article && article.sections_orden && (
               <Accordion activeKey={activeKey} onSelect={setActiveKey}>
                   {article.sections_orden.map((sectionName) => (

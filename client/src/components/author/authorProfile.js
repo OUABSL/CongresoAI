@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Card, ListGroup, Button , Form, Container, Col, Row} from 'react-bootstrap';
+import { Card, Button , Form, Container, Col, Row} from 'react-bootstrap';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useContext } from "react";
 import { AlertContext } from '../../context/alertProvider';
@@ -8,7 +8,7 @@ import { useAuth } from "../../context/appProvider";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import TagsInput from '../tagsInput';
-
+import "../estilos/profile.css";
 
 
 function AuthorProfile() {
@@ -40,13 +40,13 @@ function AuthorProfile() {
         }
       );
 
+      const result = await response.json();
+
       if(response.status === 401) {
         logout();
       }
-      const data = await response.json();
-
-      setProfileData(data);
-      setIntereses(Array.isArray(data.interests) ? data.interests : []);
+      setProfileData(result);
+      setIntereses(Array.isArray(result.interests) ? result.interests : []);
 
     };
     if (!editing) {
@@ -62,6 +62,10 @@ function AuthorProfile() {
     setEditing(true);
   }
 
+  const handleEditCancel = () => {
+    setEditing(false);
+  }
+
   
   const handleChangeRole = async (e) => {
     e.preventDefault();
@@ -73,9 +77,9 @@ function AuthorProfile() {
         },
         body: JSON.stringify({ new_role: 'reviewer' }),
     });
+    const result = await response.json();
 
-    if (response.ok) {
-        const result = await response.json();
+    if (result.success) {
         setSessionToken(result.access_token);
         setRole("reviewer");
         navigate(`/portal-reviewer/profile/${username}`);
@@ -101,20 +105,131 @@ function AuthorProfile() {
         },
       }
     );
+    const result = await response.json();
 
-    if (response.ok) {
+
+    if (result.success) {
       setEditing(false);
-      setAlert({ visible: true, variant: 'success', message: 'Perfil actualizado' });
+      setAlert({ show: true, variant: 'success', message: 'Perfil actualizado' });
     } else {
-      setAlert({ visible: true, variant: 'danger', message: 'No se pudo actualizar el perfil. Intenta en otro momento!' });
+      setAlert({ show: true, variant: 'danger', message: 'No se pudo actualizar el perfil. Intenta en otro momento!' });
     }
-    setTimeout(()=> setAlert({visible: false, variant: '', message: ''}), 1000)
   }
 
  if (!profileData) {
     return <div className="d-flex justify-content-center align-items-center"><FontAwesomeIcon icon={faSpinner} scale="2x"></FontAwesomeIcon></div>;
   }
+
   return (
+    <Container className="d-flex justify-content-center align-items-center h-100">
+      <Card className="profile-card p-3 mt-5 shadow-lg">
+        <Card.Body>
+          <h2 className="text-center mb-4">Perfil de autor - <b>{profileData.username || '-'}</b></h2>
+          <Form>
+            <Row className="mb-3">
+              <Col sm={6}>
+                 <Form.Group as={Row} className='field-box'>
+                  <Form.Label column sm={4}>Nombre:</Form.Label>
+                  <Col sm={8} className='p-0'>
+                      {editing ? 
+                          <Form.Control type="text" name="fullname" value={profileData.fullname || ''} onChange={handleInputChange}/> :
+                          <div >{profileData.fullname || '-'}</div>
+                      }
+                  </Col>
+                </Form.Group>
+              </Col>
+              <Col sm={6}>
+                   <Form.Group as={Row} className='field-box onlyread-field'>
+                    <Form.Label column sm={4}>Usuario:</Form.Label>
+                    <Col sm={8} className='p-0'>
+                        {editing ?
+                            <Form.Control className='ps-1' readOnly plaintext value={profileData.username} /> :
+                            <div >{profileData.username || '-'}</div>
+                        }
+                    </Col>
+                  </Form.Group>
+              </Col>
+            </Row>
+            <Row className="mb-3">
+              <Col sm={6}>
+                   <Form.Group as={Row} className='field-box'>
+                    <Form.Label column sm={4}>Email:</Form.Label>
+                    <Col sm={8} className='p-0'>
+                        {editing ? 
+                            <Form.Control type="email" name="email" value={profileData.email || ''} onChange={handleInputChange}/> :
+                            <div >{profileData.email || '-'}</div>
+                        }
+                    </Col>
+                  </Form.Group>
+              </Col>
+              <Col sm={6}>
+                   <Form.Group as={Row} className='field-box'>
+                      <Form.Label column sm={4}>Teléfono:</Form.Label>
+                      <Col sm={8} className='p-0'>
+                          {editing ? 
+                              <Form.Control type="tel" name="phonenumber" value={profileData.phonenumber || ''} onChange={handleInputChange}/> :
+                              <div >{profileData.phonenumber || '-'}</div>
+                          }
+                      </Col>
+                  </Form.Group>
+              </Col>
+            </Row>
+            <Row className="mb-3">
+              <Col>
+                <Form.Group as={Row} className='field-box'>
+                    <Form.Label column sm={4}>Intereses:</Form.Label>
+                    <Col sm={8} className='p-0'>
+                    {editing ? 
+                        <TagsInput tags={intereses} setTags={setIntereses} persPlaceholder="áreas de intéres" /> :
+                        <div >{intereses.length > 0 ? intereses.join(', ') : '-'}</div>
+                    }
+                    </Col>
+                </Form.Group>
+              </Col>
+            </Row>
+            <Row className="mb-3">
+              <Col>
+                <Form.Group as={Row} className='field-box onlyread-field'>
+                  <Form.Label column sm={4}>Fecha de registro:</Form.Label>
+                  <Col sm={8} className='p-0'>
+                      {editing ?
+                          <Form.Control className='ps-1' readOnly plaintext value={profileData.registration_date} /> :
+                          <div >{profileData.registration_date || '-'}</div>
+                      }
+                  </Col>
+                </Form.Group>
+              </Col>
+            </Row>
+            <Row className="justify-content-between">
+              <Col sm="auto">
+                  <Button variant="primary" onClick={editing ? handleSaveClick : handleEditClick}>
+                  {editing ? 'Guardar' : 'Editar perfil'}
+                  </Button>
+              </Col>
+              {editing && (
+                  <Col sm="auto">
+                  <Button variant="secondary" onClick={handleEditCancel}>Cancelar</Button>
+                  </Col>
+              )}
+              {profileData.is_bi && !editing && (
+                  <Col sm="auto">
+                  <Button variant="secondary" onClick={handleChangeRole}>Pasar a revisor</Button>
+                  </Col>
+              )}
+            </Row>
+          </Form>
+        </Card.Body>
+      </Card>
+    </Container>
+    );
+  }
+  
+
+export default AuthorProfile;
+
+
+/* 
+return (
     <>
     <Container className="d-flex justify-content-center align-items-center h-100">
       <Card style={{ width: '30rem' }} className="p-3 mt-5">
@@ -122,19 +237,20 @@ function AuthorProfile() {
               <Card.Title>
                   Nombre completo:
                   {editing ? 
-                          <Form.Control readOnly={!editing} type="text" name="fullname" value={profileData.fullname || ''} onChange={handleInputChange}/> :
-                          `${profileData.fullname}`
+                           <Form.Control readOnly={!editing} type="text" name="fullname" value={profileData.fullname || ''} onChange={handleInputChange}/> :
+                          ` ${profileData.fullname}`
                   }
               </Card.Title>
               <Card.Subtitle className="mb-2 text-muted">
                   Usuario:
                   {editing ?
-                        <Form.Control readOnly style={{backgroundColor:'#f1f1f1', border: '1px solid #888'}} plaintext value={profileData.username} /> :
-                          `${profileData.username}`
+                        <Form.Control className='ps-1' readOnly style={{backgroundColor:'#f1f1f1', border: '1px solid #888'}} plaintext value={profileData.username} /> :
+                          ` ${profileData.username}`
                     }
               </Card.Subtitle>
 
-            <ListGroup.Item className="p-2">                  Email:
+            <ListGroup.Item className="p-2">
+              Email:
                 {editing ? 
                   <Form.Control readOnly={!editing} type="email" name="email" value={profileData.email || ''} onChange={handleInputChange}/> :
                   ` ${profileData.email}`
@@ -154,14 +270,15 @@ function AuthorProfile() {
                   <TagsInput
                     tags={intereses}
                     setTags={setIntereses}
+                    persPlaceholder="áreas de intéres"
                   /> :
-                  ` ${intereses.join(', ')}`
+                  ` ${intereses.length > 0 ? intereses.join(', ') : '-'}`
                 }
               </ListGroup.Item>
               <ListGroup.Item className="p-2">
               Fecha de registro:
                   {editing ?
-                  <Form.Control readOnly style={{backgroundColor:'#f1f1f1', border: '1px solid #888'}} plaintext value={profileData.registration_date} /> : 
+                  <Form.Control  className='ps-1' readOnly style={{backgroundColor:'#f1f1f1', border: '1px solid #888'}} plaintext value={profileData.registration_date} /> : 
                   ` ${profileData.registration_date}`}
                   </ListGroup.Item>
           </ListGroup>
@@ -171,6 +288,9 @@ function AuthorProfile() {
                     {editing ? 'Guardar' : 'Editar perfil'}
                 </Button>
             </Col>
+            {editing && (<Col sm="auto">
+                <Button variant="primary" onClick={handleEditCancel}>Cancelar</Button>
+            </Col>)}
             {profileData.is_bi && !editing && (
                 <Col sm="auto">
                     <Button variant="secondary" onClick={handleChangeRole}>Pasar a revisor</Button>
@@ -184,4 +304,6 @@ function AuthorProfile() {
   );
 }
 
-export default AuthorProfile;
+
+
+*/

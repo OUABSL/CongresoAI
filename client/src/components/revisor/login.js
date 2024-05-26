@@ -45,16 +45,20 @@ const LoginRevisor = () => {
         )
       ]);
 
+      const result = await response.json();
+
+
       if (response.status === 200) {
-        const result = await response.json();
         setSessionToken(result.access_token);
         setUsername(usernameInput);
         setRole("reviewer");
 
         setAlert({ show: true, message: "Login Exitoso", variant: "success" });
         navigate(`/portal-reviewer/profile/${usernameInput}`, { replace: true });
+      } else if(response.status === 404){
+        setAlert({ show: true, message: "No existe el usuario", variant: "danger" });
       } else {
-        setAlert({ show: true, message: "Error en el Login", variant: "danger" });
+        setAlert({ show: true, message: "Usuario o contraseña incorrectos", variant: "danger" });
       }
     } catch (error) {
       setAlert({ show: true, message: error.message, variant: "danger" });

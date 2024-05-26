@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Container, Alert} from 'react-bootstrap';
+import { Table, Container, Alert, Pagination} from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { useContext } from "react";
 import AuthContext from "../../context/context";
@@ -15,11 +15,25 @@ function ShowAssignedArticles() {
   const {setAlert} = useContext(AlertContext)
   const [first, setFirst] = useState(false);
   const [articles, setArticles] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [articlesPerPage] = useState(5);
+  const requiredFields = ['title', 'description', 'submission_date', 'last_modified', 'submit_number', 'review_result', 'processing_state'];
+
   const navigate = useNavigate();
 
   useEffect(() => {
     document.title = `Articulos asignados - ${username}`;
   }, [username]);
+
+  const indexOfLastPost = currentPage * articlesPerPage;
+  const indexOfFirstPost = indexOfLastPost - articlesPerPage;
+  const currentArticles = Array.isArray(articles) && articles.length > 0 ? articles.slice(indexOfFirstPost, indexOfLastPost) : [];
+
+  const paginate = (currentPage) => setCurrentPage(currentPage);
+  const pageNumbers = [];
+  for (let i = 1; i <= Math.ceil(articles.length / articlesPerPage); i++) {
+    pageNumbers.push(i);
+  }
 
   useEffect(() => {
     const fetchArticles = async () => {
@@ -30,13 +44,15 @@ function ShowAssignedArticles() {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${sessionToken}`,
         },
-      })
+      });
+
+      const data = await response.json();
+
 
       if(response.status === 401) {
         logout();
         return;
       }
-      const data = await response.json();
       setArticles(data);
       setFirst(true);
 
@@ -58,9 +74,9 @@ function ShowAssignedArticles() {
   else if (!articles.length) {
     return (
     <>
-        <div className="d-flex justify-content-center align-items-center vh-100">
+      <Container className="my-5 d-flex justify-content-center align-items-center">
         <Alert variant="warning">No existe ningún artículo asignado</Alert>
-      </div>
+      </Container>
     </>
     );
   }
@@ -76,18 +92,21 @@ function ShowAssignedArticles() {
             <th>Descripción</th>
             <th>Fecha de Entrega</th>
             <th>Última modificación</th>
+            <th>Número de entrega</th>
             <th>Estado de revisión</th>
             <th>Acceder al artículo</th>
           </tr>
         </thead>
         <tbody>
-        {articles.filter(article => article.description).map((article, index) => (
-          <tr key={index}>
+        {currentArticles.length > 0 && currentArticles.filter(article =>
+            requiredFields.every(field => article.hasOwnProperty(field) && article[field])
+          ).map((article, index) => (          <tr key={index}>
             <td>{index + 1}</td>
             <td>{article.title}</td>
             <td>{article.description}</td>
             <td>{article.submission_date}</td>
             <td>{article.last_modified}</td>
+            <td>{article.submit_number}</td>
             <td>{article.review_result}</td>
             <td className='open-article'>
               {article.processing_state === "Done" ?
@@ -111,6 +130,13 @@ function ShowAssignedArticles() {
           ))}
         </tbody>
       </Table>
+      <Pagination className='justify-content-center'>
+        {pageNumbers.map(num => (
+          <Pagination.Item key={num} active={num === currentPage} onClick={() => paginate(num)}>
+            {num}
+          </Pagination.Item>
+          ))}
+      </Pagination>
     </Container>
   );
 }

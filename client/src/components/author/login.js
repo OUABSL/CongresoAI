@@ -48,8 +48,10 @@ const LoginAuthor = () => {
         
         setAlert({ show: true, message: "Login Exitoso", variant: "success" });
         navigate(`/portal-author/profile/${usernameInput}`);
+      } else if(response.status === 404){
+        setAlert({ show: true, message: "No existe el usuario", variant: "danger" });
       } else {
-        setAlert({ show: true, message: "Error en el Login", variant: "danger" });
+        setAlert({ show: true, message: "Usuario o contraseña incorrectos", variant: "danger" });
       }
     } catch (error) {
       setAlert({ show: true, message: error.message, variant: "danger" });

@@ -14,11 +14,11 @@ class ProcessingState(BaseField):
 
 
 class ReviewResult(BaseField):
-    STATES = ("Pending Review", "Approved", "Rejected", "Pending Improvement")
+    STATES = ("Pending Review", "Approved", "Rejected", "Pending Improvement", "None")
 
     def validate(self, value):
         if value not in self.STATES:
-            raise ValidationError('Invalid Processing State')
+            raise ValidationError('MongoEng: Invalid review´s state')
 
 class ScientificArticle(Document):
     meta = {'alias': 'default',
@@ -43,7 +43,9 @@ class ScientificArticle(Document):
     sorted_backup_assignment = ListField()
     review = DictField()
     review_result = ReviewResult(default="Pending Review")
-    is_resubmited = BooleanField()
+    old_review_result = ReviewResult(default="None")
+    is_resubmited = BooleanField(default=False)
+    submit_number = IntField(default=1)
     last_modified = DateTimeField(default=None)
     latex_project_id = ObjectIdField()
     submitted_pdf_id = ObjectIdField()
@@ -56,15 +58,17 @@ class ScientificArticle(Document):
         if latex_project:
             self.save_files(submitted_pdf=latex_project)
 
-    def update_properties(self,latex_project_id = None, submitted_pdf_id = None,  title: str = None, content: str = None, sections_orden:list = None, key_words: List[str] = None, summary: str = None, evaluation: str = None, reviewer: str = None,sorted_backup_assignment: List[tuple] = None, processing_state: bool = None, improvements:str = None, is_resubmited:bool=None):
-        if title:
-            self.title = title
+    def update_properties(self, description: str=None, key_words: List[str]=None, processing_state: str=None, content: dict=None, sections_orden:List[str]=None, summary: dict=None, evaluation: dict=None, reviewer: str=None, sorted_backup_assignment: list=None, review: dict=None, review_result: str=None, old_review_result: str=None, is_resubmited: bool=None, submit_number: int=None, latex_project_id: ObjectId=None, submitted_pdf_id: ObjectId=None, improvements: str=None):
+        if description:
+            self.description = description
+        if key_words:
+            self.key_words = key_words
+        if processing_state:
+            self.processing_state = processing_state
         if content:
             self.content = content
         if sections_orden:
             self.sections_orden = sections_orden
-        if key_words:
-            self.key_words = key_words
         if summary:
             self.summary = summary
         if evaluation:
@@ -73,16 +77,23 @@ class ScientificArticle(Document):
             self.reviewer = reviewer
         if sorted_backup_assignment:
             self.sorted_backup_assignment = sorted_backup_assignment
-        if processing_state is not None:
-            self.processing_state = processing_state
+        if review:
+            self.review = review
+        if review_result:
+            self.review_result = review_result
+        if old_review_result:
+            self.old_review_result = old_review_result
+        if is_resubmited:
+            self.is_resubmited = is_resubmited
+        if submit_number:
+            self.submit_number += 1
         if latex_project_id:
             self.latex_project_id = latex_project_id
         if submitted_pdf_id:
             self.submitted_pdf_id = submitted_pdf_id
         if improvements:
             self.improvements = improvements
-        if is_resubmited:
-            self.is_resubmited = is_resubmited
+        
         self.last_modified = datetime.now()
         self.save()
 
@@ -131,6 +142,7 @@ class ScientificArticle(Document):
             'description': self.description,
             'submission_id':self.submission_id,
             'submission_date': self.submission_date.strftime('%Y-%m-%d %H:%M:%S'),
+            'submit_number':self.submit_number,
             'keywords': self.key_words,
         }
 

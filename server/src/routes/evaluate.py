@@ -40,6 +40,23 @@ def delete_temp_dir(dest_path):
 
 
 
+"""
+Función para preparar un artículo científico para ser enviado en formato json, 
+se eliminan las propiedades innecearias para la petición
+"""
+def serialize_article(article):
+    if "_id" in article:
+        article.pop("_id", None) 
+    if "content" in article:
+        article.pop("content", None)
+    if "latex_project_id" in article and article["latex_project_id"]:
+        article['latex_project_id'] = str(article['latex_project_id'])
+    if "submitted_pdf_id" in article and article["submitted_pdf_id"]:
+        article['submitted_pdf_id'] = str(article['submitted_pdf_id'])
+    if "sorted_backup_assignment" in article:
+        article.pop("sorted_backup_assignment", None)
+    return article
+
 # Obtener los artículos asignados a un revisor en particular
 @evaluate_bp.route(API + '/evaluate/<reviewer>', methods = ['GET'])
 @jwt_required()
@@ -52,7 +69,8 @@ def show_articles(reviewer):
                 article["_id"] = str(article["_id"])
                 submitted_pdf_id = article.get('submitted_pdf_id')
                 if isinstance(submitted_pdf_id, ObjectId):
-                    result.append({
+                    result.append(
+                        {
                         "title": article.get("title"),
                         "description": article.get("description"),
                         "pdf": "/file/" + str(submitted_pdf_id),
@@ -60,8 +78,11 @@ def show_articles(reviewer):
                         "processing_state": article.get('processing_state'),
                         "submission_date":article.get("submission_date"),
                         "last_modified":article.get("last_modified"),
-                        "review_result":article.get("review_result", "Pending Review")
-                    })
+                        "review_result":article.get("review_result", "Pending Review"),
+                        "submit_number":article.get("submit_number", 1),
+                        "is_resubmited":article.get("is_resubmited", False)
+                    }
+                    )
         return make_response(jsonify(result), 200)
     else:
         return make_response(jsonify({"success":False,  "message": "No articles found for this reviewer."}), 404)
@@ -85,11 +106,8 @@ def serve_zip(file_id):
 def show_article(reviewer, article_title):
     article = DB.find_one({"reviewer":str(reviewer), "title":article_title})
     if article:
-        article.pop("_id", None)
-        article.pop("content", None)
-        article['latex_project_id'] = str(article.get('latex_project_id'))
-        article['submitted_pdf_id'] = str(article.get('submitted_pdf_id'))
-        return make_response(jsonify(article), 200)
+        serialized_articles = serialize_article(article)
+        return make_response(jsonify(serialized_articles), 200)
     else:
         return make_response(jsonify({"success":False,  "message": "No articles found for this reviewer."}), 404)
     
@@ -201,39 +219,39 @@ def regenerate_pre_evaluation_flow(article:ScientificArticle, tasks:dict):
             data_handler = DataHandler(article, dest_path=dest_path)
             try:
                 data_handler.run()
+            except Exception as e:
+                logging.error(f"Error during rungging DataHandler - evaluate.py-232:  {e}")
             finally:
                 delete_temp_dir(dest_path)
 
         if "summary" in tasks:
             summary_instance = ArticleSummarizer(mongo, prompt_summary, llamus_key, article)
-            summary_instance.chat_model = tasks["summary"]
+            #summary_instance.chat_model = tasks["summary"]
             summary = summary_instance.run()
 
         if "initialevaluation" in tasks:
             evaluation_instance = PreEvaluation(mongo, prompt_eval, llamus_key, article)
-            evaluation_instance.chat_model = tasks["initialevaluation"]
+            #evaluation_instance.chat_model = tasks["initialevaluation"]
             pre_evaluation = evaluation_instance.run()
 
-        error = summary.get('error', False) or pre_evaluation.get('error', False)
-
-        if summary!={} and not summary.get('error', False):
+        error = ("Error" in summary.values()) or ("Error" in pre_evaluation.values())
+        if summary and not "Error" in summary.values():
             article.update_properties(summary=summary)
 
-        if pre_evaluation!={} and not pre_evaluation.get('error', False):
+        if pre_evaluation and not "Error" in pre_evaluation.values():
             article.update_properties(evaluation=pre_evaluation)
 
-        if(error):
-            logging.error("Error en el procesamiento del artículo")
+        if error:
             article.update_properties(processing_state="Fail")
         else:
             article.update_properties(processing_state="Done")
-            logging.info("La regeneración de la pre-evaluación se realizó con éxito para el artículo: %s", article.title)
+            logging.info(f"La regeneración de la pre-evaluación se realizó con éxito para el artículo:  {article.title}")
 
         article.save()
 
 
     except Exception as e:
-        logging.error(f"Error during regeneration of pre-evaluation flow: {e}")
+        logging.error(f"Error during regeneration of pre-evaluation flow - evaluate.py-252:  {e}")
         # Actualizar el estado de procesamiento en caso de error
         article.update_properties(processing_state="Fail")
 
@@ -243,7 +261,8 @@ def regenerate_pre_evaluation_flow(article:ScientificArticle, tasks:dict):
 @evaluate_bp.route(API + '/evaluate/reevaluate/<reviewer>/<article_title>', methods=['PUT'])
 @jwt_required()
 def regenerate_pre_evaluation(reviewer, article_title):
-    tasks = request.json  # get data from JSON in the request body
+    tasks = request.json 
+    #Recoger el articulo en formato JSON
     article = fetch_article(article_title, reviewer)
     
     if article is None:
@@ -254,7 +273,7 @@ def regenerate_pre_evaluation(reviewer, article_title):
     threading.Thread(target=regenerate_pre_evaluation_flow, args=(article, tasks)).start()
     return make_response(jsonify({"success":True,  "message": "Reevaluation started successfully."}), 200)
 
-# Reasigna un artículo a un nuevo revisor
+# asigna un nuevo revisor a un artículo
 @evaluate_bp.route(API + '/evaluate/reassignate/<reviewer>/<article_title>', methods=['PUT'])
 @jwt_required()
 def reassignate_reviewer(reviewer, article_title):
@@ -269,7 +288,7 @@ def reassignate_reviewer(reviewer, article_title):
             {"$set": {"reviewer": new_reviewer}}
         )
     else:
-        return make_response(jsonify({"success":False,  "message": "There is no disponible reviewer.Please contact the adminastator!"}), 404)
+        return make_response(jsonify({"success":False,  "message": "There is no disponible reviewer.Please contact the adminastator!"}), 406)
 
     return make_response(jsonify({"success":True,  "message": f"Re-Assignement done successfully. The new assigned reviewer is {new_reviewer}."}), 200)
 

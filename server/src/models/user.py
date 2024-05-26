@@ -29,7 +29,7 @@ class User(Document):
 
 
 class Reviewer(User):
-    ORCID = StringField(required=True, unique=True, max_length=19)
+    ORCID = StringField(required=True, unique=True, max_length=20)
     knowledges = ListField(StringField(), default=list)
 
     @property

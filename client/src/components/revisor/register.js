@@ -29,7 +29,7 @@ const SignUpRevisor = () => {
     confirmPassword: '',
     fullname: '',
     phonenumber: '',
-    knowledges: '',
+    knowledges: [],
     is_bi:false,
     token:token
   }
@@ -95,8 +95,15 @@ const handleORCIDChange = (e) => {
         return;
       }
     }
-    let errors = validateForm(state["email"], state["ORCID"], state["phonenumber"], state["password"], state["confirmPassword"]);
 
+    let errors = validateForm({ 
+      email: state.email, 
+      orcid: state.ORCID,
+      phone: state.phonenumber, 
+      password: state.password, 
+      confirmPassword: state.confirmPassword 
+    });
+    
     if (errors.length > 0) {
       setLoading(false);
         setAlert({
@@ -119,26 +126,44 @@ const handleORCIDChange = (e) => {
       },
       body: JSON.stringify(body)
     })
-    .then(response => response.json())
-    .then(data => {
+    .then(response => {
+      // guarda el status en, por ejemplo, status
+      // convierte el cuerpo de la respuesta a objeto JavaScript
+      const status = response.status;
+      return response.json().then(data => ({ status, data }));
+    })
+    .then(({ status, data }) => {
       console.log(JSON.stringify(data.message));
-      if (data.success) {
+      if (status ===201) {
         setAlert({
           show: true,
           message: "Registro correcto",
           variant: "success"
         });
-        navigate('/portal-reviewer/login');
-      } else {
-        setLoading(false);
+        return navigate('/portal-reviewer/login');
+      } else if(status === 400){
         setAlert({
-          show: true,
-          message: `Registro Incorrecto: ${data.message}`,
+          show: true, 
+          message: "Nombre de usuario ya existe!", 
+          variant: "danger"
+        });
+      }
+      else if(status===401){
+        setAlert({
+          show: true, 
+          message: "Registro no autorizado! ORCID incorrecto.", 
           variant: "danger"
         });
       }
     })
-    .catch((error) => console.log(JSON.stringify(error)))
+    .catch((error) => {
+      console.log(JSON.stringify(error));
+      setAlert({
+        show: true, 
+        message: "Ha sucecido error en el registro! Intentálo de nuevo más tarde.", 
+        variant: "danger"
+      });
+    })
     .finally(() => {
       setLoading(false);
     });

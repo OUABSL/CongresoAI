@@ -1,7 +1,7 @@
-export const validateForm = (email, orcid , phone, password, confirmPassword) => {
+export const validateForm = ({email="", orcid="" , phone="", password="", confirmPassword=""}) => {
   let errors = [];
 
-  console.log("Validar: ", email, orcid, phone, password, confirmPassword);
+  console.log("Validar:", { email, orcid, phone, password, confirmPassword });
 
 
   if (email && !validateEmail(email)) {

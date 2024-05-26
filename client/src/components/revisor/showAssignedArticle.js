@@ -5,6 +5,7 @@ import AuthContext from "../../context/context";
 import { AlertContext } from '../../context/alertProvider';
 import RegenerationModal from './regeneratePreEvaluation'
 import ReassignateReviewButton from './reAssignateReviewer';
+import "../estilos/showArticle.css";
 
 // Constant criteria and scale
 const CRITERIA = ['Motivation', 'Novelty', 'Clarity', 'Grammar and Style', 'Typos and Errors'];
@@ -20,6 +21,7 @@ const DownloadArticle = ({ pdf, zip, title }) => {
     const handleDownload = async (fileUrl, filename, type) => {
         try {
             const response = await fetch(`/api/v1${fileUrl}`);
+
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
@@ -38,7 +40,7 @@ const DownloadArticle = ({ pdf, zip, title }) => {
     };
   
     return (
-        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+        <div className="d-flex justify-content-end mt-1">
             <DropdownButton id="dropdown-button" title="Descargar">
                 <Dropdown.Item onClick={() => handleDownload(pdf, title, 'application/pdf')}>Descargar PDF</Dropdown.Item>
                 <Dropdown.Item onClick={() => handleDownload(zip, title, 'application/zip')}>Descargar ZIP</Dropdown.Item>
@@ -134,7 +136,7 @@ const SectionReview = ({ reviewData, sectionName, handleSectionUpdate, handleEdi
                             </Col>
                         </Row>
                     ))}
-                    <Form.Group controlId="reviewComment" className="mt-3">
+                    <Form.Group controlId="reviewComment" className="mt-3 ">
                         <Form.Label>Comentario del Revisor</Form.Label>
                         <Form.Control
                             as="textarea"
@@ -154,7 +156,7 @@ const SectionReview = ({ reviewData, sectionName, handleSectionUpdate, handleEdi
             ) : (
                 <>
                     <Card className="mt-3">
-                        <Card.Header>Resumen de la revisión anterior:</Card.Header>
+                        <Card.Header className="card-cabecera">Resumen de la revisión anterior:</Card.Header>
                         <Card.Body>
                             {/* Mostrar la última revisión */}
                             {previousReviews && previousReviews[sectionName] && (
@@ -219,11 +221,11 @@ const DisplaySection = ({ sectionName, summarySection=null, preEvalSection=null,
         <Accordion.Item eventKey={sectionName}>
             <Accordion.Header>{sectionName}</Accordion.Header>
             <Accordion.Body>
-                <h5>Resumen</h5>
+                <h5 className='text-center text-primary'><b>Resumen</b></h5>
                 <p>{summarySection}</p>
-                <h5>PreEvaluación</h5>
+                <h5 className='text-center text-primary'><b>Evaluación inicial</b></h5>
                 <p dangerouslySetInnerHTML={{ __html: formattedPreEvalSection }} />
-                <h5>Revisión</h5>
+                <h5 className='text-center text-primary'><b>Revisión</b></h5>
                 <SectionReview
                     reviewData={reviewSection}
                     sectionName={sectionName}
@@ -293,11 +295,12 @@ function ShowAssignedArticle() {
         } catch (error) {
             // Manejar errores de red y respuestas no esperadas
             // Deberías establecer un estado para mostrar el mensaje de error
+            setAlert({ show: true, variant: 'danger', message: 'No se pudo cargar el manuscrito! Intentálo más tarde.' });
             console.log("There was an error!", error);
         }
     }
     fetchArticle();
-}, [username, article_title, sessionToken, logout]);
+}, [username, article_title, sessionToken, logout, setAlert]);
 
 
     useEffect(()=> {
@@ -307,11 +310,19 @@ function ShowAssignedArticle() {
         }
     }, [article, activeKey]);
 
-    const handleStateSelect = (state) => {
-        const index = STATES_REVIEW.indexOf(state);
-        const enState = STATES_REVIEW_API[index] || 'Error: Pending Review';
-        setResultReview(enState);
-    };
+
+    const translateReviewStatus = (status, lang) => {
+        if(lang==="EN"){
+            const index = STATES_REVIEW.indexOf(status);
+            const enState = STATES_REVIEW_API[index] || 'Error: Pending Review';
+            setResultReview(enState);
+        } else if(lang==="ES"){
+            const index = STATES_REVIEW_API.findIndex(s => s === status);
+            return STATES_REVIEW[index] || status; // Fallback to the original status if not found
+        }
+        else return status;
+        
+      };
 
 
     const addReview = async () => {
@@ -334,29 +345,26 @@ function ShowAssignedArticle() {
         window.scrollTo(0, 0);
 
         if (data.success) {
-            setAlert({ visible: true, variant: 'success', message: 'Revisión guardada con éxito.' });
+            setAlert({ show: true, variant: 'success', message: 'Revisión guardada con éxito.' });
         } else {
-            setAlert({ visible: true, variant: 'danger', message: 'No se pudo guardar la revisión. Inténtalo de nuevo.' });
+            setAlert({ show: true, variant: 'danger', message: 'No se pudo guardar la revisión. Inténtalo de nuevo.' });
         }
-
-        setTimeout(() => setAlert({ visible: false, variant: '', message: '' }), 1200)
-
 
     };
 
     return (
         <>
             <Row className="justify-content-between mb-4">
-                <Col xs="auto">
+                <Col xs="auto" className='mt-1'>
                     <Button className="btn bg-secondary" onClick={goBack}>Volver Atrás</Button>
                 </Col>
-                <Col xs="auto">
+                <Col xs="auto" className='mt-1'>
                     <RegenerationModal username={username} articleTitle={article_title} />
                 </Col>
-                <Col xs="auto">
-                    <ReassignateReviewButton username={username} articleTitle={article_title} setAlert={setAlert} />
+                <Col xs="auto" className='mt-1'>
+                    <ReassignateReviewButton username={username} articleTitle={article_title} />
                 </Col>
-                <Col xs="auto">
+                <Col xs="auto" className='mt-1'>
                     <DownloadArticle
                         pdf={`/file/${article.submitted_pdf_id}`}
                         title={article.title}
@@ -364,11 +372,13 @@ function ShowAssignedArticle() {
                 </Col>
             </Row>
             <Row className='mb-5 px-3'>
-                <Card style={{ width: '100%' }}>
+                <Card className='tarjeta'>
                     <Card.Body>
-                        {article && article.title && <Card.Title>{article.title}</Card.Title>}
-                        {article && article.description && <Card.Text>{article.description}</Card.Text>}
-                        {article && resultReview !== "" && <Card.Text>{resultReview}</Card.Text>}
+                        {article && article.title && <Card.Title className='text-center h2'><h2>{article.title}</h2></Card.Title>}
+                        {article && article.description && <Card.Text><b>Descripción: </b>{article.description}</Card.Text>}
+                        {article && article.submit_number && <Card.Text><b>Número de entrega: </b>{article.submit_number}</Card.Text>}
+                        {article && article.is_resubmited === true && <Card.Text><b>Resultado de revisión anterior: </b>{translateReviewStatus(article.old_review_result, "ES")}</Card.Text>}
+                        {article && resultReview !== "" && <Card.Text><b>Estado de revisión: </b>{translateReviewStatus(resultReview, "ES")}</Card.Text>}
                         {article && article.sections_orden && (
                             <Accordion activeKey={activeKey} onSelect={setActiveKey}>
                                 {article.sections_orden.map((sectionName) => (
@@ -403,7 +413,7 @@ function ShowAssignedArticle() {
                                         id={`radio-${state}`}
                                         label={state}
                                         value={state}
-                                        onChange={e => handleStateSelect(e.target.value)}
+                                        onChange={e => translateReviewStatus(e.target.value, "EN")}
                                     />
                                 ))}
                             </Modal.Body>

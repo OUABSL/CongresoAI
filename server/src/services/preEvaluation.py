@@ -6,7 +6,7 @@ from src.models.tabajo import ScientificArticle
 
 
 
-SYSTEM_PROMPT_BASE = ("""You are an expert tutor specializing in reviewing and evaluating scientific research articles within the technology domain. Your focus lies on the '{section_name}' section of a manuscript titled "{title}"
+SYSTEM_PROMPT_BASE = ("""You are an expert tutor specializing in reviewing and evaluating scientific manuscripts within the technology domain. Your focus lies on the '{section_name}' section of a manuscript titled "{title}" that have as key words: {key_words}
                       Process the provided {section_name} section, evaluate it according to the following criteria and respecting the defined evaluation format:
 
                       Evaluation Levels:                 
@@ -31,6 +31,8 @@ SYSTEM_PROMPT_BASE = ("""You are an expert tutor specializing in reviewing and e
                       - Typos and Errors:                 
                       Accuracy: Is the section free of typos and other errors? (Provide specific examples from the text).
                       Improvement: Suggest specific corrections for typos and other errors.
+
+                      
                 
                       Evaluation format: 
                       Evaluation Criteria: Evaluation Level, Evaluation justification and exemples from the evaluated section.
@@ -41,9 +43,10 @@ SYSTEM_PROMPT_BASE = ("""You are an expert tutor specializing in reviewing and e
 
 
 
-SYSTEM_PROMPT_RESUBMIT = ("""You are an expert tutor specializing in reviewing and evaluating scientific research articles within the technology domain. Your focus lies on the '{section_name}' section of a manuscript titled "{title}".
-
-                    Evaluate it according to the following criteria and respecting the defined evaluation format:
+SYSTEM_PROMPT_RESUBMIT = ("""You are an expert tutor specializing in reviewing and evaluating scientific research articles within the technology domain. Your focus lies on the '{section_name}' section of a manuscript titled "{title} that have as key words: {key_words}
+                    
+                    
+                          Evaluate it according to the following criteria and respecting the defined evaluation format:
                             
                       Evaluation Levels:                 
                       - YES: The criterion is fully met in the provided section.
@@ -67,11 +70,13 @@ SYSTEM_PROMPT_RESUBMIT = ("""You are an expert tutor specializing in reviewing a
                       - Typos and Errors:                 
                       Accuracy: Is the section free of typos and other errors? (Provide specific examples from the text).
                       Improvement: Suggest specific corrections for typos and other errors.
+                          
+                     This section is a resubmission of the previous version. Considering the previous review made by the expert reviewer of the section: {review_section}, ensure that improvements have been made as per the reviewer's comments: {review_comments}.
+
                 
                       Evaluation format: 
-                      Evaluation Criteria: Evaluation Level, Evaluation justification and exemples from the evaluated section.
+                      Evaluation Criteria: Evaluation Level, If the new section version Evaluation justification and exemples from the evaluated section.
                       
-                      This section is a resubmission of the previous version. Considering the previous review of the section: {review_section}, ensure that improvements have been made as per the reviewer's comments: {review_comments}.
 
                 Section Text:\n
                 """
@@ -89,7 +94,7 @@ class PreEvaluation:
         self.chat_model = 'llama2:13b-chat'
         self.temperature = 0.8
         self.DB = db.db.scientific_article
-        self.SYSTEM_PROMPT_BASE = system_prompt_base
+        self.system_prompt_base = system_prompt_base
         self.article = article
         self.is_resubmited = is_resubmited
         try:
@@ -98,6 +103,7 @@ class PreEvaluation:
             logging.error('KeyError: Article contents not found')
             self.article_content = {}
 
+
     def llamus_request(self, system_prompt, user_prompt):
         headers = {
             'Content-Type': 'application/json',
@@ -105,7 +111,7 @@ class PreEvaluation:
         }
         data = {
             'stream': False,
-            'model':"llama2:7b-chat",
+            'model':self.chat_model,
             'temperature':self.temperature,
             'messages':[
                 {
@@ -124,10 +130,11 @@ class PreEvaluation:
                 logging.info(response.text)
                 return response.json()
             except json.decoder.JSONDecodeError:  # Catching JSON decode errors
-                logging.error('Failed to decode JSON. Response:', response.content)
+                logging.error(f'Failed to decode JSON. Response: {response.content}')
         else:
-            logging.error('Request failed. Status Code:', response.status_code)
-            logging.error('Response:', response.content)
+            logging.error(f'Request failed. Status Code:  {response.status_code}')
+            logging.error(f'Response: {response.content}')
+
 
     def get_article(self, query)->ScientificArticle:
         return self.DB.find_one(query)
@@ -140,20 +147,42 @@ class PreEvaluation:
         self.article = self.get_article(self.query)
         logging.info(f"\nUpdated the evaluation of {value[0]} in memory!\n")
 
+    """
+    Función para manejar el proceso de la evaluación inicial mediante peticiones a modelos de llamus.
+    1- Se recogen las variables y se limpia el error de ejecuión de un proceso anteriro
+    2- 
+    """
     def run(self):
+
         res = self.article["evaluation"]
-        content = dict(self.article['content'])
+        if 'error' in res:
+            del res['error']
+
+        content = dict(self.article['content'])      
+        key_words = ', '.join(self.article["key_words"]) if isinstance(self.article["key_words"], list) and self.article["key_words"] else str(self.article["key_words"])
+
+        #Eliminar la variable error en cado de existir
+        if res.keys():
+            self.article["evaluation"]
+        res = self.article["evaluation"]
+
+
+        if(self.is_resubmited):
+            review = dict(self.article["review"])
 
         for section_name, section_content in content.items():
-            try:  # Add try block 
+            try: 
                 if(not(self.is_resubmited)):
-                    system_prompt = self.SYSTEM_PROMPT_BASE.format(section_name=section_name, title=self.article['title'])
+                    system_prompt = self.system_prompt_base.format(section_name=section_name, title=self.article['title'], key_words = key_words)
                 else:
-                    review_section = dict(self.article["review"][section_name])
-                    review_comments = review_section["comment"]
-                    review_section.pop("comment")
-                    system_prompt = self.SYSTEM_PROMPT_BASE.format(section_name=section_name, title=self.article['title'], review_section=review_section, review_comments=review_comments)
-     
+                    if review:
+                        review_section = dict(review.get(section_name, {}))
+                        review_comments = review_section.get('comment', '')
+                        if review_comments != '':
+                            review_section.pop("comment")
+                        system_prompt = self.system_prompt_base.format(section_name=section_name, title=self.article['title'], key_words = key_words, review_section=review_section, review_comments=review_comments)
+                    else:
+                        logging.error("No se ha recibido la revisión del articulo")
                 section_evaluation = self.llamus_request(system_prompt, section_content)
 
                 
@@ -161,15 +190,18 @@ class PreEvaluation:
                     tmp = dict(section_evaluation)
                     choices = tmp.get('choices', [])
                     if choices and isinstance(choices, list):
-                        msg = choices[0].get('message', {})
-                        response = msg.get('content', '')
+                        try:
+                            msg = choices[0].get('message', {})
+                            response = msg.get('content', '')
+
+                        except IndexError:
+                            logging.error(f"No choices returned in response for section_name: {section_name}")      
+                            continue               
                     else:
                         response = ''
                     res[section_name] = response
             except Exception as e:
-                logging.error(f"error evaluacion {section_name}:\n {e}")
-                logging.error(f"An error occurred while processing the '{section_name}' section \n{e}")
-                res[section_name] = ""  # Set the value to an empty string
-                res['error'] = True
-                continue  # Continue to the next iteration of the loop
+                logging.error(f"An error occurred while reviewing the '{section_name}' section \n{e}")
+                res[section_name] = "Error"  # Set the value to an empty string
+                continue 
         return res

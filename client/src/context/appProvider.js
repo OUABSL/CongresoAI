@@ -3,8 +3,6 @@ import AuthContext from "./context";
 import { useNavigate } from "react-router-dom";
 
 
-const INACTIVITY_TIMEOUT = 1000 * 60 * 20; // 20 minutes in milliseconds
-
 
 const useAuth = () => {
   return useContext(AuthContext);
@@ -23,7 +21,6 @@ const AppProvider = ({ children }) => {
   const [username, setUsername] = useState(
     localStorage.getItem("username") || ""
   );
-  const [lastActivity, setLastActivity] = useState(Date.now());
 
   const navigate = useNavigate();
 
@@ -104,40 +101,6 @@ const AppProvider = ({ children }) => {
   const handleSetUsername = (newUsername) => {
     setUsername(newUsername);
   };
-
-
-  useEffect(() => {
-    const handleWindowFocus = () => {
-      setLastActivity(Date.now());
-    };
-
-    const handleUserInteraction = () => {
-      setLastActivity(Date.now());
-    };
-
-    window.addEventListener("focus", handleWindowFocus);
-    window.addEventListener("click", handleUserInteraction);
-    window.addEventListener("keydown", handleUserInteraction);
-
-    return () => {
-      window.removeEventListener("focus", handleWindowFocus);
-      window.removeEventListener("click", handleUserInteraction);
-      window.removeEventListener("keydown", handleUserInteraction);
-    };
-  }, []); // Empty dependency array to prevent infinite loops
-
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      const now = Date.now();
-      const isInactive = now - lastActivity > INACTIVITY_TIMEOUT;
-
-      if (isInactive) {
-        handleLogout();
-      }
-    }, INACTIVITY_TIMEOUT);
-
-    return () => clearTimeout(timeout);
-  }, [lastActivity, handleLogout]); 
 
   return (
     <AuthContext.Provider

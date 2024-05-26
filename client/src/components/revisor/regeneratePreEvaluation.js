@@ -29,7 +29,7 @@ function RegenerationModal({ username, articleTitle }) {
   const [selectedTasks, setSelectedTasks] = useState({
   summary: { checked: false, value: defaultModel.summary },
   initialevaluation: { checked: false, value: defaultModel.initialevaluation },
-  datapreparation: { checked: false, value: defaultModel.datapreparation }
+  datapreparation: { checked: false, value: '' }
   });
 
 
@@ -81,6 +81,7 @@ function RegenerationModal({ username, articleTitle }) {
         'Authorization': `Bearer ${sessionToken}`,
       }
     });
+
     if (response.status === 401) {
       logout();
       setAlert({show: true, message: "Por favor, inicie sesión de nuevo.", variant: "info"});
@@ -141,7 +142,7 @@ return (
                       <Form.Control
                         plaintext
                         readOnly
-                        defaultValue={`No hay modelo para ${task}`}
+                        defaultValue={`Se usara el modelo por defecto: ${defaultModel[task]}`}
                       />
                     )
                   )}

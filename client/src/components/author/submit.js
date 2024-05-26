@@ -58,7 +58,7 @@ const SubmitArticle = () => {
     formData.append('username', username);
     formData.append('title', title);
     formData.append('description', description);
-    formData.append('key_words', keyWords);
+    formData.append('key_words', JSON.stringify(keyWords));
     if (isResubmit){
       formData.append('improvements', improvements);
       formData.append('review_comments', reviewComments);
@@ -82,17 +82,27 @@ const SubmitArticle = () => {
       const response = await fetch(api, requestOptions);
   
       const data = await response.json();
-      console.log("Response data:", data);
   
-      if (!response.ok) {
+      if (!data.success) {
         if(response.status === 401) {
           logout();
+          setAlert({ show: true, message: "Sesión abortafa! Por favor inicia sesión de nuuevo", variant: 'info' });  
           return;
         }
+        if(response.status === 422) {
+          setAlert({ show: true, message: "Datos no recibidos correctamente!", variant: 'danger' });  
+          return;
+        }
+        if(response.status === 400) {
+          setAlert({ show: true, message: "Título repetido! Por favor contacte con el administrador o cambia el título", variant: 'info' });  
+          return;
+        }
+        else{
         throw new Error(data.message);
+        }
       }
       else if (response.status === 201 || response.status === 200) {
-        setAlert({ show: true, message: data.message, variant: 'success' });  
+        setAlert({ show: true, message: "Entrega realizada correctamente. Comprueba tus manuscritos", variant: 'success' });  
         const url = URL.createObjectURL(file);
         setSubmitSummary(data.submit_summary);
         // Navega después de establecer el estado
@@ -112,7 +122,7 @@ const SubmitArticle = () => {
       }
     } catch (error) {
       console.error(error);
-      setAlert({ show: true, message: error.toString(), variant: 'danger' });
+      setAlert({ show: true, message: "Ha sucecido error durante la entrega! Por favor Intentálo más tarde.", variant: 'danger' });
     }
   };
 
@@ -166,7 +176,7 @@ const SubmitArticle = () => {
           <Form.Control type="file" onChange={(e) => setFile(e.target.files[0])} required className="input-submit" />
         </Form.Group>
 
-        <Button variant="primary" type="submit" className="button-class">
+        <Button variant="primary" type="submit" className="button-class mt-1">
           Submit
         </Button>
         </Form>

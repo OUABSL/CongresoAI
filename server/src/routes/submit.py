@@ -9,9 +9,10 @@ from src.services.preEvaluation import PreEvaluation
 from src.services.summary import ArticleSummarizer
 from src.services.summary import SYSTEM_PROMPT_BASE as prompt_summary
 from src.services.preEvaluation import  SYSTEM_PROMPT_BASE as prompt_eval
+from src.services.preEvaluation import  SYSTEM_PROMPT_RESUBMIT as prompt_eval_resubmit
 from src.services.reviewerAssignment import ReviewerAssignment
 import tempfile, shutil, threading, os
-import logging
+import logging, json
 from uuid import uuid4
 
 
@@ -56,24 +57,26 @@ def process_submit(article:ScientificArticle, dest_path, resubmit:bool = False):
             assignment_agent.run()
         else:
             summary_instance = ArticleSummarizer(mongo, prompt_summary,  llamus_key, article)
-            pre_evaluation_instance = PreEvaluation(mongo,  prompt_eval, llamus_key, article, resubmit)
+            pre_evaluation_instance = PreEvaluation(mongo,  prompt_eval_resubmit, llamus_key, article, resubmit)
 
 
         summary =summary_instance.run()
         pre_evaluation = pre_evaluation_instance.run()
-        error = summary.get('error', False) or pre_evaluation.get('error', False)
-        if summary and not summary.get('error', False):
+        
+        error = ("Error" in summary.values()) or ("Error" in pre_evaluation.values())
+
+        if summary and not "Error" in summary.values():
             article.update_properties(summary=summary)
 
-        if pre_evaluation and not pre_evaluation.get('error', False):
+        if pre_evaluation and not "Error" in pre_evaluation.values():
             article.update_properties(evaluation=pre_evaluation)
 
-
-        if(error):
-            logging.error("Error en el procesamiento del artículo")
+        if error:
             article.update_properties(processing_state="Fail")
         else:
             article.update_properties(processing_state="Done")
+            logging.info(f"La generación de la pre-evaluación se realizó con éxito para el artículo: {article.title}")
+
 
         article.save()
         
@@ -107,7 +110,7 @@ def submit_article():
     file_obj = request.files.get('latex_project', None)
     title = request.form.get("title", None)
     description = request.form.get("description", None)
-    key_words = request.form.get('key_words', None)
+    key_words = json.loads(request.form.get('key_words', None))
     username = get_jwt_identity()
 
     # Comprobar la existencia de todos los campos requiridos
@@ -115,9 +118,18 @@ def submit_article():
         message = "Missing required fields, {}{}".format("File is missing; " if not file_obj else "",
                                                          "Form fields are missing; " if not all([title, description, key_words, loged_in_author]) else "")
         return jsonify({'success':False, 'message': message}), 422
-    key_words = key_words.split(',')
+    
+    # Comprobar la existencia del título del artículo
+    existing_article = mongo.db.articles.find_one({'title': title})
+
+    if existing_article:
+        # Devolver con un mensaje de error si el artículo ya existe
+        return jsonify({'success': False, 'message': 'An article with this title already exists'}), 400
+
+
+    key_words = key_words
     submission_id = str(uuid4())
-    article = ScientificArticle(author = username, submission_id=submission_id ,title=title, description=description, key_words=key_words)
+    article = ScientificArticle(author = username, submission_id=submission_id ,title=title, description=description, key_words=key_words, submit_number = 1)
     article.save_files(latex_project=file_obj)
     article.save()
     threading.Thread(target=process_submit, args=(article, temp_dir)).start()
@@ -127,10 +139,13 @@ def submit_article():
     # Devolver el resumen del artículo junto con el mensaje de éxito
     return jsonify({'success':True, 'message': 'File uploaded and processing', 'submit_summary': submit_summary}), 201
 
-#Función para preparar un artículo científico para ser enviado en formato json
+"""
+Función para preparar un artículo científico para ser enviado en formato json, 
+se eliminan las propiedades innecearias para la petición
+"""
 def serialize_article(article):
     if "_id" in article:
-        article.pop("_id", None)  # Removing MongoDB's _id field which is of type ObjectId
+        article.pop("_id", None) 
     if "content" in article:
         article.pop("content", None)
     if "summary" in article:
@@ -157,7 +172,7 @@ def show_articles(author):
     articles = list(DB.find({"author":str(author)}))
     if articles:
         serialized_articles = [serialize_article(article) for article in articles]
-        return make_response(jsonify(articles), 200)
+        return make_response(jsonify(serialized_articles), 200)
     else:
         return make_response(jsonify({'success':False,"message": "No articles found for this author."}), 404)
 
@@ -197,25 +212,35 @@ def update_article(author, title):
     if not article_updated:
         return jsonify({'success':False, "message": "Article not found"}), 404
     
+    key_words = json.loads(request.form.get('key_words', None))
+    description = request.form.get('description', None)
     file_obj = request.files.get('latex_project', None)
     improvements = request.form.get('improvements', None)
     review_comments = request.form.get('review_comments', None)
     resubmit = request.form.get('resubmit', None)
 
+
     temp_dir = create_temp_dir(UPLOAD_FOLDER)
 
     # Verificar si todos los campos requeridos están presentes
-    if not all([file_obj, improvements, review_comments, resubmit]):
+    if not all([description, key_words,file_obj, improvements, review_comments, resubmit]):
         message = "Missing required fields, {}{}".format(
             "File is missing; " if not file_obj else "",
             "Form fields are missing; " if not all([
                 improvements, review_comments, resubmit]) else "")
         return jsonify({'success':False, 'message': message}), 422
+    
+    old_review_result = article_updated["review_result"]
 
     # Actualizar el artículo
-    #article_updated = ScientificArticle(**article)  
     article_updated.save_files(latex_project=file_obj)
     article_updated.update_properties(
+        key_words = key_words,
+        description = description,
+        is_resubmited = True,
+        review_result = "Pending Review",
+        submit_number = 2,
+        old_review_result = old_review_result,
         improvements=improvements,
         processing_state="On Process" #TODO: Falta mejorar la logica de resubmit
     )

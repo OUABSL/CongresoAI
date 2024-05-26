@@ -64,13 +64,14 @@ class DataHandler:
         positions = [m.start() for m in section_matcher.finditer(document_content)]
         positions.append(len(document_content))  # end position of the last section
         section_contents = {}
-        sections_orden = [None] * len(sections)
+        sections_orden = [section_name for section_name in sections if section_name != "Acknowledgements"]
         for idx, section_name in enumerate(sections):
             if  section_name !="Acknowledgements":
-                sections_orden[idx] = section_name
                 section_content = document_content[positions[idx]:positions[idx + 1]].strip()
                 #section_content = section_content[section_content.find('}') + 1:]
                 section_contents[section_name] = section_content
+        
+            
         return section_contents, sections_orden
     
     

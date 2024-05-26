@@ -1,0 +1,13 @@
+.field-box {
+    border: 1px outset #cfe2ff;
+    margin: 0px 5px;
+}
+
+.profile-card{
+    width: clamp(20rem, 100%, 50rem);
+}
+
+.onlyread-field{
+    background-color:#b9c3d3;
+    border: 1px solid #888;
+}

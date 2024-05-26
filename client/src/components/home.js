@@ -73,17 +73,17 @@ const Home = () => {
             <h2>¿Cómo puede ayudarte The AI Congress?</h2>
             <Card className="home__benefits">
               <Card.Body>
-            <p className=''>
-              Nuestro sistema utiliza la inteligencia artificial generativa para facilitar la tarea de revisión de artículos científicos minimizando el esfuerzo y el tiempo necesario para hacerlo:
-            </p>
-            <ListGroup>
-              <ListGroup.Item>Evaluación inicial del artículo por la IA generativa.</ListGroup.Item>
-              <ListGroup.Item>Resumen automático del artículo.</ListGroup.Item>
-              <ListGroup.Item>Asignación al revisor basada en las palabras claves del artículo</ListGroup.Item>
-              <ListGroup.Item>Herramientas eficientes para revisión y feedback</ListGroup.Item>
-              <ListGroup.Item>Flexibilidad para nuestros usuarios en todo el proceso.</ListGroup.Item>
-            </ListGroup>
-            </Card.Body>
+                <p className=''>
+                  Nuestro sistema utiliza la inteligencia artificial generativa para facilitar la tarea de revisión de artículos científicos minimizando el esfuerzo y el tiempo necesario para hacerlo:
+                </p>
+                <ListGroup>
+                  <ListGroup.Item>Evaluación inicial del artículo por la IA generativa.</ListGroup.Item>
+                  <ListGroup.Item>Resumen automático del artículo.</ListGroup.Item>
+                  <ListGroup.Item>Asignación al revisor basada en las palabras claves del artículo</ListGroup.Item>
+                  <ListGroup.Item>Herramientas eficientes para revisión y feedback</ListGroup.Item>
+                  <ListGroup.Item>Flexibilidad para nuestros usuarios en todo el proceso.</ListGroup.Item>
+                </ListGroup>
+                </Card.Body>
             </Card>
           </Col>
         </Row>
