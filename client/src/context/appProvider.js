@@ -24,7 +24,7 @@ const AppProvider = ({ children }) => {
 
   const navigate = useNavigate();
 
-
+  // Eliminar la información de la sesión
   const clearSession = useCallback(() => {
     navigate('/');
     setSessionToken("");
@@ -35,6 +35,8 @@ const AppProvider = ({ children }) => {
     localStorage.removeItem("username");
 }, [navigate]);
 
+
+  // Cerrar sesión
   const handleLogout = useCallback(async () => {
     try {
       const response = await fetch("/api/v1/logout", { method: 'POST' });
@@ -48,6 +50,8 @@ const AppProvider = ({ children }) => {
     clearSession();
   }, [clearSession]);
 
+  
+  // Comprobar que la sesión es válida y cerrar sesión en otro caso
   useEffect(() => {
     const checkSession = async () => {
       try {
@@ -81,7 +85,8 @@ const AppProvider = ({ children }) => {
       }
     };
   }, [sessionToken, username, role, clearSession]);
-  
+
+
   useEffect(() => {
       if(sessionToken!=="" && role!=="" && username!==""){
         localStorage.setItem("sessionToken", sessionToken);

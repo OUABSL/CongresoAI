@@ -1,0 +1,44 @@
+@startuml Manuscript-Congreso 
+skinparam classBackgroundColor AliceBlue
+skinparam classBorderColor Blue
+skinparam classFontName Comic Sans
+skinparam classFontSize 20
+!define ObjectId PrimitiveType
+
+class ScientificArticle {
+  - author: String
+  - submission_id: String
+  - title: String
+  - description: String
+  - key_words: List<String>
+  - submission_date: DateTime
+  - processing_state: String
+  - content: Map
+  - sections_orden: List<String>
+  - summary: Map
+  - evaluation: Map
+  - reviewer: String
+  - sorted_backup_assignment: List<String>
+  - review: Map
+  - review_result: String
+  - old_review_result: String
+  - is_resubmited: Boolean
+  - submit_number: int
+  - last_modified: DateTime
+  - latex_project_id: ObjectId
+  - submitted_pdf_id: ObjectId
+  - improvements: String
+  + update_properties(...)
+  + set_latex_project_url(file_id: ObjectId)
+  + save_files(latex_project: bytes, submitted_pdf: bytes)
+  + get_file_url(file_id: ObjectId): String
+  + get_latex_project(): bytes
+  + get_summary_to_dict(): Map
+  + to_dict(): Map
+  + to_json(): String
+  --
+  collection: scientific_articles,
+  indexes: [{fields: [author, title], unique: true}, {fields: [submission_id], unique: true}] }
+}
+
+@enduml

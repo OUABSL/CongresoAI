@@ -1,8 +1,5 @@
-import json, requests
-import logging
-from src.app import mongo, llamus_key
-from bson.objectid import ObjectId
-from src.models.tabajo import ScientificArticle
+import json, requests, logging
+from src.models.manuscript import ScientificArticle
 
 
 
@@ -41,12 +38,10 @@ SYSTEM_PROMPT_BASE = ("""You are an expert tutor specializing in reviewing and e
                 """
 )
 
-
-
 SYSTEM_PROMPT_RESUBMIT = ("""You are an expert tutor specializing in reviewing and evaluating scientific research articles within the technology domain. Your focus lies on the '{section_name}' section of a manuscript titled "{title} that have as key words: {key_words}
                     
                     
-                          Evaluate it according to the following criteria and respecting the defined evaluation format:
+                    Evaluate it according to the following criteria and respecting the defined evaluation format:
                             
                       Evaluation Levels:                 
                       - YES: The criterion is fully met in the provided section.
@@ -82,11 +77,11 @@ SYSTEM_PROMPT_RESUBMIT = ("""You are an expert tutor specializing in reviewing a
                 """
 )
 
-
+# Configuración del logging para el módulo de generación de evaluaciones
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-
 class PreEvaluation:
+    # Configuración inicial de la evaluación
     def __init__(self, db, system_prompt_base, llamus_key, article : ScientificArticle, is_resubmited:bool=False):
         self.API_URL = "https://llamus.cs.us.es/ollama/v1/chat/completions"
         self.LLAMUS_KEY = llamus_key
@@ -97,13 +92,14 @@ class PreEvaluation:
         self.system_prompt_base = system_prompt_base
         self.article = article
         self.is_resubmited = is_resubmited
+        # Se recoge el contenido del manuscrito de la base de datos 
         try:
             self.article_content = dict(self.article["content"])
         except KeyError:
             logging.error('KeyError: Article contents not found')
             self.article_content = {}
 
-
+    # Función para hacer una solicitud a la API LLAMUS
     def llamus_request(self, system_prompt, user_prompt):
         headers = {
             'Content-Type': 'application/json',
@@ -134,47 +130,41 @@ class PreEvaluation:
         else:
             logging.error(f'Request failed. Status Code:  {response.status_code}')
             logging.error(f'Response: {response.content}')
-
-
-    def get_article(self, query)->ScientificArticle:
-        return self.DB.find_one(query)
-
-    def updateEvaluationdb(self, value):
-        evaluationState = dict(self.article['evaluation'])
-        evaluationState[value[0]] = value[1]
-        newvalues = { "$set": { "evaluation": evaluationState } }
-        self.DB.update_one(self.query,newvalues)
-        self.article = self.get_article(self.query)
-        logging.info(f"\nUpdated the evaluation of {value[0]} in memory!\n")
-
+    
     """
     Función para manejar el proceso de la evaluación inicial mediante peticiones a modelos de llamus.
     1- Se recogen las variables y se limpia el error de ejecuión de un proceso anteriro
     2- 
     """
+    # Función para realizar el proceso de pre-evaluación
     def run(self):
-
+        # Obtener la evaluación almacenada del artículo
         res = self.article["evaluation"]
+        # Comprobar si existe un error prevenido de procesos anteriores, en caso afirmativo, eliminarlo
         if 'error' in res:
             del res['error']
-
-        content = dict(self.article['content'])      
+        # Convertir el contenido del artículo a un diccionario
+        content = dict(self.article['content'])     
+        # Crear una lista de palabras clave del artículo
         key_words = ', '.join(self.article["key_words"]) if isinstance(self.article["key_words"], list) and self.article["key_words"] else str(self.article["key_words"])
 
-        #Eliminar la variable error en cado de existir
+        # Si el artículo ya tiene una evaluación, obtener esa evaluación
         if res.keys():
             self.article["evaluation"]
         res = self.article["evaluation"]
 
-
+        # Si se trata de segunda entrega, obtener la revisión de la entrega anterior.
         if(self.is_resubmited):
             review = dict(self.article["review"])
 
+        # Para cada sección en el contenido del artículo
         for section_name, section_content in content.items():
             try: 
+                # Si el artículo no ha sido reenviado para revisión, crear el prompt del sistema correspondiente
                 if(not(self.is_resubmited)):
                     system_prompt = self.system_prompt_base.format(section_name=section_name, title=self.article['title'], key_words = key_words)
                 else:
+                    # Si se trata de segunda entrega, obtener la sección revisada y los comentarios para esa sección
                     if review:
                         review_section = dict(review.get(section_name, {}))
                         review_comments = review_section.get('comment', '')
@@ -185,7 +175,7 @@ class PreEvaluation:
                         logging.error("No se ha recibido la revisión del articulo")
                 section_evaluation = self.llamus_request(system_prompt, section_content)
 
-                
+                # Si se obtiene una evaluación de la sección, almacenarla en "res"
                 if section_evaluation:
                     tmp = dict(section_evaluation)
                     choices = tmp.get('choices', [])
@@ -195,13 +185,16 @@ class PreEvaluation:
                             response = msg.get('content', '')
 
                         except IndexError:
-                            logging.error(f"No choices returned in response for section_name: {section_name}")      
+                            logging.error(f"Error al recibir la variable choice en la respuesta Llamus para la sección <{section_name}>")      
                             continue               
                     else:
                         response = ''
                     res[section_name] = response
             except Exception as e:
-                logging.error(f"An error occurred while reviewing the '{section_name}' section \n{e}")
-                res[section_name] = "Error"  # Set the value to an empty string
+                # Registrar en log cualquier error que ocurra durante la evaluación de la sección
+                logging.error(f"Ha sucecido un error en la generación de evaluación de sección <{section_name}> \n{e}")
+                # Marcar la evaluación de la sección como "Error", el valor Error se gestiona posteriormente en los módulos del componente <Routes>
+                res[section_name] = "Error"
                 continue 
+        # Devolver las evaluaciones de las secciones
         return res

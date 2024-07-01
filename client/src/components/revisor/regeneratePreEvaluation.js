@@ -15,7 +15,10 @@ const taskTranslations = {
   //Funcion que traduce las tareas al español
 const translateTask = task => taskTranslations[task] || task;
 
+// Listado de modelos de generación de texto disponibles en LlamUs 
+// (Estos modelos pueden sufren cambios a lo largo del tiempo, por lo que es previsto sustituir esta lista en desarrllo futuro por una lista generada de forma dinamica)
 
+const modelsLlamUs = ["Hermes-2-Pro-Mistral-7B:Q5_K_M","llama2:13b-chat","llama2:70b-chat","llama2:7b-chat"];
 
 function RegenerationModal({ username, articleTitle }) {
   const [show, setShow] = useState(false);
@@ -23,8 +26,8 @@ function RegenerationModal({ username, articleTitle }) {
   const {setAlert } = useContext(AlertContext);
   const [models, setModels] = useState([]);
   const defaultModel = {
-    'summary': 'lIama2:13b-chat',
-    'initialevaluation': 'Ilama2:70b-chat',
+    'summary': 'llama2:13b-chat',
+    'initialevaluation': 'llama2:70b-chat',
     'datapreparation': ''}
   const [selectedTasks, setSelectedTasks] = useState({
   summary: { checked: false, value: defaultModel.summary },
@@ -33,14 +36,27 @@ function RegenerationModal({ username, articleTitle }) {
   });
 
 
+  // El detino final de este fetch va a un metodo endesuso de la última actualización de llamus.
+  // por lo que se congela su uso hasta próximo aviso
   useEffect(() => {
     const fetchModels = async () => {
-        const response = await fetch("/api/v1/models");
-        const data = await response.json();
-        setModels(data);
+        try {
+          const response = await fetch("/api/v1/models");
+          const data = await response.json();
+          if (data && Array.isArray(data) && data.length > 0) {
+            setModels(data);
+          } else {
+            setModels(modelsLlamUs);
+          }
+        } catch (error) {
+          console.error(error);
+          // setAlert({show: true, message: "Error al cargar los modelos.", variant: "danger"});
+          setModels(modelsLlamUs);
+        }
     };
     fetchModels();
-}, []);
+  }, []);
+
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -127,16 +143,22 @@ return (
                   />
 
                   {models.length > 0 ? (
-                    <Form.Control
-                      as="select"
-                      name={task}
-                      disabled={!checked}
-                      value={value}
-                      onChange={handleSelectChange}
-                    >
-                      <option disabled value="">Seleccione un modelo</option>
-                      {models.map((model, index) => <option key={index} value={model}>{model}</option>)}
-                    </Form.Control>
+                    task !== 'datapreparation' && (
+                      <Form.Control
+                        as="select"
+                        name={task}
+                        disabled={!checked}
+                        value={value}
+                        onChange={handleSelectChange}
+                      >
+                        <option value="">Seleccione un modelo</option>
+                        {models.map((model, index) => (
+                          <option key={index} value={model}>
+                            {model === defaultModel[task] ? `${model} [Recomendado]` : model}
+                          </option>
+                        ))}
+                      </Form.Control>
+                    )
                   ) : (
                     task !== 'datapreparation' && (
                       <Form.Control

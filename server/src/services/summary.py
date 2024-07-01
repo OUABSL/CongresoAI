@@ -2,7 +2,7 @@ from typing import Type
 import requests, json, os, sys
 from bson.objectid import ObjectId
 from src.app import mongo, llamus_key
-from src.models.tabajo import ScientificArticle
+from src.models.manuscript import ScientificArticle
 import logging
 
 SYSTEM_PROMPT_BASE = """Act as a research paper summarizer. I will provide you with a research paper section by section, and you will create a summary of the main points and findings of the paper section. 
@@ -13,20 +13,29 @@ SYSTEM_PROMPT_BASE = """Act as a research paper summarizer. I will provide you w
                         Section text:"""
 
 class ArticleSummarizer:
+    """ Definir la configuración inicial de la instancia, el desarrollo de la inicialización de una instancia de la clase
+    ArticleSummarizer permite a sus elementos usar el valor establecido por defecto, o bien estar restablecido mediante parámetrización.
+    """
     def __init__(self, db, system_prompt_base, llamus_key, article:ScientificArticle):
         self.API_URL = "https://llamus.cs.us.es/ollama/v1/chat/completions"
+        # Definir la clave de conexión con la API de Llamus, el modelo seleccionado y la temperatura de respuesta generada
         self.LLAMUS_KEY = llamus_key
+        self.chat_model = "llama2:7b-chat" #Alternativa posible: 'falcon:180b-chat-Q4_K_M'
         self.temperature = 0.8
-        self.chat_model = "llama2:7b-chat" #'falcon:180b-chat-Q4_K_M'
-        self.DB = db.db.scientific_article
+        # Definir el prompt de sistema base para la pétición
         self.SYSTEM_PROMPT_BASE = system_prompt_base
+        # Recoger el manuscrito a procesar
         self.article = article
+        # Definir la colección de base de datos, está en desuso por cambios de lógica
+        self.DB = db.db.scientific_article
+
+        #Recoger el título y contenido del manuscrito con manejo de errores.
+        self.title = self.article['title']
         try:
             self.article_content = dict(self.article["content"])
         except KeyError:
-            logging.error('KeyError: Article contents not found')
+            logging.error('KeyError: Contenido de manuscrito no recibido <ArticleSummarizer>')
             self.article_content = {} 
-        self.title = self.article['title']
 
 
 
@@ -62,23 +71,23 @@ class ArticleSummarizer:
             logging.error(f'Response: {response.content}')
 
 
-    def get_article(self, query)->ScientificArticle:
-        return self.DB.find_one(query)
-
-    def update_summary_db(self, value):
-        summary_state = dict(self.article['summary'])
-        summary_state[value[0]] = value[1]
-        self.DB.update_one(self.query, {"$set": {"summary": summary_state}})
-        self.article = self.get_article(self.query)
-        logging.error(f"\nUpdated the summary of {value[0]} srction in database!")
-
+    """ Esta función es responsable de ejecutar el flujo de trabajo del proceso, resume un manuscrito haciendo una solicitud a la API LLAMUS para cada sección del artículo.
+    - Si una sección se resume con éxito, su contenido resumido se agrega bajo su nombre en el diccionario.
+    - En caso contrario, se agrega bajo el nombre de la sección en el diccionario el valor <Error> que sería procesado en otros componentes del sistema.
+    Salida: Devuelve un diccionario que contiene el resumen generado para cada sección.
+    """
     def run(self):
+        # Comenzar con el atributo summary ya proporcionado del manuscrito o que ya ha sido inicializado con {} en el servicio de Procesamiento de manuscrito
         res = self.article["summary"]
-
+        
+        # Iterar sobre cada sección en el contenido del artículo
         for section_name, section_content in self.article_content.items():
-            try:  # Add try block here
+            try:
+                # Formatear el prompt del sistema agregando el nombre de la sección y el título del artículo
                 system_prompt = self.SYSTEM_PROMPT_BASE.format(section_name=section_name, article_title=self.title)
-                section_summary = self.llamus_request(system_prompt, section_content)
+                user_prompt = section_content
+                # Invocar el modelo seleccionado de LlamUs para obtener el resumen de la sección actual
+                section_summary = self.llamus_request(system_prompt, user_prompt)
                 if section_summary:
                     tmp = dict(section_summary)
                     choices = tmp.get('choices', [])
@@ -90,10 +99,9 @@ class ArticleSummarizer:
                     res[section_name] = response
             #Manejar los errores que se pueden generar durante la ejecución del proceso
             except Exception: 
-                logging.error(f"An error occurred while processing the '{section_name}' section")
+                logging.error(f"Error al resumir la sección <{section_name}>")
                 # El valor Erroe será posteriormente comprobado en funciones de routes 
                 res[section_name] = "Error" 
                 break 
 
         return res
-        #self.article.update_properties(summary=res)

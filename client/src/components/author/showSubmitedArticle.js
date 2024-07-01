@@ -30,7 +30,7 @@ const NavigateToSubmitButton = ({ article }) => {
       } 
     });
   }
-  return <Button onClick={handleOnClick}>Resubmit Article</Button>;
+  return <Button onClick={handleOnClick}>Realizar nueva entrega</Button>;
 };
 
 const DownloadArticle = ({ pdf, zip, title }) => {
