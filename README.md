@@ -29,6 +29,30 @@ This document outlines the API endpoints available in the Flask-React applicatio
 | `/api/v1/submit/<author>`                    | GET    | Returns all manuscripts submitted by an authenticated author.  | -                                                     | 200 (success) |
 | `/api/v1/submit/<author>/<article_title>`    | GET    | Returns details of a specific manuscript by an authenticated author. | -                                                     | 200 (success) |
 
+
+**Administrator Endpoints**
+
+The module focused on system administration implements the `admin` Blueprint and aims to manage system users, with plans to expand functionalities for complete control of all system features and key element configurations. Below are the implemented endpoints for the current version.
+
+| URI (Method)                                   | Description                                                  | Process                                                                                  | Responses                                                                 |
+|------------------------------------------------|--------------------------------------------------------------|------------------------------------------------------------------------------------------|--------------------------------------------------------------------------|
+| `/api/v1/generate-register-token/<orcid>` (GET)| Generates a custom registration token for a reviewer using their ORCID. | Validates admin session, generates a unique token linked to the provided ORCID, returns a URL for the reviewer to complete registration. | 200 - Token generated with registration URL, 400 - Invalid ORCID, 403 - Access denied if not admin. |
+| `/api/v1/verify-token/<token>` (GET)           | Verifies the validity of a registration token.               | Verifies if the provided token is valid, returns a message indicating token validity.    | 200 - Token valid, 400 - Token invalid or expired.                       |
+| `/api/v1/admin/users` (GET)                    | Returns the list of all users (reviewers and authors) in the system. | Verifies admin authentication, retrieves and serializes all registered users' information. | 200 - Users list returned, 403 - Access denied if not admin.             |
+| `/api/v1/admin/users` (POST)                   | Allows admin to register a new reviewer in the system.       | Verifies admin authentication, checks username availability, inserts new reviewer data.  | 201 - User registered, 400 - Username already exists, 403 - Access denied if not admin. |
+| `/api/v1/admin/users/<username>` (PUT)         | Allows admin to update an existing reviewer's information.   | Verifies admin authentication, updates the reviewer's data in the database.              | 200 - User updated, 403 - Access denied if not admin.                    |
+| `/api/v1/admin/users/<username>` (DELETE)      | Allows admin to delete a user from the system.               | Verifies admin authentication, deletes the user from the reviewers' database.            | 200 - User deleted, 403 - Access denied if not admin.                    |
+
+**Additional Endpoints**
+
+The system offers the download of usage manuals for each developed portal. Below are the implemented endpoints for this functionality.
+
+| URI (Method)                                     | Description                                                | Process                                                                                   | Responses                                                                 |
+|--------------------------------------------------|------------------------------------------------------------|-------------------------------------------------------------------------------------------|--------------------------------------------------------------------------|
+| `/api/v1/manuales/manual-reviewer` (GET)         | Returns the reviewer's manual in PDF format for download.  | Returns the PDF file of the reviewer's manual from the specified server directory.        | 200 - Manual returned, 404 - File not found, 400 - Invalid file path.    |
+| `/api/v1/manuales/manual-author` (GET)           | Returns the author's manual in PDF format for download.    | Returns the PDF file of the author's manual from the specified server directory.          | 200 - Manual returned, 404 - File not found, 400 - Invalid file path.    |
+```
+
 ## Endpoint Details
 
 ### User Management Endpoints
