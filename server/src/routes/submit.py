@@ -2,7 +2,7 @@ from bson.objectid import ObjectId
 from flask import Blueprint, request, jsonify, make_response
 from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 from werkzeug.utils import secure_filename
-from src.models.tabajo import ScientificArticle  
+from src.models.manuscript import ScientificArticle  
 from src.app import mongo, API, llamus_key
 from src.services.dataPreparation import DataHandler
 from src.services.preEvaluation import PreEvaluation
@@ -47,7 +47,6 @@ Args: Artículo, ruta de procesamiento, es entrega de mejora?
 """
 def process_submit(article:ScientificArticle, dest_path, resubmit:bool = False):
     try:
-        # Data processing
         data_handler = DataHandler(article, dest_path=dest_path)
         data_handler.run()
         if not(resubmit):    
@@ -58,7 +57,6 @@ def process_submit(article:ScientificArticle, dest_path, resubmit:bool = False):
         else:
             summary_instance = ArticleSummarizer(mongo, prompt_summary,  llamus_key, article)
             pre_evaluation_instance = PreEvaluation(mongo,  prompt_eval_resubmit, llamus_key, article, resubmit)
-
 
         summary =summary_instance.run()
         pre_evaluation = pre_evaluation_instance.run()
@@ -119,8 +117,9 @@ def submit_article():
                                                          "Form fields are missing; " if not all([title, description, key_words, loged_in_author]) else "")
         return jsonify({'success':False, 'message': message}), 422
     
+    
     # Comprobar la existencia del título del artículo
-    existing_article = mongo.db.articles.find_one({'title': title})
+    existing_article = mongo.db.scientific_article.find_one({'title': title, 'author':username})
 
     if existing_article:
         # Devolver con un mensaje de error si el artículo ya existe

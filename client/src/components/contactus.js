@@ -9,9 +9,9 @@ import './estilos/contactus.css'
 const ContactForm = ({ formState, handleFormSubmit, handleInputChange }) => {
   return (
     <Form onSubmit={handleFormSubmit}>
-      {["nombre", "email", "asunto"].map((field, index) => (
+      {["Nombre", "Correo Electrónico", "Asunto"].map((field, index) => (
         <Form.Group className="mb-3" key={index}>
-          <Form.Label>{field.toUpperCase()}</Form.Label>
+          <Form.Label>{field}</Form.Label>
           <Form.Control
             type="text"
             placeholder={`Tu ${field}`}
@@ -21,7 +21,7 @@ const ContactForm = ({ formState, handleFormSubmit, handleInputChange }) => {
         </Form.Group>
       ))}
       <Form.Group className="mb-3">
-        <Form.Label>MENSAJE</Form.Label>
+        <Form.Label>Mensaje</Form.Label>
         <TextareaAutosize
           minRows={3}
           style={{ width: '100%', minRows: '3' }}

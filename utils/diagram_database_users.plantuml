@@ -1,0 +1,41 @@
+@startuml User-Congreso 
+skinparam classBackgroundColor AliceBlue
+skinparam classBorderColor Blue
+skinparam classFontName Comic Sans
+skinparam classFontSize 20
+
+!define ObjectId PrimitiveType
+
+class User {
+  - email: String
+  - username: String
+  - password: String
+  - fullname: String
+  - registration_date: DateTime
+  - phonenumber: String
+  - is_bi: Boolean
+  + to_json(): String
+}
+
+class Author {
+  - ID_Author: String
+  - interests: List<String>
+  + id_author: String
+  --
+  collection: authors
+}
+
+class Reviewer {
+  - ORCID: String
+  - knowledges: List<String>
+  + id_revisor: String
+  --
+  collection: reviewers
+}
+
+User <|-- Author
+User <|-- Reviewer
+
+@enduml
+
+

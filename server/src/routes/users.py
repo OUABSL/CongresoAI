@@ -1,6 +1,6 @@
 from flask import request, Blueprint, jsonify, make_response, current_app
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_jwt_extended import create_access_token, get_jwt, unset_jwt_cookies, get_jwt_identity, verify_jwt_in_request, jwt_required, decode_token
+from flask_jwt_extended import create_access_token, get_jwt, unset_jwt_cookies, get_jwt_identity, jwt_required
 from src.models.user import User, Reviewer, Author
 from src.utils.func import  check_token
 from src.app import  mongo, API
@@ -159,6 +159,13 @@ Portal de autor
 @users_bp.route(API + "/authors/profile/<username>", methods=["GET"])
 @jwt_required()
 def profile_author(username):
+
+    # Comprobar que solo el mismo usuario o el admin puede acceder al perfil de autor 
+    claims = get_jwt()
+    role = claims["role"]
+    if get_jwt_identity() != username and role != "admin":
+        return jsonify({'success':False, 'message': 'Unauthorized'}), 403
+
     user = authors_col.find_one({'username': username})
     if user:
         user.pop('password', None)
@@ -189,6 +196,12 @@ Portal de revisor
 @users_bp.route(API + "/reviewers/profile/<username>", methods=["GET"])
 @jwt_required()
 def profile_reviewer(username):
+    
+    # Comprobar que solo el mismo usuario o el admin puede acceder al perfil de revisor 
+    claims = get_jwt()
+    role = claims["role"]
+    if get_jwt_identity() != username and role != "admin":
+        return jsonify({'success':False, 'message': 'Unauthorized'}), 403
     user = reviewers_col.find_one({'username': username})
     if user:
         user.pop('password', None)

@@ -22,7 +22,7 @@ const SignUpAuthor = () => {
     confirmPassword: '',
     fullname: '',
     phonenumber: '',
-    interestarea: ''
+    interests: ''
   }
   const [state, setState] = useState(initialState);
 
@@ -117,7 +117,7 @@ const SignUpAuthor = () => {
 
 
   useEffect(() => {
-    setState(currentState => ({ ...currentState, interestarea: interestarea }))
+    setState(currentState => ({ ...currentState, interests: interestarea }))
   }, [interestarea]);
 
   const onChange = (e) => setState({...state, [e.target.name]: e.target.value});

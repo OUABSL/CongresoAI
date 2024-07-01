@@ -86,7 +86,7 @@ const SubmitArticle = () => {
       if (!data.success) {
         if(response.status === 401) {
           logout();
-          setAlert({ show: true, message: "Sesión abortafa! Por favor inicia sesión de nuuevo", variant: 'info' });  
+          setAlert({ show: true, message: "Sesión abortada! Por favor inicia sesión de nuuevo", variant: 'info' });  
           return;
         }
         if(response.status === 422) {
@@ -176,8 +176,8 @@ const SubmitArticle = () => {
           <Form.Control type="file" onChange={(e) => setFile(e.target.files[0])} required className="input-submit" />
         </Form.Group>
 
-        <Button variant="primary" type="submit" className="button-class mt-1">
-          Submit
+        <Button variant="primary" type="submit" className="button-class mt-2">
+          Confirmar entrega
         </Button>
         </Form>
         </Card>

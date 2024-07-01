@@ -1,13 +1,11 @@
 from datetime import datetime
 import threading, os, tempfile, shutil, logging
 from bson.objectid import ObjectId
-from flask import Blueprint, request, jsonify, abort
-from flask import send_file, make_response, Response
+from flask import Blueprint, request, jsonify, abort, send_file, make_response
 from io import BytesIO
 from bson import ObjectId 
-from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
-from werkzeug.utils import secure_filename
-from src.models.tabajo import ScientificArticle, get_file
+from flask_jwt_extended import jwt_required
+from src.models.manuscript import ScientificArticle, get_file
 from src.app import mongo, API, llamus_key
 from src.services.preEvaluation import PreEvaluation
 from src.services.summary import ArticleSummarizer
@@ -122,7 +120,7 @@ def add_review(reviewer, article_title):
         abort(404, description="No articles found for this reviewer.") 
     review_data = request.get_json()
 
-    # Ensure that review data is provided
+    # Comprobar la existencia de la revisión en la petición recibida.
     if 'review' not in review_data or 'review_result' not in review_data:
         abort(400, description="Missing required review data.")
     print(f"Review data:  ${review_data['review']}")
@@ -131,7 +129,7 @@ def add_review(reviewer, article_title):
         review[section_name] = section_review
 
     review_result = str(review_data['review_result'])
-    # Update the article with the new review
+    # Actualizar el manuscrito con la nueva revisión
     new_review = {"review": review, "review_result": review_result}
     print(f"Review: {new_review}")
     
@@ -139,11 +137,14 @@ def add_review(reviewer, article_title):
     logging.info("Revisión añadida exitosamente para el artículo con título: %s", article_title)
     return make_response(jsonify({"success":True,  "message": "Review successfully added!"}), 201)
 
-# Actualizar una revisión a un artículo
+""" Actualizar una revisión de sección/secciones específicas de un manuscrito: 
+    Se ha decidido congelar el uso a nivel de cliente de esta función temporalmente para limitar accesos innecesarios a la base de datos
+"""
 @evaluate_bp.route(API + '/evaluate/<reviewer>/<article_title>', methods = ['PUT'])
 @jwt_required()
 def update_review(reviewer, article_title):
     """
+    Ejemplo de revisión esperada:
     review = {section1:review_section1, section2: review_section2}
     review[section] = {
         Motivation: 'value',
@@ -201,7 +202,7 @@ def fetch_article(title:str, reviewer:str):
 
 """
 Función para gestionar la tarea de regeneración de alguno de los servicios de la aplicación:
- #-Extractción y preparación del contenido del proyecto latex.
+ -Extractción y preparación del contenido del proyecto latex.
  - Resumen generado por la IA generativa
  - Evaluación inicial generada por la IA generativa
  
@@ -226,12 +227,12 @@ def regenerate_pre_evaluation_flow(article:ScientificArticle, tasks:dict):
 
         if "summary" in tasks:
             summary_instance = ArticleSummarizer(mongo, prompt_summary, llamus_key, article)
-            #summary_instance.chat_model = tasks["summary"]
+            summary_instance.chat_model = tasks["summary"]
             summary = summary_instance.run()
 
         if "initialevaluation" in tasks:
             evaluation_instance = PreEvaluation(mongo, prompt_eval, llamus_key, article)
-            #evaluation_instance.chat_model = tasks["initialevaluation"]
+            evaluation_instance.chat_model = tasks["initialevaluation"]
             pre_evaluation = evaluation_instance.run()
 
         error = ("Error" in summary.values()) or ("Error" in pre_evaluation.values())

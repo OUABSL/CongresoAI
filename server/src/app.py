@@ -1,6 +1,5 @@
 from flask import Flask, Response, abort, jsonify, send_from_directory
 from flask_pymongo import PyMongo
-from pymongo import MongoClient
 import mongoengine as me
 import os, sys
 from flask_cors import CORS
@@ -57,16 +56,12 @@ def register_blueprints(app):
     print(f"Created Blueprint for {models_bp}")
 
 
-
-def get_users_from_db(db):
-    return list(db.users.find())
-
-
 API = '/api/v1'
 app = create_app()
 mongo, mongo_engine = create_mongo(app)
 jwt = JWTManager(app)
 register_blueprints(app)
+
 
 # Define la carpeta de archivos estáticos
 app.static_folder = 'data'
@@ -75,24 +70,8 @@ app.static_folder = 'data'
 #app.static_url_path = '/manuales'
 #print(f"La ruta est es {app.static_folder} y {os.getcwd()}")
 
-@app.route("/", methods=["GET"])
-def index():
-    return "Bienvenido en el servidor de The AI Congress!"
-
-
-@app.route(API + "/", methods=["GET"])
-def api_index():
-    return "Bienvenido en el servidor de The AI Congress!"
-
-@app.route(API + "/users", methods=["GET"])
-def users():
-    ls = mongo.db.authors.find()
-    print("ls:" , ls)
-    return f"The system users are mega:\n {(e.username for e in ls)}"
-
 
 MANUALS_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../data/manuales")
-print(MANUALS_FOLDER)
 # Ruta para servir el manual del revisor
 @app.route("/api/v1/manuales/manual-reviewer", methods=["GET"])
 def send_manual_reviewer():
@@ -115,11 +94,11 @@ def send_manual_author():
     except IsADirectoryError:
         return jsonify({"error": "Not a file"}), 400
 
+# En el caso de ejecución en local sin el uso de docker 
+"""
+Nota: Para la ejecución en local se debe considerar la definición de carpeta server como carpeta raíz de la ejecución  
+"""
 def main():
-    """Run the Flask application"""
+    """Ejecutar la aplicación Flask"""
     #app.run(host='localhost', port=5000, debug=True)
     app.run()
-
-    
-# if __name__ == "__main__":
-#     main()

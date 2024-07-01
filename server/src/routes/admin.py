@@ -14,6 +14,9 @@ db_admin = mongo.db.admin
 
 @admin_bp.route(API + '/generate-register-token/<orcid>')
 def create_register_token(orcid):
+    claims = get_jwt()
+    if claims["role"] != "admin":
+        abort(403)
     token = generate_token(orcid)
     url_root_with_port = request.url_root
     url_parts = url_root_with_port.split(':')
@@ -88,13 +91,3 @@ def delete_user(username):
         abort(403)
     db_reviewers.delete_one({'username': username})
     return jsonify({'success':True, 'message':'User deleted successfully'}), 200
-
-# Generate register form for Reviewers.
-@admin_bp.route(API + "/admin/users/reviewer/register-form", methods=["GET"])
-@jwt_required()
-def generate_form_reviewer():
-    claims = get_jwt()
-    if claims["role"] != "admin":
-        abort(403)
-    #Add your form generation logic here. Return generated form.
-    pass
