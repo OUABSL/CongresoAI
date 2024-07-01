@@ -51,7 +51,6 @@ The system offers the download of usage manuals for each developed portal. Below
 |--------------------------------------------------|------------------------------------------------------------|-------------------------------------------------------------------------------------------|--------------------------------------------------------------------------|
 | `/api/v1/manuales/manual-reviewer` (GET)         | Returns the reviewer's manual in PDF format for download.  | Returns the PDF file of the reviewer's manual from the specified server directory.        | 200 - Manual returned, 404 - File not found, 400 - Invalid file path.    |
 | `/api/v1/manuales/manual-author` (GET)           | Returns the author's manual in PDF format for download.    | Returns the PDF file of the author's manual from the specified server directory.          | 200 - Manual returned, 404 - File not found, 400 - Invalid file path.    |
-```
 
 ## Endpoint Details
 
