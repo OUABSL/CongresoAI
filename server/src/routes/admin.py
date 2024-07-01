@@ -14,9 +14,6 @@ db_admin = mongo.db.admin
 
 @admin_bp.route(API + '/generate-register-token/<orcid>')
 def create_register_token(orcid):
-    claims = get_jwt()
-    if claims["role"] != "admin":
-        abort(403)
     token = generate_token(orcid)
     url_root_with_port = request.url_root
     url_parts = url_root_with_port.split(':')
@@ -29,9 +26,6 @@ def create_register_token(orcid):
         return jsonify({'success':False, 'message': "Invalid ORCID"}), 400
 
 
-
-
-
 @admin_bp.route(API + '/verify-token/<token>', methods=['GET'])
 def verify_token(token):
     if (check_token(token=token)):
@@ -40,7 +34,7 @@ def verify_token(token):
         return jsonify({'success':False, 'message': "Invalid token"}), 400
 
 
-# Retrieve user list (all users)
+# Devolver todos los usuarios
 @admin_bp.route(API + "/admin/users", methods=["GET"])
 @jwt_required()
 def get_all_users():
@@ -57,7 +51,7 @@ def get_all_users():
     users = list(reviewers, authors)
     return jsonify(users), 200
 
-# Create (register) a new user.
+# Crear un usuario nuevo
 @admin_bp.route(API + "/admin/users", methods=["POST"])
 @jwt_required()
 def create_user():
@@ -71,7 +65,7 @@ def create_user():
         db_reviewers.insert_one(data)
         return jsonify({'success':True, 'message':'User registration successful!'}), 201
 
-# Update user information.
+# Actualizar información de usuario
 @admin_bp.route(API + "/admin/users/<username>", methods=["PUT"])
 @jwt_required()
 def update_user(username):
@@ -82,7 +76,7 @@ def update_user(username):
     db_reviewers.update_one({'username': username}, {'$set': data})
     return jsonify({'success':True, 'message':'User updated successfully'}), 200
 
-# Delete an user.
+# Eliminar usuario
 @admin_bp.route(API + "/admin/users/<username>", methods=["DELETE"])
 @jwt_required()
 def delete_user(username):
