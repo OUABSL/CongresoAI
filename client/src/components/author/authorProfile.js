@@ -94,11 +94,12 @@ function AuthorProfile() {
 }
 
   const handleSaveClick = async () => {
+    const updatedProfileData = { ...profileData, interests: intereses };
     const response = await fetch(
       `/api/v1/authors/profile/${username}`,
       {
         method: 'PUT',
-        body: JSON.stringify(profileData),
+        body: JSON.stringify(updatedProfileData),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${sessionToken}`,
@@ -226,84 +227,3 @@ function AuthorProfile() {
   
 
 export default AuthorProfile;
-
-
-/* 
-return (
-    <>
-    <Container className="d-flex justify-content-center align-items-center h-100">
-      <Card style={{ width: '30rem' }} className="p-3 mt-5">
-          <Card.Body>
-              <Card.Title>
-                  Nombre completo:
-                  {editing ? 
-                           <Form.Control readOnly={!editing} type="text" name="fullname" value={profileData.fullname || ''} onChange={handleInputChange}/> :
-                          ` ${profileData.fullname}`
-                  }
-              </Card.Title>
-              <Card.Subtitle className="mb-2 text-muted">
-                  Usuario:
-                  {editing ?
-                        <Form.Control className='ps-1' readOnly style={{backgroundColor:'#f1f1f1', border: '1px solid #888'}} plaintext value={profileData.username} /> :
-                          ` ${profileData.username}`
-                    }
-              </Card.Subtitle>
-
-            <ListGroup.Item className="p-2">
-              Email:
-                {editing ? 
-                  <Form.Control readOnly={!editing} type="email" name="email" value={profileData.email || ''} onChange={handleInputChange}/> :
-                  ` ${profileData.email}`
-                }
-              </ListGroup.Item>
-          <ListGroup variant="flush">
-              <ListGroup.Item className="p-2">
-                  Número de teléfono:
-                  {editing ? 
-                      <Form.Control readOnly={!editing} type="tel" name="phonenumber" value={profileData.phonenumber || ''} onChange={handleInputChange}/> :
-                      ` ${profileData.phonenumber}`
-                  }
-              </ListGroup.Item>
-              <ListGroup.Item className="p-2">
-                Lista de intereses:
-                {editing ? 
-                  <TagsInput
-                    tags={intereses}
-                    setTags={setIntereses}
-                    persPlaceholder="áreas de intéres"
-                  /> :
-                  ` ${intereses.length > 0 ? intereses.join(', ') : '-'}`
-                }
-              </ListGroup.Item>
-              <ListGroup.Item className="p-2">
-              Fecha de registro:
-                  {editing ?
-                  <Form.Control  className='ps-1' readOnly style={{backgroundColor:'#f1f1f1', border: '1px solid #888'}} plaintext value={profileData.registration_date} /> : 
-                  ` ${profileData.registration_date}`}
-                  </ListGroup.Item>
-          </ListGroup>
-          <Form.Group as={Row} className="justify-content-around p-2 my-3">
-            <Col sm="auto">
-                <Button variant="primary" onClick={editing ? handleSaveClick : handleEditClick}>
-                    {editing ? 'Guardar' : 'Editar perfil'}
-                </Button>
-            </Col>
-            {editing && (<Col sm="auto">
-                <Button variant="primary" onClick={handleEditCancel}>Cancelar</Button>
-            </Col>)}
-            {profileData.is_bi && !editing && (
-                <Col sm="auto">
-                    <Button variant="secondary" onClick={handleChangeRole}>Pasar a revisor</Button>
-                </Col>
-            )}
-        </Form.Group>
-        </Card.Body>
-      </Card>
-    </Container>
-    </>
-  );
-}
-
-
-
-*/

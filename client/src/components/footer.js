@@ -31,7 +31,7 @@ const AppFooter = () => (
                     <p>Versión inicial de la aplicación The Congress AI.</p>
         </div>
         <div className="footer-copyright text-center text-dark my-2" >© 2024 Copyright:
-            <a href='https://www.linkedin.com/in/ouael-boussiali/'> Ouael Boussiali</a>
+            <a href='https://www.linkedin.com/in/ouael-boussiali/'> Ouael Boussiali</a> | 
             <a href="https://www.cs.us.es/" className="text-secondary"> Departamento de Ciencias de la Computación e Inteligencia Artificial</a> | 
             <a href="https://www.us.es/" className="text-secondary"> Universidad de Sevilla</a>
         </div>
