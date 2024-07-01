@@ -246,4 +246,127 @@ Returns specific details of a manuscript submitted by an author.
 - 401 - Invalid session.
 - 404 - Article not found.
 
+
+## Endpoint Details
+
+### Administrator Endpoints
+
+#### `/api/v1/generate-register-token/<orcid>` (GET)
+
+**Description:**
+Generates a personalized registration token for a reviewer using their ORCID.
+
+**Process:**
+- Validates the session of the administrator.
+- Generates a unique token associated with the provided ORCID.
+- Constructs and returns a URL for the reviewer to complete their registration.
+
+**Responses:**
+- 200 - Token generated successfully along with the registration URL.
+- 400 - Invalid or not found ORCID.
+- 403 - Access denied if the user is not an administrator.
+
+#### `/api/v1/verify-token/<token>` (GET)
+
+**Description:**
+Verifies the validity of a token generated for reviewer registration.
+
+**Process:**
+- Verifies if the provided token is valid.
+- Returns a message indicating whether the token is valid or not.
+
+**Responses:**
+- 200 - Token is valid.
+- 400 - Token is invalid or expired.
+
+#### `/api/v1/admin/users` (GET)
+
+**Description:**
+Returns the list of all users (reviewers and authors) registered in the system.
+
+**Process:**
+- Verifies the authentication of the administrator.
+- Retrieves and serializes the information of all registered reviewers and authors from the database.
+
+**Responses:**
+- 200 - List of users returned successfully.
+- 403 - Access denied if the user is not an administrator.
+
+#### `/api/v1/admin/users` (POST)
+
+**Request Body:**
+- Data of the new reviewer to be registered.
+
+**Description:**
+Allows the administrator to register a new reviewer in the system.
+
+**Process:**
+- Verifies the authentication of the administrator.
+- Checks the availability of the username.
+- Inserts the new user's data into the reviewers' database.
+
+**Responses:**
+- 201 - User registered successfully.
+- 400 - Username already exists in the system.
+- 403 - Access denied if the user is not an administrator.
+
+#### `/api/v1/admin/users/<username>` (PUT)
+
+**Request Body:**
+- Updated data of the reviewer.
+
+**Description:**
+Allows the administrator to update the information of an existing reviewer in the system.
+
+**Process:**
+- Verifies the authentication of the administrator.
+- Updates the user's data identified by their username in the reviewers' database.
+
+**Responses:**
+- 200 - User updated successfully.
+- 403 - Access denied if the user is not an administrator.
+
+#### `/api/v1/admin/users/<username>` (DELETE)
+
+**Description:**
+Allows the administrator to delete a user from the system.
+
+**Process:**
+- Verifies the authentication of the administrator.
+- Deletes the user identified by their username from the reviewers' database.
+
+**Responses:**
+- 200 - User deleted successfully.
+- 403 - Access denied if the user is not an administrator.
+
+### Additional Endpoints
+
+#### `/api/v1/manuales/manual-reviewer` (GET)
+
+**Description:**
+Returns the reviewer's manual in PDF format as a download.
+
+**Process:**
+- Returns the PDF file of the reviewer's manual.
+- The file is located in the specified folder on the server.
+
+**Responses:**
+- 200 - Reviewer's manual file returned successfully.
+- 404 - Specified file not found.
+- 400 - The specified path does not correspond to a valid file.
+
+#### `/api/v1/manuales/manual-author` (GET)
+
+**Description:**
+Returns the author's manual in PDF format as a download.
+
+**Process:**
+- Returns the PDF file of the author's manual.
+- The file is located in the specified folder on the server.
+
+**Responses:**
+- 200 - Author's manual file returned successfully.
+- 404 - Specified file not found.
+- 400 - The specified path does not correspond to a valid file.
+
 For any further information or assistance, please refer to the project's documentation or contact the development team.
