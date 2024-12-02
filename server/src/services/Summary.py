@@ -1,8 +1,9 @@
-from typing import Type
-import requests, json, os, sys
-from bson.objectid import ObjectId
-from src.app import mongo, llamus_key
-from src.models.tabajo import ScientificArticle
+import logging
+from src.models.manuscript import ScientificArticle
+from src.services.gptHandler import GptHandler
+
+# Configuración del logging para el módulo de generación de evaluaciones
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 SYSTEM_PROMPT_BASE = """Act as a research paper summarizer. I will provide you with a research paper section by section, and you will create a summary of the main points and findings of the paper section. 
                         Your focus lies on the '{section_name}' section of a manuscript titled {article_title}, Process the provided {section_name} section, summarize it according to the following instructions:
@@ -12,85 +13,48 @@ SYSTEM_PROMPT_BASE = """Act as a research paper summarizer. I will provide you w
                         Section text:"""
 
 class ArticleSummarizer:
-    def __init__(self, db, system_prompt_base, llamus_key, article:ScientificArticle):
-        self.API_URL = "https://llamus.cs.us.es/ollama/v1/chat/completions"
-        self.LLAMUS_KEY = llamus_key
+    """ Clase para resumir artículos científicos utilizando GptHandler para interactuar con GPT-4. """
+    
+    def __init__(self, db, system_prompt_base, gpt_key, article: ScientificArticle):
         self.temperature = 0.8
-        self.chat_model = 'falcon:180b-chat-Q4_K_M'
-        self.DB = db.db.scientific_article
         self.SYSTEM_PROMPT_BASE = system_prompt_base
         self.article = article
+        self.title = self.article['title']
+        self.gpt_handler = GptHandler(openai_api_key=gpt_key, system_prompt_base=system_prompt_base)
+
+        
         try:
             self.article_content = dict(self.article["content"])
         except KeyError:
-            print('KeyError: Article contents not found')
-            self.article_content = {} 
-        self.title = self.article['title']
+            logging.error('KeyError: Contenido de manuscrito no recibido <ArticleSummarizer>')
+            self.article_content = {}
 
-
-
-    def llamus_request(self, system_prompt, user_prompt):
-        headers = {
-            'Content-Type': 'application/json',
-            'Authorization': f'Bearer {self.LLAMUS_KEY}'
-        }
-        data = {
-            'stream': False,
-            'model':"llama2:7b-chat",
-            'temperature':self.temperature,
-            'messages':[
-                {
-                    "role":"system",
-                    "content":system_prompt
-                },
-                {
-                    "role":"user",
-                    "content":user_prompt + "\n\n Section Evaluation:"
-                }]
-        }
-
-        response = requests.post(self.API_URL, headers=headers, data=json.dumps(data))
-        if response.status_code == 200:  # Checking if the request was successful
-            try:
-                #print(response.text)
-                return response.json()
-            except json.decoder.JSONDecodeError:  # Catching JSON decode errors
-                print('Failed to decode JSON. Response:', response.content)
-        else:
-            print('Request failed. Status Code:', response.status_code)
-            print('Response:', response.content)
-
-
-    def get_article(self, query)->ScientificArticle:
-        return self.DB.find_one(query)
-
-    def update_summary_db(self, value):
-        summary_state = dict(self.article['summary'])
-        summary_state[value[0]] = value[1]
-        self.DB.update_one(self.query, {"$set": {"summary": summary_state}})
-        self.article = self.get_article(self.query)
-        print(f"\nUpdated the summary of {value[0]} srction in database!")
-
+    """ Esta función es responsable de ejecutar el flujo de trabajo del proceso, resume un manuscrito haciendo una solicitud a GPT-4 para cada sección del artículo.
+    - Si una sección se resume con éxito, su contenido resumido se agrega bajo su nombre en el diccionario.
+    - En caso contrario, se agrega bajo el nombre de la sección en el diccionario el valor <Error> que sería procesado en otros componentes del sistema.
+    Salida: Devuelve un diccionario que contiene el resumen generado para cada sección.
+    """
     def run(self):
-        res = self.article["summary"]
-
+        # Comenzar con el atributo summary ya proporcionado del manuscrito o que ya ha sido inicializado con {} en el servicio de Procesamiento de manuscrito
+        res = self.article.get("summary", {})
+        
+        # Iterar sobre cada sección en el contenido del artículo
         for section_name, section_content in self.article_content.items():
             try:  # Add try block here
                 system_prompt = self.SYSTEM_PROMPT_BASE.format(section_name=section_name, article_title=self.title)
-                section_summary = self.llamus_request(system_prompt, section_content)
+                user_prompt = section_content
+                
+                # Invocar el método de GptHandler para obtener el resumen de la sección actual
+                section_summary = self.gpt_handler.gpt_request(system_prompt, user_prompt)
+                
                 if section_summary:
-                    tmp = dict(section_summary)
-                    choices = tmp.get('choices', [])
-                    if choices and isinstance(choices, list):
-                        msg = choices[0].get('message', {})
-                        response = msg.get('content', '')
-                    else:
-                        response = ''
-                    res[section_name] = response
-            except Exception:  # Catch all types of exceptions
-                print(f"An error occurred while processing the '{section_name}' section")
-                res[section_name] = "Error"  # Set the value to an empty string
-                continue  # Continue to the next iteration of the loop
+                    res[section_name] = section_summary
+                else:
+                    res[section_name] = "Error en la generación del resumen"
+                    
+            # Manejar los errores que se pueden generar durante la ejecución del proceso
+            except Exception as e: 
+                logging.error(f"Error al resumir la sección <{section_name}>: {e}")
+                res[section_name] = "Error" 
 
         return res
-        #self.article.update_properties(summary=res)

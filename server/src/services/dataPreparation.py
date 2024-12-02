@@ -4,7 +4,7 @@ from pylatexenc.latex2text import LatexNodes2Text
 import zipfile
 import re, io, os, sys 
 from src.app import mongo
-from src.models.tabajo import ScientificArticle
+from server.src.models.manuscript import ScientificArticle
 from bson.objectid import ObjectId
 
 class DataHandler:

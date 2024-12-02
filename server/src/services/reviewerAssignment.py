@@ -2,7 +2,7 @@ from typing import List, Tuple
 from collections import defaultdict
 import spacy
 from src.models.user import Reviewer
-from src.models.tabajo import ScientificArticle
+from server.src.models.manuscript import ScientificArticle
 
 class ReviewerAssignment:
     def __init__(self, article: ScientificArticle, mongo):

@@ -1,6 +1,6 @@
 from typing import List
 from bson import ObjectId
-from mongoengine import Document, StringField, DateTimeField, ListField, ObjectIdField, DictField, ReferenceField, BooleanField, IntField
+from mongoengine import Document, StringField, DateTimeField, ListField, ObjectIdField, DictField, BooleanField, IntField
 from mongoengine.base import BaseField
 from mongoengine.errors import ValidationError
 from datetime import datetime
@@ -14,11 +14,11 @@ class ProcessingState(BaseField):
 
 
 class ReviewResult(BaseField):
-    STATES = ("Pending Review", "Approved", "Rejected", "Pending Improvement")
+    STATES = ("Pending Review", "Approved", "Rejected", "Pending Improvement", "None")
 
     def validate(self, value):
         if value not in self.STATES:
-            raise ValidationError('Invalid Processing State')
+            raise ValidationError('MongoEng: Invalid review´s state')
 
 class ScientificArticle(Document):
     meta = {'alias': 'default',
@@ -36,13 +36,16 @@ class ScientificArticle(Document):
     submission_date = DateTimeField(default=datetime.now())
     processing_state = ProcessingState(default='On Process')
     content = DictField()
+    sections_orden = ListField()
     summary = DictField()
     evaluation = DictField()
     reviewer = StringField(max_length=200)
     sorted_backup_assignment = ListField()
     review = DictField()
     review_result = ReviewResult(default="Pending Review")
-    is_resubmited = BooleanField()
+    old_review_result = ReviewResult(default="None")
+    is_resubmited = BooleanField(default=False)
+    submit_number = IntField(default=1)
     last_modified = DateTimeField(default=None)
     latex_project_id = ObjectIdField()
     submitted_pdf_id = ObjectIdField()
@@ -55,13 +58,22 @@ class ScientificArticle(Document):
         if latex_project:
             self.save_files(submitted_pdf=latex_project)
 
-    def update_properties(self,latex_project_id = None, submitted_pdf_id = None,  title: str = None, content: str = None, key_words: List[str] = None, summary: str = None, evaluation: str = None, reviewer: str = None,sorted_backup_assignment: List[tuple] = None, processing_state: bool = None, improvements:str = None, is_resubmited:bool=None):
-        if title:
-            self.title = title
-        if content:
-            self.content = content
+    """
+    Método para actualizar los atributos del manuscrito de forma cómoda y eficiente.
+    Entrada: Uno o más atributos a actualizar
+    Operación: Actualiza los atributos recibidos junto con la fecha de última modificación 
+    """
+    def update_properties(self, description: str=None, key_words: List[str]=None, processing_state: str=None, content: dict=None, sections_orden:List[str]=None, summary: dict=None, evaluation: dict=None, reviewer: str=None, sorted_backup_assignment: list=None, review: dict=None, review_result: str=None, old_review_result: str=None, is_resubmited: bool=None, submit_number: int=None, latex_project_id: ObjectId=None, submitted_pdf_id: ObjectId=None, improvements: str=None):
+        if description:
+            self.description = description
         if key_words:
             self.key_words = key_words
+        if processing_state:
+            self.processing_state = processing_state
+        if content:
+            self.content = content
+        if sections_orden:
+            self.sections_orden = sections_orden
         if summary:
             self.summary = summary
         if evaluation:
@@ -70,39 +82,49 @@ class ScientificArticle(Document):
             self.reviewer = reviewer
         if sorted_backup_assignment:
             self.sorted_backup_assignment = sorted_backup_assignment
-        if processing_state is not None:
-            self.processing_state = processing_state
+        if review:
+            self.review = review
+        if review_result:
+            self.review_result = review_result
+        if old_review_result:
+            self.old_review_result = old_review_result
+        if is_resubmited:
+            self.is_resubmited = is_resubmited
+        if submit_number:
+            self.submit_number += 1
         if latex_project_id:
             self.latex_project_id = latex_project_id
         if submitted_pdf_id:
             self.submitted_pdf_id = submitted_pdf_id
         if improvements:
             self.improvements = improvements
-        if is_resubmited:
-            self.is_resubmited = is_resubmited
+        
         self.last_modified = datetime.now()
         self.save()
-
 
     def set_latex_project_url(self, file_id):
         self.latex_project_url = file_id
 
+    """
+    Método para guardar archivos en la base de datos con GridFS
+    Entrada: Proyecto LaTeX y PDF enviado 
+    Operación: Guarda los archivos de proyecto LaTeX y pdf enviado en GridFS 
+               y actualiza sus ids en las propiedades del manuscrito.
+    """
     def save_files(self, latex_project=None, submitted_pdf=None): 
-        #print(type(mongo.db))  # Check the type of mongo.db
-    
-        # Ensure mongo.db is an instance of Database
-        if not isinstance(mongo.db, pymongo.database.Database):
-            raise TypeError("mongo.db must be an instance of Database")
-
         fs = gridfs.GridFS(mongo.db)
         if latex_project: 
-            print(latex_project)
             self.update_properties(latex_project_id=fs.put(latex_project) )
 
         if submitted_pdf:
-            print(submitted_pdf)
             self.update_properties(submitted_pdf_id=fs.put(submitted_pdf))
     
+    
+    """
+    Método para obtener la URL del archivo.
+    Entrada: Id del archivo
+    Operación: devuelve la URL del archivo basada en el id del archivo
+    """
     def get_file_url(self, file_id):
         if file_id:
             fs = gridfs.GridFS(mongo.db)
@@ -114,21 +136,31 @@ class ScientificArticle(Document):
                 return f"/file/{str(file_id)}"
         return None
     
-
+    """
+    Método para obtener el proyecto Latex.
+    Operación: Si el id del proyecto Latex existe, devuelve el archivo 
+               del proyecto Latex desde la base de datos.
+    """
     def get_latex_project(self):
         if self.latex_project_id:
             return get_file(self.latex_project_id)
         else:
             return None
     
+    """
+    Método para obtener un resumen del artículo como un diccionario, usado para la confirmación de entrega.
+    Operación: Devuelve un diccionario con el título, autor, descripción, id de envío,
+               la fecha de envío y el número de envíos del artículo.
+    """
     def get_summary_to_dict(self):
         return {
-            'author': self.author,
-            'submission_id':self.submission_id,
             'title': self.title,
+            'author': self.author,
+            'description': self.description,
+            'submission_id':self.submission_id,
             'submission_date': self.submission_date.strftime('%Y-%m-%d %H:%M:%S'),
+            'submit_number':self.submit_number,
             'keywords': self.key_words,
-            'las_modified':self.last_modified,
         }
 
     def to_dict(self):
@@ -146,14 +178,24 @@ class ScientificArticle(Document):
             'latex_project_url': self.get_file_url(self.latex_project_id),
             'submitted_pdf_url': self.get_file_url(self.submitted_pdf_id),
         }
-    
-
 
     def to_json(self):
-        return json.dumps(self.to_dict())
+        # Método propio de MongoEngine que permite devolver un diccionario del documento almacenado en MongoDB
+        manuscript_dict = self.to_mongo()
+        if manuscript_dict.get('id'): 
+            manuscript_dict['id'] = str(self.pk)
+        manuscript_dict.pop('_id', None)     
+
+        return json.dumps(manuscript_dict)
     
 
 
+"""
+    Función excluida de la clase ScientificArticle para obtener un archivo.
+    Entrada: ID del archivo
+    Operación: Intenta obtener y leer el archivo del sistema de archivos gridFS usando el ID del archivo.
+               Si ocurre un error durante el proceso, se captura y se imprime el error.
+"""
 def get_file(file_id):
     fs = gridfs.GridFS(mongo.db)
     try:

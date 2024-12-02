@@ -17,6 +17,7 @@ llamus_key = os.environ['LLAMUS_KEY']
 jwt_key = os.environ['JWT_KEY']
 hf_email = os.environ['EMAIL_HF']
 hf_pass = os.environ['PASS_HF']
+gpt_key = os.environ['GPT_KEY']
 
 
 def create_app():
@@ -26,6 +27,8 @@ def create_app():
     app.config['LLAMUS_KEY'] = llamus_key
     app.config['MONGO_URI'] = mongo_uri
     app.config["JWT_SECRET_KEY"] = jwt_key
+    app.config['GPT_KEY'] = gpt_key
+
     return app
 
 def create_mongo(app):
@@ -39,11 +42,16 @@ def register_blueprints(app):
     from src.routes.submit import submit_bp
     from src.routes.evaluate import evaluate_bp
     from src.routes.models import models_bp
+    from src.routes.admin import admin_bp
+    from src.utils.tags import tags_bp
+    from src.tests.testGptIntegration import test_gpt_bp
 
     app.register_blueprint(users_bp)
     app.register_blueprint(submit_bp)
     app.register_blueprint(evaluate_bp)
     app.register_blueprint(models_bp)
+    app.register_blueprint(tags_bp)
+    app.register_blueprint(test_gpt_bp)
 
     print(f"Created Blueprint for {users_bp}")
     print(f"Created Blueprint for {submit_bp}")

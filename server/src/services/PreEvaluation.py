@@ -1,8 +1,7 @@
-import json, requests
-import logging
-from src.app import mongo, llamus_key
-from bson.objectid import ObjectId
-from src.models.tabajo import ScientificArticle
+import json, requests, logging
+from src.models.manuscript import ScientificArticle
+from src.services.gptHandler import GptHandler
+from src.app import gpt_key
 
 
 SYSTEM_PROMPT_BASE = ("""You are an expert tutor specializing in reviewing and evaluating scientific research articles within the technology domain. Your focus lies on the '{section_name}' section of a manuscript titled "{title}"
@@ -81,94 +80,70 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 
 
 class PreEvaluation:
-    def __init__(self, db, system_prompt_base, llamus_key, article : ScientificArticle, is_resubmited:bool=False):
-        self.API_URL = "https://llamus.cs.us.es/ollama/v1/chat/completions"
-        self.LLAMUS_KEY = llamus_key
-        self.temperature = 0.8
-        self.chat_model = 'llama2:13b-chat'
-        self.temperature = 0.8
+    # Configuración inicial de la evaluación
+    def __init__(self, db, system_prompt_base, gpt_key, article: ScientificArticle, is_resubmited: bool = False):
+        self.gpt_handler = GptHandler(openai_api_key=gpt_key, system_prompt_base=system_prompt_base)
         self.DB = db.db.scientific_article
         self.SYSTEM_PROMPT_BASE = system_prompt_base
         self.article = article
         self.is_resubmited = is_resubmited
+        self.gpt_key = gpt_key
+        # Se recoge el contenido del manuscrito de la base de datos 
         try:
             self.article_content = dict(self.article["content"])
         except KeyError:
             print('KeyError: Article contents not found')
             self.article_content = {}
 
-    def llamus_request(self, system_prompt, user_prompt):
-        headers = {
-            'Content-Type': 'application/json',
-            'Authorization': f'Bearer {self.LLAMUS_KEY}'
-        }
-        data = {
-            'stream': False,
-            'model':"llama2:7b-chat",
-            'temperature':self.temperature,
-            'messages':[
-                {
-                    "role":"system",
-                    "content":system_prompt
-                },
-                {
-                    "role":"assistant",
-                    "content":user_prompt + "\n\n Section Evaluation:"
-                }]
-        }
-
-        response = requests.post(self.API_URL, headers=headers, data=json.dumps(data))
-        if response.status_code == 200:  # Checking if the request was successful
-            try:
-                #print(response.text)
-                return response.json()
-            except json.decoder.JSONDecodeError:  # Catching JSON decode errors
-                print('Failed to decode JSON. Response:', response.content)
-        else:
-            print('Request failed. Status Code:', response.status_code)
-            print('Response:', response.content)
-
-    def get_article(self, query)->ScientificArticle:
-        return self.DB.find_one(query)
-
-    def updateEvaluationdb(self, value):
-        evaluationState = dict(self.article['evaluation'])
-        evaluationState[value[0]] = value[1]
-        newvalues = { "$set": { "evaluation": evaluationState } }
-        self.DB.update_one(self.query,newvalues)
-        self.article = self.get_article(self.query)
-        print(f"\nUpdated the evaluation of {value[0]} in memory!\n")
-
+    # Función para realizar el proceso de pre-evaluación
     def run(self):
         res = self.article["evaluation"]
+        # Comprobar si existe un error prevenido de procesos anteriores, en caso afirmativo, eliminarlo
+        if 'error' in res:
+            del res['error']
+        # Convertir el contenido del artículo a un diccionario
         content = dict(self.article['content'])
+        # Crear una lista de palabras clave del artículo
+        key_words = ', '.join(self.article["key_words"]) if isinstance(self.article["key_words"], list) and self.article["key_words"] else str(self.article["key_words"])
 
+        # Si el artículo ya tiene una evaluación, obtener esa evaluación
+        if res.keys():
+            self.article["evaluation"]
+        res = self.article["evaluation"]
+
+        # Si se trata de segunda entrega, obtener la revisión de la entrega anterior.
+        if self.is_resubmited:
+            review = dict(self.article["review"])
+
+        # Para cada sección en el contenido del artículo
         for section_name, section_content in content.items():
-            try:  # Add try block 
-                if(not(self.is_resubmited)):
-                    system_prompt = self.SYSTEM_PROMPT_BASE.format(section_name=section_name, title=self.article['title'])
+            try:
+                # Si el artículo no ha sido reenviado para revisión, crear el prompt del sistema correspondiente
+                if not self.is_resubmited:
+                    system_prompt = self.system_prompt_base.format(section_name=section_name, title=self.article['title'], key_words=key_words)
                 else:
-                    review_section = dict(self.article["review"][section_name])
-                    review_comments = review_section["comment"]
-                    review_section.pop("comment")
-                    system_prompt = self.SYSTEM_PROMPT_BASE.format(section_name=section_name, title=self.article['title'], review_section=review_section, review_comments=review_comments)
-     
-                section_evaluation = self.llamus_request(system_prompt, section_content)
-
-                
-                if section_evaluation:
-                    tmp = dict(section_evaluation)
-                    choices = tmp.get('choices', [])
-                    if choices and isinstance(choices, list):
-                        msg = choices[0].get('message', {})
-                        response = msg.get('content', '')
+                    # Si se trata de segunda entrega, obtener la sección revisada y los comentarios para esa sección
+                    if review:
+                        review_section = dict(review.get(section_name, {}))
+                        review_comments = review_section.get('comment', '')
+                        if review_comments != '':
+                            review_section.pop("comment")
+                        system_prompt = self.system_prompt_base.format(section_name=section_name, title=self.article['title'], key_words=key_words, review_section=review_section, review_comments=review_comments)
                     else:
-                        response = ''
-                    res[section_name] = response
+                        logging.error("No se ha recibido la revisión del articulo")
+                        return f"Error: Se iniciliazó un proceso de segunda entrega pero no se encontró una revisión anterior de la sección de sección <{section_name}>"
+
+                user_prompt = section_content
+                # Invocar el método de GptHandler para obtener la evaluación de la sección actual
+                section_evaluation = self.gpt_handler.gpt_request(system_prompt, user_prompt)
+                # Si se obtiene una evaluación de la sección, almacenarla en "res"
+                if section_evaluation:
+                    res[section_name] = section_evaluation
             except Exception as e:
-                logging.error(f"error evaluacion {section_name}:\n {e}")
-                print(f"An error occurred while processing the '{section_name}' section \n{e}")
-                res[section_name] = ""  # Set the value to an empty string
-                res['error'] = True
-                continue  # Continue to the next iteration of the loop
+                # Registrar en log cualquier error que ocurra durante la evaluación de la sección
+                logging.error(f"Ha sucecido un error en la generación de evaluación de sección <{section_name}> \n{e}")
+                # Marcar la evaluación de la sección como "Error", el valor Error se gestiona posteriormente en los módulos del componente <Routes>
+                res[section_name] = "Error"
+                continue
+        # Devolver las evaluaciones de las secciones
         return res

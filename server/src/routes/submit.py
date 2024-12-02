@@ -3,14 +3,14 @@ from flask import Blueprint, request, jsonify, make_response
 from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 from werkzeug.datastructures import CombinedMultiDict
 from werkzeug.utils import secure_filename
-from src.models.user import Author
-from src.models.tabajo import ScientificArticle  
-from src.app import mongo, API, llamus_key
+from src.models.manuscript import ScientificArticle  
+from src.app import mongo, API, llamus_key, gpt_key
 from src.services.dataPreparation import DataHandler
-from src.services.PreEvaluation import PreEvaluation
+from src.services.preEvaluation import PreEvaluation
 from src.services.summary import ArticleSummarizer
 from src.services.summary import SYSTEM_PROMPT_BASE as prompt_summary
-from src.services.PreEvaluation import  SYSTEM_PROMPT_BASE as prompt_eval
+from src.services.preEvaluation import  SYSTEM_PROMPT_BASE as prompt_eval
+from src.services.preEvaluation import  SYSTEM_PROMPT_RESUBMIT as prompt_eval_resubmit
 from src.services.reviewerAssignment import ReviewerAssignment
 import tempfile, shutil, threading, os
 import logging
@@ -37,14 +37,13 @@ def process_submit(article:ScientificArticle, dest_path, resubmit:bool = False):
         data_handler = DataHandler(article, dest_path=dest_path)
         data_handler.run()
         if not(resubmit):    
-            summary_instance = ArticleSummarizer(mongo, prompt_summary,  llamus_key, article)
-            pre_evaluation_instance = PreEvaluation(mongo,  prompt_eval, llamus_key, article)
+            summary_instance = ArticleSummarizer(mongo, prompt_summary,  gpt_key, article)
+            pre_evaluation_instance = PreEvaluation(mongo,  prompt_eval, gpt_key, article)
             assignment_agent = ReviewerAssignment(mongo = mongo, article = article)
             assignment_agent.run()
         else:
-            summary_instance = ArticleSummarizer(mongo, prompt_summary,  llamus_key, article)
-            pre_evaluation_instance = PreEvaluation(mongo,  prompt_eval, llamus_key, article, resubmit)
-
+            summary_instance = ArticleSummarizer(mongo, prompt_summary,  gpt_keyÇ, article)
+            pre_evaluation_instance = PreEvaluation(mongo,  prompt_eval_resubmit, gpt_keyÇ, article, resubmit)
 
         summary =summary_instance.run()
         pre_evaluation = pre_evaluation_instance.run()

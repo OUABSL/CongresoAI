@@ -5,16 +5,14 @@ from flask import Blueprint, request, jsonify, abort
 from flask import send_file, make_response, Response
 from io import BytesIO
 from bson import ObjectId 
-from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
-from werkzeug.utils import secure_filename
-from src.models.user import User, Author
-from src.models.tabajo import ScientificArticle, get_file
-from src.app import mongo, API, llamus_key
-from src.services.PreEvaluation import PreEvaluation
+from flask_jwt_extended import jwt_required
+from src.models.manuscript import ScientificArticle, get_file
+from src.app import mongo, API, llamus_key, gpt_key
+from src.services.preEvaluation import PreEvaluation
 from src.services.summary import ArticleSummarizer
 from src.services.dataPreparation import DataHandler
 from src.services.summary import SYSTEM_PROMPT_BASE as prompt_summary
-from src.services.PreEvaluation import  SYSTEM_PROMPT_BASE as prompt_eval
+from src.services.preEvaluation import  SYSTEM_PROMPT_BASE as prompt_eval
 
 
 evaluate_bp = Blueprint('evaluate', __name__)
@@ -167,13 +165,13 @@ def regenerate_pre_evaluation_flow(article:ScientificArticle, tasks:dict):
         update_data = {}  # Datos para actualizar
 
         if "summary" in tasks:
-            summary_instance = ArticleSummarizer(mongo, prompt_summary, llamus_key, article)
+            summary_instance = ArticleSummarizer(mongo, prompt_summary, gpt_key, article)
             summary_instance.chat_model = tasks["summary"]
             summary = summary_instance.run()
             update_data["summary"] = summary  # Actualizar el resumen en los datos de actualización        
 
         if "initialevaluation" in tasks:
-            evaluation_instance = PreEvaluation(mongo, prompt_eval, llamus_key, article)
+            evaluation_instance = PreEvaluation(mongo, prompt_eval, gpt_key, article)
             evaluation_instance.chat_model = tasks["initialevaluation"]
             preevaluation = evaluation_instance.run()
             update_data["evaluation"] = preevaluation
