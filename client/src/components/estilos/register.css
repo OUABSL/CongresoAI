@@ -1,3 +1,18 @@
 .register-card{
-    width: clamp(350px, 80%, 600px);
+    max-width: 700px;
+    margin: 1.25rem auto; 
+
+}
+
+.input-class {
+    width: clamp(150px, 100%, 250px) !important;
+}
+.react-tel-input .form-control {
+    width: clamp(150px, 100%, 250px) !important;
+}
+
+.row{
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between;
 }

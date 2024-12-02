@@ -13,25 +13,19 @@ function Portal() {
   }
 
   return (
-    <div className="d-flex justify-content-around">
-      <Card style={{ width: '18rem' }}>
+    <div className="d-flex justify-content-center">
+      <Card className="d-flex justify-content-center p-3 m-4" style={{ width: '30rem' }}>
         <FontAwesomeIcon icon={faUserPen} size="6x" />
-        <Card.Body>
+        <Card.Body className="d-flex justify-content-center align-items-center flex-column">
           <Card.Title>Portal de Autor</Card.Title>
-          <Card.Text>
-            Descripción del portal de Autor
-          </Card.Text>
           <Button variant="primary" onClick={() => handleLinkClick('/portal-author/login')}>Ir al portal</Button>
         </Card.Body>
       </Card>
       
-      <Card style={{ width: '18rem' }}>
+      <Card className="d-flex justify-content-center p-3 m-4" style={{ width: '30rem' }}>
         <FontAwesomeIcon icon={faPenRuler} size="6x" />
-        <Card.Body>
+        <Card.Body className="d-flex justify-content-center align-items-center flex-column">
           <Card.Title>Portal de Revisor</Card.Title>
-          <Card.Text>
-            Descripción del portal de Revisor
-          </Card.Text>
           <Button variant="primary" onClick={() => handleLinkClick('/portal-reviewer/login')}>Ir al portal</Button>
         </Card.Body>
       </Card>

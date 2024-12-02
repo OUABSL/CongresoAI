@@ -1,3 +1,30 @@
+/*
+.navbar {
+  margin: 10px 0;
+  padding: 20px;
+  border-radius: 10px;
+  font-size: 1.1em;
+}
+
+.navbar-brand {
+  display: flex;
+  align-items: center;
+}
+
+.nav-link:hover {
+  background-color: #43a1ff;
+  border-radius: 5px;
+}
+
+.nav-dropdown {
+  background-color: #7f7f7f;
+}
+
+.navbar .nav-item .nav-link {
+  cursor: pointer;
+}
+*/
+
 .navbar {
   font-size: 1.1rem;
   margin: 0.5rem 0;

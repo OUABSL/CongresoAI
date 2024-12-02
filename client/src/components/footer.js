@@ -1,5 +1,5 @@
-import React from 'react'
-
+import React from 'react';
+import "./estilos/footer.css";
 
 const LinkSection = () => (
     <div className="col-md-3 mb-md-0 mb-3">
@@ -25,14 +25,15 @@ const ContactSection = () => (
 )
 
 const AppFooter = () => (
-    <footer className="page-footer font-small pt-4 bg-primary">
-        <div className="text-center py-3 text-light">
-                    <h5 className="text-uppercase text-light">Versión Beta</h5>
-                    <p>La presente página es una versión inicial del frontend de la aplicación The Congress AI.</p>
+    <footer className="page-footer font-small pt-2">
+        <div className="text-center py-2 text-dark">
+                    <h5 className="text-uppercase text-dark">Versión Alfa</h5>
+                    <p>Versión inicial de la aplicación The Congress AI.</p>
         </div>
-        <div className="footer-copyright text-center py-3 text-light">© 2024 Copyright:
-            <a href="https://www.cs.us.es/" className="text-light"> Departamento de Ciencias de la Computación e Inteligencia Artificial</a> | 
-            <a href="https://www.us.es/" className="text-light"> Universidad de Sevilla</a>
+        <div className="footer-copyright text-center text-dark my-2" >© 2024 Copyright:
+            <a href='https://www.linkedin.com/in/ouael-boussiali/'> Ouael Boussiali</a> | 
+            <a href="https://www.cs.us.es/" className="text-secondary"> Departamento de Ciencias de la Computación e Inteligencia Artificial</a> | 
+            <a href="https://www.us.es/" className="text-secondary"> Universidad de Sevilla</a>
         </div>
     </footer>
 )

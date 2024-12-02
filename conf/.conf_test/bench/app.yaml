@@ -1,0 +1,22 @@
+# backend app.yaml
+runtime: python310
+
+# frontend app.yaml
+runtime: nodejs20
+service: client
+
+
+env_variables:
+  none_of: "your_business"
+
+handlers:
+# frontend
+- url: /static
+  static_dir: build/static
+- url: /(.*\.(json|ico|js|html))$
+  static_files: build/\1
+  upload: build/.*\.(json|ico|js|html)$
+
+# backend
+- url: /.*
+  script: auto

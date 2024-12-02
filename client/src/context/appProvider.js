@@ -2,7 +2,6 @@ import {useContext, useState, useEffect, useCallback } from "react";
 import AuthContext from "./context";
 import { useNavigate } from "react-router-dom";
 
-const INACTIVITY_TIMEOUT = 1000 * 60 * 20; // 20 minutes in milliseconds
 
 
 const useAuth = () => {
@@ -14,29 +13,30 @@ const useAuth = () => {
 
 const AppProvider = ({ children }) => {
   const [sessionToken, setSessionToken] = useState(
-    localStorage.getItem("sessionToken") || null
+    localStorage.getItem("sessionToken") || ""
   );
-  const [role, setRole] = useState(localStorage.getItem("role") || null);
+  const [role, setRole] = useState(localStorage.getItem("role") || "");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const [username, setUsername] = useState(
-    localStorage.getItem("username") || null
+    localStorage.getItem("username") || ""
   );
-  const [lastActivity, setLastActivity] = useState(Date.now());
 
   const navigate = useNavigate();
 
-
+  // Eliminar la información de la sesión
   const clearSession = useCallback(() => {
     navigate('/');
-    setSessionToken(null);
-    setRole(null);
-    setUsername(null);
+    setSessionToken("");
+    setRole("");
+    setUsername("");
     localStorage.removeItem("sessionToken");
     localStorage.removeItem("role");
     localStorage.removeItem("username");
 }, [navigate]);
 
+
+  // Cerrar sesión
   const handleLogout = useCallback(async () => {
     try {
       const response = await fetch("/api/v1/logout", { method: 'POST' });
@@ -50,6 +50,8 @@ const AppProvider = ({ children }) => {
     clearSession();
   }, [clearSession]);
 
+  
+  // Comprobar que la sesión es válida y cerrar sesión en otro caso
   useEffect(() => {
     const checkSession = async () => {
       try {
@@ -83,11 +85,14 @@ const AppProvider = ({ children }) => {
       }
     };
   }, [sessionToken, username, role, clearSession]);
-  
+
+
   useEffect(() => {
-    localStorage.setItem("sessionToken", sessionToken);
-    localStorage.setItem("role", role);
-    localStorage.setItem("username", username);
+      if(sessionToken!=="" && role!=="" && username!==""){
+        localStorage.setItem("sessionToken", sessionToken);
+        localStorage.setItem("role", role);
+        localStorage.setItem("username", username);
+      }
   }, [sessionToken, role, username]);
 
   const handleSetSessionToken = (token) => {
@@ -101,41 +106,6 @@ const AppProvider = ({ children }) => {
   const handleSetUsername = (newUsername) => {
     setUsername(newUsername);
   };
-
-
-  useEffect(() => {
-    const handleWindowFocus = () => {
-      setLastActivity(Date.now());
-    };
-
-    const handleUserInteraction = () => {
-      setLastActivity(Date.now());
-    };
-
-    window.addEventListener("focus", handleWindowFocus);
-    window.addEventListener("click", handleUserInteraction);
-    window.addEventListener("keydown", handleUserInteraction);
-
-    return () => {
-      window.removeEventListener("focus", handleWindowFocus);
-      window.removeEventListener("click", handleUserInteraction);
-      window.removeEventListener("keydown", handleUserInteraction);
-    };
-  }, []); // Empty dependency array to prevent infinite loops
-
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      const now = Date.now();
-      const isInactive = now - lastActivity > INACTIVITY_TIMEOUT;
-
-      if (isInactive) {
-        handleLogout();
-      }
-    }, INACTIVITY_TIMEOUT);
-
-    return () => clearTimeout(timeout);
-  }, [lastActivity, handleLogout]); // Dependency on `lastActivity` to restart timeout on updates
-
 
   return (
     <AuthContext.Provider

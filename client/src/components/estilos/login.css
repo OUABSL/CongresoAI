@@ -1,6 +1,16 @@
 /* ---------- SIGN IN ---------- */
 .form-card {
     width: clamp(350px, 90%, 500px);
-    background-color: rgb(203, 35, 35);
+    background-color: #43a1ff;
   }
   
+.modal-dialog {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100% - 60px);
+  margin-bottom: 0; 
+}
+
+.modal-content {
+  margin: auto auto 8rem auto}

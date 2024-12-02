@@ -1,16 +1,21 @@
-import React, { useState } from "react";
-import { Form, Button, Alert, Card, FloatingLabel } from "react-bootstrap";
+import React, { useState, useContext, useEffect } from "react";
+import { Form, Button, Card, FloatingLabel } from "react-bootstrap";
 import { Link, useNavigate } from 'react-router-dom';
-import "../estilos/login.css";
+import { AlertContext } from '../../context/alertProvider';
 import { useAuth } from "../../context/appProvider";
+import "../estilos/login.css";
 
 const LoginAuthor = () => {
   const [usernameInput, setInputUsername] = useState("");
   const [password, setInputPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [alert, setAlert] = useState({ show: false, message: '', variant: 'danger' });
+  const { setAlert } = useContext(AlertContext);
   const navigate = useNavigate();
   const { setSessionToken, setRole, setUsername } = useAuth();
+
+  useEffect(() => {
+    document.title = "Inicio de sesión - Autor";
+  }, []);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -43,8 +48,10 @@ const LoginAuthor = () => {
         
         setAlert({ show: true, message: "Login Exitoso", variant: "success" });
         navigate(`/portal-author/profile/${usernameInput}`);
+      } else if(response.status === 404){
+        setAlert({ show: true, message: "No existe el usuario", variant: "danger" });
       } else {
-        setAlert({ show: true, message: "Error en el Login", variant: "danger" });
+        setAlert({ show: true, message: "Usuario o contraseña incorrectos", variant: "danger" });
       }
     } catch (error) {
       setAlert({ show: true, message: error.message, variant: "danger" });
@@ -62,16 +69,6 @@ const LoginAuthor = () => {
     <Card className="form-card mx-auto">
       <Form className="login-form shadow p-4 bg-white rounded" onSubmit={handleSubmit}>
         <div className="h4 mb-2 text-center">Acceso de autor</div>
-        {alert.show && 
-          <Alert
-            className="mb-2 mx-auto"
-            variant={alert.variant}
-            onClose={() => setAlert({ ...alert, show: false })}
-            dismissible
-          >
-            {alert.message}
-          </Alert>
-        }
         <FloatingLabel
           controlId="floatingUsername"
           label="Nombre de usuario"

@@ -1,30 +1,35 @@
-import React, { useState } from 'react'
-import { Card, Form, Row, Col, Button, Alert } from "react-bootstrap";
-import { Link } from 'react-router-dom';
-import "../estilos/register.css"
-
-
-
+import React, { useState, useContext, useEffect } from 'react';
+import { Card, Form, Row, Col, Button} from "react-bootstrap";
+import { Link, useNavigate } from 'react-router-dom';
+import { AlertContext } from '../../context/alertProvider';
+import PhoneInput from "react-phone-input-2";
+import { validateForm } from '../validators/register';
+import TagsInput from '../tagsInput';
+import "react-phone-input-2/lib/style.css";
+import "../estilos/register.css";
 
 
 const SignUpAuthor = () => {
-  const [alert, setAlert] = useState({ show: false, message: '', variant: 'success' });
+  const { setAlert } = useContext(AlertContext);
   const [loading, setLoading] = useState(false);
-
-
-
+  const navigate = useNavigate();
+  const [interestarea, setTags] = useState([]);
   const initialState = {
-    rol: 'author',
+    role: 'author',
     email: '',
     username: '',
     password: '',
+    confirmPassword: '',
     fullname: '',
-    birthdate: '',
     phonenumber: '',
-    interestarea: ''
+    interests: ''
   }
-
   const [state, setState] = useState(initialState);
+
+  useEffect(() => {
+    document.title = `Registro de autor `;
+  }, []);
+  
 
   const onSubmit = (e) => {
     e.preventDefault();
@@ -32,12 +37,32 @@ const SignUpAuthor = () => {
       if (state[key] === '') {
         setAlert({
           show: true,
-          message: 'Todos los campos son obligatorios',
+          message: `Todos los campos son obligatorios! Completa el campo ${key}.`,
           variant: 'danger'
         });
         return;
       }
     }
+
+    let errors = validateForm({ 
+      email: state.email, 
+      phone: state.phonenumber, 
+      password: state.password, 
+      confirmPassword: state.confirmPassword 
+    });
+    
+    if (errors.length > 0) {
+      setLoading(false);
+        setAlert({
+          show: true,
+          message: errors.map(x=> "-" + x + "\n"),
+          variant: "danger"
+        });
+        return;
+    } else{
+      delete state.confirmPassword;
+    }
+
     setLoading(true);
     
 
@@ -49,43 +74,60 @@ const SignUpAuthor = () => {
       body: JSON.stringify(state)
     })
     .then(response => {
-      if (!response.ok) { throw Error(response.statusText); }
-      return response.json();
+      // guarda el status en, por ejemplo, status
+      // convierte el cuerpo de la respuesta a objeto JavaScript
+      const status = response.status;
+      return response.json().then(data => ({ status, data }));
+  })
+  .then(({ status, data }) => {
+      console.log(JSON.stringify(data.message));
+      if (status  === 400) {
+          setAlert({
+              show: true,
+              message: "Nombre de usuario ya existe!",
+              variant: "danger"
+          });
+      } else if(status === 401){
+          setAlert({
+              show: true,
+              message: "Registro no autorizado!",
+              variant: "danger"
+          });
+      } else if(data.success){
+          setAlert({
+              show: true,
+              message: "Registro correcto! Inicia sesión.",
+              variant: "success"
+          });
+          return navigate("/portal-author/login");
+      }
+  })
+    .catch((error) => {
+      console.log(JSON.stringify(error));
+      setAlert({
+        show: true, 
+        message: "Ha sucecido error en el registro! Intentálo de nuevo más tarde.", 
+        variant: "danger"
+      });
     })
-    .then(data => {
-        console.log(data.message);
-
-        setAlert({
-          show: true, 
-          message: data.message, 
-          variant: data.success ? "success" : "danger"
-        });
-    })
-    .catch((error) => console.log(error))
     .finally(() => {
       setLoading(false);
-      setState(initialState);
     });
-
-    setLoading(false);
-    setState(initialState)
   }
+
+
+  useEffect(() => {
+    setState(currentState => ({ ...currentState, interests: interestarea }))
+  }, [interestarea]);
 
   const onChange = (e) => setState({...state, [e.target.name]: e.target.value});
 
   return (
     <Card className="register-card mt-2 p-5 mx-auto">
       <Form onSubmit={onSubmit} className="form-class">
-        <div className="h4 mb-4 form-heading text-center">Registro de autor</div>
-              
-        {alert.show && (
-          <Alert variant={alert.variant} onClose={() => setAlert({...alert, show: false})} dismissible>
-            {alert.message}
-          </Alert>
-        )}
-            
+        <div className="h4 mb-4 form-heading text-center">Registro de autor</div>         
           <Row>
-            <Col>
+            <Col  xs={12} md={6}>
               <Form.Group className="mb-3 form-group-class">
                 <Form.Label className="label-class">Nombre completo</Form.Label>
                 <Form.Control
@@ -99,7 +141,7 @@ const SignUpAuthor = () => {
                 />
               </Form.Group>
             </Col>
-            <Col>
+            <Col  xs={12} md={6}>
               <Form.Group className="mb-3 form-group-class">
                 <Form.Label className="label-class">Nombre de usuario</Form.Label>
                 <Form.Control
@@ -116,39 +158,9 @@ const SignUpAuthor = () => {
           </Row>
 
           <Row>
-            <Col>
-              <Form.Group className="mb-3 form-group-class">
-                <Form.Label className="label-class">Fecha de Nacimiento</Form.Label>
-                <Form.Control
-                  type="date"
-                  name="birthdate"
-                  value={state.birthdate}
-                  onChange={onChange}
-                  className="input-class"
-                  required
-                />
-              </Form.Group>
-            </Col>
-            <Col>
-              <Form.Group className="mb-3 form-group-class">
-                <Form.Label className="label-class">Número de teléfono</Form.Label>
-                <Form.Control
-                  type="number"
-                  placeholder="Introduzca su número de teléfono"
-                  name="phonenumber"
-                  value={state.phonenumber}
-                  onChange={onChange}
-                  className="input-class"
-                  required
-                />
-              </Form.Group>
-            </Col>
-          </Row>
-
-          <Row>
-          <Col>
+          <Col  xs={12} md={6}>
             <Form.Group className="mb-3 form-group-class">
-              <Form.Label className="label-class">Dirección de correo electrónico</Form.Label>
+              <Form.Label className="label-class">Correo electrónico</Form.Label>
               <Form.Control
                 type="email"
                 placeholder="Introduzca su correo electrónico"
@@ -160,7 +172,20 @@ const SignUpAuthor = () => {
               />
             </Form.Group>
           </Col>
-          <Col>
+            <Col  xs={12} md={6}>
+              <Form.Group className="mb-3 form-group-class">
+                  <Form.Label className="label-class">Número de teléfono</Form.Label>
+                  <PhoneInput
+                      className="number"
+                      country={"es"}
+                      value={state.phonenumber}
+                      onChange={phone => setState({ ...state, phonenumber: phone })}
+                  />
+              </Form.Group>
+            </Col>
+          </Row>
+          <Row>
+          <Col  xs={12} md={6}>
             <Form.Group className="mb-3 form-group-class">
               <Form.Label className="label-class">Contraseña</Form.Label>
               <Form.Control
@@ -174,19 +199,24 @@ const SignUpAuthor = () => {
               />
             </Form.Group>
             </Col>
+            <Col  xs={12} md={6}>
+            <Form.Group className="mb-3 form-group-class">
+              <Form.Label className="label-class">Repita su Contraseña</Form.Label>
+              <Form.Control
+                type="password"
+                placeholder="Repita la contraseña"
+                name="confirmPassword" 
+                value={state.confirmPassword}
+                onChange={onChange}
+                className="input-class"
+              />
+            </Form.Group>
+            </Col>
           </Row>
         
         <Form.Group className="mb-3 form-group-class">
-          <Form.Label className="label-class">Área de interés</Form.Label>
-          <Form.Control
-            type="text"
-            placeholder="Elija sus áreas de interés"
-            name="interestarea"
-            value={state.interestarea}
-            onChange={onChange}
-            className="input-class"
-            required
-          />
+          <Form.Label className="label-class">Áreas de Intereses</Form.Label>
+          <TagsInput tags={interestarea} setTags={setTags} persPlaceholder="áreas de intereses" />
         </Form.Group>
         {!loading ? (
           <div className="d-grid gap-2">

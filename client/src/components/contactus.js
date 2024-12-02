@@ -1,16 +1,17 @@
-import React, { useState, useEffect } from "react";
-import { Form, Button, Alert, Container, Row, Col, Card } from "react-bootstrap";
+import React, { useState, useEffect, useContext } from "react";
+import { Form, Button, Alert, Container, Row, Card } from "react-bootstrap";
 import { BsMap, BsEnvelope, BsTelephone } from "react-icons/bs";
 import TextareaAutosize from 'react-textarea-autosize';
+import { AlertContext } from '../context/alertProvider';
 
 import './estilos/contactus.css'
 
 const ContactForm = ({ formState, handleFormSubmit, handleInputChange }) => {
   return (
     <Form onSubmit={handleFormSubmit}>
-      {["nombre", "email", "asunto"].map((field, index) => (
+      {["Nombre", "Correo Electrónico", "Asunto"].map((field, index) => (
         <Form.Group className="mb-3" key={index}>
-          <Form.Label>{field.toUpperCase()}</Form.Label>
+          <Form.Label>{field}</Form.Label>
           <Form.Control
             type="text"
             placeholder={`Tu ${field}`}
@@ -20,7 +21,7 @@ const ContactForm = ({ formState, handleFormSubmit, handleInputChange }) => {
         </Form.Group>
       ))}
       <Form.Group className="mb-3">
-        <Form.Label>MENSAJE</Form.Label>
+        <Form.Label>Mensaje</Form.Label>
         <TextareaAutosize
           minRows={3}
           style={{ width: '100%', minRows: '3' }}
@@ -53,16 +54,19 @@ const ContactInfo = () => (
 );
 
 const ContactUs = () => {
+  const {setAlert } = useContext(AlertContext);
   const [formState, setFormState] = useState({
     nombre: "",
     email: "",
     asunto: "",
     mensaje: "",
   });
-  const [alert, setAlert] = useState({ show: false, message: '', variant: 'success' });
-
   const [enviado, setEnviado] = useState(false);
 
+  
+  useEffect(() => {
+    document.title = `Contactános`;
+  }, []);
   useEffect(() => {
     if (enviado) {
       const formResetTimeout = setTimeout(() => {

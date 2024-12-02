@@ -1,0 +1,34 @@
+h5.text-center {
+    text-align: center;
+    overflow: hidden;
+  }
+  
+  h5.text-center::before,
+  h5.text-center::after {
+    background-color: #cfe2ff;
+    content: "";
+    display: inline-block;
+    height: 1px;
+    position: relative;
+    vertical-align: middle;
+    width: 50%;
+  }
+  
+  h5.text-center::before {
+    right: 1em;
+    margin-left: -50%;
+  }
+  
+  h5.text-center::after {
+    left: 1em;
+    margin-right: -50%;
+  }
+
+  .card-cabecera{
+    color:"#052c65";
+    background-color:"#cfe2ff";
+  }
+
+  .tarjeta{
+    width: '100%';
+  }

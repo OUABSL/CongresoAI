@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Nav, Navbar, NavDropdown } from 'react-bootstrap';
-import { Link, NavLink } from 'react-router-dom';
+import { Container, Nav, Navbar, Dropdown } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 import { useContext } from 'react';
 import AuthContext from '../context/context';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import logo from '../ressources/logo.png';
+import { faHome, faPaperclip, faCopy, faEnvelopeOpen, faUserAlt, faSignOutAlt, faArrowRight, faAddressCard } from '@fortawesome/free-solid-svg-icons';
 import './estilos/navBar.css';
-import { useNavigate } from 'react-router-dom';
-
 
 const navigationItems = {
   home: '/',
@@ -17,59 +17,58 @@ const navigationItems = {
 const MyNavbar = () => {
   const [activeLink, setActiveLink] = useState(navigationItems.home);
   const { username, sessionToken, role, logout } = useContext(AuthContext); 
-  const isLoggedIn = Boolean(sessionToken && username && role);
+  const isLoggedIn = sessionToken && username && role;
   const portalLink = `portal-${role}`;
-  const navigate = useNavigate();
-
 
   useEffect(() => {
     setActiveLink(window.location.pathname);
   }, []);
 
-  const renderNavigationLink = (path, title, exact = false) => (
-    <Nav.Item 
-      className={activeLink === path ? 'nav-item active' : 'nav-item'} 
-      onClick={() => {
-        setActiveLink(path);
-        navigate(path);
-      }}>
-
-        <Link className="nav-link">
-          {title}
-        </Link>
-    </Nav.Item>
+  const renderNavigationLink = (path, title, icon) => (
+    <Nav.Link as={Link} to={path} onClick={() => setActiveLink(path)} className={(activeLink === path ? 'active ' : '') + 'text-primary'}>
+          <FontAwesomeIcon className={activeLink === path ? "text-primary" : ""} icon={icon} color={activeLink === path ? '' : '#000'} />
+          <span className={activeLink === path ? "navlink-title text-primary" : "navlink-title"} style={{color: activeLink === path ? '' : '#000'}}>{title}</span>
+    </Nav.Link>
   );
 
   return (
-    <Navbar collapseOnSelect expand="lg" className="navbar navbar-dark bg-primary">
+    <Navbar collapseOnSelect expand="lg" variant="light" className="navbar">
       <Container>
-        <Link className="navbar-brand d-flex align-items-center" to={navigationItems.home} onClick={() => setActiveLink(navigationItems.home)}>
-          <img src={logo} width="60" height="60" className="d-inline-block align-top" alt="logo"/> 
-          <span className="mx-2">The AI Congress</span>
-        </Link>
+        <Navbar.Brand as={Link} to={navigationItems.home} onClick={() => setActiveLink(navigationItems.home)}>
+        <img src={logo} width="60" height="60" className="d-inline-block align-top" alt="logo"/> 
+        </Navbar.Brand>
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
-        <Navbar.Collapse id="responsive-navbar-nav">
-          <Nav className="me-auto">
-            {renderNavigationLink(navigationItems.home, 'Inicio')}
-            {isLoggedIn && role === 'author' && renderNavigationLink(`/${portalLink}/articles/${username}`, 'Artículos Presentados')}
-            {isLoggedIn && role === 'author' && renderNavigationLink(`/${portalLink}/submit`, 'Subir Artículo')}
-            {isLoggedIn && role === 'reviewer' && renderNavigationLink(`/${portalLink}/articles/${username}`, 'Artículos Asignados')}
-            {renderNavigationLink(navigationItems.contactus, 'Contáctanos')}
+        <Navbar.Collapse id="responsive-navbar-nav" className="justify-content-center">
+          <Nav className="ml-auto">
+            {renderNavigationLink(navigationItems.home, 'Inicio', faHome)}
+            {renderNavigationLink(navigationItems.contactus, 'Contactenos', faEnvelopeOpen)}
+            {isLoggedIn && renderNavigationLink(`/${portalLink}/articles/${username}`, 'Manuscritos', faCopy)}
+            {isLoggedIn && role === 'author' && renderNavigationLink(`/portal-author/submit`, 'Subir Manuscrito', faPaperclip)}
           </Nav>
 
-          {!isLoggedIn && renderNavigationLink(navigationItems.portal, 'Portal', true)}
-
-          {isLoggedIn && (
-            <Nav>
-              <NavDropdown title={username} id="nav-dropdown">
-                <NavDropdown.Item as="div">
-                  <NavLink to={`/${portalLink}/profile/${username}`}>Profile</NavLink>
-                </NavDropdown.Item>
-                <NavDropdown.Divider />
-                <NavDropdown.Item onClick={logout}>Logout</NavDropdown.Item>
-              </NavDropdown>
-            </Nav>
-          )}
+          <Nav className='ml-auto'>
+  {isLoggedIn ? 
+    <Dropdown>
+      <Dropdown.Toggle as={Nav.Item} id=".nav-link nav-dropdown" className='dropdown-toggle'>
+        <span className={activeLink === `/${portalLink}/profile/${username}` ? "navlink-title text-primary" : "navlink-title"} style={{color: activeLink ===  `/${portalLink}/profile/${username}` ? '' : '#01003D'}}>Bienvenido <span className="fst-italic text-decoration-underline">{username}</span> </span>
+        <FontAwesomeIcon className={activeLink === `/${portalLink}/profile/${username}` ? "text-primary" : ""} color={activeLink === `/${portalLink}/profile/${username}` ? '' : '#01004B'} icon={faUserAlt} />
+      </Dropdown.Toggle>
+      <Dropdown.Menu>
+        <Dropdown.Item as={Link} 
+                       to={`/${portalLink}/profile/${username}`} 
+                       className={`text-primary ${activeLink === `/${portalLink}/profile/${username}` ? 'active' : ''}`} 
+                       onClick={() => setActiveLink(`/${portalLink}/profile/${username}`)}>
+          <FontAwesomeIcon className="text-primary" icon={faAddressCard}/> Profile
+        </Dropdown.Item>
+        <Dropdown.Divider />
+        <Dropdown.Item className="text-dark" onClick={logout}>
+          <FontAwesomeIcon className="text-dark" icon={faSignOutAlt} /> Logout
+        </Dropdown.Item>
+      </Dropdown.Menu>
+    </Dropdown> :
+   renderNavigationLink(navigationItems.portal, 'Portal', faArrowRight)
+  }
+</Nav>
         </Navbar.Collapse>
       </Container>
     </Navbar>

@@ -1,22 +1,40 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Container, Alert} from 'react-bootstrap';
-import { useParams, useNavigate } from 'react-router-dom';
+import { Table, Container, Alert, Pagination} from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 import { useContext } from "react";
 import AuthContext from "../../context/context";
 import { AlertContext } from '../../context/alertProvider';
-
 import '../estilos/show_articles.css'
-
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {faEye, faEyeSlash} from '@fortawesome/free-solid-svg-icons';
 
 function ShowSubmittedArticles() {
   const { username, sessionToken, logout } = useContext(AuthContext);
   const {setAlert} = useContext(AlertContext)
-
+  const [currentPage, setCurrentPage] = useState(1);
+  const [articlesPerPage] = useState(5);
   const [articles, setArticles] = useState([]);
   const navigate = useNavigate();
+  const requiredFields = ['title', 'submission_id', 'review_result', 'submission_date', 'submit_number'];
 
+
+
+  useEffect(() => {
+    document.title = `Resultado de Revisión`;
+  }, []);
+
+
+  const indexOfLastPost = currentPage * articlesPerPage;
+  const indexOfFirstPost = indexOfLastPost - articlesPerPage;
+  const currentArticles = Array.isArray(articles) && articles.length > 0 ? articles.slice(indexOfFirstPost, indexOfLastPost) : [];
+
+
+  const paginate = (currentPage) => setCurrentPage(currentPage);
+  const pageNumbers = [];
+  for (let i = 1; i <= Math.ceil(articles.length / articlesPerPage); i++) {
+    pageNumbers.push(i);
+  }
+  
   useEffect(() => {
     const fetchArticles = async () => {
       const response = await fetch(`/api/v1/submit/${username}`,
@@ -27,12 +45,13 @@ function ShowSubmittedArticles() {
           'Authorization': `Bearer ${sessionToken}`,
         },
       })
+      const data = await response.json();
+
 
       if(response.status === 401) {
         logout();
         return;
       }
-      const data = await response.json();
       if (Array.isArray(data)) {
         setArticles(data);
       } else {
@@ -43,7 +62,13 @@ function ShowSubmittedArticles() {
   }, [username, sessionToken, logout])
 
   if (!articles.length) {
-    return <Alert variant="warning">No hay ningún artículo presentado</Alert>;
+    return (
+      <>
+      <Container className="my-5 d-flex justify-content-center align-items-center">
+        <Alert variant="warning">No existe ningún artículo asignado</Alert>
+      </Container>
+    </>
+    );
   }
 
   return (
@@ -52,21 +77,25 @@ function ShowSubmittedArticles() {
         <thead>
           <tr>
             <th>#</th>
-            <th>Título</th>
+            <th>Título</th>            
+            <th>ID de entrega</th>
             <th>Estado de revisión</th>
-            <th>Fecha de Presentación</th>
-            <th>Última modificación</th>
+            <th>Fecha de presentación</th>
+            <th>Número de entrega</th>
             <th>Ver artículo</th>
           </tr>
         </thead>
         <tbody>
-        {articles.filter(article => article.description).map((article, index) => (
-          <tr key={index}>
+        {currentArticles.length > 0 && currentArticles
+        .filter(article =>requiredFields.every(field => article.hasOwnProperty(field) && article[field]))
+        .map((article, index) => (
+            <tr key={index}>
             <td>{index + 1}</td>
             <td>{article.title}</td>
+            <td>{article.submission_id}</td>
             <td>{article.review_result}</td>
             <td>{article.submission_date}</td>
-            <td>{article.last_modified}</td>
+            <td>{article.submit_number}</td>
             <td className='open-article'>
                 {article.review_result !== "Pending Review" ? (
                   <div className='center-content' onClick={() => navigate(`/portal-author/articles/${username}/${article.title}`)}>
@@ -82,6 +111,13 @@ function ShowSubmittedArticles() {
           ))}
         </tbody>
       </Table>
+      <Pagination className='justify-content-center'>
+        {pageNumbers.map(num => (
+          <Pagination.Item key={num} active={num === currentPage} onClick={() => paginate(num)}>
+            {num}
+          </Pagination.Item>
+          ))}
+      </Pagination>
     </Container>
   );
 }
