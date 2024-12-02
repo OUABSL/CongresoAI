@@ -11,6 +11,7 @@ from dotenv import load_dotenv
 # Cargar el archivo .env
 load_dotenv()
 
+print(sys.path[0])
 # Acceder a las variables de entorno
 mongo_uri = os.environ['MONGO_URI']
 llamus_key = os.environ['LLAMUS_KEY']

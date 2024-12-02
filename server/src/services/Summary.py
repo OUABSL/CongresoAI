@@ -1,3 +1,4 @@
+import json
 import logging
 from src.models.manuscript import ScientificArticle
 from src.services.gptHandler import GptHandler
@@ -35,12 +36,20 @@ class ArticleSummarizer:
     Salida: Devuelve un diccionario que contiene el resumen generado para cada sección.
     """
     def run(self):
+        print("Entrando en run summary")
         # Comenzar con el atributo summary ya proporcionado del manuscrito o que ya ha sido inicializado con {} en el servicio de Procesamiento de manuscrito
-        res = self.article.get("summary", {})
+        res = self.article.summary if self.article.summary else {}
         
         # Iterar sobre cada sección en el contenido del artículo
         for section_name, section_content in self.article_content.items():
-            try:  # Add try block here
+            try:
+                print(f"{section_name} --> {section_content}")
+                 # Convertir section_content a cadena si es un diccionario
+                if isinstance(section_content, dict):
+                    section_content = json.dumps(section_content)
+                elif not isinstance(section_content, str):
+                    raise ValueError(f"Tipo de contenido de sección no soportado: {type(section_content)}")
+                
                 system_prompt = self.SYSTEM_PROMPT_BASE.format(section_name=section_name, article_title=self.title)
                 user_prompt = section_content
                 
