@@ -1,6 +1,7 @@
 .venv
 venv
-.env
+server/.env
+server/.env.dev
 server/data/
 server/src/config.py
 server/src/test
