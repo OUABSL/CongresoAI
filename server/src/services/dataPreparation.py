@@ -9,7 +9,7 @@ from bson.objectid import ObjectId
 import logging
 
 # Configurar el logging
-logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 """Esta clase lleva a cabo las tareas de extracción, procesamiento y almacenamiento de datos de manuscritos entregados.""" 
 class DataHandler:
@@ -66,13 +66,10 @@ class DataHandler:
           tex_file (str) - Nombre del archivo .tex en el directorio de destino.
     """
     def _get_tex(self):
-        logging.debug(f"Listing files in directory: {self.dest_path}")
         tex_file = ''
         for archivo in os.listdir(self.dest_path):
-            logging.debug(f"Found file: {archivo}")
             if re.search(r'\.tex$', archivo):
                 tex_file = archivo
-                logging.debug(f"Found .tex file: {tex_file}")
         return tex_file
 
     """
@@ -83,10 +80,8 @@ class DataHandler:
     def _get_pdf(self):
         pdf_file = ''
         for archivo in os.listdir(self.dest_path):
-            logging.debug(f"Found file: {archivo}")
             if re.search(r'\.pdf$', archivo):
                 pdf_file = archivo
-                logging.debug(f"Found .pdf file: {pdf_file}")
         return pdf_file
 
     """
@@ -100,7 +95,6 @@ class DataHandler:
     def _parse_document_content(data):
         begin_pos = data.find(r'\begin{document}') + len(r'\begin{document}')
         end_pos = data.find(r'\end{document}')
-        logging.debug(f"Document content positions: begin_pos={begin_pos}, end_pos={end_pos}")
         return data[begin_pos:end_pos] if begin_pos != -1 and end_pos != -1 else None
     
     """
@@ -127,8 +121,6 @@ class DataHandler:
         sections = section_matcher.findall(document_content)
         positions = [m.start() for m in section_matcher.finditer(document_content)]
         positions.append(len(document_content))  # end position of the last section
-        logging.debug(f"Sections found: {sections}")
-        logging.debug(f"Section positions: {positions}")
         section_contents = {}
         sections_orden = [section_name for section_name in sections if section_name != "Acknowledgements"]
         for idx, section_name in enumerate(sections):
@@ -138,7 +130,6 @@ class DataHandler:
                     continue
                 section_content = document_content[positions[idx]:positions[idx + 1]].strip()
                 section_contents[section_name] = section_content
-                logging.debug(f"Section content for {section_name}: {section_content[:100]}...")  # Log first 100 chars
         
         return section_contents, sections_orden
 
@@ -181,15 +172,12 @@ class DataHandler:
       document_sections_processed (dict) - Diccionario con nombres de las secciones y su contenido procesado.
     """
     def run(self):
-        logging.info("Starting run method")
-
         # Extracción de los archivos latex desde zip en la ruta de destino
         self._perform_extraction(self.dest_path)
         logging.info("Extraction completed")
 
         # Recuperando el nombre del fichero .tex del directorio de destino
         latex_file_name = self._get_tex()
-        logging.debug(f"Latex file name: {latex_file_name}")
         if not latex_file_name:
             logging.error("No .tex file found in the directory")
             return
@@ -198,11 +186,9 @@ class DataHandler:
         latex_file_path = self.dest_path / latex_file_name
         # Leyendo el contenido del fichero .tex
         latex_file_text = self._read_file_data(latex_file_path)
-        logging.debug(f"Latex file text: {latex_file_text[:100]}...")  # Log first 100 chars
 
         # Obteniendo el nombre del fichero .pdf en el directorio de destino
         pdf_file_name = self._get_pdf()
-        logging.debug(f"PDF file name: {pdf_file_name}")
         if not pdf_file_name:
             logging.error("No .pdf file found in the directory")
             return
@@ -219,12 +205,10 @@ class DataHandler:
         if document_content is None:
             logging.error("Failed to parse document content")
             return
-        logging.debug(f"Document content: {document_content[:100]}...")  # Log first 100 chars
 
         # Extrayendo información de las secciones de contenido del documento
         document_sections, sections_orden = self._get_section_data(document_content)
         logging.debug(f"Document sections: {document_sections.keys()}")
-        logging.debug(f"Sections order: {sections_orden}")
 
         # Procesando secciones LaTeX en texto plano, Usa la bibleotica pylatexenc para realizar la tarea de limpieza de latex.
         document_sections_processed = {section: self._extract_just_text(text) for section, text in document_sections.items() if section != "Acknowledgements"}

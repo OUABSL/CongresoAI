@@ -43,7 +43,6 @@ class ArticleSummarizer:
         # Iterar sobre cada sección en el contenido del artículo
         for section_name, section_content in self.article_content.items():
             try:
-                print(f"{section_name} --> {section_content}")
                  # Convertir section_content a cadena si es un diccionario
                 if isinstance(section_content, dict):
                     section_content = json.dumps(section_content)

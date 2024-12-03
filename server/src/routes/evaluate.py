@@ -292,4 +292,3 @@ def reassignate_reviewer(reviewer, article_title):
         return make_response(jsonify({"success":False,  "message": "There is no disponible reviewer.Please contact the adminastator!"}), 406)
 
     return make_response(jsonify({"success":True,  "message": f"Re-Assignement done successfully. The new assigned reviewer is {new_reviewer}."}), 200)
-

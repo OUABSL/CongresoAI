@@ -17,12 +17,13 @@ class User(Document):
         if user_dict.get('id'): 
             user_dict['id'] = str(self.pk)
         user_dict.pop('password')
-        user_dict.pop('_id', None)     
+        user_dict.pop('_id', None)
         #Devolver el diccionario en formato JSON
         return json.dumps(user_dict)
     # Permitemos la herencia de la clase User, y indicamos que no tendrá ninguna colección propia
     meta = {'allow_inheritance': True,
             'abstract': True}
+
 
 class Reviewer(User):
     ORCID = StringField(required=True, unique=True, max_length=20)

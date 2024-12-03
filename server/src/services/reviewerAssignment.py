@@ -51,14 +51,22 @@ class ReviewerAssignment:
         reviewers = Reviewer.objects
         key_words_article = self.article["key_words"]
         reviewer_scores = defaultdict(float)
+        
+        # Si solo hay un revisor, devolver una lista con su nombre de usuario
+
+        if len(reviewers) == 1:
+            return [(9999, reviewers[0].username)]
+        
         for reviewer in reviewers:
-            pending_works = self.DB.count_documents({"reviewer": reviewer.username, "review_result":"Pending Review"})
+            pending_works = self.DB.count_documents({"reviewer": reviewer.username, "review_result": "Pending Review"})
             if pending_works < 4:
                 similitud = self.calcular_similitud(reviewer["knowledges"], key_words_article)
                 penalizacion = 0.9 ** pending_works
                 reviewer_scores[reviewer.username] += similitud * penalizacion
-        scores_ordendos = sorted(((score, user) for user, score in reviewer_scores.items()), reverse=True)
-        return scores_ordendos
+        
+        scores_ordenados = sorted(((score, user) for user, score in reviewer_scores.items()), reverse=True)
+        return scores_ordenados
+
 
     """
     Asignar un revisor a un artículo científico utilizando un algoritmo basado en similitud de palabras clave y número de trabajos pendientes.
@@ -66,6 +74,8 @@ class ReviewerAssignment:
     def run(self):
         # obtiene una lista ordenada de revisores compatibles basados en similitud y carga de trabajo
         sorted_assignment = self.asignar_revisor()
+        logging.info(f"Lista de asignados {sorted_assignment} ")
+
         # Selecciona el revisor con la mayor puntuación
         selected_reviewer = sorted_assignment[0]
         # Elimina el revisor seleccionado de la lista de asignaciones ordenadas

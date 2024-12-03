@@ -116,35 +116,39 @@ class PreEvaluation:
         if self.is_resubmited:
             review = dict(self.article["review"])
 
-        # Para cada sección en el contenido del artículo
         for section_name, section_content in content.items():
             try:
-                # Si el artículo no ha sido reenviado para revisión, crear el prompt del sistema correspondiente
                 if not self.is_resubmited:
-                    system_prompt = self.SYSTEM_PROMPT_BASE.format(section_name=section_name, title=self.article['title'], key_words=key_words)
+                    system_prompt = self.SYSTEM_PROMPT_BASE.format(
+                        section_name=section_name,
+                        title=self.article['title'],
+                    )
                 else:
-                    # Si se trata de segunda entrega, obtener la sección revisada y los comentarios para esa sección
                     if review:
                         review_section = dict(review.get(section_name, {}))
-                        review_comments = review_section.get('comment', '')
-                        if review_comments != '':
-                            review_section.pop("comment")
-                        system_prompt = self.SYSTEM_PROMPT_BASE.format(section_name=section_name, title=self.article['title'], key_words=key_words, review_section=review_section, review_comments=review_comments)
+                        review_comments = review_section.pop('comment', '') if 'comment' in review_section else ''
+                        review_section_str = json.dumps(review_section, ensure_ascii=False, indent=2)
+                        system_prompt = self.SYSTEM_PROMPT_BASE.format(
+                            section_name=section_name,
+                            title=self.article['title'],
+                            review_section=review_section_str,
+                            review_comments=review_comments
+                        )
                     else:
-                        logging.error("No se ha recibido la revisión del articulo")
-                        return f"Error: Se iniciliazó un proceso de segunda entrega pero no se encontró una revisión anterior de la sección de sección <{section_name}>"
-
+                        logging.error(f"No se ha recibido la revisión del artículo para la sección <{section_name}>")
+                        return f"Error: No se encontró una revisión anterior para la sección <{section_name}>"
+                
                 user_prompt = section_content
+
                 # Invocar el método de GptHandler para obtener la evaluación de la sección actual
                 section_evaluation = self.gpt_handler.gpt_request(system_prompt, user_prompt)
-                # Si se obtiene una evaluación de la sección, almacenarla en "res"
                 if section_evaluation:
                     res[section_name] = section_evaluation
+
             except Exception as e:
-                # Registrar en log cualquier error que ocurra durante la evaluación de la sección
-                logging.error(f"Ha sucecido un error en la generación de evaluación de sección <{section_name}> \n{e}")
-                # Marcar la evaluación de la sección como "Error", el valor Error se gestiona posteriormente en los módulos del componente <Routes>
+                logging.error(f"Ha sucecido un error en la generación de evaluación de sección <{section_name}>. Datos: {section_content}, Error: {e}")
                 res[section_name] = "Error"
                 continue
+
         # Devolver las evaluaciones de las secciones
         return res
