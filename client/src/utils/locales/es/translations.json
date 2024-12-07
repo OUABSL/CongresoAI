@@ -1,0 +1,85 @@
+{
+    "navbar": {
+        "home": "Inicio",
+        "contact": "Contáctenos",
+        "articles": "Manuscritos",
+        "submit": "Subir Manuscrito",
+        "welcome": "Bienvenido",
+        "profile": "Perfil",
+        "logout": "Cerrar sesión",
+        "portal": "Portal"
+    },
+    "home": {
+        "title": "The AI Congress",
+        "description": "Un sistema revolucionario de revisión de artículos científicos con inteligencia artificial generativa.",
+        "requestDemo": "¡Solicita su demo!",
+        "downloadAuthorManual": "Descargar el manual de autor",
+        "downloadReviewerManual": "Descargar el manual de revisor",
+        "benefitsTitle": "¿Cómo puede ayudarte The AI Congress?",
+        "benefitsDescription": "Nuestro sistema utiliza IA generativa para facilitar la tarea de revisión:",
+        "benefit1": "Evaluación inicial del artículo por la IA generativa.",
+        "benefit2": "Resumen automático del artículo.",
+        "benefit3": "Asignación al revisor según palabras clave.",
+        "benefit4": "Herramientas eficientes para revisión y feedback.",
+        "benefit5": "Flexibilidad en el proceso.",
+        "howItWorksTitle": "¿Cómo funciona The AI Congress?",
+        "howItWorksStep1": "Envías tu artículo en formato proyecto LaTeX (ZIP).",
+        "howItWorksStep2": "Procesamos el contenido para pasos posteriores.",
+        "howItWorksStep3": "Generamos un resumen automático con IA generativa.",
+        "howItWorksStep4": "Realizamos una evaluación inicial con IA generativa.",
+        "howItWorksStep5": "Asignamos el artículo a un revisor experto.",
+        "howItWorksStep6": "El revisor evalúa el artículo con la ayuda de IA.",
+        "howItWorksStep7": "El revisor aprueba, rechaza o solicita mejoras.",
+        "howItWorksStep8": "El autor monitorea el progreso.",
+        "howItWorksStep9": "Se comunica el resultado de la revisión."
+    },
+    "footer": {
+        "services": "Servicios",
+        "uploadArticle": "Subir un Artículo",
+        "reviewArticles": "Evaluar Artículos",
+        "accessProfile": "Acceder a mi perfil",
+        "contactUs": "Contáctanos",
+        "link1": "Enlace 1",
+        "link2": "Enlace 2",
+        "link3": "Enlace 3",
+        "link4": "Enlace 4",
+        "alphaVersion": "Versión Alfa",
+        "description": "Versión inicial de la aplicación The Congress AI."
+    },
+    "portal": {
+        "authorPortal": "Portal de Autor",
+        "reviewerPortal": "Portal de Revisor",
+        "goToPortal": "Ir al portal"
+    },
+    "contactUs": {
+        "title": "Contáctanos",
+        "description": "Si tienes alguna pregunta o comentario, no dudes en contactarnos. Estamos aquí para ayudarte.",
+        "fields": {
+            "name": "Nombre",
+            "email": "Correo Electrónico",
+            "subject": "Asunto",
+            "message": "Mensaje"
+        },
+        "placeholder": {
+            "name": "Tu Nombre",
+            "email": "Tu Correo Electrónico",
+            "subject": "Tu Asunto",
+            "message": "Tu Mensaje"
+        },
+        "submit": "Enviar mensaje",
+        "address": {
+            "title": "Dirección",
+            "text": "Calle Mayor, 123, Ciudad"
+        },
+        "email": {
+            "title": "Correo Electrónico",
+            "text": "info@ejemplo.com"
+        },
+        "phone": {
+            "title": "Teléfono",
+            "text": "+123 456 7890"
+        },
+        "successMessage": "¡Mensaje enviado con éxito!",
+        "alertMessage": "Funcionalidad en desarrollo"
+    }
+}

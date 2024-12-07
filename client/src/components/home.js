@@ -1,113 +1,104 @@
-import React, {useEffect} from 'react';
+import React, { useEffect, useContext } from 'react';
 import { Container, Row, Col, Card, ListGroup, Button } from 'react-bootstrap';
-import { useContext } from 'react';
 import AuthContext from '../context/context';
-import './estilos/Home.css'; 
+import './estilos/Home.css';
+import { useTranslation } from 'react-i18next';
 
 const Home = () => {
-  const { username, sessionToken, role } = useContext(AuthContext); 
-  const isLoggedIn = Boolean(sessionToken && username && role && sessionToken!==null && username!==null && role !==null);
+  const { username, sessionToken, role } = useContext(AuthContext);
+  const { t } = useTranslation();
   
-  useEffect(() => {
-    document.title = `The CongressAI - Inicio`;
-  }, []);
+  // Determina si el usuario está autenticado
+  const isLoggedIn = Boolean(sessionToken && username && role);
 
+  // Cambia el título de la página según el idioma
+  useEffect(() => {
+    document.title = `${t('home.title')} - ${t('home.pageTitleSuffix')}`;
+  }, [t]);
+
+  // Descarga el manual según el rol del usuario
   const handleDownload = async () => {
     try {
-        const res = await fetch(`/api/v1/manuales/manual-${role}`, {method: 'GET'});
-        if(res.ok) {
-            const blob = await res.blob();
-            const url = window.URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.setAttribute('download', `manual-${role}-theaicongress.pdf`);
-            document.body.appendChild(link);
-            link.click();
-            link.parentNode.removeChild(link);
-        } else {
-            const errorMessage = await res.text();
-            throw new Error(errorMessage);
-        }
+      const res = await fetch(`/api/v1/manuales/manual-${role}`, { method: 'GET' });
+      if (res.ok) {
+        const blob = await res.blob();
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', `manual-${role}-theaicongress.pdf`);
+        document.body.appendChild(link);
+        link.click();
+        link.parentNode.removeChild(link);
+      } else {
+        const errorMessage = await res.text();
+        throw new Error(errorMessage);
+      }
     } catch (err) {
-        console.error(err);
+      console.error(err);
     }
-}
+  };
+
+  // Vista para usuarios no autenticados
   const loggedOutView = (
     <div className="home">
-        <Card className="text-center home__title">
+      <Card className="text-center home__title">
         <Card.Body>
-          <Card.Title><h1>The AI Congress</h1></Card.Title>
-          <Card.Text>
-            Un sistema revolucionario de revisión de artículos científicos con inteligencia artificial generativa. 
-          </Card.Text>
-          <Button href="/portal-author/register" variant="success">¡Solicita su demo!</Button>
+          <Card.Title><h1>{t('home.title')}</h1></Card.Title>
+          <Card.Text>{t('home.description')}</Card.Text>
+          <Button href="/portal-author/register" variant="success">{t('home.requestDemo')}</Button>
         </Card.Body>
       </Card>
     </div>
   );
 
+  // Vista para usuarios autenticados con la opción de descargar manual
   const ManualView = (
     <div className="home">
-        <Card className="text-center home__title">
+      <Card className="text-center home__title">
         <Card.Body>
-          <Card.Title><h1>The AI Congress</h1></Card.Title>
-          <Card.Text>
-            Un sistema revolucionario de revisión de artículos científicos con inteligencia artificial generativa. 
-          </Card.Text>
-          {role === "author" ?
-            <Button onClick={handleDownload} variant="success">Descargar el manual de autor</Button>
-            :
-            <Button onClick={handleDownload} variant="success">Descargar el manual de revisor</Button>
-          }
+          <Card.Title><h1>{t('home.title')}</h1></Card.Title>
+          <Card.Text>{t('home.description')}</Card.Text>
+          <Button onClick={handleDownload} variant="success">
+            {role === 'author' ? t('home.downloadAuthorManual') : t('home.downloadReviewerManual')}
+          </Button>
         </Card.Body>
       </Card>
     </div>
   );
-  
+
+  // Contenido principal de la página
   return (
     <div className="body">
-    {!isLoggedIn ? loggedOutView : ManualView} 
+      {!isLoggedIn ? loggedOutView : ManualView}
       <Container className="home__content">
-         <Row className="home__description mb-4">
+        <Row className="home__description mb-4">
           <Col md={12}>
-            <h2>¿Cómo puede ayudarte The AI Congress?</h2>
+            <h2>{t('home.benefitsTitle')}</h2>
             <Card className="home__benefits">
               <Card.Body>
-                <p className=''>
-                  Nuestro sistema utiliza la inteligencia artificial generativa para facilitar la tarea de revisión de artículos científicos minimizando el esfuerzo y el tiempo necesario para hacerlo:
-                </p>
+                <p>{t('home.benefitsDescription')}</p>
                 <ListGroup>
-                  <ListGroup.Item>Evaluación inicial del artículo por la IA generativa.</ListGroup.Item>
-                  <ListGroup.Item>Resumen automático del artículo.</ListGroup.Item>
-                  <ListGroup.Item>Asignación al revisor basada en las palabras claves del artículo</ListGroup.Item>
-                  <ListGroup.Item>Herramientas eficientes para revisión y feedback</ListGroup.Item>
-                  <ListGroup.Item>Flexibilidad para nuestros usuarios en todo el proceso.</ListGroup.Item>
+                  {[1, 2, 3, 4, 5].map((index) => (
+                    <ListGroup.Item key={index}>{t(`home.benefit${index}`)}</ListGroup.Item>
+                  ))}
                 </ListGroup>
-                </Card.Body>
+              </Card.Body>
             </Card>
           </Col>
         </Row>
-
         <Row className="home__description mb-4">
           <Col md={12}>
-            <h2>¿Cómo funciona The AI Congress?</h2>
-            <Card className='use_case'>
+            <h2>{t('home.howItWorksTitle')}</h2>
+            <Card className="use_case">
               <Card.Body>
                 <ol>
-                  <li>Tu envías tu artículo en formato proyecto LaTeX (ZIP).</li>
-                  <li>Nuestro sistema extrae el contenido y lo prepara de forma adecuada para los posteiores procesos.</li>
-                  <li>Producimos un resumen automático de tu artículo con un modelo de IA generativa.</li>
-                  <li>Realizamos una evaluación inicial a tu artículo con un modelo de IA generativa.</li>
-                  <li>Asignamos tu artículo a un revisor experto basado en la compatibilidad de sus conocimientos con el artículo y su disponiblidad.</li>
-                  <li>El revisor recibe el artículo, el resumen y la evaluación para realizar su revisión.</li>
-                  <li>El revisor controla el material propocionado por la IA generativa con la disponibilidad de generar nueva versión en todo momento.</li>
-                  <li>El revisor aprueba, rechaza o solicita mejoras antes la publicación de tu artículo.</li>
-                  <li>El autor visualiza el estado de la revisión de sus artículos asignados, y su resultado en caso de existir.</li>
-
+                  {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((index) => (
+                    <li key={index}>{t(`home.howItWorksStep${index}`)}</li>
+                  ))}
                 </ol>
               </Card.Body>
             </Card>
-          </Col>         
+          </Col>
         </Row>
       </Container>
     </div>

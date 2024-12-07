@@ -1,4 +1,5 @@
-from langchain.chat_models import ChatOpenAI
+import re
+from langchain_openai import ChatOpenAI
 from langchain.prompts import (
     ChatPromptTemplate,
     SystemMessagePromptTemplate,
@@ -6,7 +7,11 @@ from langchain.prompts import (
 )
 from langchain.schema import AIMessage, HumanMessage, SystemMessage
 from langchain.chains import LLMChain
+
 from tiktoken import get_encoding  # Para manejar conteo de tokens directamente
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+
+from pydantic import BaseModel
 
 import logging
 
@@ -29,7 +34,7 @@ class GptHandler:
             max_tokens=self.max_tokens,
         )
 
-        # Inicializa el tokenizador para el modelo
+        # Inicializa el tokenizador
         self.tokenizer = get_encoding("cl100k_base")  # Utiliza el tokenizador adecuado para GPT-3.5/GPT-4
 
         self.conversation_history = []
@@ -40,19 +45,71 @@ class GptHandler:
         """
         return len(self.tokenizer.encode(content))
 
-    def _chunk_content(self, content, max_tokens):
+    def _escape_special_characters(self, content):
         """
-        Divide el contenido en fragmentos asegurando que cada uno no exceda el límite de tokens.
+        Escapa caracteres especiales y asegura que las fórmulas matemáticas no generen problemas.
         """
-        words = content.split()
+        # Lista de caracteres a escapar
+        special_characters = ["\\", "^", "_", "{", "}", "(", ")", "[", "]", "=", "+", "-", "*", "/", ">", "<", "∧", "∨", "⟶", "⇝", "·", "∈", "𝒫", "σ", "γ", "θ", "μ", "ρ"]
+        
+        # Escapar cada carácter especial solo una vez
+        for char in special_characters:
+            content = re.sub(r'(?<!\\)' + re.escape(char), f"\\{char}", content)
+        
+        # Eliminar caracteres no ASCII si es necesario
+        content = re.sub(r'[^\x00-\x7F]+', '', content)
+        
+        return content
+
+    def _chunk_content_smart_with_langchain(self, content, max_tokens):
+        """
+        Usa LangChain para dividir el contenido en fragmentos inteligentes,
+        manejando específicamente las fórmulas matemáticas.
+        """
+        # Detectar secciones con fórmulas matemáticas
+        math_pattern = r'[A-Za-z0-9_]+[\^_{}⟶⇝·∈]+'  # Patrón para identificar fórmulas
+        math_sections = re.findall(math_pattern, content)
+        
+        if math_sections:
+            logging.info("Se detectaron fórmulas matemáticas. Procesando con cuidado...")
+            content = self._escape_special_characters(content)
+
+        # Proseguir con el chunking inteligente
+        avg_token_length = 4
+        chunk_size_characters = max_tokens * avg_token_length
+
+        text_splitter = RecursiveCharacterTextSplitter(
+            separators=["\n\n", "\n", ". ", " "],
+            chunk_size=chunk_size_characters,
+            chunk_overlap=avg_token_length * 50,
+            length_function=lambda text: self._count_tokens(text),
+        )
+
+        chunks = text_splitter.split_text(content)
+        refined_chunks = []
+
+        for chunk in chunks:
+            if self._count_tokens(chunk) > max_tokens:
+                refined_chunks.extend(self._split_large_chunk(chunk, max_tokens))
+            else:
+                refined_chunks.append(chunk)
+
+        return refined_chunks
+
+    def _split_large_chunk(self, content, max_tokens):
+        """
+        Divide un fragmento largo en frases más pequeñas.
+        """
+        import re
+        sentences = re.split(r'(?<=[.!?]) +', content)  # Divide por frases completas
         chunks = []
         current_chunk = []
 
-        for word in words:
-            current_chunk.append(word)
+        for sentence in sentences:
+            current_chunk.append(sentence)
             if self._count_tokens(" ".join(current_chunk)) > max_tokens:
                 chunks.append(" ".join(current_chunk[:-1]))
-                current_chunk = [word]
+                current_chunk = [sentence]
 
         # Agregar el último fragmento si queda algo
         if current_chunk:
@@ -60,49 +117,41 @@ class GptHandler:
 
         return chunks
 
-
-    def gpt_request(self, system_prompt, user_prompt):
-        
-        max_context_length = 16385  # Máximo permitido por GPT-3-turbo
-        
-        # Validar entradas
-        if not isinstance(user_prompt, str) or not user_prompt.strip():
-            logging.error("El prompt del usuario no es válido.")
-            return "Por favor, proporciona un prompt válido."
-
-        if not isinstance(system_prompt, str) or not system_prompt.strip():
-            logging.error("El prompt del sistema no es válido.")
-            return "Por favor, proporciona un prompt de sistema válido."
-
-        logging.info(f"ENRANDO EN EL TRY: {type(system_prompt)} - {type(user_prompt)}")
+    def gpt_request(self, system_prompt, user_prompt, max_context_length=16385):
+        max_safe_tokens = max_context_length - self.max_tokens
 
         try:
-            # Calcular tokens del prompt y verificar si requiere fragmentación
-            total_prompt = f"{system_prompt}\n\n{user_prompt}"
-            num_tokens = self._count_tokens(total_prompt)
-            max_safe_tokens = max_context_length - self.max_tokens
-            logging.info(f"Tokens calculados: {num_tokens}, Límite seguro: {max_safe_tokens}")
+            # Validar entradas
+            if not isinstance(user_prompt, str) or not user_prompt.strip():
+                logging.error("El prompt del usuario no es válido.")
+                return "Por favor, proporciona un prompt válido."
 
-            if num_tokens > max_safe_tokens:
-                logging.info("El contenido es demasiado largo. Realizando fragmentación...")
-                chunk_size = max_safe_tokens - 1000  # Deja un margen para el prompt del sistema
-                chunks = self._chunk_content(user_prompt, chunk_size)
+            if not isinstance(system_prompt, str) or not system_prompt.strip():
+                logging.error("El prompt del sistema no es válido.")
+                return "Por favor, proporciona un prompt de sistema válido."
 
+            logging.info(f"Tokens calculados: {self._count_tokens(user_prompt)}, Límite seguro: {max_safe_tokens}")
+
+            # Si el contenido excede el límite, dividirlo
+            if self._count_tokens(user_prompt) > max_safe_tokens:
+                logging.info("Fragmentación necesaria. Dividiendo contenido...")
+                chunks = self._chunk_content_smart_with_langchain(user_prompt, max_safe_tokens)
+
+                # Procesar fragmentos y combinar respuestas
                 results = []
                 for i, chunk in enumerate(chunks):
                     logging.info(f"Procesando fragmento {i + 1}/{len(chunks)}")
                     response = self._process_single_request(system_prompt, chunk)
                     results.append(response)
 
-                # Generar un resumen de los fragmentos
+                # Generar un resumen final
                 combined_summary = " ".join(results)
-                logging.info("Generando resumen combinado de fragmentos.")
+                logging.info("Generando resumen combinado de los fragmentos.")
                 final_response = self._process_single_request(system_prompt, combined_summary)
                 return final_response
 
-
+            # Si no se excede el límite, procesar directamente
             else:
-                # Procesar directamente si el contenido no requiere fragmentación
                 return self._process_single_request(system_prompt, user_prompt)
 
         except Exception as e:
@@ -111,34 +160,39 @@ class GptHandler:
 
     def _process_single_request(self, system_prompt, content):
         """
-        Procesa una única solicitud a OpenAI, garantizando que el contenido sea un string.
+        Procesa una única solicitud a OpenAI, garantizando que el contenido sea válido.
         """
         try:
-            # Forzar que el contenido sea un string
+            # Asegurarse de que el contenido es una cadena de texto
             content = str(content)
 
-            # Crear plantillas de mensaje
+            # Escapar caracteres especiales en el contenido
+            content = self._escape_special_characters(content)
+
+            # Crear plantillas de mensaje, asegurándose de que los valores sean válidos
+            if not system_prompt.strip() or not content.strip():
+                logging.error("El prompt del sistema o del usuario está vacío.")
+                return "Por favor, proporciona un prompt válido."
+
             system_message_template = SystemMessagePromptTemplate.from_template(system_prompt)
             user_message_template = HumanMessagePromptTemplate.from_template(content)
 
+            # Forzar una lista vacía como valor de input_variables en HumanMessagePromptTemplate
+            user_message_template.prompt.input_variables = []
+
             # Crear el ChatPromptTemplate usando las plantillas
             chat_prompt = ChatPromptTemplate.from_messages([system_message_template, user_message_template])
+            
+            # Forzar una lista vacía como valor de input_variables en ChatPromptTemplate
+            chat_prompt.input_variables = []
 
-            # Crear y ejecutar la cadena LLM
-            chain = LLMChain(llm=self.llm, prompt=chat_prompt)
+            logging.info(f"El contenido del chatPrompt: \n\n {chat_prompt}\n\n-----------------------------------------------------")
+
+            # Crear y ejecutar la cadena utilizando LLMChain
+            chain = LLMChain(prompt=chat_prompt, llm=self.llm)
             response = chain.run({})
             return response
 
         except Exception as e:
             logging.error(f"Error en la solicitud individual a GPT: {e}")
             return "Error al procesar el fragmento."
-
-    # Función para obtener el historial de la conversación
-    def get_conversation_history(self):
-        return self.conversation_history
-
-    # Función para ajustar la temperatura
-    def set_temperature(self, new_temperature):
-        self.temperature = new_temperature
-        self.llm.temperature = new_temperature
-        logging.info(f"Temperatura ajustada a: {new_temperature}")
