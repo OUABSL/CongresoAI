@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Container, Alert, Pagination} from 'react-bootstrap';
+import { Table, Container, Alert, Pagination } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { useContext } from "react";
 import AuthContext from "../../context/context";
 import { AlertContext } from '../../context/alertProvider'; // Importa tu contexto
+import { useTranslation } from 'react-i18next'; // Importa la función useTranslation
 
 import '../estilos/show_articles.css'
 
@@ -11,8 +12,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenClip, faSpinner, faCircleExclamation } from '@fortawesome/free-solid-svg-icons';
 
 function ShowAssignedArticles() {
+  const { t } = useTranslation(); // Desestructuramos t para acceder a las funciones de traducción
   const { username, sessionToken, logout } = useContext(AuthContext); // Access username from context
-  const {setAlert} = useContext(AlertContext)
+  const { setAlert } = useContext(AlertContext)
   const [first, setFirst] = useState(false);
   const [articles, setArticles] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -22,8 +24,8 @@ function ShowAssignedArticles() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    document.title = `Articulos asignados - ${username}`;
-  }, [username]);
+    document.title = `${t('showAssignedArticles.assignedArticles')} - ${username}`; // Usamos la traducción para el título de la página
+  }, [username, t]);
 
   const indexOfLastPost = currentPage * articlesPerPage;
   const indexOfFirstPost = indexOfLastPost - articlesPerPage;
@@ -37,8 +39,7 @@ function ShowAssignedArticles() {
 
   useEffect(() => {
     const fetchArticles = async () => {
-      const response = await fetch(`/api/v1/evaluate/${username}`,
-      {
+      const response = await fetch(`/api/v1/evaluate/${username}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -48,39 +49,33 @@ function ShowAssignedArticles() {
 
       const data = await response.json();
 
-
-      if(response.status === 401) {
+      if (response.status === 401) {
         logout();
         return;
       }
       setArticles(data);
       setFirst(true);
-
     }
     fetchArticles()
-  }, [username, sessionToken, logout])
-
+  }, [username, sessionToken, logout]);
 
   if (!first) {
     return (
-    <>
-      <div className='d-flex justify-content-center align-items-center'>
-        <FontAwesomeIcon icon={faSpinner} size='2x' />
-      </div>
-    </>
+      <>
+        <div className='d-flex justify-content-center align-items-center'>
+          <FontAwesomeIcon icon={faSpinner} size='2x' />
+        </div>
+      </>
     );
-  }
-
-  else if (!articles.length) {
+  } else if (!articles.length) {
     return (
-    <>
-      <Container className="my-5 d-flex justify-content-center align-items-center">
-        <Alert variant="warning">No existe ningún artículo asignado</Alert>
-      </Container>
-    </>
+      <>
+        <Container className="my-5 d-flex justify-content-center align-items-center">
+          <Alert variant="warning">{t('showAssignedArticles.noArticlesAssigned')}</Alert> {/* Usamos la traducción */}
+        </Container>
+      </>
     );
   }
-
 
   return (
     <Container className="my-5">
@@ -88,45 +83,46 @@ function ShowAssignedArticles() {
         <thead>
           <tr>
             <th>#</th>
-            <th>Título</th>
-            <th>Descripción</th>
-            <th>Fecha de Entrega</th>
-            <th>Última modificación</th>
-            <th>Número de entrega</th>
-            <th>Estado de revisión</th>
-            <th>Acceder al artículo</th>
+            <th>{t('showAssignedArticles.articleTitle')}</th> {/* Usamos la traducción */}
+            <th>{t('showAssignedArticles.articleDescription')}</th> {/* Usamos la traducción */}
+            <th>{t('showAssignedArticles.submissionDate')}</th> {/* Usamos la traducción */}
+            <th>{t('showAssignedArticles.lastModified')}</th> {/* Usamos la traducción */}
+            <th>{t('showAssignedArticles.submissionNumber')}</th> {/* Usamos la traducción */}
+            <th>{t('showAssignedArticles.reviewStatus')}</th> {/* Usamos la traducción */}
+            <th>{t('showAssignedArticles.accessArticle')}</th> {/* Usamos la traducción */}
           </tr>
         </thead>
         <tbody>
-        {currentArticles.length > 0 && currentArticles.filter(article =>
+          {currentArticles.length > 0 && currentArticles.filter(article =>
             requiredFields.every(field => article.hasOwnProperty(field) && article[field])
-          ).map((article, index) => (          <tr key={index}>
-            <td>{index + 1}</td>
-            <td>{article.title}</td>
-            <td>{article.description}</td>
-            <td>{article.submission_date}</td>
-            <td>{article.last_modified}</td>
-            <td>{article.submit_number}</td>
-            <td>{article.review_result}</td>
-            <td className='open-article'>
-              {article.processing_state === "Done" ?
-                <div className='center-content' onClick={() => navigate(`/portal-reviewer/articles/${username}/${article.title}`)}>
-                  <FontAwesomeIcon icon={faPenClip} />
-                  <p>Evaluar</p>
-                </div>
-              : article.processing_state ==="Fail" ?
-                <div className='center-content' onClick={() => navigate(`/portal-reviewer/articles/${username}/${article.title}`)}>
-                  <FontAwesomeIcon icon={faCircleExclamation} />       
-                    <p>Fallido</p>
-                </div>
-                : 
-                <div className='center-content' onClick={() => navigate(`/portal-reviewer/articles/${username}/${article.title}`)}>
-                  <FontAwesomeIcon icon={faSpinner} />
-                  <p>Processing</p>
-                </div>
-              }
-            </td>
-          </tr>
+          ).map((article, index) => (
+            <tr key={index}>
+              <td>{index + 1}</td>
+              <td>{article.title}</td>
+              <td>{article.description}</td>
+              <td>{article.submission_date}</td>
+              <td>{article.last_modified}</td>
+              <td>{article.submit_number}</td>
+              <td>{article.review_result}</td>
+              <td className='open-article'>
+                {article.processing_state === "Done" ?
+                  <div className='center-content' onClick={() => navigate(`/portal-reviewer/articles/${username}/${article.title}`)}>
+                    <FontAwesomeIcon icon={faPenClip} />
+                    <p>{t('showAssignedArticles.evaluate')}</p> {/* Usamos la traducción */}
+                  </div>
+                  : article.processing_state === "Fail" ?
+                    <div className='center-content' onClick={() => navigate(`/portal-reviewer/articles/${username}/${article.title}`)}>
+                      <FontAwesomeIcon icon={faCircleExclamation} />
+                      <p>{t('showAssignedArticles.failed')}</p> {/* Usamos la traducción */}
+                    </div>
+                    :
+                    <div className='center-content' onClick={() => navigate(`/portal-reviewer/articles/${username}/${article.title}`)}>
+                      <FontAwesomeIcon icon={faSpinner} />
+                      <p>{t('showAssignedArticles.processing')}</p> {/* Usamos la traducción */}
+                    </div>
+                }
+              </td>
+            </tr>
           ))}
         </tbody>
       </Table>
@@ -135,7 +131,7 @@ function ShowAssignedArticles() {
           <Pagination.Item key={num} active={num === currentPage} onClick={() => paginate(num)}>
             {num}
           </Pagination.Item>
-          ))}
+        ))}
       </Pagination>
     </Container>
   );

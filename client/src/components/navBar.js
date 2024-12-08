@@ -69,12 +69,14 @@ const MyNavbar = () => {
             {isLoggedIn ? (
               <Dropdown>
                 <Dropdown.Toggle as={Nav.Item} id=".nav-link nav-dropdown" className="dropdown-toggle">
-                  <span className={activeLink === `/${portalLink}/profile/${username}` ? 'navlink-title text-primary' : 'navlink-title'} style={{ color: activeLink === `/${portalLink}/profile/${username}` ? '' : '#01003D' }}>
-                    {t('navbar.welcome')} <span className="fst-italic text-decoration-underline">{username}</span>
-                  </span>
                   <FontAwesomeIcon className={activeLink === `/${portalLink}/profile/${username}` ? 'text-primary' : ''} color={activeLink === `/${portalLink}/profile/${username}` ? '' : '#01004B'} icon={faUserAlt} />
                 </Dropdown.Toggle>
                 <Dropdown.Menu>
+                  <Dropdown.Item>
+                  <span className={activeLink === `/${portalLink}/profile/${username}` ? 'text-primary' : ''} style={{ color: activeLink === `/${portalLink}/profile/${username}` ? '' : '#01003D' }}>
+                    {t('navbar.welcome')} <span className="fst-italic text-decoration-underline">{username}</span>
+                  </span>
+                  </Dropdown.Item>
                   <Dropdown.Item
                     as={Link}
                     to={`/${portalLink}/profile/${username}`}

@@ -8,6 +8,8 @@ import { useAuth } from "../../context/appProvider";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import TagsInput from '../tagsInput';
+import { useTranslation } from 'react-i18next';
+
 import "../estilos/profile.css";
 
 
@@ -22,6 +24,7 @@ function RevisorProfile() {
   const { setSessionToken, setRole} = useAuth();
   const navigate = useNavigate();
   const [knowledges, setKnowledges] = useState([]); 
+  const { t } = useTranslation(); 
 
 
   
@@ -134,101 +137,146 @@ function RevisorProfile() {
     <Container className="d-flex justify-content-center align-items-center h-100">
       <Card className="p-3 mt-5 shadow-lg profile-card">
         <Card.Body>
-          <h2 className="text-center mb-4">Perfil de revisor - <b>{profileData.username || '-'}</b></h2>
+          <h2 className="text-center mb-4">
+            {t('reviewerProfile.title')} - <b>{profileData.username || '-'}</b>
+          </h2>
           <Form>
             <Row className="mb-3">
               <Col sm={6}>
-                <Form.Group as={Row} className='field-box'>
-                  <Form.Label column sm={4}>Nombre:</Form.Label>
-                  <Col sm={8} className='p-0'>
-                    {editing ? 
-                      <Form.Control type="text" name="fullname" value={profileData.fullname || ''} onChange={handleInputChange}/> :
-                      <div >{profileData.fullname || '-'}</div>
-                    }
+                <Form.Group as={Row} className="field-box">
+                  <Form.Label column sm={4}>{t('reviewerProfile.fullName')}:</Form.Label>
+                  <Col sm={8} className="p-0">
+                    {editing ? (
+                      <Form.Control
+                        type="text"
+                        name="fullname"
+                        value={profileData.fullname || ''}
+                        onChange={handleInputChange}
+                      />
+                    ) : (
+                      <div>{profileData.fullname || '-'}</div>
+                    )}
                   </Col>
                 </Form.Group>
               </Col>
               <Col sm={6}>
-                <Form.Group as={Row} className={`field-box ${editing ? 'onlyread-field':''}`}>
-                  <Form.Label column sm={4}>ORCID:</Form.Label>
-                  <Col sm={8} className='p-0'>
-                    {editing ?
-                      <Form.Control className='ps-1' readOnly  plaintext value={profileData.ORCID} /> :
-                      <div >{profileData.ORCID || '-'}</div>
-                    }
+                <Form.Group as={Row} className={`field-box ${editing ? 'onlyread-field' : ''}`}>
+                  <Form.Label column sm={4}>{t('reviewerProfile.orcid')}:</Form.Label>
+                  <Col sm={8} className="p-0">
+                    {editing ? (
+                      <Form.Control
+                        className="ps-1"
+                        readOnly
+                        plaintext
+                        value={profileData.ORCID}
+                      />
+                    ) : (
+                      <div>{profileData.ORCID || '-'}</div>
+                    )}
                   </Col>
                 </Form.Group>
               </Col>
             </Row>
             <Row className="mb-3">
-            <Col sm={6}>
-                <Form.Group as={Row} className='field-box'>
-                  <Form.Label column sm={4}>Email:</Form.Label>
-                  <Col sm={8} className='p-0'>
-                    {editing ? 
-                      <Form.Control type="email" name="email" value={profileData.email || ''} onChange={handleInputChange}/> :
-                      <div >{profileData.email || '-'}</div>
-                    }
+              <Col sm={6}>
+                <Form.Group as={Row} className="field-box">
+                  <Form.Label column sm={4}>{t('reviewerProfile.email')}:</Form.Label>
+                  <Col sm={8} className="p-0">
+                    {editing ? (
+                      <Form.Control
+                        type="email"
+                        name="email"
+                        value={profileData.email || ''}
+                        onChange={handleInputChange}
+                      />
+                    ) : (
+                      <div>{profileData.email || '-'}</div>
+                    )}
                   </Col>
                 </Form.Group>
               </Col>
               <Col sm={6}>
-                <Form.Group as={Row} className='field-box'>
-                  <Form.Label column sm={4}>Teléfono:</Form.Label>
-                  <Col sm={8} className='p-0'>
-                    {editing ? 
-                      <Form.Control type="tel" name="phonenumber" value={profileData.phonenumber || ''} onChange={handleInputChange}/> :
-                      <div >{profileData.phonenumber || '-'}</div>
-                    }
-                  </Col>
-                </Form.Group>
-              </Col>
-            </Row>
-
-            <Row className="mb-3">
-              <Col>
-                <Form.Group as={Row} className='field-box'>
-                  <Form.Label column sm={4}>Conocimientos:</Form.Label>
-                  <Col sm={8} className='p-0'>
-                  {editing ? 
-                      <TagsInput                     
-                      tags={knowledges}
-                      setTags={setKnowledges}
-                      persPlaceholder="áreas de conocimientos" />
-                      :
-                      <div >{knowledges.length > 0 ? knowledges.join(', ') : ''}</div>
-                  }
+                <Form.Group as={Row} className="field-box">
+                  <Form.Label column sm={4}>{t('reviewerProfile.phone')}:</Form.Label>
+                  <Col sm={8} className="p-0">
+                    {editing ? (
+                      <Form.Control
+                        type="tel"
+                        name="phonenumber"
+                        value={profileData.phonenumber || ''}
+                        onChange={handleInputChange}
+                      />
+                    ) : (
+                      <div>{profileData.phonenumber || '-'}</div>
+                    )}
                   </Col>
                 </Form.Group>
               </Col>
             </Row>
             <Row className="mb-3">
               <Col>
-                <Form.Group as={Row} className={`field-box ${editing ? 'onlyread-field':''}`}>
-                  <Form.Label column sm={4}>Fecha de registro:</Form.Label>
-                  <Col sm={8} className='p-0'>
-                    {editing ?
-                      <Form.Control className='ps-1' readOnly plaintext value={profileData.registration_date} /> :
-                      <div >{profileData.registration_date || '-'}</div>
-                    }
+                <Form.Group as={Row} className="field-box">
+                  <Form.Label column sm={4}>{t('reviewerProfile.knowledgeAreas')}:</Form.Label>
+                  <Col sm={8} className="p-0">
+                    {editing ? (
+                      <TagsInput
+                        tags={knowledges}
+                        setTags={setKnowledges}
+                        persPlaceholder={t('reviewerProfile.knowledgePlaceholder')}
+                      />
+                    ) : (
+                      <div>{knowledges.length > 0 ? knowledges.join(', ') : '-'}</div>
+                    )}
+                  </Col>
+                </Form.Group>
+              </Col>
+            </Row>
+            <Row className="mb-3">
+              <Col>
+                <Form.Group as={Row} className={`field-box ${editing ? 'onlyread-field' : ''}`}>
+                  <Form.Label column sm={4}>{t('reviewerProfile.registrationDate')}:</Form.Label>
+                  <Col sm={8} className="p-0">
+                    {editing ? (
+                      <Form.Control
+                        className="ps-1"
+                        readOnly
+                        plaintext
+                        value={profileData.registration_date}
+                      />
+                    ) : (
+                      <div>{profileData.registration_date || '-'}</div>
+                    )}
                   </Col>
                 </Form.Group>
               </Col>
             </Row>
             <Row className="justify-content-between">
               <Col sm="auto">
-                <Button variant="primary" onClick={editing ? handleSaveClick : handleEditClick}>
-                  {editing ? 'Guardar' : 'Editar perfil'}
+                <Button
+                  variant="primary"
+                  onClick={editing ? handleSaveClick : handleEditClick}
+                >
+                  {editing ? t('reviewerProfile.saveButton') : t('reviewerProfile.editButton')}
                 </Button>
               </Col>
               {editing && (
                 <Col sm="auto">
-                  <Button variant="secondary" onClick={handleEditCancel}>Cancelar</Button>
+                  <Button
+                    variant="secondary"
+                    onClick={handleEditCancel}
+                  >
+                    {t('reviewerProfile.cancelButton')}
+                  </Button>
                 </Col>
               )}
               {profileData.is_bi && !editing && (
                 <Col sm="auto">
-                  <Button variant="secondary" onClick={handleChangeRole}>Pasar a autor</Button>
+                  <Button
+                    variant="secondary"
+                    onClick={handleChangeRole}
+                  >
+                    {t('reviewerProfile.switchToAuthorButton')}
+                  </Button>
                 </Col>
               )}
             </Row>
@@ -237,6 +285,7 @@ function RevisorProfile() {
       </Card>
     </Container>
   );
+  
 };
   
 export default RevisorProfile;
