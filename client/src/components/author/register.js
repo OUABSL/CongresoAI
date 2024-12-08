@@ -1,19 +1,21 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { Card, Form, Row, Col, Button} from "react-bootstrap";
+import { Card, Form, Row, Col, Button } from "react-bootstrap";
 import { Link, useNavigate } from 'react-router-dom';
 import { AlertContext } from '../../context/alertProvider';
 import PhoneInput from "react-phone-input-2";
 import { validateForm } from '../validators/register';
 import TagsInput from '../tagsInput';
+import { useTranslation } from "react-i18next";
 import "react-phone-input-2/lib/style.css";
 import "../estilos/register.css";
 
-
 const SignUpAuthor = () => {
+  const { t } = useTranslation();
   const { setAlert } = useContext(AlertContext);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const [interestarea, setTags] = useState([]);
+
   const initialState = {
     role: 'author',
     email: '',
@@ -23,13 +25,13 @@ const SignUpAuthor = () => {
     fullname: '',
     phonenumber: '',
     interests: ''
-  }
+  };
+
   const [state, setState] = useState(initialState);
 
   useEffect(() => {
-    document.title = `Registro de autor `;
-  }, []);
-  
+    document.title = t("registerAuthor.title");
+  }, [t]);
 
   const onSubmit = (e) => {
     e.preventDefault();
@@ -37,206 +39,167 @@ const SignUpAuthor = () => {
       if (state[key] === '') {
         setAlert({
           show: true,
-          message: `Todos los campos son obligatorios! Completa el campo ${key}.`,
+          message: t("registerAuthor.emptyField", { field: t(`registerAuthor.fields.${key}`) }),
           variant: 'danger'
         });
         return;
       }
     }
 
-    let errors = validateForm({ 
-      email: state.email, 
-      phone: state.phonenumber, 
-      password: state.password, 
-      confirmPassword: state.confirmPassword 
+    let errors = validateForm({
+      email: state.email,
+      phone: state.phonenumber,
+      password: state.password,
+      confirmPassword: state.confirmPassword
     });
-    
+
     if (errors.length > 0) {
-      setLoading(false);
-        setAlert({
-          show: true,
-          message: errors.map(x=> "-" + x + "\n"),
-          variant: "danger"
-        });
-        return;
-    } else{
+      setAlert({
+        show: true,
+        message: errors.map(err => `- ${err}\n`).join(''),
+        variant: "danger"
+      });
+      return;
+    } else {
       delete state.confirmPassword;
     }
 
     setLoading(true);
-    
 
     fetch('/api/v1/signup', {
       method: 'POST',
       headers: {
-          'Content-Type': 'application/json'
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify(state)
     })
-    .then(response => {
-      // guarda el status en, por ejemplo, status
-      // convierte el cuerpo de la respuesta a objeto JavaScript
-      const status = response.status;
-      return response.json().then(data => ({ status, data }));
-  })
-  .then(({ status, data }) => {
-      console.log(JSON.stringify(data.message));
-      if (status  === 400) {
-          setAlert({
-              show: true,
-              message: "Nombre de usuario ya existe!",
-              variant: "danger"
-          });
-      } else if(status === 401){
-          setAlert({
-              show: true,
-              message: "Registro no autorizado!",
-              variant: "danger"
-          });
-      } else if(data.success){
-          setAlert({
-              show: true,
-              message: "Registro correcto! Inicia sesión.",
-              variant: "success"
-          });
-          return navigate("/portal-author/login");
-      }
-  })
-    .catch((error) => {
-      console.log(JSON.stringify(error));
-      setAlert({
-        show: true, 
-        message: "Ha sucecido error en el registro! Intentálo de nuevo más tarde.", 
-        variant: "danger"
+      .then(response => {
+        const status = response.status;
+        return response.json().then(data => ({ status, data }));
+      })
+      .then(({ status, data }) => {
+        if (status === 400) {
+          setAlert({ show: true, message: t("registerAuthor.usernameExists"), variant: "danger" });
+        } else if (status === 401) {
+          setAlert({ show: true, message: t("registerAuthor.unauthorized"), variant: "danger" });
+        } else if (data.success) {
+          setAlert({ show: true, message: t("registerAuthor.success"), variant: "success" });
+          navigate("/portal-author/login");
+        }
+      })
+      .catch((error) => {
+        setAlert({ show: true, message: t("registerAuthor.error"), variant: "danger" });
+      })
+      .finally(() => {
+        setLoading(false);
       });
-    })
-    .finally(() => {
-      setLoading(false);
-    });
-  }
-
+  };
 
   useEffect(() => {
-    setState(currentState => ({ ...currentState, interests: interestarea }))
+    setState(currentState => ({ ...currentState, interests: interestarea }));
   }, [interestarea]);
 
-  const onChange = (e) => setState({...state, [e.target.name]: e.target.value});
+  const onChange = (e) => setState({ ...state, [e.target.name]: e.target.value });
 
   return (
     <Card className="register-card mt-2 p-5 mx-auto">
       <Form onSubmit={onSubmit} className="form-class">
-        <div className="h4 mb-4 form-heading text-center">Registro de autor</div>         
-          <Row>
-            <Col  xs={12} md={6}>
-              <Form.Group className="mb-3 form-group-class">
-                <Form.Label className="label-class">Nombre completo</Form.Label>
-                <Form.Control
-                  type="text"
-                  placeholder="Nombre completo"
-                  name="fullname"
-                  value={state.fullname}
-                  onChange={onChange}
-                  className="input-class"
-                  required
-                />
-              </Form.Group>
-            </Col>
-            <Col  xs={12} md={6}>
-              <Form.Group className="mb-3 form-group-class">
-                <Form.Label className="label-class">Nombre de usuario</Form.Label>
-                <Form.Control
-                  type="text"
-                  placeholder="Nombre de usuario"
-                  name="username"
-                  value={state.username}
-                  onChange={onChange}
-                  className="input-class"
-                  required
-                />
-              </Form.Group>
-            </Col>
-          </Row>
-
-          <Row>
-          <Col  xs={12} md={6}>
+        <div className="h4 mb-4 form-heading text-center">{t("registerAuthor.title")}</div>
+        <Row>
+          <Col xs={12} md={6}>
             <Form.Group className="mb-3 form-group-class">
-              <Form.Label className="label-class">Correo electrónico</Form.Label>
+              <Form.Label>{t("registerAuthor.fullname")}</Form.Label>
               <Form.Control
-                type="email"
-                placeholder="Introduzca su correo electrónico"
-                name="email"
-                value={state.email}
+                type="text"
+                placeholder={t("registerAuthor.fullnamePlaceholder")}
+                name="fullname"
+                value={state.fullname}
                 onChange={onChange}
-                className="input-class"
                 required
               />
             </Form.Group>
           </Col>
-            <Col  xs={12} md={6}>
-              <Form.Group className="mb-3 form-group-class">
-                  <Form.Label className="label-class">Número de teléfono</Form.Label>
-                  <PhoneInput
-                      className="number"
-                      country={"es"}
-                      value={state.phonenumber}
-                      onChange={phone => setState({ ...state, phonenumber: phone })}
-                  />
-              </Form.Group>
-            </Col>
-          </Row>
-          <Row>
-          <Col  xs={12} md={6}>
+          <Col xs={12} md={6}>
             <Form.Group className="mb-3 form-group-class">
-              <Form.Label className="label-class">Contraseña</Form.Label>
+              <Form.Label>{t("registerAuthor.username")}</Form.Label>
               <Form.Control
-                type="password"
-                placeholder="Introduzca la contraseña"
-                name="password"
-                value={state.password}
+                type="text"
+                placeholder={t("registerAuthor.usernamePlaceholder")}
+                name="username"
+                value={state.username}
                 onChange={onChange}
-                className="input-class"
                 required
               />
             </Form.Group>
-            </Col>
-            <Col  xs={12} md={6}>
+          </Col>
+        </Row>
+        <Row>
+          <Col xs={12} md={6}>
             <Form.Group className="mb-3 form-group-class">
-              <Form.Label className="label-class">Repita su Contraseña</Form.Label>
+              <Form.Label>{t("registerAuthor.email")}</Form.Label>
               <Form.Control
-                type="password"
-                placeholder="Repita la contraseña"
-                name="confirmPassword" 
-                value={state.confirmPassword}
+                type="email"
+                placeholder={t("registerAuthor.emailPlaceholder")}
+                name="email"
+                value={state.email}
                 onChange={onChange}
-                className="input-class"
+                required
               />
             </Form.Group>
-            </Col>
-          </Row>
-        
+          </Col>
+          <Col xs={12} md={6}>
+            <Form.Group className="mb-3 form-group-class">
+              <Form.Label>{t("registerAuthor.phone")}</Form.Label>
+              <PhoneInput
+                country={"es"}
+                value={state.phonenumber}
+                onChange={phone => setState({ ...state, phonenumber: phone })}
+              />
+            </Form.Group>
+          </Col>
+        </Row>
+        <Row>
+          <Col xs={12} md={6}>
+            <Form.Group className="mb-3 form-group-class">
+              <Form.Label>{t("registerAuthor.password")}</Form.Label>
+              <Form.Control
+                type="password"
+                placeholder={t("registerAuthor.passwordPlaceholder")}
+                name="password"
+                value={state.password}
+                onChange={onChange}
+                required
+              />
+            </Form.Group>
+          </Col>
+          <Col xs={12} md={6}>
+            <Form.Group className="mb-3 form-group-class">
+              <Form.Label>{t("registerAuthor.confirmPassword")}</Form.Label>
+              <Form.Control
+                type="password"
+                placeholder={t("registerAuthor.confirmPasswordPlaceholder")}
+                name="confirmPassword"
+                value={state.confirmPassword}
+                onChange={onChange}
+              />
+            </Form.Group>
+          </Col>
+        </Row>
         <Form.Group className="mb-3 form-group-class">
-          <Form.Label className="label-class">Áreas de Intereses</Form.Label>
-          <TagsInput tags={interestarea} setTags={setTags} persPlaceholder="áreas de intereses" />
+          <Form.Label>{t("registerAuthor.interests")}</Form.Label>
+          <TagsInput tags={interestarea} setTags={setTags} persPlaceholder={t("registerAuthor.interestsPlaceholder")} />
         </Form.Group>
-        {!loading ? (
-          <div className="d-grid gap-2">
-            <Button className="w-50 mx-auto" variant="primary" type="submit">
-              Registrarse
-            </Button>
-          </div>
-        ) : (
-          <div className="d-grid gap-2">
-            <Button className="w-50 mx-auto" variant="primary" type="submit" disabled>
-              Registrandose...
-            </Button>
-          </div>
-        )}
-      <p className="forgot-password text-right">
-        ¿Ya está registrado? <Link to="/portal-author/login">iniciar sesión!</Link>
-      </p>
-    </Form>
+        <div className="d-grid gap-2">
+          <Button variant="primary" type="submit" disabled={loading}>
+            {loading ? t("registerAuthor.registering") : t("registerAuthor.registerButton")}
+          </Button>
+        </div>
+        <p className="forgot-password text-right">
+          {t("registerAuthor.alreadyRegistered")} <Link to="/portal-author/login">{t("registerAuthor.loginLink")}</Link>
+        </p>
+      </Form>
     </Card>
-    )
-  }
+  );
+};
 
-  export default SignUpAuthor;
+export default SignUpAuthor;

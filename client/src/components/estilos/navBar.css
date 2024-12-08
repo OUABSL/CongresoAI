@@ -53,3 +53,9 @@
 .dropdown-toggle{
   cursor: pointer !important;
 }
+
+.btn-idi-switcher{
+  padding: 0;
+  background: none;
+  border: none;
+}

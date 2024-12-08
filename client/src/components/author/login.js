@@ -3,9 +3,11 @@ import { Form, Button, Card, FloatingLabel } from "react-bootstrap";
 import { Link, useNavigate } from 'react-router-dom';
 import { AlertContext } from '../../context/alertProvider';
 import { useAuth } from "../../context/appProvider";
+import { useTranslation } from "react-i18next";
 import "../estilos/login.css";
 
 const LoginAuthor = () => {
+  const { t } = useTranslation();
   const [usernameInput, setInputUsername] = useState("");
   const [password, setInputPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -14,7 +16,7 @@ const LoginAuthor = () => {
   const { setSessionToken, setRole, setUsername } = useAuth();
 
   useEffect(() => {
-    document.title = "Inicio de sesión - Autor";
+    document.title = t("loginAuthor.title");
   }, []);
 
   const handleSubmit = async (event) => {
@@ -36,7 +38,9 @@ const LoginAuthor = () => {
           },
           body: JSON.stringify(payload)
         }),
-        new Promise((_, reject) => setTimeout(() => reject(new Error('La solicitud ha tardado demasiado, por favor intentelo de nuevo')), 10000))
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error(t("loginAuthor.timeout"))), 10000)
+        ),
       ]);
 
       const result = await response.json()
@@ -46,12 +50,12 @@ const LoginAuthor = () => {
         setUsername(usernameInput);
         setRole("author");
         
-        setAlert({ show: true, message: "Login Exitoso", variant: "success" });
+        setAlert({ show: true, message: t("loginAuthor.success"), variant: "success" });
         navigate(`/portal-author/profile/${usernameInput}`);
       } else if(response.status === 404){
-        setAlert({ show: true, message: "No existe el usuario", variant: "danger" });
+        setAlert({ show: true, message: t("loginAuthor.userNotFound"), variant: "danger" });
       } else {
-        setAlert({ show: true, message: "Usuario o contraseña incorrectos", variant: "danger" });
+        setAlert({ show: true, message: t("loginAuthor.invalidCredentials"), variant: "danger" });
       }
     } catch (error) {
       setAlert({ show: true, message: error.message, variant: "danger" });
@@ -61,19 +65,15 @@ const LoginAuthor = () => {
   };
   
   const handlePassword = () => {
-    setAlert({ show: true, message: "Funcionalidad en desarrollo!", variant: "info" });
+    setAlert({ show: true, message: t("loginAuthor.development"), variant: "info" });
 
   };
 
   return (
     <Card className="form-card mx-auto">
       <Form className="login-form shadow p-4 bg-white rounded" onSubmit={handleSubmit}>
-        <div className="h4 mb-2 text-center">Acceso de autor</div>
-        <FloatingLabel
-          controlId="floatingUsername"
-          label="Nombre de usuario"
-          className="mb-3"
-        >
+        <div className="h4 mb-2 text-center">{t("loginAuthor.title")}</div>
+        <FloatingLabel controlId="floatingUsername" label={t("loginAuthor.username")} className="mb-3">
           <Form.Control
             type="text"
             value={usernameInput}
@@ -81,39 +81,27 @@ const LoginAuthor = () => {
             required
           />
         </FloatingLabel>
-        <FloatingLabel
-          controlId="floatingPassword"
-          label="Contraseña"
-        >
+        <FloatingLabel controlId="floatingPassword" label={t("loginAuthor.password")}>
           <Form.Control
             type="password"
             value={password}
-            placeholder="Contraseña"
             onChange={(e) => setInputPassword(e.target.value)}
             required
           />
         </FloatingLabel>
         <Form.Group className="mt-2" controlId="checkbox">
-          <Form.Check type="checkbox" label="Recuérdame" />
+          <Form.Check type="checkbox" label={t("loginAuthor.rememberMe")} />
         </Form.Group>
-        {!loading ? (
-          <div className="d-grid gap-2">
-            <Button className="mx-auto" variant="primary" type="submit">
-              Iniciar Sesión
-            </Button>
-          </div>
-        ) : (
-          <div className="d-grid gap-2">
-            <Button className="mx-auto" variant="primary" type="submit" disabled>
-              Iniciando Sesión...
-            </Button>
-          </div>
-        )}
+        <div className="d-grid gap-2">
+          <Button variant="primary" type="submit" disabled={loading}>
+            {loading ? t("loginAuthor.loggingIn") : t("loginAuthor.loginButton")}
+          </Button>
+        </div>
         <div className="d-grid mt-3">
-          <Link onClick={handlePassword} className='text-muted link-above'>¿Olvidaste tu contraseña?</Link>
+          <Link onClick={handlePassword} className='text-muted link-above'>{t("loginAuthor.forgotPassword")}</Link>
         </div>
         <div className="d-grid mt-2">
-          <Link to="/portal-author/register" className='text-muted link-above'>¿No tienes una cuenta aún? ¡Regístrate!</Link>
+          <Link to="/portal-author/register" className='text-muted link-above'>{t("loginAuthor.noAccount")}</Link>
         </div>
       </Form>
     </Card>

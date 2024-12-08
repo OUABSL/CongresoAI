@@ -8,180 +8,424 @@ import LanguageDetector from 'i18next-browser-languagedetector';
 // have a look at the Quick start guide 
 // for passing in lng and translations on init
 
-// import translationEn from './locales/en/translation.json';
-// import translationEs from './locales/es/translation.json';
+// import enLang from './locales/en/en.json';
+// import esLang from './locales/es/es.json';
 
-  const translationEn = {
-    navbar: {
-      home: "Home",
-      contact: "Contact Us",
-      articles: "Articles",
-      submit: "Submit Article",
-      welcome: "Welcome",
-      profile: "Profile",
-      logout: "Logout",
-      portal: "Portal"
+// the translations
+// (tip move them in a JSON file and import them,
+// or even better, manage them separated from your code: https://react.i18next.com/guides/multiple-translation-files)
+const resources = {
+  en: {
+    translation: {
+        "navbar": {
+            "home": "Home",
+            "contact": "Contact Us",
+            "articles": "Articles",
+            "submit": "Submit Article",
+            "welcome": "Welcome",
+            "profile": "Profile",
+            "logout": "Logout",
+            "portal": "Portal"
+        },
+        "home": {
+            "title": "The AI Congress",
+            "description": "A revolutionary system for scientific article review using generative AI.",
+            "requestDemo": "Request Your Demo!",
+            "downloadAuthorManual": "Download Author Manual",
+            "downloadReviewerManual": "Download Reviewer Manual",
+            "benefitsTitle": "How Can The AI Congress Help You?",
+            "benefitsDescription": "Our system uses generative AI to simplify article reviews:",
+            "benefit1": "Initial article assessment by generative AI.",
+            "benefit2": "Automatic article summary.",
+            "benefit3": "Reviewer assignment based on article keywords.",
+            "benefit4": "Efficient tools for review and feedback.",
+            "benefit5": "Flexibility throughout the process.",
+            "howItWorksTitle": "How Does The AI Congress Work?",
+            "howItWorksStep1": "You submit your article in LaTeX project format (ZIP).",
+            "howItWorksStep2": "Our system processes the content for further steps.",
+            "howItWorksStep3": "We generate an automatic summary of your article with generative AI.",
+            "howItWorksStep4": "We perform an initial assessment using generative AI.",
+            "howItWorksStep5": "The article is assigned to an expert reviewer.",
+            "howItWorksStep6": "The reviewer receives the article and AI insights for evaluation.",
+            "howItWorksStep7": "The reviewer approves, rejects, or requests improvements.",
+            "howItWorksStep8": "The author tracks review progress.",
+            "howItWorksStep9": "The review result is communicated."
+        },
+        "footer": {
+            "services": "Services",
+            "uploadArticle": "Submit an Article",
+            "reviewArticles": "Evaluate Articles",
+            "accessProfile": "Access My Profile",
+            "contactUs": "Contact Us",
+            "link1": "Link 1",
+            "link2": "Link 2",
+            "link3": "Link 3",
+            "link4": "Link 4",
+            "contactUs": "Contáctanos",
+            "alphaVersion": "Versión Alfa",
+            "initialVersion": "Initial version of The Congress AI application.",
+            "description": "Initial version of The Congress AI application.",
+            "university": "University of Seville",
+            "departement":"Department of Computer Science and Artificial Intelligence"
+        },
+        "portal": {
+            "authorPortal": "Author Portal",
+            "reviewerPortal": "Reviewer Portal",
+            "goToPortal": "Go to the portal"
+        },
+        "contactUs": {
+            "title": "Contact Us",
+            "description": "If you have any questions or comments, don't hesitate to reach out to us. We're here to help.",
+            "fields": {
+                "name": "Name",
+                "email": "Email",
+                "subject": "Subject",
+                "message": "Message"
+            },
+            "placeholder": {
+                "name": "Your Name",
+                "email": "Your Email",
+                "subject": "Your Subject",
+                "message": "Your Message"
+            },
+            "submit": "Send Message",
+            "address": {
+                "title": "Address",
+                "text": "123 Main Street, City"
+            },
+            "email": {
+                "title": "Email",
+                "text": "info@example.com"
+            },
+            "phone": {
+                "title": "Phone",
+                "text": "+123 456 7890"
+            },
+            "successMessage": "Message sent successfully!",
+            "alertMessage": "Functionality under development"
+        },
+        "loginAuthor": {
+            "title": "Author Login",
+            "username": "Username",
+            "password": "Password",
+            "rememberMe": "Remember Me",
+            "loginButton": "Login",
+            "loggingIn": "Logging In...",
+            "forgotPassword": "Forgot your password?",
+            "noAccount": "Don't have an account yet? Register!",
+            "success": "Login Successful",
+            "userNotFound": "User does not exist",
+            "invalidCredentials": "Invalid username or password",
+            "timeout": "The request timed out. Please try again."
+            },
+        "registerAuthor": {
+            "title": "Author Registration",
+            "fullName": "Full Name",
+            "username": "Username",
+            "email": "Email",
+            "phone": "Phone Number",
+            "password": "Password",
+            "confirmPassword": "Confirm Password",
+            "interests": "Areas of Interest",
+            "registerButton": "Register",
+            "registering": "Registering...",
+            "alreadyRegistered": "Already registered? Log in!",
+            "requiredFields": "All fields are required! Please complete the {{field}} field.",
+            "validationErrors": "Validation errors occurred:",
+            "usernameExists": "Username already exists!",
+            "unauthorized": "Unauthorized registration!",
+            "registrationSuccess": "Registration successful! Please log in.",
+            "registrationError": "An error occurred during registration. Please try again later."
+        },
+        "authorProfile": {
+            "title": "Author Profile - {{username}}",
+            "name": "Name:",
+            "username": "Username:",
+            "email": "Email:",
+            "phone": "Phone:",
+            "interests": "Interests:",
+            "registrationDate": "Registration Date:",
+            "editProfile": "Edit Profile",
+            "save": "Save",
+            "cancel": "Cancel",
+            "changeToReviewer": "Change to Reviewer",
+            "updatingProfileSuccess": "Profile updated successfully",
+            "updatingProfileError": "Could not update the profile. Please try again later.",
+            "changingRoleError": "Could not change the role. Please try again later."
+        },
+        "submit_article": {
+            "form_title": "Fill out the form",
+            "article_title_label": "Article Title",
+            "article_title_placeholder": "Enter the manuscript title",
+            "description_label": "Brief Description of Content",
+            "description_placeholder": "Enter a summary description for the manuscript",
+            "keywords_label": "Keywords",
+            "keywords_placeholder": "Manuscript keywords",
+            "review_comments_label": "Reviewer Comments",
+            "improvements_label": "Description of Improvements",
+            "improvements_placeholder": "Describe the improvements made",
+            "latex_label": "Latex Project",
+            "submit_button": "Submit",
+            "is_resubmit_title": "Resubmit Article",
+            "is_submit_title": "Submit Article"
+        },
+        "submitSummary": {
+            "confirmation": "Submission Confirmation",
+            "title": "Title",
+            "author": "Author",
+            "submissionID": "Submission ID",
+            "submissionNumber": "Submission Number",
+            "description": "Article Description",
+            "keywords": "Keywords",
+            "submissionDate": "Submission Date",
+            "downloadLatex": "Download LaTeX Project",
+            "noLatexURL": "No LaTeX project URL available."
+          },
+        "showSubmittedArticles": {
+            "revisionResult": "Review Result",
+            "noArticles": "No articles assigned",
+            "columns": {
+                "number": "#",
+                "title": "Title",
+                "submissionID": "Submission ID",
+                "reviewStatus": "Review Status",
+                "submissionDate": "Submission Date",
+                "submissionNumber": "Submission Number",
+                "viewArticle": "View Article"
+            },
+            "pendingReview": "Pending Review"
+        },
+        "showSubmittedArticle": {
+            "backButton": "Volver Atrás",
+            "resubmitButton": "Realizar nueva entrega",
+            "downloadButton": "Descargar",
+            "downloadPdf": "Descargar PDF",
+            "downloadZip": "Descargar ZIP",
+            "reviewer": "Revisor",
+            "reviewResult": "Resultado de revisión",
+            "description": "Descripción",
+            "commentTitle": "Comentario",
+            "submitNumber": "Número de entrega"
+        },
+        "navigateToSubmitButton": {
+            "label": "Resubmit Article"
+        },
+        "downloadArticle": {
+            "label": "Download",
+            "pdf": "Download PDF",
+            "zip": "Download ZIP"
+        },
+        "displaySectionReview": {
+            "commentTitle": "Comment"
+        }
+    }, 
+  },
+  es: {
+    translation: {
+        "navbar": {
+            "home": "Inicio",
+            "contact": "Contáctenos",
+            "articles": "Manuscritos",
+            "submit": "Subir Manuscrito",
+            "welcome": "Bienvenido",
+            "profile": "Perfil",
+            "logout": "Cerrar sesión",
+            "portal": "Portal"
+        },
+        "home": {
+            "title": "The AI Congress",
+            "description": "Un sistema revolucionario de revisión de artículos científicos con inteligencia artificial generativa.",
+            "requestDemo": "¡Solicita su demo!",
+            "downloadAuthorManual": "Descargar el manual de autor",
+            "downloadReviewerManual": "Descargar el manual de revisor",
+            "benefitsTitle": "¿Cómo puede ayudarte The AI Congress?",
+            "benefitsDescription": "Nuestro sistema utiliza IA generativa para facilitar la tarea de revisión:",
+            "benefit1": "Evaluación inicial del artículo por la IA generativa.",
+            "benefit2": "Resumen automático del artículo.",
+            "benefit3": "Asignación al revisor según palabras clave.",
+            "benefit4": "Herramientas eficientes para revisión y feedback.",
+            "benefit5": "Flexibilidad en el proceso.",
+            "howItWorksTitle": "¿Cómo funciona The AI Congress?",
+            "howItWorksStep1": "Envías tu artículo en formato proyecto LaTeX (ZIP).",
+            "howItWorksStep2": "Procesamos el contenido para pasos posteriores.",
+            "howItWorksStep3": "Generamos un resumen automático con IA generativa.",
+            "howItWorksStep4": "Realizamos una evaluación inicial con IA generativa.",
+            "howItWorksStep5": "Asignamos el artículo a un revisor experto.",
+            "howItWorksStep6": "El revisor evalúa el artículo con la ayuda de IA.",
+            "howItWorksStep7": "El revisor aprueba, rechaza o solicita mejoras.",
+            "howItWorksStep8": "El autor monitorea el progreso.",
+            "howItWorksStep9": "Se comunica el resultado de la revisión."
+        },
+        "footer": {
+            "services": "Servicios",
+            "uploadArticle": "Subir un Artículo",
+            "reviewArticles": "Evaluar Artículos",
+            "accessProfile": "Acceder a mi perfil",
+            "contactUs": "Contáctanos",
+            "link1": "Enlace 1",
+            "link2": "Enlace 2",
+            "link3": "Enlace 3",
+            "link4": "Enlace 4",
+            "alphaVersion": "Versión Alfa",
+            "description": "Versión inicial de la aplicación The Congress AI.",
+            "university": "Universidad de Sevilla",
+            "departement":"Department of Computer Science and Artificial Intelligence",
+            "initialVersion": "Versión inicial de la aplicación The Congress AI.",
+        },
+        "portal": {
+            "authorPortal": "Portal de Autor",
+            "reviewerPortal": "Portal de Revisor",
+            "goToPortal": "Ir al portal"
+        },
+        "contactUs": {
+            "title": "Contáctanos",
+            "description": "Si tienes alguna pregunta o comentario, no dudes en contactarnos. Estamos aquí para ayudarte.",
+            "fields": {
+                "name": "Nombre",
+                "email": "Correo Electrónico",
+                "subject": "Asunto",
+                "message": "Mensaje"
+            },
+            "placeholder": {
+                "name": "Tu Nombre",
+                "email": "Tu Correo Electrónico",
+                "subject": "Tu Asunto",
+                "message": "Tu Mensaje"
+            },
+            "submit": "Enviar mensaje",
+            "address": {
+                "title": "Dirección",
+                "text": "Calle Mayor, 123, Ciudad"
+            },
+            "email": {
+                "title": "Correo Electrónico",
+                "text": "info@ejemplo.com"
+            },
+            "phone": {
+                "title": "Teléfono",
+                "text": "+123 456 7890"
+            },
+            "successMessage": "¡Mensaje enviado con éxito!",
+            "alertMessage": "Funcionalidad en desarrollo"
+        },
+        "loginAuthor": {
+            "title": "Inicio de sesión - Autor",
+            "username": "Nombre de usuario",
+            "password": "Contraseña",
+            "rememberMe": "Recuérdame",
+            "loginButton": "Iniciar Sesión",
+            "loggingIn": "Iniciando Sesión...",
+            "forgotPassword": "¿Olvidaste tu contraseña?",
+            "noAccount": "¿No tienes una cuenta aún? ¡Regístrate!",
+            "success": "Inicio de sesión exitoso",
+            "userNotFound": "No existe el usuario",
+            "invalidCredentials": "Usuario o contraseña incorrectos",
+            "timeout": "La solicitud ha tardado demasiado. Por favor, intentelo de nuevo."
+        },
+        "registerAuthor": {
+            "title": "Registro de Autor",
+            "fullName": "Nombre completo",
+            "username": "Nombre de usuario",
+            "email": "Correo electrónico",
+            "phone": "Número de teléfono",
+            "password": "Contraseña",
+            "confirmPassword": "Repita su Contraseña",
+            "interests": "Áreas de Interés",
+            "registerButton": "Registrarse",
+            "registering": "Registrándose...",
+            "alreadyRegistered": "¿Ya está registrado? ¡Iniciar sesión!",
+            "requiredFields": "¡Todos los campos son obligatorios! Completa el campo {{field}}.",
+            "validationErrors": "Se produjeron errores de validación:",
+            "usernameExists": "¡Nombre de usuario ya existe!",
+            "unauthorized": "¡Registro no autorizado!",
+            "registrationSuccess": "¡Registro correcto! Por favor, inicia sesión.",
+            "registrationError": "¡Ha ocurrido un error durante el registro! Por favor, intentálo de nuevo más tarde."
+        },
+        "authorProfile": {
+            "title": "Perfil de autor - {{username}}",
+            "name": "Nombre:",
+            "username": "Usuario:",
+            "email": "Email:",
+            "phone": "Teléfono:",
+            "interests": "Intereses:",
+            "registrationDate": "Fecha de registro:",
+            "editProfile": "Editar perfil",
+            "save": "Guardar",
+            "cancel": "Cancelar",
+            "changeToReviewer": "Pasar a revisor",
+            "updatingProfileSuccess": "Perfil actualizado correctamente",
+            "updatingProfileError": "No se pudo actualizar el perfil. Intenta en otro momento.",
+            "changingRoleError": "No se pudo cambiar el rol. Inténtelo de nuevo más tarde."
+        },
+        "submit_article": {
+            "form_title": "Rellene el formulario",
+            "article_title_label": "Titulo del artículo",
+            "article_title_placeholder": "Ingresa el título del manuscrito",
+            "description_label": "Descripción breve de su contenido",
+            "description_placeholder": "Introduzca una descripción resumida para el manuscrito",
+            "keywords_label": "Palabras clave",
+            "keywords_placeholder": "Palabras claves del manuscrito",
+            "review_comments_label": "Comentarios del Revisor",
+            "improvements_label": "Descripción de realizadas mejoras",
+            "improvements_placeholder": "Describe las mejoras realizadas",
+            "latex_label": "Proyecto Latex",
+            "submit_button": "Confirmar entrega",
+            "is_resubmit_title": "Mejorar Entrega",
+            "is_submit_title": "Subir artículo"
+        },
+        "submitSummary": {
+            "confirmation": "Confirmación de Entrega",
+            "title": "Título",
+            "author": "Autor",
+            "submissionID": "ID de entrega",
+            "submissionNumber": "Número de entrega",
+            "description": "Descripción del artículo",
+            "keywords": "Palabras clave",
+            "submissionDate": "Fecha de Entrega",
+            "downloadLatex": "Descargar Proyecto LaTeX",
+            "noLatexURL": "No hay URL para el proyecto LaTeX disponible."
+          },
+        "showSubmittedArticles": {
+            "revisionResult": "Resultado de Revisión",
+            "noArticles": "No existe ningún artículo asignado",
+            "columns": {
+                "number": "#",
+                "title": "Título",
+                "submissionID": "ID de entrega",
+                "reviewStatus": "Estado de revisión",
+                "submissionDate": "Fecha de presentación",
+                "submissionNumber": "Número de entrega",
+                "viewArticle": "Ver artículo"
+            },
+            "pendingReview": "Pendiente de Revisión"
+        },
+        "showSubmittedArticle": {
+            "backButton": "Volver Atrás",
+            "resubmitButton": "Realizar nueva entrega",
+            "downloadButton": "Descargar",
+            "downloadPdf": "Descargar PDF",
+            "downloadZip": "Descargar ZIP",
+            "reviewer": "Revisor",
+            "reviewResult": "Resultado de revisión",
+            "description": "Descripción",
+            "commentTitle": "Comentario",
+            "submitNumber": "Número de entrega"
+        },
+        "navigateToSubmitButton": {
+            "label": "Realizar nueva entrega"
+        },
+        "downloadArticle": {
+            "label": "Descargar",
+            "pdf": "Descargar PDF",
+            "zip": "Descargar ZIP"
+        },
+        "displaySectionReview": {
+            "commentTitle": "Comentario"
+        }
     },
-    home: {
-      title: "The AI Congress",
-      description: "A revolutionary system for scientific article review using generative AI.",
-      requestDemo: "Request Your Demo!",
-      downloadAuthorManual: "Download Author Manual",
-      downloadReviewerManual: "Download Reviewer Manual",
-      benefitsTitle: "How Can The AI Congress Help You?",
-      benefitsDescription: "Our system uses generative AI to simplify article reviews:",
-      benefit1: "Initial article assessment by generative AI.",
-      benefit2: "Automatic article summary.",
-      benefit3: "Reviewer assignment based on article keywords.",
-      benefit4: "Efficient tools for review and feedback.",
-      benefit5: "Flexibility throughout the process.",
-      howItWorksTitle: "How Does The AI Congress Work?",
-      howItWorksStep1: "You submit your article in LaTeX project format (ZIP).",
-      howItWorksStep2: "Our system processes the content for further steps.",
-      howItWorksStep3: "We generate an automatic summary of your article with generative AI.",
-      howItWorksStep4: "We perform an initial assessment using generative AI.",
-      howItWorksStep5: "The article is assigned to an expert reviewer.",
-      howItWorksStep6: "The reviewer receives the article and AI insights for evaluation.",
-      howItWorksStep7: "The reviewer approves, rejects, or requests improvements.",
-      howItWorksStep8: "The author tracks review progress.",
-      howItWorksStep9: "The review result is communicated."
-    },
-    footer: {
-      services: "Services",
-      uploadArticle: "Submit an Article",
-      reviewArticles: "Evaluate Articles",
-      accessProfile: "Access My Profile",
-      contactUs: "Contact Us",
-      link1: "Link 1",
-      link2: "Link 2",
-      link3: "Link 3",
-      link4: "Link 4",
-      alphaVersion: "Alpha Version",
-      description: "Initial version of The Congress AI application."
-    },
-    portal: {
-      authorPortal: "Author Portal",
-      reviewerPortal: "Reviewer Portal",
-      goToPortal: "Go to the portal"
-    },
-    contactUs: {
-      title: "Contact Us",
-      description: "If you have any questions or comments, don't hesitate to reach out to us. We're here to help.",
-      fields: {
-        name: "Name",
-        email: "Email",
-        subject: "Subject",
-        message: "Message"
-      },
-      placeholder: {
-        name: "Your Name",
-        email: "Your Email",
-        subject: "Your Subject",
-        message: "Your Message"
-      },
-      submit: "Send Message",
-      address: {
-        title: "Address",
-        text: "123 Main Street, City"
-      },
-      email: {
-        title: "Email",
-        text: "info@example.com"
-      },
-      phone: {
-        title: "Phone",
-        text: "+123 456 7890"
-      },
-      successMessage: "Message sent successfully!",
-      alertMessage: "Functionality under development"
-    }
-  };
-  
-  const translationEs = {
-    navbar: {
-      home: "Inicio",
-      contact: "Contáctenos",
-      articles: "Manuscritos",
-      submit: "Subir Manuscrito",
-      welcome: "Bienvenido",
-      profile: "Perfil",
-      logout: "Cerrar sesión",
-      portal: "Portal"
-    },
-    home: {
-      title: "The AI Congress",
-      description: "Un sistema revolucionario de revisión de artículos científicos con inteligencia artificial generativa.",
-      requestDemo: "¡Solicita su demo!",
-      downloadAuthorManual: "Descargar el manual de autor",
-      downloadReviewerManual: "Descargar el manual de revisor",
-      benefitsTitle: "¿Cómo puede ayudarte The AI Congress?",
-      benefitsDescription: "Nuestro sistema utiliza IA generativa para facilitar la tarea de revisión:",
-      benefit1: "Evaluación inicial del artículo por la IA generativa.",
-      benefit2: "Resumen automático del artículo.",
-      benefit3: "Asignación al revisor según palabras clave.",
-      benefit4: "Herramientas eficientes para revisión y feedback.",
-      benefit5: "Flexibilidad en el proceso.",
-      howItWorksTitle: "¿Cómo funciona The AI Congress?",
-      howItWorksStep1: "Envías tu artículo en formato proyecto LaTeX (ZIP).",
-      howItWorksStep2: "Procesamos el contenido para pasos posteriores.",
-      howItWorksStep3: "Generamos un resumen automático con IA generativa.",
-      howItWorksStep4: "Realizamos una evaluación inicial con IA generativa.",
-      howItWorksStep5: "Asignamos el artículo a un revisor experto.",
-      howItWorksStep6: "El revisor evalúa el artículo con la ayuda de IA.",
-      howItWorksStep7: "El revisor aprueba, rechaza o solicita mejoras.",
-      howItWorksStep8: "El autor monitorea el progreso.",
-      howItWorksStep9: "Se comunica el resultado de la revisión."
-    },
-    footer: {
-      services: "Servicios",
-      uploadArticle: "Subir un Artículo",
-      reviewArticles: "Evaluar Artículos",
-      accessProfile: "Acceder a mi perfil",
-      contactUs: "Contáctanos",
-      link1: "Enlace 1",
-      link2: "Enlace 2",
-      link3: "Enlace 3",
-      link4: "Enlace 4",
-      alphaVersion: "Versión Alfa",
-      description: "Versión inicial de la aplicación The Congress AI."
-    },
-    portal: {
-      authorPortal: "Portal de Autor",
-      reviewerPortal: "Portal de Revisor",
-      goToPortal: "Ir al portal"
-    },
-    contactUs: {
-      title: "Contáctanos",
-      description: "Si tienes alguna pregunta o comentario, no dudes en contactarnos. Estamos aquí para ayudarte.",
-      fields: {
-        name: "Nombre",
-        email: "Correo Electrónico",
-        subject: "Asunto",
-        message: "Mensaje"
-      },
-      placeholder: {
-        name: "Tu Nombre",
-        email: "Tu Correo Electrónico",
-        subject: "Tu Asunto",
-        message: "Tu Mensaje"
-      },
-      submit: "Enviar mensaje",
-      address: {
-        title: "Dirección",
-        text: "Calle Mayor, 123, Ciudad"
-      },
-      email: {
-        title: "Correo Electrónico",
-        text: "info@ejemplo.com"
-      },
-      phone: {
-        title: "Teléfono",
-        text: "+123 456 7890"
-      },
-      successMessage: "¡Mensaje enviado con éxito!",
-      alertMessage: "Funcionalidad en desarrollo"
-    }
-  };
+  },
+};
+
   
   i18n
     // load translation using http -> see /public/locales (i.e. https://github.com/i18next/react-i18next/tree/master/example/react/public/locales)
@@ -196,12 +440,11 @@ import LanguageDetector from 'i18next-browser-languagedetector';
     // init i18next
     // for all options read: https://www.i18next.com/overview/configuration-options
   .init({
-    resources: {
-      en: { translation: translationEn },
-      es: { translation: translationEs },
-    },
-    lng: 'es', // Idioma por defecto
+    resources,
+    debug:true,
+    lng: localStorage.getItem('idi') || 'es', // Detectar idioma desde localStorage
     fallbackLng: 'es', // Idioma de respaldo
+    returnObjects: true,
     interpolation: {
       escapeValue: false,
     },

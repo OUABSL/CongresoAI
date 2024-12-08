@@ -18,9 +18,9 @@ function Portal() {
       <Card className="d-flex justify-content-center p-3 m-4" style={{ width: '30rem' }}>
         <FontAwesomeIcon icon={faUserPen} size="6x" />
         <Card.Body className="d-flex justify-content-center align-items-center flex-column">
-          <Card.Title>{t('portal.author.title')}</Card.Title>
+          <Card.Title>{t('portal.authorPortal')}</Card.Title>
           <Button variant="primary" onClick={() => handleLinkClick('/portal-author/login')}>
-            {t('portal.author.button')}
+            {t('portal.goToPortal')}
           </Button>
         </Card.Body>
       </Card>
@@ -28,9 +28,9 @@ function Portal() {
       <Card className="d-flex justify-content-center p-3 m-4" style={{ width: '30rem' }}>
         <FontAwesomeIcon icon={faPenRuler} size="6x" />
         <Card.Body className="d-flex justify-content-center align-items-center flex-column">
-          <Card.Title>{t('portal.reviewer.title')}</Card.Title>
+          <Card.Title>{t('portal.reviewerPortal')}</Card.Title>
           <Button variant="primary" onClick={() => handleLinkClick('/portal-reviewer/login')}>
-            {t('portal.reviewer.button')}
+            {t('portal.goToPortal')}
           </Button>
         </Card.Body>
       </Card>

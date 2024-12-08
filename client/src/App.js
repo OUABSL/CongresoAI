@@ -3,6 +3,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'react-bootstrap';
 import { Alert } from 'react-bootstrap';
+import { useTranslation } from 'react-i18next';
+
 
 
 import MyNavbar from './components/navBar';

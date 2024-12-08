@@ -5,10 +5,13 @@ import { Link } from 'react-router-dom';
 import AuthContext from '../context/context';
 import LanguageSwitcher from './languageSwitcher'; // Asegúrate de importar correctamente el componente
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import logo from '../ressources/logo.png';
 import { faHome, faPaperclip, faCopy, faEnvelopeOpen, faUserAlt, faSignOutAlt, faArrowRight, faAddressCard } from '@fortawesome/free-solid-svg-icons';
 import './estilos/navBar.css';
+import esIcon from '../ressources/es.svg';
+import enIcon from '../ressources/en.svg';
+import logo from '../ressources/logo.png';
 import { useTranslation } from 'react-i18next';
+
 
 const navigationItems = {
   home: '/',
@@ -21,7 +24,14 @@ const MyNavbar = () => {
   const { username, sessionToken, role, logout } = useContext(AuthContext);
   const isLoggedIn = sessionToken && username && role;
   const portalLink = `portal-${role}`;
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const currentLang = i18n.language;
+
+  const toggleLanguage = () => {
+    const newLang = currentLang === 'es' ? 'en' : 'es';
+    i18n.changeLanguage(newLang); // Cambiar el idioma
+    localStorage.setItem('idi', newLang); // Persistir en localStorage
+  };
 
   useEffect(() => {
     setActiveLink(window.location.pathname);
@@ -50,6 +60,12 @@ const MyNavbar = () => {
           </Nav>
           <Nav className="ml-auto">
             {/* <LanguageSwitcher /> */}
+            {/* Botones de idioma */}
+          <div className="d-flex align-items-center">
+            <button onClick={toggleLanguage} className="btn-idi-switcher btn btn-light mx-2">
+              <img src={currentLang === 'es' ? enIcon : esIcon} alt="Change Language" width={25} height={25} background="None" />
+            </button>
+          </div>
             {isLoggedIn ? (
               <Dropdown>
                 <Dropdown.Toggle as={Nav.Item} id=".nav-link nav-dropdown" className="dropdown-toggle">

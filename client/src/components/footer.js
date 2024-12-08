@@ -39,11 +39,10 @@ const AppFooter = () => {
         <h5 className="text-uppercase text-dark">{t('footer.alphaVersion')}</h5>
         <p>{t('footer.initialVersion')}</p>
       </div>
-      <div className="footer-copyright text-center text-dark my-2">
-        © 2024 {t('footer.copyright')}: 
-        <a href='https://www.linkedin.com/in/ouael-boussiali/'> Ouael Boussiali</a> | 
-        <a href="https://www.cs.us.es/" className="text-secondary">{t('footer.department')}</a> | 
-        <a href="https://www.us.es/" className="text-secondary">{t('footer.university')}</a>
+      <div className="footer-copyright text-center text-dark my-2">© 2024 Copyright: 
+        <a href='https://www.linkedin.com/in/ouael-boussiali/' target='_blank'> Ouael Boussiali</a> | 
+        <a href="https://www.cs.us.es/" className="text-secondary" target='_blank'>  {t('footer.departement')}</a> | 
+        <a href="https://www.us.es/" className="text-secondary" target='_blank'> {t('footer.university')}</a>
       </div>
     </footer>
   );

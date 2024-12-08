@@ -14,26 +14,27 @@ const ContactForm = ({ formState, handleFormSubmit, handleInputChange }) => {
     <Form onSubmit={handleFormSubmit}>
       {["name", "email", "subject"].map((field, index) => (
         <Form.Group className="mb-3" key={index}>
-          <Form.Label>{t(`contactus.${field}`)}</Form.Label>
+          <Form.Label>{t(`contactUs.fields.${field}`)}</Form.Label>
           <Form.Control
             type="text"
-            placeholder={t(`contactus.placeholder.${field}`)}
+            placeholder={t(`contactUs.placeholder.${field}`)}
             value={formState[field]}
             onChange={(e) => handleInputChange(field, e.target.value)}
           />
         </Form.Group>
       ))}
       <Form.Group className="mb-3">
-        <Form.Label>{t('contactus.message')}</Form.Label>
+        <Form.Label>{t('contactUs.fields.message')}</Form.Label>
         <TextareaAutosize
           minRows={3}
           style={{ width: '100%' }}
+          placeholder={t('contactUs.placeholder.message')}
           value={formState.message}
           onChange={(e) => handleInputChange('message', e.target.value)}
         />
       </Form.Group>
       <Button variant="primary" type="submit">
-        {t('contactus.send')}
+        {t('contactUs.submit')}
       </Button>
     </Form>
   );
@@ -45,9 +46,9 @@ const ContactInfo = () => {
   return (
     <>
       {[
-        { icon: <BsMap size={32} />, title: t('contactus.address'), text: "Calle Mayor, 123, Ciudad" },
-        { icon: <BsEnvelope size={32} />, title: t('contactus.email'), text: "info@ejemplo.com" },
-        { icon: <BsTelephone size={32} />, title: t('contactus.phone'), text: "+123 456 7890" },
+        { icon: <BsMap size={32} />, title: t('contactUs.address.title'), text: t('contactUs.address.text') },
+        { icon: <BsEnvelope size={32} />, title: t('contactUs.email.title'), text: t('contactUs.email.text') },
+        { icon: <BsTelephone size={32} />, title: t('contactUs.phone.title'), text: t('contactUs.phone.text') },
       ].map((info, index) => (
         <div className="mb-3" key={index}>
           {info.icon}
@@ -72,7 +73,7 @@ const ContactUs = () => {
   const { t } = useTranslation();
 
   useEffect(() => {
-    document.title = t('contactus.title');
+    document.title = t('contactUs.title');
   }, [t]);
 
   useEffect(() => {
@@ -94,7 +95,7 @@ const ContactUs = () => {
     e.preventDefault();
     setAlert({
       show: true,
-      message: t('contactus.development'),
+      message: t('contactUs.alertMessage'),
       variant: 'info',
     });
   };
@@ -116,9 +117,9 @@ const ContactUs = () => {
         )}
       </Row>
       <Card style={{ maxWidth: '600px' }} className="mt-2 p-5">
-        <h1 className="text-center mb-4">{t('contactus.contactUs')}</h1>
+        <h1 className="text-center mb-4">{t('contactUs.title')}</h1>
         <Row>
-          <p>{t('contactus.description')}</p>
+          <p>{t('contactUs.description')}</p>
           <ContactForm
             formState={formState}
             handleFormSubmit={handleFormSubmit}
