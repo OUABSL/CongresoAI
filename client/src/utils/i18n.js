@@ -198,9 +198,6 @@ const resources = {
         "showSubmittedArticle": {
             "backButton": "Volver Atrás",
             "resubmitButton": "Realizar nueva entrega",
-            "downloadButton": "Descargar",
-            "downloadPdf": "Descargar PDF",
-            "downloadZip": "Descargar ZIP",
             "reviewer": "Revisor",
             "reviewResult": "Resultado de revisión",
             "description": "Descripción",
@@ -230,7 +227,8 @@ const resources = {
             "modalTitle": "Contact Administrator",
             "modalBody": "Please provide the investigator's ORCID to receive a personalized link. You can contact the administrator in the following ways:",
             "copyEmail": "Copy Email",
-            "sendEmail": "Send Email"
+            "sendEmail": "Send Email",
+            "success": "Login Successful",
         },
         "signUpReviewer": {
             "registerReviewer": "Reviewer Registration",
@@ -281,7 +279,10 @@ const resources = {
             "confirmButton": "Confirm",
             "successMessage": "Reevaluation started successfully. Check the result in 5 minutes.",
             "error500": "Error during reevaluation. Please contact the administrator.",
-            "generalError": "An error occurred during the process. Please try again later."
+            "generalError": "An error occurred during the process. Please try again later.",
+            "datapreparation": "Manuscript content processing",
+            "summary": "Manuscript summary",
+            "initialevaluation": "Initial manuscript evaluation"
         },
         "showAssignedArticle": {
             "reviewerComment": "Reviewer Comment",
@@ -502,9 +503,6 @@ const resources = {
         "showSubmittedArticle": {
             "backButton": "Volver Atrás",
             "resubmitButton": "Realizar nueva entrega",
-            "downloadButton": "Descargar",
-            "downloadPdf": "Descargar PDF",
-            "downloadZip": "Descargar ZIP",
             "reviewer": "Revisor",
             "reviewResult": "Resultado de revisión",
             "description": "Descripción",
@@ -534,7 +532,8 @@ const resources = {
             "modalTitle": "Contactar al Administrador",
             "modalBody": "Se ruega indicar el ORCID del investigador para recibir el enlace personalizado. Puede contactar al administrador de la siguiente manera:",
             "copyEmail": "Copiar Correo",
-            "sendEmail": "Enviar Correo"
+            "sendEmail": "Enviar Correo",
+            "success": "Inicio de sesión exitoso",
         },
         "signUpReviewer": {
             "registerReviewer": "Registro de revisor",
@@ -555,7 +554,7 @@ const resources = {
             "contactAdmin": "Por favor, contacte con el administrador."
         },
         "reviewerProfile": {
-            "profileTitle": "Perfil de revisor",
+            "title": "Perfil de revisor",
             "name": "Nombre",
             "orcid": "ORCID",
             "email": "Correo electrónico",
@@ -585,7 +584,10 @@ const resources = {
             "confirmButton": "Confirmar",
             "successMessage": "Reevaluación iniciada con éxito. Vuelve a comprobar el resultado en 5 minutos.",
             "error500": "Error en la reevaluación. Avise al administrador.",
-            "generalError": "Ha sucedido un error en el proceso. Por favor, inténtalo más tarde."
+            "generalError": "Ha sucedido un error en el proceso. Por favor, inténtalo más tarde.",
+            "datapreparation": "Procesamiento del contenido del manuscrito",
+            "summary":"Resúmen del manuscrito",
+            "initialevaluation":"Evaluación inicial del manuscrito"
         },
         "showAssignedArticle": {
             "reviewerComment": "Comentario del Revisor",

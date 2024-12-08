@@ -72,7 +72,7 @@ const MyNavbar = () => {
                   <FontAwesomeIcon className={activeLink === `/${portalLink}/profile/${username}` ? 'text-primary' : ''} color={activeLink === `/${portalLink}/profile/${username}` ? '' : '#01004B'} icon={faUserAlt} />
                 </Dropdown.Toggle>
                 <Dropdown.Menu>
-                  <Dropdown.Item>
+                  <Dropdown.Item className={`border-bottom border-bottom-1`}>
                   <span className={activeLink === `/${portalLink}/profile/${username}` ? 'text-primary' : ''} style={{ color: activeLink === `/${portalLink}/profile/${username}` ? '' : '#01003D' }}>
                     {t('navbar.welcome')} <span className="fst-italic text-decoration-underline">{username}</span>
                   </span>

@@ -144,7 +144,7 @@ function RevisorProfile() {
             <Row className="mb-3">
               <Col sm={6}>
                 <Form.Group as={Row} className="field-box">
-                  <Form.Label column sm={4}>{t('reviewerProfile.fullName')}:</Form.Label>
+                  <Form.Label column sm={4}>{t('reviewerProfile.name')}:</Form.Label>
                   <Col sm={8} className="p-0">
                     {editing ? (
                       <Form.Control
@@ -256,7 +256,7 @@ function RevisorProfile() {
                   variant="primary"
                   onClick={editing ? handleSaveClick : handleEditClick}
                 >
-                  {editing ? t('reviewerProfile.saveButton') : t('reviewerProfile.editButton')}
+                  {editing ? t('reviewerProfile.save') : t('reviewerProfile.editProfile')}
                 </Button>
               </Col>
               {editing && (
@@ -275,7 +275,7 @@ function RevisorProfile() {
                     variant="secondary"
                     onClick={handleChangeRole}
                   >
-                    {t('reviewerProfile.switchToAuthorButton')}
+                    {t('reviewerProfile.switchToAuthor')}
                   </Button>
                 </Col>
               )}

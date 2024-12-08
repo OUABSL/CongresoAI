@@ -43,7 +43,7 @@ const DownloadArticle = ({ pdf, zip, title }) => {
   
     return (
         <div className="d-flex justify-content-end mt-1">
-            <DropdownButton id="dropdown-button" title="Descargar">
+            <DropdownButton id="dropdown-button" title={t('downloadArticle.label')}>
                 <Dropdown.Item onClick={() => handleDownload(pdf, title, 'application/pdf')}>{t('downloadArticle.pdf')}</Dropdown.Item>
                 <Dropdown.Item onClick={() => handleDownload(zip, title, 'application/zip')}>{t('downloadArticle.zip')}</Dropdown.Item>
             </DropdownButton>
