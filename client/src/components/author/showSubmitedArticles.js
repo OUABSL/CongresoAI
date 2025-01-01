@@ -80,7 +80,7 @@ const ShowSubmittedArticles = () => {
               <td>{article.submission_date}</td>
               <td>{article.submit_number}</td>
               <td>
-                {article.review_result !== t('showSubmittedArticles.pendingReview') ? (
+                {article.review_result !== "Pending Review" ? (
                   <div onClick={() => navigate(`/portal-author/articles/${username}/${article.title}`)}>
                     <FontAwesomeIcon icon={faEye} />
                   </div>

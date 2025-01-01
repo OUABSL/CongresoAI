@@ -45,21 +45,6 @@ class GptHandler:
         """
         return len(self.tokenizer.encode(content))
 
-    def _escape_special_characters(self, content):
-        """
-        Escapa caracteres especiales y asegura que las fórmulas matemáticas no generen problemas.
-        """
-        # Lista de caracteres a escapar
-        special_characters = ["\\", "^", "_", "{", "}", "(", ")", "[", "]", "=", "+", "-", "*", "/", ">", "<", "∧", "∨", "⟶", "⇝", "·", "∈", "𝒫", "σ", "γ", "θ", "μ", "ρ"]
-        
-        # Escapar cada carácter especial solo una vez
-        for char in special_characters:
-            content = re.sub(r'(?<!\\)' + re.escape(char), f"\\{char}", content)
-        
-        # Eliminar caracteres no ASCII si es necesario
-        content = re.sub(r'[^\x00-\x7F]+', '', content)
-        
-        return content
 
     def _chunk_content_smart_with_langchain(self, content, max_tokens):
         """
@@ -72,7 +57,6 @@ class GptHandler:
         
         if math_sections:
             logging.info("Se detectaron fórmulas matemáticas. Procesando con cuidado...")
-            content = self._escape_special_characters(content)
 
         # Proseguir con el chunking inteligente
         avg_token_length = 4
@@ -166,25 +150,20 @@ class GptHandler:
             # Asegurarse de que el contenido es una cadena de texto
             content = str(content)
 
-            # Escapar caracteres especiales en el contenido
-            content = self._escape_special_characters(content)
-
             # Crear plantillas de mensaje, asegurándose de que los valores sean válidos
             if not system_prompt.strip() or not content.strip():
                 logging.error("El prompt del sistema o del usuario está vacío.")
                 return "Por favor, proporciona un prompt válido."
 
             system_message_template = SystemMessagePromptTemplate.from_template(system_prompt)
-            user_message_template = HumanMessagePromptTemplate.from_template(content)
-
-            # Forzar una lista vacía como valor de input_variables en HumanMessagePromptTemplate
-            user_message_template.prompt.input_variables = []
+            #user_message_template = HumanMessagePromptTemplate.from_template(content)
 
             # Crear el ChatPromptTemplate usando las plantillas
-            chat_prompt = ChatPromptTemplate.from_messages([system_message_template, user_message_template])
-            
-            # Forzar una lista vacía como valor de input_variables en ChatPromptTemplate
-            chat_prompt.input_variables = []
+            #chat_prompt = ChatPromptTemplate.from_messages([system_message_template, user_message_template])
+            chat_prompt = ChatPromptTemplate.from_messages([
+                system_message_template,
+                HumanMessage(content)
+            ])
 
             logging.info(f"El contenido del chatPrompt: \n\n {chat_prompt}\n\n-----------------------------------------------------")
 
