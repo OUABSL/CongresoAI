@@ -96,7 +96,7 @@ const SubmitArticle = () => {
           throw new Error(data.message);
         }
       } else if (response.status === 201 || response.status === 200) {
-        setAlert({ show: true, message: t('success.article_submitted'), variant: 'success' });
+        setAlert({ show: true, message: t('submit_article.success'), variant: 'success' });
         const url = URL.createObjectURL(file);
         setSubmitSummary(data.submit_summary);
         const fileName = file ? file.name : "";

@@ -1,0 +1,252 @@
+\documentclass{article}%
+\usepackage[T1]{fontenc}%
+\usepackage[utf8]{inputenc}%
+\usepackage{lmodern}%
+\usepackage{textcomp}%
+\usepackage{lastpage}%
+%
+\title{REPORTE DEL MANUSCRITO Logic Framework Manuscript}%
+\author{}%
+\date{\today}%
+%
+\begin{document}%
+\normalsize%
+\maketitle%
+\section{Información del Manuscrito}%
+\label{sec:InformacindelManuscrito}%
+\textbf{Autor: }%
+ouabou%
+\\%
+\textbf{Revisor: }%
+ouabou%
+\\%
+\textbf{Resultado de la Revisión: }%
+Pending Review%
+\\%
+\textbf{Número de Envío: }%
+1%
+\\%
+\textbf{Descripción: }%
+Logic Framework Manuscript Description%
+\\%
+\textbf{Palabras Clave: }%
+Logic, Mathematical Logic, Artificial Intelligence%
+\\%
+\textbf{Fecha de Envío: }%
+2024{-}12{-}09
+
+%
+\section{Introduction}%
+\label{sec:Introduction}%
+\subsection{Resumen}%
+\label{subsec:Resumen}%
+The introduction section of the manuscript discusses the significance of relational learning in machine learning algorithms, where relationships between objects are considered during the learning process using graphs. It mentions the two basic approaches to relational learning: the latent feature approach and the graph pattern{-}based approach. The paper addresses the challenges faced by the pattern{-}based approach, such as computational complexity and the lack of robust frameworks. The novel graph query framework presented aims to address these challenges by allowing controlled complexity in graph pattern matching and stepwise pattern expansion. The study focuses on formalizing an efficient graph query system with defined operations, emphasizing the need for atomic operations, assessing substructures in graphs, and evaluating cyclic patterns in polynomial time. The paper outlines the structure of the study, including sections on related research, the novel graph query framework, implementation for relational machine learning, and conclusions with future research directions.
+
+%
+\subsection{Evaluación Inicial}%
+\label{subsec:EvaluacinInicial}%
+Evaluation:\newline%
+\newline%
+{-} Motivation:\newline%
+  {-} Evaluation Level: Can be improved.\newline%
+  {-} Justification: The section explains the significance of relational learning methods and the limitations faced by existing approaches. For example, it mentions the power of relational learning methods in various domains and the challenges related to computational complexity and lack of robust frameworks in symbolic relational learning methods. However, the motivation could be strengthened by providing specific data or references to highlight the importance and broader impacts of these challenges.\newline%
+\newline%
+{-} Novelty:\newline%
+  {-} Evaluation Level: Can be improved.\newline%
+  {-} Justification: The section briefly describes the two basic approaches to relational learning and introduces the novel graph query framework as a solution to the identified problems. It mentions the characteristics that the graph query system must fulfill but lacks a clear comparison with existing methods to emphasize the novelty. Enhancing the section by explicitly comparing with related work and highlighting unique contributions would strengthen the novelty aspect.\newline%
+\newline%
+{-} Clarity:\newline%
+  {-} Evaluation Level: YES.\newline%
+  {-} Justification: The section is well{-}written and easy to understand. It uses appropriate terminology related to machine learning and relational learning without ambiguity. The concepts are clearly presented, making the content comprehensible to the target audience.\newline%
+\newline%
+{-} Grammar and Style:\newline%
+  {-} Evaluation Level: YES.\newline%
+  {-} Justification: The section is free of grammatical and stylistic errors. The language used is suitable for an academic setting, maintaining a formal tone throughout the text.\newline%
+\newline%
+{-} Typos and Errors:\newline%
+  {-} Evaluation Level: YES.\newline%
+  {-} Justification: The section is free of typos and other errors.\newline%
+\newline%
+Overall, the Introduction section of the "Logic Framework Manuscript" is well{-}structured and provides a clear overview of the research problem, existing challenges, and the proposed novel solution. However, to enhance the evaluation, it is recommended to strengthen the motivation by providing specific data or references and emphasize the novelty by explicitly comparing with related work and highlighting unique contributions.
+
+%
+\section{Related work}%
+\label{sec:Relatedwork}%
+\subsection{Resumen}%
+\label{subsec:Resumen}%
+The "Related Work" section discusses the common approach of executing relational queries by developing patterns in an abstract representation of data and searching for their occurrences in datasets. The study falls under Graph Pattern Matching, a field actively researched for over three decades, with distinctions in pattern matching methods including structural, semantic, exact, inexact, optimal, and approximate. Graph pattern matching can be based on isomorphisms, graph simulation, and bounded simulation, each presenting different complexities. The paper's proposal focuses on semantic, exact, and optimal graph pattern matching implemented similarly to simulations.\newline%
+\newline%
+Two types of relational learning models are highlighted: the latent feature approach based on latent feature learning and the graph{-}pattern based approach automatically extracting relational patterns. The paper focuses on the second approach, reviewing relational learning techniques utilizing the graph{-}pattern based approach and related query systems.\newline%
+\newline%
+Pattern{-}based relational learning methods are mostly derived from Inductive Logic Programming (ILP), allowing for the automatic creation of logical decision trees capable of managing relational predicates. TILDE is a representative algorithm for learning logical decision trees, but does not cater to relational learning. Multi{-}relational decision tree learning is supported by Selection Graphs for enhancing queries, but lacks the ability to distinguish between query elements. Graph{-}Based Induction of Decision Trees (DT{-}GBI) is a method for learning graph classifiers using graph{-}based induction. The paper's proposal supports learning from general subgraphs, enabling the execution of cyclic queries and extraction of cyclic patterns during the learning process.
+
+%
+\subsection{Evaluación Inicial}%
+\label{subsec:EvaluacinInicial}%
+Evaluation:\newline%
+\newline%
+Motivation: \newline%
+{-} Evaluation Level: Can be improved.\newline%
+{-} Justification: The section provides some background on graph pattern matching and relational learning models, but it lacks specific data or references to highlight the significance of the problem and its broader impacts. For instance, the text mentions that graph pattern matching has been researched for over three decades, but it could benefit from citing recent studies or statistics to emphasize the ongoing relevance and importance of the research area.\newline%
+\newline%
+Novelty: \newline%
+{-} Evaluation Level: Can be improved.\newline%
+{-} Justification: While the section briefly touches on different types of relational learning models and methods, it does not clearly articulate the unique aspects or contributions of the proposed approach. To enhance the novelty, the section could explicitly compare the proposed approach with existing methods and highlight specific innovations or advancements.\newline%
+\newline%
+Clarity: \newline%
+{-} Evaluation Level: Can be improved.\newline%
+{-} Justification: The section contains complex sentences and technical terminology that may be challenging for readers to grasp easily. For instance, the text could be clearer by providing more definitions of technical terms such as "graph isomorphism" and "logical decision trees" to aid comprehension.\newline%
+\newline%
+Grammar and Style: \newline%
+{-} Evaluation Level: Can be improved.\newline%
+{-} Justification: The section has some grammatical issues and could benefit from more concise and precise language. For example, in the sentence "Most of the pattern{-}based relational learning methods are derived from Inductive Logic Programming (ILP) <cit.>," the use of "are derived" could be rephrased for better readability.\newline%
+\newline%
+Typos and Errors: \newline%
+{-} Evaluation Level: YES.\newline%
+{-} Justification: The section is free of typos and other errors. \newline%
+\newline%
+Overall, the Related Work section of the manuscript can be improved in terms of motivation, novelty, clarity, and grammar/style to enhance the overall quality and impact of the research presentation.
+
+%
+\section{Graph query framework}%
+\label{sec:Graphqueryframework}%
+\subsection{Resumen}%
+\label{subsec:Resumen}%
+Error al procesar el fragmento.
+
+%
+\subsection{Evaluación Inicial}%
+\label{subsec:EvaluacinInicial}%
+Error al procesar el fragmento.
+
+%
+\section{Relational machine learning}%
+\label{sec:Relationalmachinelearning}%
+\subsection{Resumen}%
+\label{subsec:Resumen}%
+The section on Relational Machine Learning discusses leveraging a framework to create relational classifiers for graph datasets. It describes using a pattern search technique based on information gain to find typical patterns for each subgraph class. The process involves decision tree induction with graph queries as test tools to identify refinement sets that define classes within the dataset. The training set consists of subgraphs and their associated classes, and the decision tree learning process involves iteratively refining queries to maximize information gain. The resulting decision trees are not binary. Practical examples are provided, such as classifying nodes in a social network and character species in a graph, showcasing how relational decision trees can accurately assign types to nodes and explain classifications based on relational information from the network.
+
+%
+\subsection{Evaluación Inicial}%
+\label{subsec:EvaluacinInicial}%
+Evaluation:\newline%
+\newline%
+Motivation:\newline%
+{-} Can be improved: The section lacks a clear and robust explanation of the significance and relevance of utilizing relational machine learning on graph data sets. While it briefly mentions leveraging the framework to acquire relational classifiers, it could benefit from providing specific examples or references to highlight the importance of this approach.\newline%
+\newline%
+Novelty:\newline%
+{-} Must be improved: The section does not explicitly emphasize the novelty or originality of the proposed approach in relational machine learning. It fails to differentiate itself from existing work or highlight any unique contributions it brings to the field.\newline%
+\newline%
+Clarity:\newline%
+{-} Can be improved: The section is moderately clear but can be improved for better comprehension. Some sentences are overly complex and may benefit from restructuring for clarity. Additionally, defining technical terms like "subgraph set" and providing more illustrative examples could enhance the reader's understanding.\newline%
+\newline%
+Grammar and Style:\newline%
+{-} Can be improved: The section contains a few grammatical errors and stylistic inconsistencies. For instance, there are issues with punctuation, such as missing commas in lists and unclear sentence structures. Improving the language for academic standards would enhance the overall quality of the section.\newline%
+\newline%
+Typos and Errors:\newline%
+{-} Can be improved: There are minor typos and errors in the text that need correction. For example, there are spaces before commas, backslashes not correctly formatted, and inconsistencies in referencing figures.\newline%
+\newline%
+Overall, the section has potential but requires improvements in clearly articulating the motivation and novelty, enhancing clarity, refining grammar and style, and correcting typos and errors for a more impactful presentation of the relational machine learning approach in the manuscript.
+
+%
+\section{Conclusions and future work}%
+\label{sec:Conclusionsandfuturework}%
+\subsection{Resumen}%
+\label{subsec:Resumen}%
+The paper introduces a novel framework for graph queries that allows for the polynomial cyclic evaluation of queries and refinements based on atomic operations. The framework demonstrates the ability to apply refinements in relational learning processes and meets essential requirements such as utilizing a consistent grammar for queries and structures evaluation. It enables the assessment of subgraphs beyond individual nodes and supports cyclic queries within limited query path lengths. The system facilitates controlled and automated query construction through refinements which are effective tools for top{-}down learning techniques.\newline%
+\newline%
+Unlike graph isomorphism{-}based query systems with exponential complexity for cyclic queries, the proposed framework evaluates the existence/non{-}existence of paths and nodes in a graph, enabling the assessment of cyclic patterns in polynomial time. The capabilities of the framework are demonstrated through experimentation, showing the extraction of interesting patterns from relational data, significant for explainable learning and automatic feature extraction tasks.\newline%
+\newline%
+While the query definition is based on binary graph datasets, it can be implemented on hypergraph data, making it adaptable to more universal cases as hypergraphs become more prevalent. The paper also discusses the provision of basic refinement operations, suggesting the establishment of more complex refinement families to handle complex queries and prevent plateaus in the pattern space. Future research will focus on developing automated methods for generating refinement sets based on learning tasks and graph dataset characteristics, potentially leading to significant optimizations.\newline%
+\newline%
+The paper concludes that effective techniques for matching graph patterns and learning symbolic relationships can be established, allowing systematic exploration of the pattern space with high query expressiveness and reasonable computational costs. The patterns obtained can be used to characterize subgraph categories, justify decisions, and serve as features in other machine learning methods. Investigating the probabilistic combination of queries for generating interpretable patterns is suggested, along with exploring additional machine learning algorithms in conjunction with the proposed query framework for relational learning opportunities.
+
+%
+\subsection{Evaluación Inicial}%
+\label{subsec:EvaluacinInicial}%
+Evaluation:\newline%
+\newline%
+Motivation: Can be improved\newline%
+The section does explain the significance of the study by highlighting the novel framework for graph queries and its potential impact on relational learning processes. However, it could be strengthened by providing more data or references to further justify the importance of the problem addressed. For instance, mentioning specific examples of real{-}world applications or industry needs that would benefit from such advancements could enhance the motivation.\newline%
+\newline%
+Novelty: YES\newline%
+The section clearly articulates the novelty of the proposed framework for graph queries. It differentiates itself from existing work by emphasizing its ability to assess cyclic patterns in polynomial time, which is a significant departure from traditional graph isomorphism{-}based systems. By focusing on path and node evaluations rather than isomorphisms, the framework offers a unique approach to tackling complex queries.\newline%
+\newline%
+Clarity: YES\newline%
+The section is well{-}written and presents complex concepts in a structured manner. The terminology used is appropriate for the academic context, aiding in the comprehension of the reader. However, there are a few instances where the sentences could be simplified for better clarity, especially when describing technical processes or algorithms.\newline%
+\newline%
+Grammar and Style: Can be improved\newline%
+The section is mostly free of grammatical errors and maintains a formal tone suitable for an academic paper. However, there are instances where the language could be more precise and concise. For example, rephrasing passive voice constructions or simplifying complex sentence structures can enhance the overall readability of the section.\newline%
+\newline%
+Typos and Errors: YES\newline%
+The section is accurately written and free of typographical errors or other inconsistencies, ensuring the content's reliability and professionalism.\newline%
+\newline%
+Overall, the Conclusions and Future Work section effectively highlights the contributions and potential impact of the research. By strengthening the motivation with additional references or real{-}world examples, refining the language for better clarity, and enhancing the precision of the writing style, the section could further engage readers and emphasize the significance of the study.
+
+%
+\section{Short Biography of Authors}%
+\label{sec:ShortBiographyofAuthors}%
+\subsection{Resumen}%
+\label{subsec:Resumen}%
+The Short Biography of Authors section provides background information on the authors of the Logic Framework Manuscript, detailing their expertise and experience in the field. The authors' qualifications and research backgrounds are likely to contribute to the credibility and depth of the manuscript's content.
+
+%
+\subsection{Evaluación Inicial}%
+\label{subsec:EvaluacinInicial}%
+Evaluation Criteria: \newline%
+Motivation: \newline%
+{-} Clarity\newline%
+{-} Improvement\newline%
+Novelty: \newline%
+{-} Originality\newline%
+{-} Improvement\newline%
+Clarity: \newline%
+{-} Comprehension\newline%
+{-} Improvement\newline%
+Grammar and Style: \newline%
+{-} Correctness\newline%
+{-} Improvement\newline%
+Typos and Errors: \newline%
+{-} Accuracy\newline%
+{-} Improvement\newline%
+\newline%
+Section Text: \newline%
+\newline%
+Evaluation: \newline%
+Motivation:\newline%
+{-} Clarity: Must be Improved\newline%
+The section lacks any content related to the authors' background, expertise, or why they are qualified to conduct the research. It does not explain how their experience or previous work relates to the current study.\newline%
+\newline%
+Improvement:\newline%
+The authors should include information about their relevant expertise, previous research in the field, or any achievements that establish their credibility for conducting the current study.\newline%
+\newline%
+Novelty:\newline%
+{-} Originality: Not Applicable\newline%
+Since there is no text provided in the section, it is not possible to evaluate if the authors described the novelty or originality of their proposed approach.\newline%
+\newline%
+Improvement:\newline%
+The authors should ensure to highlight the unique aspects of their research compared to existing work in the field.\newline%
+\newline%
+Clarity:\newline%
+{-} Comprehension: Must be Improved\newline%
+The complete absence of any text in this section makes it impossible to evaluate its comprehension level.\newline%
+\newline%
+Improvement:\newline%
+Authors should ensure to provide a clear and concise summary of their background, qualifications, and relevance to the study.\newline%
+\newline%
+Grammar and Style:\newline%
+{-} Correctness: Not Applicable\newline%
+Since there is no content in the section, it cannot be evaluated for correctness.\newline%
+\newline%
+Improvement:\newline%
+N/A\newline%
+\newline%
+Typos and Errors:\newline%
+{-} Accuracy: Not Applicable\newline%
+There are no typos or errors to evaluate in the absence of text.\newline%
+\newline%
+Improvement:\newline%
+N/A
+
+%
+\end{document}

@@ -1,10 +1,12 @@
 from datetime import datetime
+import json
 import threading, os, tempfile, shutil, logging
 from bson.objectid import ObjectId
 from flask import Blueprint, request, jsonify, abort, send_file, make_response
 from io import BytesIO
 from bson import ObjectId 
 from flask_jwt_extended import jwt_required
+from src.services.reportGenerator import ReportGenerator
 from src.models.manuscript import ScientificArticle, get_file
 from src.app import mongo, API, llamus_key, gpt_key
 from src.services.preEvaluation import PreEvaluation
@@ -12,31 +14,16 @@ from src.services.summary import ArticleSummarizer
 from src.services.dataPreparation import DataHandler
 from src.services.summary import SYSTEM_PROMPT_BASE as prompt_summary
 from src.services.preEvaluation import  SYSTEM_PROMPT_BASE as prompt_eval
+from src.utils.func import create_temp_dir, delete_temp_dir
 
 
 evaluate_bp = Blueprint('evaluate', __name__)
 DB = mongo.db.scientific_article
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-
-
-
-UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../../data")
-
-#Función para crear carpeta temporal para la extracción de datos desde el proyecto latex.
-def create_temp_dir(parent_dir):
-    return tempfile.mkdtemp(dir=parent_dir)
-
-#Función para eliminar la carpeta temporal creada, se ejecuta al terminar la extracción de datos desde el proyecto latex. 
-def delete_temp_dir(dest_path):
-    # Eliminar la carpeta temporal usada en el proceso
-    if os.path.isdir(dest_path):
-        shutil.rmtree(dest_path)
-        if os.path.isdir(dest_path): # verifica si la carpeta ºavía existe después de usar shutil.rmtree()
-            os.rmdir(dest_path) # se utiliza os.rmdir() para eliminar la carpeta vacía
-    logging.info("Carpeta temporal %s eliminada exitosamente", dest_path)
-
-
+# Configuración de rutas
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+UPLOAD_FOLDER = os.path.abspath(os.path.join(BASE_DIR, 'data'))
 
 """
 Función para preparar un artículo científico para ser enviado en formato json, 
@@ -51,6 +38,8 @@ def serialize_article(article):
         article['latex_project_id'] = str(article['latex_project_id'])
     if "submitted_pdf_id" in article and article["submitted_pdf_id"]:
         article['submitted_pdf_id'] = str(article['submitted_pdf_id'])
+    if "report_pdf_id" in article and article["report_pdf_id"]:
+        article['report_pdf_id'] = str(article['report_pdf_id'])
     if "sorted_backup_assignment" in article:
         article.pop("sorted_backup_assignment", None)
     return article
@@ -86,10 +75,16 @@ def show_articles(reviewer):
         return make_response(jsonify({"success":False,  "message": "No articles found for this reviewer."}), 404)
 
 # Servir un archivo PDF solicitado por su id
-@evaluate_bp.route(API + '/file/<file_id>', methods=['GET'])
-def serve_pdf(file_id):
+@evaluate_bp.route(API + '/manuscript_file/<file_id>', methods=['GET'])
+def serve_manuscript_pdf(file_id):
     pdf_file = get_file(file_id)
-    return send_file(BytesIO(pdf_file), mimetype='application/pdf', as_attachment=False, download_name='pdf_file.pdf')
+    return send_file(BytesIO(pdf_file), mimetype='application/pdf', as_attachment=False, download_name='manuscript_file.pdf')
+
+# Servir un archivo PDF solicitado por su id
+@evaluate_bp.route(API + '/report_file/<file_id>', methods=['GET'])
+def serve_report_pdf(file_id):
+    pdf_file = get_file(file_id)
+    return send_file(BytesIO(pdf_file), mimetype='application/pdf', as_attachment=False, download_name='report_file.pdf')
     
 # Servir un archivo ZIP solicitado por su id
 @evaluate_bp.route(API + '/zip/<file_id>', methods=['GET'])
@@ -135,6 +130,13 @@ def add_review(reviewer, article_title):
     
     DB.update_one({"title":article_title}, {"$set": new_review})
     logging.info("Revisión añadida exitosamente para el artículo con título: %s", article_title)
+    #Actualizar el informe con la revisión
+    if not os.path.exists(UPLOAD_FOLDER):
+        os.makedirs(UPLOAD_FOLDER)
+    temp_dir = create_temp_dir(UPLOAD_FOLDER)
+    # Generar el informe
+    report_generator = ReportGenerator(article, dest_path=temp_dir)
+    report_generator.generate_report()
     return make_response(jsonify({"success":True,  "message": "Review successfully added!"}), 201)
 
 """ Actualizar una revisión de sección/secciones específicas de un manuscrito: 
@@ -211,8 +213,9 @@ Función para gestionar la tarea de regeneración de alguno de los servicios de 
 """
 def regenerate_pre_evaluation_flow(article:ScientificArticle, tasks:dict):
     try:
-
+        logging.info(f"recibido: {json.dumps(tasks)}")
         summary = pre_evaluation = {}
+        error = False
         if "datapreparation" in tasks:
             if not os.path.exists(UPLOAD_FOLDER):
                 os.makedirs(UPLOAD_FOLDER)
@@ -226,21 +229,20 @@ def regenerate_pre_evaluation_flow(article:ScientificArticle, tasks:dict):
                 delete_temp_dir(dest_path)
 
         if "summary" in tasks:
-            summary_instance = ArticleSummarizer(mongo, prompt_summary, gpt_key, article)
-            summary_instance.chat_model = tasks["summary"]
+            summary_instance = ArticleSummarizer(db=mongo,system_prompt_base=prompt_summary, gpt_key=gpt_key, article=article, model=tasks["summary"], temperature=float(tasks["temperature_summary"]))
             summary = summary_instance.run()
+            error = error or ("Error" in summary[0].values())
 
         if "initialevaluation" in tasks:
-            evaluation_instance = PreEvaluation(mongo, prompt_eval, gpt_key, article)
-            evaluation_instance.chat_model = tasks["initialevaluation"]
+            evaluation_instance = PreEvaluation(db=mongo, system_prompt_base= prompt_eval, gpt_key= gpt_key, model= tasks["initialevaluation"], temperature= float(tasks["temperature_initialevaluation"]), article= article)
             pre_evaluation = evaluation_instance.run()
+            error = error or ("Error" in pre_evaluation[0].values())
 
-        error = ("Error" in summary.values()) or ("Error" in pre_evaluation.values())
-        if summary and not "Error" in summary.values():
-            article.update_properties(summary=summary)
+        if summary and isinstance(summary, tuple) and not "Error" in summary[0].values():
+            article.update_properties(summary=summary[0], aimodel_summary=summary[1])
 
-        if pre_evaluation and not "Error" in pre_evaluation.values():
-            article.update_properties(evaluation=pre_evaluation)
+        if pre_evaluation and isinstance(pre_evaluation, tuple) and not "Error" in pre_evaluation[0].values():
+            article.update_properties(evaluation=pre_evaluation[0], aimodel_evaluation=pre_evaluation[1])
 
         if error:
             article.update_properties(processing_state="Fail")
@@ -248,7 +250,14 @@ def regenerate_pre_evaluation_flow(article:ScientificArticle, tasks:dict):
             article.update_properties(processing_state="Done")
             logging.info(f"La regeneración de la pre-evaluación se realizó con éxito para el artículo:  {article.title}")
 
-        article.save()
+            if not os.path.exists(UPLOAD_FOLDER):
+                os.makedirs(UPLOAD_FOLDER)
+            temp_dir = create_temp_dir(UPLOAD_FOLDER)
+            # Generar el informe
+            report_generator = ReportGenerator(article, dest_path=temp_dir)
+            report_generator.generate_report()
+
+        #article.save()
 
 
     except Exception as e:
@@ -292,3 +301,29 @@ def reassignate_reviewer(reviewer, article_title):
         return make_response(jsonify({"success":False,  "message": "There is no disponible reviewer.Please contact the adminastator!"}), 406)
 
     return make_response(jsonify({"success":True,  "message": f"Re-Assignement done successfully. The new assigned reviewer is {new_reviewer}."}), 200)
+
+# obtener el informe en formato PDF
+@evaluate_bp.route(API + '/evaluate/report/<reviewer>/<article_title>', methods=['GET'])
+@jwt_required()
+def get_report_pdf(reviewer, article_title):
+    article = fetch_article(article_title, reviewer)
+    if article is None:
+        return make_response(jsonify({"success": False, "message": "No article found."}), 404)
+
+    if not os.path.exists(UPLOAD_FOLDER):
+        os.makedirs(UPLOAD_FOLDER)
+    temp_dir = create_temp_dir(UPLOAD_FOLDER)
+
+    # Generar el informe
+    report_generator = ReportGenerator(article, dest_path=temp_dir)
+    pdf_path = report_generator.generate_report()
+
+    # Leer el contenido del PDF
+    with open(pdf_path, 'rb') as f:
+        pdf_content = f.read()
+
+    # Eliminar el archivo PDF temporal
+    os.remove(pdf_path)
+
+    # Enviar el archivo PDF como respuesta
+    return send_file(BytesIO(pdf_content), mimetype='application/pdf', as_attachment=True, download_name='report.pdf')

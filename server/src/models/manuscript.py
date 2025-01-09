@@ -37,7 +37,8 @@ class ScientificArticle(Document):
     processing_state = ProcessingState(default='On Process')
     content = DictField()
     sections_orden = ListField()
-    summary = DictField()
+    aimodel = DictField(default={"summary": "", "evaluation": ""})
+    summary  = DictField()
     evaluation = DictField()
     reviewer = StringField(max_length=200)
     sorted_backup_assignment = ListField()
@@ -49,7 +50,8 @@ class ScientificArticle(Document):
     last_modified = DateTimeField(default=None)
     latex_project_id = ObjectIdField()
     submitted_pdf_id = ObjectIdField()
-    improvements=StringField()
+    report_pdf_id = ObjectIdField()
+    improvements = StringField()
 
     def __init__(self, *args, **kwargs):
         latex_project = kwargs.pop('latex_project', None)
@@ -63,7 +65,7 @@ class ScientificArticle(Document):
     Entrada: Uno o más atributos a actualizar
     Operación: Actualiza los atributos recibidos junto con la fecha de última modificación 
     """
-    def update_properties(self, description: str=None, key_words: List[str]=None, processing_state: str=None, content: dict=None, sections_orden:List[str]=None, summary: dict=None, evaluation: dict=None, reviewer: str=None, sorted_backup_assignment: list=None, review: dict=None, review_result: str=None, old_review_result: str=None, is_resubmited: bool=None, submit_number: int=None, latex_project_id: ObjectId=None, submitted_pdf_id: ObjectId=None, improvements: str=None):
+    def update_properties(self, description: str=None, key_words: List[str]=None, processing_state: str=None, content: dict=None, sections_orden:List[str]=None, summary: dict=None, evaluation: dict=None, reviewer: str=None, sorted_backup_assignment: list=None, review: dict=None, review_result: str=None, old_review_result: str=None, is_resubmited: bool=None, submit_number: int=None, latex_project_id: ObjectId=None, submitted_pdf_id: ObjectId=None, report_pdf_id: ObjectId=None, improvements: str=None, aimodel_summary:str=None, aimodel_evaluation:str=None):
         if description:
             self.description = description
         if key_words:
@@ -96,9 +98,14 @@ class ScientificArticle(Document):
             self.latex_project_id = latex_project_id
         if submitted_pdf_id:
             self.submitted_pdf_id = submitted_pdf_id
+        if report_pdf_id:
+            self.report_pdf_id = report_pdf_id
         if improvements:
             self.improvements = improvements
-        
+        if aimodel_summary:
+            self.aimodel["summary"] = aimodel_summary
+        if aimodel_evaluation:
+            self.aimodel["evaluation"] = aimodel_evaluation
         self.last_modified = datetime.now()
         self.save()
 
@@ -111,15 +118,20 @@ class ScientificArticle(Document):
     Operación: Guarda los archivos de proyecto LaTeX y pdf enviado en GridFS 
                y actualiza sus ids en las propiedades del manuscrito.
     """
-    def save_files(self, latex_project=None, submitted_pdf=None): 
+        
+    def save_files(self, latex_project=None, submitted_pdf=None, report_pdf=None):
         fs = gridfs.GridFS(mongo.db)
-        if latex_project: 
-            self.update_properties(latex_project_id=fs.put(latex_project) )
-
+        if latex_project:
+            self.update_properties(latex_project_id=fs.put(latex_project))
         if submitted_pdf:
             self.update_properties(submitted_pdf_id=fs.put(submitted_pdf))
-    
-    
+        
+        if report_pdf:
+            # Check if there is an existing report and delete it
+            if self.report_pdf_id:
+                fs.delete(self.report_pdf_id)
+            self.update_properties(report_pdf_id=fs.put(report_pdf))
+
     """
     Método para obtener la URL del archivo.
     Entrada: Id del archivo
@@ -170,6 +182,7 @@ class ScientificArticle(Document):
             'content': self.content,
             'submission_date': self.submission_date.strftime('%Y-%m-%d %H:%M:%S'),
             'keywords': self.key_words,
+            'aimodel':self.aimodel,
             'summary': self.summary,
             'evaluation': self.evaluation,
             'reviewer': self.reviewer,
@@ -177,6 +190,8 @@ class ScientificArticle(Document):
             'las_modified':self.last_modified,
             'latex_project_url': self.get_file_url(self.latex_project_id),
             'submitted_pdf_url': self.get_file_url(self.submitted_pdf_id),
+            'report_pdf_url': self.get_file_url(self.report_pdf_id),
+
         }
 
     def to_json(self):

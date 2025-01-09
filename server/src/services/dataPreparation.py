@@ -9,6 +9,7 @@ from src.models.manuscript import ScientificArticle
 from bson.objectid import ObjectId
 import logging
 
+
 # Configurar el logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -78,6 +79,7 @@ class DataHandler:
                 section_contents[section_name] = section_content
         return section_contents, sections_orden
 
+
     def _extract_just_text(self, section_content):
         """
         Extract plain text, process equations and graphics.
@@ -98,7 +100,7 @@ class DataHandler:
             # Step 3: Convert LaTeX to plain text
             plain_text = LatexNodes2Text().latex_to_text(content_with_equations)
 
-            # Step 4: Process graphics and append captions
+            # Step 4: Process graphics and replace with captions
             processed_text = self._process_graphics(content_with_equations, plain_text)
 
         except Exception as e:
@@ -107,45 +109,55 @@ class DataHandler:
 
         return processed_text
 
-
     def _process_graphics(self, latex_text, processed_text):
-        """Extract captions of graphics and append them to the processed text."""
+        """Extract captions of graphics and replace them in the processed text."""
+        graphic_pattern = re.compile(r'\\includegraphics(?:\[.*?\])?\{.*?\}')
         caption_pattern = re.compile(r'\\caption\{([^}]*)\}')
-        captions = caption_pattern.findall(latex_text)
-        for caption in captions:
-            processed_text += f"\n[Gráfica: {caption.strip()}]\n"
+        
+        def replace_graphic_with_caption(match):
+            graphic = match.group(0)
+            caption_match = caption_pattern.search(latex_text, match.end())
+            if caption_match:
+                caption = caption_match.group(1).strip()
+                return f"[Gráfica: {caption}]"
+            return "[Gráfica sin descripción]"
+        
+        processed_text = graphic_pattern.sub(replace_graphic_with_caption, processed_text)
         return processed_text
 
     def _convert_equations_to_text(self, latex_content):
         """
-        Process and clean all equations from the LaTeX file, converting them to human-readable text.
+        Processes and cleans all the mathematical expressions of LaTeX content, turning them into plain text readable.
 
         Parameters:
             latex_content (str): The LaTeX content as a string.
 
         Returns:
-            str: The modified LaTeX content with equations replaced by text representations.
+            str: The modified LaTeX content with mathematical expressions replaced by text representations.
         """
+
         def replace_equation(match):
             equation = match.group(1)
             try:
                 parsed_expr = parse_latex(equation)
                 readable_expr = str(parsed_expr)
-                return f"[Equation: {readable_expr}]"
+                return f"[EM: {readable_expr}]"
             except Exception as e:
-                return f"[Unparsable Equation: {equation}]"
+                return f"[EM without formatting: {equation}]"
 
-        # Patterns for inline and block equations
-        inline_pattern = re.compile(r'\\\((.+?)\\\)')
-        block_pattern = re.compile(r'\\\[(.+?)\\\]')
+        # Patrones para ecuaciones en línea y de bloque
+        inline_pattern = re.compile(r'\$(.+?)\$')
+        block_pattern = re.compile(r'\$\$(.+?)\$\$')
 
-        # Replace inline equations
+        # Reemplazar ecuaciones en línea
         latex_content = inline_pattern.sub(replace_equation, latex_content)
 
-        # Replace block equations
+        # Reemplazar ecuaciones de bloque
         latex_content = block_pattern.sub(replace_equation, latex_content)
 
         return latex_content
+
+
 
     @staticmethod
     def _save_sections(sections: dict, destination: Path, esResFinal=False):

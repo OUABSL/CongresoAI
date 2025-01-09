@@ -11,10 +11,10 @@ from dotenv import load_dotenv
 # Cargar el archivo .env
 load_dotenv()
 
-print(sys.path[0])
 # Acceder a las variables de entorno
 mongo_uri = os.environ['MONGO_URI']
 llamus_key = os.environ['LLAMUS_KEY']
+print(mongo_uri)
 jwt_key = os.environ['JWT_KEY']
 hf_email = os.environ['EMAIL_HF']
 hf_pass = os.environ['PASS_HF']
@@ -92,5 +92,5 @@ def main():
     app.run()
 
     
-# if __name__ == "__main__":
-#     main()
+if __name__ == "__main__":
+    main()

@@ -167,7 +167,8 @@ const resources = {
             "latex_label": "Latex Project",
             "submit_button": "Submit",
             "is_resubmit_title": "Resubmit Article",
-            "is_submit_title": "Submit Article"
+            "is_submit_title": "Submit Article",
+            "success":"Manuscript uploaded correctly!"
         },
         "submitSummary": {
             "confirmation": "Submission Confirmation",
@@ -209,8 +210,9 @@ const resources = {
         },
         "downloadArticle": {
             "label": "Download",
-            "pdf": "Download PDF",
-            "zip": "Download ZIP"
+            "manuscript_pdf": "Download Manuscript PDF",
+            "report_pdf": "Download Rport PDF",
+            "zip": "Download Latex ZIP"
         },
         "displaySectionReview": {
             "commentTitle": "Comment"
@@ -282,7 +284,9 @@ const resources = {
             "generalError": "An error occurred during the process. Please try again later.",
             "datapreparation": "Manuscript content processing",
             "summary": "Manuscript summary",
-            "initialevaluation": "Initial manuscript evaluation"
+            "initialevaluation": "Initial manuscript evaluation",
+            "temperatureLabel":"Temperature",
+            "temperatureValue":"Selected temperature"
         },
         "showAssignedArticle": {
             "reviewerComment": "Reviewer Comment",
@@ -472,7 +476,8 @@ const resources = {
             "latex_label": "Proyecto Latex",
             "submit_button": "Confirmar entrega",
             "is_resubmit_title": "Mejorar Entrega",
-            "is_submit_title": "Subir artículo"
+            "is_submit_title": "Subir artículo",
+            "success":"¡Manuscrito subido correctamente!"
         },
         "submitSummary": {
             "confirmation": "Confirmación de Entrega",
@@ -514,8 +519,9 @@ const resources = {
         },
         "downloadArticle": {
             "label": "Descargar",
-            "pdf": "Descargar PDF",
-            "zip": "Descargar ZIP"
+            "manuscript_pdf": "Descargar Manuscrito PDF",
+            "report_pdf": "Descargar Rporte PDF",
+            "zip": "Descargar ZIP Latex"
         },
         "displaySectionReview": {
             "commentTitle": "Comentario"
@@ -587,7 +593,9 @@ const resources = {
             "generalError": "Ha sucedido un error en el proceso. Por favor, inténtalo más tarde.",
             "datapreparation": "Procesamiento del contenido del manuscrito",
             "summary":"Resúmen del manuscrito",
-            "initialevaluation":"Evaluación inicial del manuscrito"
+            "initialevaluation":"Evaluación inicial del manuscrito",
+            "temperatureLabel":"Temperatura",
+            "temperatureValue":"Temperatura seleccionada"
         },
         "showAssignedArticle": {
             "reviewerComment": "Comentario del Revisor",

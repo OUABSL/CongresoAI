@@ -16,12 +16,13 @@ SYSTEM_PROMPT_BASE = """Act as a research paper summarizer. I will provide you w
 class ArticleSummarizer:
     """ Clase para resumir artículos científicos utilizando GptHandler para interactuar con GPT-4. """
     
-    def __init__(self, db, system_prompt_base, gpt_key, article: ScientificArticle):
-        self.temperature = 0.8
+    def __init__(self, db, system_prompt_base, gpt_key, article: ScientificArticle, temperature = 0.8, model= "gpt-3.5-turbo"):
         self.SYSTEM_PROMPT_BASE = system_prompt_base
         self.article = article
         self.title = self.article['title']
-        self.gpt_handler = GptHandler(openai_api_key=gpt_key, system_prompt_base=system_prompt_base)
+        self.model=model
+        self.temperature = temperature
+        self.gpt_handler = GptHandler(openai_api_key=gpt_key, system_prompt_base=system_prompt_base, model=self.model, temperature=self.temperature)
 
         
         try:
@@ -39,7 +40,7 @@ class ArticleSummarizer:
         print("Entrando en run summary")
         # Comenzar con el atributo summary ya proporcionado del manuscrito o que ya ha sido inicializado con {} en el servicio de Procesamiento de manuscrito
         res = self.article.summary if self.article.summary else {}
-        
+        aimodel = f"Model: {self.model} - Temperature: {self.temperature}"
         # Iterar sobre cada sección en el contenido del artículo
         for section_name, section_content in self.article_content.items():
             try:
@@ -65,4 +66,4 @@ class ArticleSummarizer:
                 logging.error(f"Error al resumir la sección <{section_name}>: {e}")
                 res[section_name] = "Error" 
 
-        return res
+        return (res, aimodel)

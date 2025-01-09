@@ -81,13 +81,15 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 
 class PreEvaluation:
     # Configuración inicial de la evaluación
-    def __init__(self, db, system_prompt_base, gpt_key, article: ScientificArticle, is_resubmited: bool = False):
-        self.gpt_handler = GptHandler(openai_api_key=gpt_key, system_prompt_base=system_prompt_base)
+    def __init__(self, db, system_prompt_base, gpt_key, article: ScientificArticle, is_resubmited: bool = False, temperature = 0.8, model= "gpt-3.5-turbo"):
         self.DB = db.db.scientific_article
         self.SYSTEM_PROMPT_BASE = system_prompt_base
         self.article = article
         self.is_resubmited = is_resubmited
         self.gpt_key = gpt_key
+        self.model=model
+        self.temperature = temperature
+        self.gpt_handler = GptHandler(openai_api_key=gpt_key, system_prompt_base=system_prompt_base, model=self.model, temperature=self.temperature)
         # Se recoge el contenido del manuscrito de la base de datos 
         try:
             self.article_content = dict(self.article["content"])
@@ -97,8 +99,8 @@ class PreEvaluation:
 
     # Función para realizar el proceso de pre-evaluación
     def run(self):
-        print("Entrando en run PreEvaluation")
-        res = self.article["evaluation"]
+        res = self.article["evaluation"] if self.article.evaluation else {}
+        aimodel = f"Model: {self.model} - Temperature: {self.temperature}"
         # Comprobar si existe un error prevenido de procesos anteriores, en caso afirmativo, eliminarlo
         if 'error' in res:
             del res['error']
@@ -151,4 +153,4 @@ class PreEvaluation:
                 continue
 
         # Devolver las evaluaciones de las secciones
-        return res
+        return (res, aimodel)

@@ -12,3 +12,4 @@ server/test_results/
 */.ipynb_checkpoints
 *.save
 #*/package.json
+.codegpt

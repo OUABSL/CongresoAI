@@ -17,7 +17,7 @@ const STATES_REVIEW = ["Pendiente de Revisión", "Aprobado", "Rechazado", "Pendi
 const STATES_REVIEW_API =  ["Pending Review", "Approved", "Rejected", "Pending Improvement"]
 
 
-const DownloadArticle = ({ pdf, zip, title }) => {
+const DownloadArticle = ({ manuscriptPdf, reportPdf, zip, title }) => {
     const { t } = useTranslation();
 
     const handleDownload = async (fileUrl, filename, type) => {
@@ -44,8 +44,9 @@ const DownloadArticle = ({ pdf, zip, title }) => {
     return (
         <div className="d-flex justify-content-end mt-1">
             <DropdownButton id="dropdown-button" title={t('downloadArticle.label')}>
-                <Dropdown.Item onClick={() => handleDownload(pdf, title, 'application/pdf')}>{t('downloadArticle.pdf')}</Dropdown.Item>
+                <Dropdown.Item onClick={() => handleDownload(manuscriptPdf, title, 'application/pdf')}>{t('downloadArticle.manuscript_pdf')}</Dropdown.Item>
                 <Dropdown.Item onClick={() => handleDownload(zip, title, 'application/zip')}>{t('downloadArticle.zip')}</Dropdown.Item>
+                <Dropdown.Item onClick={() => handleDownload(reportPdf, title, 'application/pdf')}>{t('downloadArticle.report_pdf')}</Dropdown.Item>
             </DropdownButton>
         </div>
     )
@@ -356,9 +357,11 @@ function ShowAssignedArticle() {
                 </Col>
                 <Col xs="auto" className='mt-1'>
                     <DownloadArticle
-                        pdf={`/file/${article.submitted_pdf_id}`}
+                        manuscriptPdf={`/manuscript_file/${article.submitted_pdf_id}`}
+                        reportPdf = {`/report_file/${article.report_pdf_id}`}
                         title={article.title}
-                        zip={`/zip/${article.latex_project_id}`} />
+                        zip={`/zip/${article.latex_project_id}`} 
+                        />
                 </Col>
             </Row>
             <Row className='mb-5 px-3'>

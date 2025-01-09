@@ -18,14 +18,42 @@ import logging
 # Configuración del logging para el módulo de generación de evaluaciones
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
+# Diccionario con las propiedades de los modelos
+MODEL_PROPERTIES = {
+    "gpt-3.5-turbo": {
+        "max_tokens": 4096
+    },
+    "gpt-4o": {
+        "max_tokens": 4096
+    },
+    "gpt-4o-mini": {
+        "max_tokens": 16384
+    },
+    "gpt-4-turbo": {
+        "max_tokens": 4096
+    },
+    "gpt-4-turbo": {
+        "max_tokens": 4096
+    },
+    "gpt-4" : {
+        "max_tokens": 8192
+    }
+}
 
 class GptHandler:
-    def __init__(self, openai_api_key, system_prompt_base, temperature=0.8, max_tokens=4096, model="gpt-3.5-turbo"):
+    def __init__(self, openai_api_key, system_prompt_base, temperature=0.8, model="gpt-3.5-turbo"):
         self.temperature = temperature
         self.system_prompt_base = system_prompt_base
-        self.max_tokens = max_tokens
         self.model = model
 
+
+        logging.info(f"Generación: {self.model} - {self.temperature}")
+        # Ajustar max_tokens según el modelo
+        if model in MODEL_PROPERTIES:
+            self.max_tokens = MODEL_PROPERTIES[model]["max_tokens"]
+        else:
+            self.max_tokens = 4096
+        
         # Inicializa el modelo de OpenAI
         self.llm = ChatOpenAI(
             openai_api_key=openai_api_key,
