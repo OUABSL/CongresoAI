@@ -6,6 +6,9 @@ import AuthContext from "../../context/context";
 import { AlertContext } from '../../context/alertProvider';
 import RegenerationModal from './regeneratePreEvaluation'
 import ReassignateReviewButton from './reAssignateReviewer';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import rehypeRaw from 'rehype-raw';
 import "../estilos/showArticle.css";
 
 // Constant criteria and scale
@@ -193,46 +196,67 @@ const SectionReview = ({ reviewData, sectionName, handleSectionUpdate, handleEdi
 };
 
 
-const DisplaySection = ({ sectionName, summarySection=null, preEvalSection=null, actualReviewSection=null, handleSectionUpdate=null }) => {
-    const [reviewSection, setReviewSection] = useState(actualReviewSection || defaultReviewSection);
-    const [editing, setEditing] = useState(true);
-    const [formattedPreEvalSection, setFormattedPreEvalSection] = useState("");
+const DisplaySection = ({
+    sectionName,
+    summarySection = null,
+    preEvalSection = null,
+    actualReviewSection = null,
+    handleSectionUpdate = null,
+}) => {
+    const [reviewSection, setReviewSection] = useState(actualReviewSection || {});
+    const [editing, setEditing] = useState(false);
     const [isEdited, setIsEdited] = useState(false);
-    const { t } = useTranslation(); 
 
     const handleEdit = (value) => {
-        if(!value) setIsEdited(true);
         setEditing(value);
+        if (!value) setIsEdited(true);
     };
 
     useEffect(() => {
         if (actualReviewSection) {
-          setReviewSection(actualReviewSection);
+            setReviewSection(actualReviewSection);
         }
-      }, [actualReviewSection, sectionName]);
-
-
-    useEffect(()=> {
-        if(preEvalSection){
-            let preEvalSplit = preEvalSection.split("Evaluation Summary:", 2);
-            setFormattedPreEvalSection(formatPreEvalSection(preEvalSplit[0], preEvalSplit[1]));
-        }
-    }, [preEvalSection])
-
+    }, [actualReviewSection]);
 
     return (
         <Accordion.Item eventKey={sectionName}>
             <Accordion.Header>{sectionName}</Accordion.Header>
             <Accordion.Body>
-                <h5 className='text-center text-primary'><b>{t('showAssignedArticle.summary')}</b></h5>
-                <p>{summarySection}</p>
-                <h5 className='text-center text-primary'><b>{t('showAssignedArticle.initialEvaluation')}</b></h5>
-                <p dangerouslySetInnerHTML={{ __html: formattedPreEvalSection }} />
-                <h5 className='text-center text-primary'><b>{t('showAssignedArticle.review')}</b></h5>
+                <h5 className="text-center text-primary">
+                    <b>Summary</b>
+                </h5>
+                {summarySection &&
+                <div className="markdown-container">
+                    <ReactMarkdown
+                        remarkPlugins={[remarkGfm]}
+                        rehypePlugins={[rehypeRaw]}
+                    >
+                        {summarySection}
+                    </ReactMarkdown>
+                </div>
+                }
+
+                <h5 className="text-center text-primary">
+                    <b>Initial Evaluation</b>
+                </h5>
+                {preEvalSection && (
+                    <div className="markdown-container">
+                        <ReactMarkdown
+                            remarkPlugins={[remarkGfm]}
+                            rehypePlugins={[rehypeRaw]} // Procesa HTML si es necesario
+                        >
+                            {preEvalSection}
+                        </ReactMarkdown>
+                    </div>
+                )}
+
+                <h5 className="text-center text-primary">
+                    <b>Review</b>
+                </h5>
                 <SectionReview
                     reviewData={reviewSection}
                     sectionName={sectionName}
-                    handleSectionUpdate={handleSectionUpdate} 
+                    handleSectionUpdate={handleSectionUpdate}
                     handleEdit={handleEdit}
                     editing={editing}
                     isEdited={isEdited}
@@ -241,7 +265,6 @@ const DisplaySection = ({ sectionName, summarySection=null, preEvalSection=null,
         </Accordion.Item>
     );
 };
-
 
 
 function ShowAssignedArticle() {

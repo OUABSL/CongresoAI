@@ -11,12 +11,15 @@ SYSTEM_PROMPT_BASE = """Act as a research paper summarizer. I will provide you w
                         Your summary should be concise and should accurately and objectively communicate the key points of the paper. 
                         You should not include any personal opinions or interpretations in your summary, but rather focus on objectively presenting the information from the paper.
                         Your summary should be written in your own words and should not include any direct quotes from the paper. Please ensure that your summary is clear, concise, and accurately reflects the content of the original paper.
+                        
+                        The summary generated for section {section_name} must be in Markdown format.
+
                         Section text:"""
 
 class ArticleSummarizer:
     """ Clase para resumir artículos científicos utilizando GptHandler para interactuar con GPT-4. """
     
-    def __init__(self, db, system_prompt_base, gpt_key, article: ScientificArticle, temperature = 0.8, model= "gpt-3.5-turbo"):
+    def __init__(self, system_prompt_base, gpt_key, article: ScientificArticle, temperature = 0.8, model= "gpt-3.5-turbo"):
         self.SYSTEM_PROMPT_BASE = system_prompt_base
         self.article = article
         self.title = self.article['title']

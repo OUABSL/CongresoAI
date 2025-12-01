@@ -32,6 +32,7 @@ SYSTEM_PROMPT_BASE = ("""You are an expert tutor specializing in reviewing and e
                 
                       Evaluation format: 
                       Evaluation Criteria: Evaluation Level, Evaluation justification and exemples from the evaluated section.
+                      The evaluation generated for section {section_name} must be in Markdown format.
 
                 Section Text:\n
                 """
@@ -68,7 +69,8 @@ SYSTEM_PROMPT_RESUBMIT = ("""You are an expert tutor specializing in reviewing a
                 
                       Evaluation format: 
                       Evaluation Criteria: Evaluation Level, Evaluation justification and exemples from the evaluated section.
-                      
+                      The evaluation generated for section {section_name} must be in Markdown format.
+
                       This section is a resubmission of the previous version. Considering the previous review of the section: {review_section}, ensure that improvements have been made as per the reviewer's comments: {review_comments}.
 
                 Section Text:\n

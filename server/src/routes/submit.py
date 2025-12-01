@@ -144,9 +144,10 @@ def submit_article():
 Función para preparar un artículo científico para ser enviado en formato json, 
 se eliminan las propiedades innecearias para la petición
 """
+# se eliminan las propiedades innecesarias para la petición
 def serialize_article(article):
     if "_id" in article:
-        article.pop("_id", None) 
+        article["_id"] = str(article["_id"])
     if "content" in article:
         article.pop("content", None)
     if "summary" in article:
@@ -157,11 +158,14 @@ def serialize_article(article):
         article['latex_project_id'] = str(article['latex_project_id'])
     if "submitted_pdf_id" in article and article["submitted_pdf_id"]:
         article['submitted_pdf_id'] = str(article['submitted_pdf_id'])
+    if "report_pdf_id" in article and article["report_pdf_id"]:
+        article['report_pdf_id'] = str(article['report_pdf_id'])
     if "review_result" in article and article.get("review_result") == "Pending Review":
         article.pop("review", None)
     if "sorted_backup_assignment" in article:
         article.pop("sorted_backup_assignment", None)
     return article
+
 
 """
 Función para devolver los artículos científicos entregados por parte de un autor. 
@@ -172,7 +176,7 @@ Función para devolver los artículos científicos entregados por parte de un au
 def show_articles(author):
     articles = list(DB.find({"author":str(author)}))
     if articles:
-        serialized_articles = [serialize_article(article) for article in articles]
+        serialized_articles = [serialize_article(article.to_mongo().to_dict()) for article in articles]
         return make_response(jsonify(serialized_articles), 200)
     else:
         return make_response(jsonify({'success':False,"message": "No articles found for this author."}), 404)
@@ -186,7 +190,7 @@ Función para devolver la revisión de un artículo científico entregado.
 def show_article(author, article_title):
     article = DB.find_one({"author":str(author), "title":article_title})
     if article:
-        serialized_article = serialize_article(article)
+        serialized_article = serialize_article(article.to_mongo().to_dict())
         return make_response(jsonify(serialized_article), 200)
     else:
         return make_response(jsonify({"success":False, "message": "No articles found for this author."}), 404)

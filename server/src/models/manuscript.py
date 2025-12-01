@@ -124,10 +124,9 @@ class ScientificArticle(Document):
         if latex_project:
             self.update_properties(latex_project_id=fs.put(latex_project))
         if submitted_pdf:
-            self.update_properties(submitted_pdf_id=fs.put(submitted_pdf))
-        
+            self.update_properties(submitted_pdf_id=fs.put(submitted_pdf)) 
         if report_pdf:
-            # Check if there is an existing report and delete it
+            # Comprobar si existe un informe existente y eliminarlo
             if self.report_pdf_id:
                 fs.delete(self.report_pdf_id)
             self.update_properties(report_pdf_id=fs.put(report_pdf))

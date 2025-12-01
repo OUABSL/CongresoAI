@@ -99,7 +99,6 @@ class ReportGenerator:
             pdf_path = f"{files_path}.pdf"
             tex_path = f"{files_path}.tex"
             logging.info(f"Generating PDF at: {pdf_path}")
-            logging.info(f"The Latex file's name: {tex_path}")
 
             doc.generate_pdf(files_path, clean_tex=False)
 

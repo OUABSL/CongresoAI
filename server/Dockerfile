@@ -9,16 +9,18 @@ COPY ./requirements.txt .
 
 ENV FLASK_ENV production
 
-RUN pip install --upgrade pip 
+RUN pip install --upgrade pip --default-timeout=100
 RUN pip install -r ./requirements.txt
 RUN python -m spacy download en_core_web_lg
 
-# Instalar el compilador Latex
+# Actualiza los paquetes e instala Pandoc y el compilador LaTeX
 RUN apt-get update && apt-get install -y \
-texlive-full \
-&& apt-get clean
+    texlive-full \
+    pandoc \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
-    
+
 #RUN pip install -U langchain-community
 # RUN pip install -U langchain langchain-openai pydantic
 
