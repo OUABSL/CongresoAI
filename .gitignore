@@ -13,3 +13,7 @@ server/test_results/
 *.save
 #*/package.json
 .codegpt
+# Generated artefacts
+__pycache__/
+.ipynb_checkpoints/
+server/src/data/tmp*/
