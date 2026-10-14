@@ -1,6 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { Card, Form, Row, Col, Button} from "react-bootstrap";
 import { Link, useNavigate, useParams} from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { AlertContext } from '../../context/alertProvider';
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
@@ -19,6 +20,7 @@ const SignUpRevisor = () => {
   const { token } = useParams();
   const [first, setFirst] = useState(false);
   const [valid, setValid] = useState(false);
+  const { t } = useTranslation(); 
 
   const initialState = {
     role: 'reviewer',
@@ -184,84 +186,95 @@ const handleORCIDChange = (e) => {
     <Card className="register-card mt-2 p-5 mx-auto">
       {valid ? (
         <Form onSubmit={onSubmit} className="form-class">
-            <div className="h4 mb-4 form-heading text-center">Registro de revisor</div>
-            <Row>
-              <Col xs={12} md={6}>
-                <Form.Group className="mb-3 form-group-class">
-                  <Form.Label className="label-class">ORCID ID</Form.Label>
-                  <Form.Control
-                    type="text"
-                    placeholder="0000-0000-0000-0000"
-                    name="ORCID"
-                    value={state.ORCID}
-                    className="input-class"
-                    onChange={handleORCIDChange}
-                  />
-                </Form.Group>
-              </Col>
-              <Col xs={12} md={6}>
-                <Form.Group className="mb-3 form-group-class">
-                  <Form.Label className="label-class">¿Crear portal de autor?</Form.Label>
-                  <div>
-                    <Form.Check
-                      inline
-                      type="radio"
-                      label="Sí"
-                      name="is_bi"
-                      value="yes"
-                      checked={state.is_bi === true}
-                      onChange={onChange}
-                    />
-                    <Form.Check
-                      inline
-                      type="radio"
-                      label="No"
-                      name="is_bi"
-                      value="no"
-                      checked={state.is_bi === false}
-                      onChange={onChange}
-                    />
-                  </div>
-                </Form.Group>
-              </Col>
-          </Row>
+          <div className="h4 mb-4 form-heading text-center">
+            {t("signUpReviewer.formHeading")}
+          </div>
           <Row>
-            <Col  xs={12} md={6}>
+            <Col xs={12} md={6}>
               <Form.Group className="mb-3 form-group-class">
-                <Form.Label className="label-class">Nombre completo</Form.Label>
+                <Form.Label className="label-class">
+                  {t("signUpReviewer.orcidLabel")}
+                </Form.Label>
                 <Form.Control
                   type="text"
-                  placeholder="Nombre completo"
+                  placeholder={t("signUpReviewer.orcidPlaceholder")}
+                  name="ORCID"
+                  value={state.ORCID}
+                  className="input-class"
+                  onChange={handleORCIDChange}
+                />
+              </Form.Group>
+            </Col>
+            <Col xs={12} md={6}>
+              <Form.Group className="mb-3 form-group-class">
+                <Form.Label className="label-class">
+                  {t("signUpReviewer.createAuthorPortalLabel")}
+                </Form.Label>
+                <div>
+                  <Form.Check
+                    inline
+                    type="radio"
+                    label={t("signUpReviewer.yes")}
+                    name="is_bi"
+                    value="yes"
+                    checked={state.is_bi === true}
+                    onChange={onChange}
+                  />
+                  <Form.Check
+                    inline
+                    type="radio"
+                    label={t("signUpReviewer.no")}
+                    name="is_bi"
+                    value="no"
+                    checked={state.is_bi === false}
+                    onChange={onChange}
+                  />
+                </div>
+              </Form.Group>
+            </Col>
+          </Row>
+          <Row>
+            <Col xs={12} md={6}>
+              <Form.Group className="mb-3 form-group-class">
+                <Form.Label className="label-class">
+                  {t("signUpReviewer.fullnameLabel")}
+                </Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder={t("signUpReviewer.fullnamePlaceholder")}
                   name="fullname"
                   value={state.fullname}
                   onChange={onChange}
                   className="input-class"
                   required
-                  />
+                />
               </Form.Group>
             </Col>
-            <Col  xs={12} md={6}>
+            <Col xs={12} md={6}>
               <Form.Group className="mb-3 form-group-class">
-                <Form.Label className="label-class">Nombre de usuario</Form.Label>
+                <Form.Label className="label-class">
+                  {t("signUpReviewer.usernameLabel")}
+                </Form.Label>
                 <Form.Control
                   type="text"
-                  placeholder="Nombre de usuario"
+                  placeholder={t("signUpReviewer.usernamePlaceholder")}
                   name="username"
                   value={state.username}
                   onChange={onChange}
-                className="input-class"
+                  className="input-class"
                 />
               </Form.Group>
             </Col>
           </Row>
-
           <Row>
-            <Col  xs={12} md={6}>
+            <Col xs={12} md={6}>
               <Form.Group className="mb-3 form-group-class">
-                <Form.Label className="label-class">Correo electrónico</Form.Label>
+                <Form.Label className="label-class">
+                  {t("signUpReviewer.emailLabel")}
+                </Form.Label>
                 <Form.Control
                   type="email"
-                  placeholder="Introduzca su correo electrónico"
+                  placeholder={t("signUpReviewer.emailPlaceholder")}
                   name="email"
                   value={state.email}
                   onChange={onChange}
@@ -269,82 +282,103 @@ const handleORCIDChange = (e) => {
                 />
               </Form.Group>
             </Col>
-            <Col  xs={12} md={6}>
+            <Col xs={12} md={6}>
               <Form.Group className="mb-3 form-group-class">
-                  <Form.Label className="label-class">Número de teléfono</Form.Label>
-                  <PhoneInput
-                      inputClass="input-class"
-                      className="number"
-                      country={"es"}
-                      value={state.phonenumber}
-                      placeholder='+34 611 111 111'
-                      onChange={phone => setState({ ...state, phonenumber: phone })}
-                  />
+                <Form.Label className="label-class">
+                  {t("signUpReviewer.phoneLabel")}
+                </Form.Label>
+                <PhoneInput
+                  inputClass="input-class"
+                  className="number"
+                  country={"es"}
+                  value={state.phonenumber}
+                  placeholder={t("signUpReviewer.phonePlaceholder")}
+                  onChange={(phone) => setState({ ...state, phonenumber: phone })}
+                />
               </Form.Group>
             </Col>
           </Row>
           <Row>
-          <Col  xs={12} md={6}>
-            <Form.Group className="mb-3 form-group-class">
-              <Form.Label className="label-class">Contraseña</Form.Label>
-              <Form.Control
-                type="password"
-                placeholder="Introduzca la contraseña"
-                name="password"
-                value={state.password}
-                onChange={onChange}
-                className="input-class"
-              />
-            </Form.Group>
+            <Col xs={12} md={6}>
+              <Form.Group className="mb-3 form-group-class">
+                <Form.Label className="label-class">
+                  {t("signUpReviewer.passwordLabel")}
+                </Form.Label>
+                <Form.Control
+                  type="password"
+                  placeholder={t("signUpReviewer.passwordPlaceholder")}
+                  name="password"
+                  value={state.password}
+                  onChange={onChange}
+                  className="input-class"
+                />
+              </Form.Group>
             </Col>
-            <Col  xs={12} md={6}>
-            <Form.Group className="mb-3 form-group-class">
-              <Form.Label className="label-class">Repita su Contraseña</Form.Label>
-              <Form.Control
-                type="password"
-                placeholder="Repita la contraseña"
-                name="confirmPassword" 
-                value={state.confirmPassword}
-                onChange={onChange}
-                className="input-class"
-              />
-            </Form.Group>
+            <Col xs={12} md={6}>
+              <Form.Group className="mb-3 form-group-class">
+                <Form.Label className="label-class">
+                  {t("signUpReviewer.confirmPasswordLabel")}
+                </Form.Label>
+                <Form.Control
+                  type="password"
+                  placeholder={t("signUpReviewer.confirmPasswordPlaceholder")}
+                  name="confirmPassword"
+                  value={state.confirmPassword}
+                  onChange={onChange}
+                  className="input-class"
+                />
+              </Form.Group>
             </Col>
           </Row>
-        
-        <Form.Group className="mb-3 form-group-class">
-          <Form.Label className="label-class">Área de Conocimiento</Form.Label>
-          <TagsInput tags={knowledges} setTags={setTags} persPlaceholder="áreas de conocimientos" />
-        </Form.Group>
-
-        {!loading ? (
-          <div className="d-grid gap-2">
-            <Button className="w-50 mx-auto" variant="primary" type="submit">
-              Registrarse
-            </Button>
-          </div>
-        ) : (
-          <div className="d-grid gap-2">
-            <Button className="w-50 mx-auto" variant="primary" type="submit" disabled>
-              Registrandose...
-            </Button>
-          </div>
-        )}
-      <p className="forgot-password text-right">
-        ¿Ya está registrado? <Link to="/portal-reviewer/login">iniciar sesión!</Link>
-      </p>
-    </Form>
-    ) : (first ? (
-      <div className='d-flex flex-column justify-content-center align-self-center text-center text-danger'>
-        <h2><FontAwesomeIcon icon={faCircleExclamation} />¡Registro no autorizado!</h2>
-        <h4>Por favor, contacte con el administrador.</h4>
-      </div>
-    ) :( 
-    <div className='d-flex justify-content-center align-items-center'>
-      <FontAwesomeIcon icon={faSpinner} size='2x' />
-    </div>
-    ))}
+          <Form.Group className="mb-3 form-group-class">
+            <Form.Label className="label-class">
+              {t("signUpReviewer.knowledgesLabel")}
+            </Form.Label>
+            <TagsInput
+              tags={knowledges}
+              setTags={setTags}
+              persPlaceholder={t("signUpReviewer.knowledgesPlaceholder")}
+            />
+          </Form.Group>
+          {!loading ? (
+            <div className="d-grid gap-2">
+              <Button className="w-50 mx-auto" variant="primary" type="submit">
+                {t("signUpReviewer.submitButton")}
+              </Button>
+            </div>
+          ) : (
+            <div className="d-grid gap-2">
+              <Button
+                className="w-50 mx-auto"
+                variant="primary"
+                type="submit"
+                disabled
+              >
+                {t("signUpReviewer.loadingButton")}
+              </Button>
+            </div>
+          )}
+          <p className="forgot-password text-right">
+            {t("signUpReviewer.alreadyRegistered")}{" "}
+            <Link to="/portal-reviewer/login">
+              {t("signUpReviewer.loginLink")}
+            </Link>
+          </p>
+        </Form>
+      ) : first ? (
+        <div className="d-flex flex-column justify-content-center align-self-center text-center text-danger">
+          <h2>
+            <FontAwesomeIcon icon={faCircleExclamation} />{" "}
+            {t("signUpReviewer.unauthorizedHeading")}
+          </h2>
+          <h4>{t("signUpReviewer.unauthorizedMessage")}</h4>
+        </div>
+      ) : (
+        <div className="d-flex justify-content-center align-items-center">
+          <FontAwesomeIcon icon={faSpinner} size="2x" />
+        </div>
+      )}
     </Card>
-    );
+  );  
   }
   export default SignUpRevisor;

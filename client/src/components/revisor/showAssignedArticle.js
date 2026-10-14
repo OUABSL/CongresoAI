@@ -1,10 +1,14 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Button, Card, Accordion, Row, Modal, Col, DropdownButton, Dropdown, Form } from 'react-bootstrap';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import AuthContext from "../../context/context";
 import { AlertContext } from '../../context/alertProvider';
 import RegenerationModal from './regeneratePreEvaluation'
 import ReassignateReviewButton from './reAssignateReviewer';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import rehypeRaw from 'rehype-raw';
 import "../estilos/showArticle.css";
 
 // Constant criteria and scale
@@ -16,7 +20,8 @@ const STATES_REVIEW = ["Pendiente de Revisión", "Aprobado", "Rechazado", "Pendi
 const STATES_REVIEW_API =  ["Pending Review", "Approved", "Rejected", "Pending Improvement"]
 
 
-const DownloadArticle = ({ pdf, zip, title }) => {
+const DownloadArticle = ({ manuscriptPdf, reportPdf, zip, title }) => {
+    const { t } = useTranslation();
 
     const handleDownload = async (fileUrl, filename, type) => {
         try {
@@ -41,9 +46,10 @@ const DownloadArticle = ({ pdf, zip, title }) => {
   
     return (
         <div className="d-flex justify-content-end mt-1">
-            <DropdownButton id="dropdown-button" title="Descargar">
-                <Dropdown.Item onClick={() => handleDownload(pdf, title, 'application/pdf')}>Descargar PDF</Dropdown.Item>
-                <Dropdown.Item onClick={() => handleDownload(zip, title, 'application/zip')}>Descargar ZIP</Dropdown.Item>
+            <DropdownButton id="dropdown-button" title={t('downloadArticle.label')}>
+                <Dropdown.Item onClick={() => handleDownload(manuscriptPdf, title, 'application/pdf')}>{t('downloadArticle.manuscript_pdf')}</Dropdown.Item>
+                <Dropdown.Item onClick={() => handleDownload(zip, title, 'application/zip')}>{t('downloadArticle.zip')}</Dropdown.Item>
+                <Dropdown.Item onClick={() => handleDownload(reportPdf, title, 'application/pdf')}>{t('downloadArticle.report_pdf')}</Dropdown.Item>
             </DropdownButton>
         </div>
     )
@@ -67,6 +73,7 @@ const SectionReview = ({ reviewData, sectionName, handleSectionUpdate, handleEdi
     const [sectionReview, setSectionReview] = useState(reviewData || {});
     const [previousReviews, setPreviousReviews] = useState({});
     const [first, setFirst] = useState(true);
+    const { t } = useTranslation();
 
 
     useEffect(() => {
@@ -131,13 +138,13 @@ const SectionReview = ({ reviewData, sectionName, handleSectionUpdate, handleEdi
                                         checked={sectionReview[CRITERIA_API[i]] === evalScale}
                                         onChange={() => handleInputChange(CRITERIA_API[i], evalScale)}
                                         key={`<span class="math-inline">${sectionName}-</span>${criterion}-${index}`}
-                                        />
+                                    />
                                 ))}
                             </Col>
                         </Row>
                     ))}
                     <Form.Group controlId="reviewComment" className="mt-3 ">
-                        <Form.Label>Comentario del Revisor</Form.Label>
+                        <Form.Label>{t('showAssignedArticle.reviewerComment')}</Form.Label>
                         <Form.Control
                             as="textarea"
                             rows={3}
@@ -150,27 +157,24 @@ const SectionReview = ({ reviewData, sectionName, handleSectionUpdate, handleEdi
                         onClick={handleClickSaveReview}
                         className="mt-3"
                     >
-                        Guardar Revisión de Sección
+                        {t('showAssignedArticle.saveSectionReview')}
                     </Button>
                 </>
             ) : (
                 <>
                     <Card className="mt-3">
-                        <Card.Header className="card-cabecera">Resumen de la revisión anterior:</Card.Header>
+                        <Card.Header className="card-cabecera">{t('showAssignedArticle.previousReviewSummary')}:</Card.Header>
                         <Card.Body>
-                            {/* Mostrar la última revisión */}
                             {previousReviews && previousReviews[sectionName] && (
                                 <div className="mt-3">
-                                    {/* Iterar y mostrar los criterios */}
                                     {CRITERIA.map((criterion, i) => (
                                         <p key={criterion}>
                                             <b>{criterion}: </b>
                                             {previousReviews[sectionName][CRITERIA_API[i]]}
                                         </p>
                                     ))}
-                                    {/* Mostrar comentario del revisor */}
                                     <p>
-                                        <b>Comentario del Revisor: </b>
+                                        <b>{t('showAssignedArticle.reviewerComment')}: </b>
                                         {previousReviews[sectionName].comment}
                                     </p>
                                 </div>
@@ -182,57 +186,80 @@ const SectionReview = ({ reviewData, sectionName, handleSectionUpdate, handleEdi
                         onClick={() => handleEdit(true)}
                         className="mt-3"
                     >
-                        Editar Revisión
+                        {t('showAssignedArticle.editReview')}
                     </Button>
                 </>
             )}
         </div>
     );
+
 };
 
 
-const DisplaySection = ({ sectionName, summarySection=null, preEvalSection=null, actualReviewSection=null, handleSectionUpdate=null }) => {
-    const [reviewSection, setReviewSection] = useState(actualReviewSection || defaultReviewSection);
-    const [editing, setEditing] = useState(true);
-    const [formattedPreEvalSection, setFormattedPreEvalSection] = useState("");
+const DisplaySection = ({
+    sectionName,
+    summarySection = null,
+    preEvalSection = null,
+    actualReviewSection = null,
+    handleSectionUpdate = null,
+}) => {
+    const [reviewSection, setReviewSection] = useState(actualReviewSection || {});
+    const [editing, setEditing] = useState(false);
     const [isEdited, setIsEdited] = useState(false);
 
     const handleEdit = (value) => {
-        if(!value) setIsEdited(true);
         setEditing(value);
+        if (!value) setIsEdited(true);
     };
 
     useEffect(() => {
         if (actualReviewSection) {
-          setReviewSection(actualReviewSection);
+            setReviewSection(actualReviewSection);
         }
-      }, [actualReviewSection, sectionName]);
-
-
-    useEffect(()=> {
-        if(preEvalSection){
-            let preEvalSplit = preEvalSection.split("Evaluation Summary:", 2);
-            setFormattedPreEvalSection(formatPreEvalSection(preEvalSplit[0], preEvalSplit[1]));
-        }
-    }, [preEvalSection])
-
+    }, [actualReviewSection]);
 
     return (
         <Accordion.Item eventKey={sectionName}>
             <Accordion.Header>{sectionName}</Accordion.Header>
             <Accordion.Body>
-                <h5 className='text-center text-primary'><b>Resumen</b></h5>
-                <p>{summarySection}</p>
-                <h5 className='text-center text-primary'><b>Evaluación inicial</b></h5>
-                <p dangerouslySetInnerHTML={{ __html: formattedPreEvalSection }} />
-                <h5 className='text-center text-primary'><b>Revisión</b></h5>
+                <h5 className="text-center text-primary">
+                    <b>Summary</b>
+                </h5>
+                {summarySection &&
+                <div className="markdown-container">
+                    <ReactMarkdown
+                        remarkPlugins={[remarkGfm]}
+                        rehypePlugins={[rehypeRaw]}
+                    >
+                        {summarySection}
+                    </ReactMarkdown>
+                </div>
+                }
+
+                <h5 className="text-center text-primary">
+                    <b>Initial Evaluation</b>
+                </h5>
+                {preEvalSection && (
+                    <div className="markdown-container">
+                        <ReactMarkdown
+                            remarkPlugins={[remarkGfm]}
+                            rehypePlugins={[rehypeRaw]} // Procesa HTML si es necesario
+                        >
+                            {preEvalSection}
+                        </ReactMarkdown>
+                    </div>
+                )}
+
+                <h5 className="text-center text-primary">
+                    <b>Review</b>
+                </h5>
                 <SectionReview
                     reviewData={reviewSection}
                     sectionName={sectionName}
-                    handleSectionUpdate={handleSectionUpdate} 
+                    handleSectionUpdate={handleSectionUpdate}
                     handleEdit={handleEdit}
-                    editing = {editing}
-                    isEdited = {isEdited}
+                    editing={editing}
+                    isEdited={isEdited}
                 />
             </Accordion.Body>
         </Accordion.Item>
@@ -240,14 +267,14 @@ const DisplaySection = ({ sectionName, summarySection=null, preEvalSection=null,
 };
 
 
-
 function ShowAssignedArticle() {
+    const { t } = useTranslation(); // Usar hook para la traducción
     const { sessionToken, logout } = useContext(AuthContext); 
     const { username, article_title } = useParams();
     const [article, setArticle] = useState({});
     const [review, setReview] = useState({});
     const [resultReview, setResultReview] = useState("");
-    const {setAlert} = useContext(AlertContext);
+    const { setAlert } = useContext(AlertContext);
     const [showModal, setShowModal] = useState(false);
     const [activeKey, setActiveKey] = useState("start");
     const navigate = useNavigate();
@@ -257,77 +284,65 @@ function ShowAssignedArticle() {
     }
 
     const updateSectionReview = (sectionName, updatedReview) => {
-      setReview({ ...review, [sectionName]: updatedReview });
-  };
+        setReview({ ...review, [sectionName]: updatedReview });
+    };
 
+    useEffect(() => {
+        document.title = `Revisión - ${article_title}`;
+    }, [article_title]);
 
-  useEffect(() => {
-    document.title = `Revisión - ${article_title}`;
-  }, [article_title]);
+    useEffect(() => {
+        async function fetchArticle() {
+            try {
+                const response = await fetch(`/api/v1/evaluate/${username}/${encodeURIComponent(article_title)}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${sessionToken}`,
+                    }
+                });
 
-
-  useEffect(() => {
-    async function fetchArticle() {
-        try {
-            const response = await fetch(`/api/v1/evaluate/${username}/${encodeURIComponent(article_title)}`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${sessionToken}`,
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
                 }
-            });
 
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+                const data = await response.json();
+
+                if (data && data.submitted_pdf_id && data.title && data.description) {
+                    await setArticle(data);
+                } else {
+                    throw new Error('Data received is not as expected');
+                }
+                
+            } catch (error) {
+                setAlert({ show: true, variant: 'danger', message: t('showAssignedArticle.errorFetchingArticle') });
+                console.log("There was an error!", error);
             }
-
-            const data = await response.json();
-
-            // llamadas de función o asignaciones que dependan de estas propiedades.
-            if (data && data.submitted_pdf_id && data.title && data.description) {
-                await setArticle(data);
-                // llamar a la función handleShowPdf
-                //await handleShowPdf(`/file/${data.submitted_pdf_id}`); 
-            } else {
-                throw new Error('Data received is not as expected');
-            }
-            
-        } catch (error) {
-            // Manejar errores de red y respuestas no esperadas
-            // Deberías establecer un estado para mostrar el mensaje de error
-            setAlert({ show: true, variant: 'danger', message: 'No se pudo cargar el manuscrito! Intentálo más tarde.' });
-            console.log("There was an error!", error);
         }
-    }
-    fetchArticle();
-}, [username, article_title, sessionToken, logout, setAlert]);
+        fetchArticle();
+    }, [username, article_title, sessionToken, logout, setAlert, t]); // Añadir 't' a las dependencias
 
-
-    useEffect(()=> {
+    useEffect(() => {
         if (article && article.sections_orden) {
             setResultReview(article.review_result);
-            if(article.sections_orden.length > 0 && activeKey === "start") setActiveKey(article.sections_orden[0]);       
+            if (article.sections_orden.length > 0 && activeKey === "start") setActiveKey(article.sections_orden[0]);
         }
     }, [article, activeKey]);
 
-
     const translateReviewStatus = (status, lang) => {
-        if(lang==="EN"){
+        if (lang === "EN") {
             const index = STATES_REVIEW.indexOf(status);
             const enState = STATES_REVIEW_API[index] || 'Error: Pending Review';
             setResultReview(enState);
-        } else if(lang==="ES"){
+        } else if (lang === "ES") {
             const index = STATES_REVIEW_API.findIndex(s => s === status);
             return STATES_REVIEW[index] || status; // Fallback to the original status if not found
-        }
-        else return status;
-        
-      };
-
+        } else return status;
+    };
 
     const addReview = async () => {
         const reviewData = {
-            review: review, 
+            review: review,
             review_result: resultReview
         };
 
@@ -345,18 +360,17 @@ function ShowAssignedArticle() {
         window.scrollTo(0, 0);
 
         if (data.success) {
-            setAlert({ show: true, variant: 'success', message: 'Revisión guardada con éxito.' });
+            setAlert({ show: true, variant: 'success', message: t('showAssignedArticle.reviewSavedSuccess') });
         } else {
-            setAlert({ show: true, variant: 'danger', message: 'No se pudo guardar la revisión. Inténtalo de nuevo.' });
+            setAlert({ show: true, variant: 'danger', message: t('showAssignedArticle.reviewSaveError') });
         }
-
     };
 
     return (
         <>
             <Row className="justify-content-between mb-4">
                 <Col xs="auto" className='mt-1'>
-                    <Button className="btn bg-secondary" onClick={goBack}>Volver Atrás</Button>
+                    <Button className="btn bg-secondary" onClick={goBack}>{t('showAssignedArticle.backButton')}</Button>
                 </Col>
                 <Col xs="auto" className='mt-1'>
                     <RegenerationModal username={username} articleTitle={article_title} />
@@ -366,19 +380,21 @@ function ShowAssignedArticle() {
                 </Col>
                 <Col xs="auto" className='mt-1'>
                     <DownloadArticle
-                        pdf={`/file/${article.submitted_pdf_id}`}
+                        manuscriptPdf={`/manuscript_file/${article.submitted_pdf_id}`}
+                        reportPdf = {`/report_file/${article.report_pdf_id}`}
                         title={article.title}
-                        zip={`/zip/${article.latex_project_id}`} />
+                        zip={`/zip/${article.latex_project_id}`} 
+                        />
                 </Col>
             </Row>
             <Row className='mb-5 px-3'>
                 <Card className='tarjeta'>
                     <Card.Body>
                         {article && article.title && <Card.Title className='text-center h2'><h2>{article.title}</h2></Card.Title>}
-                        {article && article.description && <Card.Text><b>Descripción: </b>{article.description}</Card.Text>}
-                        {article && article.submit_number && <Card.Text><b>Número de entrega: </b>{article.submit_number}</Card.Text>}
-                        {article && article.is_resubmited === true && <Card.Text><b>Resultado de revisión anterior: </b>{translateReviewStatus(article.old_review_result, "ES")}</Card.Text>}
-                        {article && resultReview !== "" && <Card.Text><b>Estado de revisión: </b>{translateReviewStatus(resultReview, "ES")}</Card.Text>}
+                        {article && article.description && <Card.Text><b>{t('showAssignedArticle.description')}: </b>{article.description}</Card.Text>}
+                        {article && article.submit_number && <Card.Text><b>{t('showAssignedArticle.submissionNumber')}: </b>{article.submit_number}</Card.Text>}
+                        {article && article.is_resubmited === true && <Card.Text><b>{t('showAssignedArticle.previousReviewResult')}: </b>{translateReviewStatus(article.old_review_result, "ES")}</Card.Text>}
+                        {article && resultReview !== "" && <Card.Text><b>{t('showAssignedArticle.reviewStatus')}: </b>{translateReviewStatus(resultReview, "ES")}</Card.Text>}
                         {article && article.sections_orden && (
                             <Accordion activeKey={activeKey} onSelect={setActiveKey}>
                                 {article.sections_orden.map((sectionName) => (
@@ -392,17 +408,16 @@ function ShowAssignedArticle() {
                                     />
                                 ))}
                             </Accordion>
-                        )
-                    }
+                        )}
                         <Button className="btn bg-info mt-3" variant="primary" onClick={() => setShowModal(true)}>
-                            Guardar Revisión
+                            {t('showAssignedArticle.saveReview')}
                         </Button>
                         <Modal
                             show={showModal}
                             onHide={() => setShowModal(false)}
                         >
                             <Modal.Header closeButton>
-                                <Modal.Title>Elige un estado para la revisión</Modal.Title>
+                                <Modal.Title>{t('showAssignedArticle.chooseReviewStatus')}</Modal.Title>
                             </Modal.Header>
                             <Modal.Body>
                                 {STATES_REVIEW.map((state, index) => (
@@ -419,10 +434,10 @@ function ShowAssignedArticle() {
                             </Modal.Body>
                             <Modal.Footer>
                                 <Button variant="secondary" onClick={() => setShowModal(false)}>
-                                    Close
+                                    {t('showAssignedArticle.close')}
                                 </Button>
                                 <Button variant="primary" onClick={addReview}>
-                                    Confirmar Elección
+                                    {t('showAssignedArticle.confirmChoice')}
                                 </Button>
                             </Modal.Footer>
                         </Modal>
@@ -432,5 +447,4 @@ function ShowAssignedArticle() {
         </>
     );
 }
-
 export default ShowAssignedArticle;

@@ -32,3 +32,26 @@ h5.text-center {
   .tarjeta{
     width: '100%';
   }
+
+  code.language-markdown{
+    text-wrap: wrap !important;
+  }
+
+  .markdown-container h3 {
+      font-size: 1.5rem;
+      font-weight: bold;
+      margin-top: 1rem;
+      margin-bottom: 0.5rem;
+  }
+
+  .markdown-container strong {
+      font-weight: bold;
+      color: #333; /* Ajusta el color si es necesario */
+  }
+
+  .markdown-container p {
+      margin: 0.5rem 0;
+      line-height: 1.6;
+      word-wrap: break-word; /* Evita desbordamientos */
+      white-space: pre-wrap; /* Asegura que los saltos de línea se respeten */
+  }

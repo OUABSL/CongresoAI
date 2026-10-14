@@ -1,4 +1,7 @@
+import os
 import re
+import shutil
+import tempfile
 from cryptography.fernet import Fernet
 from base64 import urlsafe_b64encode
 
@@ -38,3 +41,16 @@ def to_list(form_element):
         return form_element
     else:
         return form_element.split(',')
+    
+#Función para crear carpeta temporal para la extracción de datos desde el proyecto latex.
+def create_temp_dir(parent_dir):
+    return tempfile.mkdtemp(dir=parent_dir)
+
+#Función para eliminar la carpeta temporal creada, se ejecuta al terminar la extracción de datos desde el proyecto latex. 
+def delete_temp_dir(dest_path):
+    # Eliminar la carpeta temporal usada en el proceso
+    if os.path.isdir(dest_path):
+        shutil.rmtree(dest_path)
+        if os.path.isdir(dest_path): # verifica si la carpeta todavía existe después de usar shutil.rmtree()
+            os.rmdir(dest_path) # se utiliza os.rmdir() para eliminar la carpeta vacía
+            print(f"Eliminada la carpeta temporal {dest_path}")

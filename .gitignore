@@ -1,5 +1,7 @@
 .venv
-#.env
+venv
+server/.env
+server/.env.dev
 server/data/
 server/src/config.py
 server/src/test
@@ -10,3 +12,8 @@ server/test_results/
 */.ipynb_checkpoints
 *.save
 #*/package.json
+.codegpt
+# Generated artefacts
+__pycache__/
+.ipynb_checkpoints/
+server/src/data/tmp*/

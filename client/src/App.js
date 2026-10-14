@@ -3,6 +3,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'react-bootstrap';
 import { Alert } from 'react-bootstrap';
+import { useTranslation } from 'react-i18next';
+
 
 
 import MyNavbar from './components/navBar';
@@ -11,6 +13,8 @@ import Home from './components/home';
 import ContactUs from './components/contactus';
 import AppProvider from './context/appProvider'
 import { AlertProvider, AlertContext } from './context/alertProvider';
+import LanguageProvider from './context/languageProvider';
+
 
 
 
@@ -37,6 +41,7 @@ import Portal from './components/portal';
 function App() {
   return (
     <BrowserRouter>
+      {/* <LanguageProvider> */}
       <AppProvider>
       <AlertProvider>
       <div className='d-flex flex-column min-vh-100 justify-content-between'>
@@ -81,6 +86,7 @@ function App() {
         </div>
       </AlertProvider>
       </AppProvider>
+      {/* </LanguageProvider> */}
     </BrowserRouter>
   );
 }

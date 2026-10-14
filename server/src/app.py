@@ -1,5 +1,6 @@
-from flask import Flask, Response, abort, jsonify, send_from_directory
+from flask import Flask, Response, jsonify
 from flask_pymongo import PyMongo
+from pymongo import MongoClient
 import mongoengine as me
 import os, sys
 from flask_cors import CORS
@@ -13,9 +14,11 @@ load_dotenv()
 # Acceder a las variables de entorno
 mongo_uri = os.environ['MONGO_URI']
 llamus_key = os.environ['LLAMUS_KEY']
+print(mongo_uri)
 jwt_key = os.environ['JWT_KEY']
 hf_email = os.environ['EMAIL_HF']
 hf_pass = os.environ['PASS_HF']
+gpt_key = os.environ['GPT_KEY']
 
 
 def create_app():
@@ -25,7 +28,8 @@ def create_app():
     app.config['LLAMUS_KEY'] = llamus_key
     app.config['MONGO_URI'] = mongo_uri
     app.config["JWT_SECRET_KEY"] = jwt_key
-    
+    app.config['GPT_KEY'] = gpt_key
+
     return app
 
 def create_mongo(app):
@@ -41,19 +45,24 @@ def register_blueprints(app):
     from src.routes.models import models_bp
     from src.routes.admin import admin_bp
     from src.utils.tags import tags_bp
+    from src.tests.testGptIntegration import test_gpt_bp
 
-    app.register_blueprint(admin_bp)
     app.register_blueprint(users_bp)
     app.register_blueprint(submit_bp)
     app.register_blueprint(evaluate_bp)
     app.register_blueprint(models_bp)
     app.register_blueprint(tags_bp)
+    app.register_blueprint(test_gpt_bp)
 
-    print(f"Created Blueprint for {admin_bp}")
     print(f"Created Blueprint for {users_bp}")
     print(f"Created Blueprint for {submit_bp}")
     print(f"Created Blueprint for {evaluate_bp}")
     print(f"Created Blueprint for {models_bp}")
+
+
+
+def get_users_from_db(db):
+    return list(db.users.find())
 
 
 API = '/api/v1'
@@ -62,43 +71,26 @@ mongo, mongo_engine = create_mongo(app)
 jwt = JWTManager(app)
 register_blueprints(app)
 
-
-# Define la carpeta de archivos estáticos
-app.static_folder = 'data'
-
-# Si necesitas acceder a los archivos dentro de la carpeta 'manuales', entonces la ruta base sería '/manuales'
-#app.static_url_path = '/manuales'
-#print(f"La ruta est es {app.static_folder} y {os.getcwd()}")
+@app.route("/", methods=["GET"])
+def index():
+    return "Bienvenido en el servidor de The AI Congress!"
 
 
-MANUALS_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../data/manuales")
-# Ruta para servir el manual del revisor
-@app.route("/api/v1/manuales/manual-reviewer", methods=["GET"])
-def send_manual_reviewer():
-    try:
-        # Ruta absoluta del archivo manual-revisor-theaicongress.pdf
-        return send_from_directory(MANUALS_FOLDER, "manual-revisor-theaicongress.pdf", as_attachment=True)
-    except FileNotFoundError:
-        return jsonify({"error": "File not found"}), 404
-    except IsADirectoryError:
-        return jsonify({"error": "Not a file"}), 400
+@app.route(API + "/", methods=["GET"])
+def api_index():
+    return "Bienvenido en el servidor de The AI Congress!"
 
-# Ruta para servir el manual del autor
-@app.route("/api/v1/manuales/manual-author", methods=["GET"])
-def send_manual_author():
-    try:
-        # Ruta absoluta del archivo manual-autor-theaicongress.pdf
-        return send_from_directory(MANUALS_FOLDER, "manual-autor-theaicongress.pdf", as_attachment=True)
-    except FileNotFoundError:
-        return jsonify({"error": "File not found"}), 404
-    except IsADirectoryError:
-        return jsonify({"error": "Not a file"}), 400
+@app.route(API + "/users", methods=["GET"])
+def users():
+    ls = mongo.db.authors.find()
+    print("ls:" , ls)
+    return f"The system users are mega:\n {(e.username for e in ls)}"
 
-# En el caso de ejecución en local sin el uso de docker 
-"""
-Nota: Para la ejecución en local se debe considerar la definición de carpeta server como carpeta raíz de la ejecución  
-"""
 def main():
-    """Ejecutar la aplicación Flask"""
+    """Run the Flask application"""
     #app.run(host='localhost', port=5000, debug=True)
     app.run()
+
+    
+if __name__ == "__main__":
+    main()

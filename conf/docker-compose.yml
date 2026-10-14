@@ -56,17 +56,3 @@ volumes:
 networks:
   server:
     driver: bridge
-
-
-
-  # client:
-  #   build:
-  #     context: ../client
-  #     dockerfile: Dockerfile
-  #   container_name: client
-  #   command: npm start
-  #   volumes:
-  #     - ../client:/usr/app
-  #     - /usr/app/node_modules
-  #   ports:
-  #     - "3000:3000"

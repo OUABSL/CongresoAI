@@ -2,8 +2,9 @@ from bson.objectid import ObjectId
 from flask import Blueprint, request, jsonify, make_response
 from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 from werkzeug.utils import secure_filename
+from src.services.reportGenerator import ReportGenerator
 from src.models.manuscript import ScientificArticle  
-from src.app import mongo, API, llamus_key
+from src.app import mongo, API, llamus_key, gpt_key
 from src.services.dataPreparation import DataHandler
 from src.services.preEvaluation import PreEvaluation
 from src.services.summary import ArticleSummarizer
@@ -11,6 +12,7 @@ from src.services.summary import SYSTEM_PROMPT_BASE as prompt_summary
 from src.services.preEvaluation import  SYSTEM_PROMPT_BASE as prompt_eval
 from src.services.preEvaluation import  SYSTEM_PROMPT_RESUBMIT as prompt_eval_resubmit
 from src.services.reviewerAssignment import ReviewerAssignment
+from src.utils.func import create_temp_dir, delete_temp_dir
 import tempfile, shutil, threading, os
 import logging, json
 from uuid import uuid4
@@ -20,22 +22,13 @@ from uuid import uuid4
 
 
 submit_bp = Blueprint('submit', __name__)
-UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../../data")
+# Configuración de rutas
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+UPLOAD_FOLDER = os.path.abspath(os.path.join(BASE_DIR, 'data'))
 DB = mongo.db.scientific_article
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-#Función para crear carpeta temporal para la extracción de datos desde el proyecto latex.
-def create_temp_dir(parent_dir):
-    return tempfile.mkdtemp(dir=parent_dir)
 
-#Función para eliminar la carpeta temporal creada, se ejecuta al terminar la extracción de datos desde el proyecto latex. 
-def delete_temp_dir(dest_path):
-    # Eliminar la carpeta temporal usada en el proceso
-    if os.path.isdir(dest_path):
-        shutil.rmtree(dest_path)
-        if os.path.isdir(dest_path): # verifica si la carpeta todavía existe después de usar shutil.rmtree()
-            os.rmdir(dest_path) # se utiliza os.rmdir() para eliminar la carpeta vacía
-            print(f"Eliminada la carpeta temporal {dest_path}")
 
 """
 Función para gestionar la entrega de artículo científico por autor. incluye la gestión de las primeras entregas y las entregas de mejora. 
@@ -46,34 +39,43 @@ Función para gestionar la entrega de artículo científico por autor. incluye l
 Args: Artículo, ruta de procesamiento, es entrega de mejora?
 """
 def process_submit(article:ScientificArticle, dest_path, resubmit:bool = False):
+    print("Entrando en process_submit")
     try:
         data_handler = DataHandler(article, dest_path=dest_path)
         data_handler.run()
-        if not(resubmit):    
-            summary_instance = ArticleSummarizer(mongo, prompt_summary,  llamus_key, article)
-            pre_evaluation_instance = PreEvaluation(mongo,  prompt_eval, llamus_key, article)
+        if not(resubmit):
+            summary_instance = ArticleSummarizer(mongo, prompt_summary,  gpt_key, article)
+            pre_evaluation_instance = PreEvaluation(mongo,  prompt_eval, gpt_key, article)
             assignment_agent = ReviewerAssignment(mongo = mongo, article = article)
             assignment_agent.run()
         else:
-            summary_instance = ArticleSummarizer(mongo, prompt_summary,  llamus_key, article)
-            pre_evaluation_instance = PreEvaluation(mongo,  prompt_eval_resubmit, llamus_key, article, resubmit)
+            summary_instance = ArticleSummarizer(mongo, prompt_summary,  gpt_key, article)
+            pre_evaluation_instance = PreEvaluation(mongo,  prompt_eval_resubmit, gpt_key, article, resubmit)
 
         summary =summary_instance.run()
         pre_evaluation = pre_evaluation_instance.run()
         
-        error = ("Error" in summary.values()) or ("Error" in pre_evaluation.values())
+        error = ("Error" in summary[0].values()) or ("Error" in pre_evaluation[0].values())
 
-        if summary and not "Error" in summary.values():
-            article.update_properties(summary=summary)
+        if summary and not "Error" in summary[0].values():
+            article.update_properties(summary=summary[0], aimodel_summary=summary[1])
 
-        if pre_evaluation and not "Error" in pre_evaluation.values():
-            article.update_properties(evaluation=pre_evaluation)
+        if pre_evaluation and not "Error" in pre_evaluation[0].values():
+            article.update_properties(evaluation=pre_evaluation[0], aimodel_evaluation=pre_evaluation[1])
 
         if error:
             article.update_properties(processing_state="Fail")
         else:
             article.update_properties(processing_state="Done")
             logging.info(f"La generación de la pre-evaluación se realizó con éxito para el artículo: {article.title}")
+            if not os.path.exists(UPLOAD_FOLDER):
+                os.makedirs(UPLOAD_FOLDER)
+            temp_dir = create_temp_dir(UPLOAD_FOLDER)
+            # Generar el informe
+            report_generator = ReportGenerator(article, dest_path=temp_dir)
+            report_generator.generate_report()
+
+            
 
 
         article.save()
@@ -142,9 +144,10 @@ def submit_article():
 Función para preparar un artículo científico para ser enviado en formato json, 
 se eliminan las propiedades innecearias para la petición
 """
+# se eliminan las propiedades innecesarias para la petición
 def serialize_article(article):
     if "_id" in article:
-        article.pop("_id", None) 
+        article["_id"] = str(article["_id"])
     if "content" in article:
         article.pop("content", None)
     if "summary" in article:
@@ -155,11 +158,14 @@ def serialize_article(article):
         article['latex_project_id'] = str(article['latex_project_id'])
     if "submitted_pdf_id" in article and article["submitted_pdf_id"]:
         article['submitted_pdf_id'] = str(article['submitted_pdf_id'])
+    if "report_pdf_id" in article and article["report_pdf_id"]:
+        article['report_pdf_id'] = str(article['report_pdf_id'])
     if "review_result" in article and article.get("review_result") == "Pending Review":
         article.pop("review", None)
     if "sorted_backup_assignment" in article:
         article.pop("sorted_backup_assignment", None)
     return article
+
 
 """
 Función para devolver los artículos científicos entregados por parte de un autor. 
@@ -170,7 +176,7 @@ Función para devolver los artículos científicos entregados por parte de un au
 def show_articles(author):
     articles = list(DB.find({"author":str(author)}))
     if articles:
-        serialized_articles = [serialize_article(article) for article in articles]
+        serialized_articles = [serialize_article(article.to_mongo().to_dict()) for article in articles]
         return make_response(jsonify(serialized_articles), 200)
     else:
         return make_response(jsonify({'success':False,"message": "No articles found for this author."}), 404)
@@ -184,7 +190,7 @@ Función para devolver la revisión de un artículo científico entregado.
 def show_article(author, article_title):
     article = DB.find_one({"author":str(author), "title":article_title})
     if article:
-        serialized_article = serialize_article(article)
+        serialized_article = serialize_article(article.to_mongo().to_dict())
         return make_response(jsonify(serialized_article), 200)
     else:
         return make_response(jsonify({"success":False, "message": "No articles found for this author."}), 404)
